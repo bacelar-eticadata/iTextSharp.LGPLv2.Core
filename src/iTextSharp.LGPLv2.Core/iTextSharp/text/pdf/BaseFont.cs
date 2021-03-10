@@ -1123,9 +1123,8 @@ namespace iTextSharp.text.pdf
 #endif
                 istr = assm.GetManifestResourceStream(key);
             }
-            catch
-            {
-            }
+            catch { }
+
             if (istr != null)
             {
                 return istr;
@@ -1152,7 +1151,7 @@ namespace iTextSharp.text.pdf
 #if NET40
                             var asm = Assembly.LoadFrom(dir);
 #else
-                            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(dir);
+                            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(dir);                            
 #endif
                             istr = asm.GetManifestResourceStream(key);
                         }

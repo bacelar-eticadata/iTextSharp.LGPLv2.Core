@@ -1,14 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Description> iTextSharp.LGPLv2.Core is an unofficial port of the last LGPL version of the iTextSharp (V4.1.6) to .NET Core.</Description>
-    <VersionPrefix>1.6.7</VersionPrefix>
+    <Description>iTextSharp.LGPLv2.Eti is Eticadata fork of  iTextSharp.LGPLv2.Core.StrongName bumping support for .net 4.8 and removing depdendency from System.Runtime.Loader;
+iTextSharp.LGPLv2.Core is an unofficial port of the last LGPL version of the iTextSharp (V4.1.6) to .NET Core.
+</Description>
+    <VersionPrefix>1.6.7.0</VersionPrefix>
     <LangVersion>latest</LangVersion>
     <Authors>Contributors</Authors>
     <Company>Codeuctivity</Company>
     <AssemblyTitle>iTextSharp.LGPLv2.Core.StrongName</AssemblyTitle>
-    <Product>iTextSharp.LGPLv2.Core.StrongName</Product>
-    <AssemblyName>iTextSharp.LGPLv2.Core.StrongName</AssemblyName>
-    <PackageId>iTextSharp.LGPLv2.Core.StrongName</PackageId>
+    <Product>iTextSharp.LGPLv2.Eti</Product>
+    <AssemblyName>iTextSharp.LGPLv2.Eti</AssemblyName>
+    <PackageId>iTextSharp.LGPLv2.Eti</PackageId>
     <TargetFrameworks>net40;netstandard2.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard2.0</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
@@ -43,13 +45,19 @@
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <DefineConstants>NETSTANDARD2_0</DefineConstants>
+    <DefineConstants>DEBUG;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.6.7" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
-    <DefineConstants>NET40</DefineConstants>
+    <DefineConstants>DEBUG;NET40</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <OutputPath>bin\Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\.editorconfig" Link=".editorconfig" />
@@ -63,6 +71,6 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
+    </PackageReference>    
   </ItemGroup>
 </Project>

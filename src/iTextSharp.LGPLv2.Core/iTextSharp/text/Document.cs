@@ -129,6 +129,12 @@ namespace iTextSharp.text
         /// </summary>
         public static string Product { get; } = "iTextSharp.LGPLv2.Core";
 
+        /// <summary>
+        /// Gets the iText version.
+        /// </summary>
+        /// <value>iText version</value>
+        public static string Version => $"{Product} {Release}";
+
 #if NET40
         /// <summary>
         /// Gets the release number.
@@ -269,11 +275,6 @@ namespace iTextSharp.text
         /// <value>the top margin</value>
         public float TopMargin { get; protected set; }
 
-        /// <summary>
-        /// Gets the iText version.
-        /// </summary>
-        /// <value>iText version</value>
-        public static string Version => $"{Product} {Release}";
 
         /// <summary>
         /// Adds an Element to the Document.
