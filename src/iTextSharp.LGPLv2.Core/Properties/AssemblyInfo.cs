@@ -3,10 +3,10 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("iTextSharp.LGPLv2.Core")]
+[assembly: AssemblyProduct("iTextSharp.LGPLv2.Eti")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyTitle("iTextSharp.LGPLv2.Core")]
-[assembly: AssemblyDescription("iTextSharp.LGPLv2.Core is an unofficial port of the last LGPL version of the iTextSharp (V4.1.6) to .NET Core.")]
+[assembly: AssemblyDescription("iTextSharp.LGPLv2.Core is an unofficial port of the last LGPL version of the iTextSharp (V4.1.6) to .NET Startdard 2.0 & .net 48.")]
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]

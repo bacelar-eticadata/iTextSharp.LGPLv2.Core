@@ -3,15 +3,15 @@
     <Description> iTextSharp.LGPLv2.Core is an unofficial port of the last LGPL version of the iTextSharp (V4.1.6) to .NET Core.</Description>
     <VersionPrefix>1.7.1</VersionPrefix>
     <LangVersion>latest</LangVersion>
-    <Authors>Vahid Nasiri</Authors>
-    <TargetFrameworks>netstandard2.0;net40;netstandard1.3;</TargetFrameworks>
+    <Authors>Vahid Nasiri &amp; Contributors</Authors>
+    <TargetFrameworks>netstandard2.0;net48;</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' != 'Windows_NT'">netstandard1.3;netstandard2.0</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>iTextSharp.LGPLv2.Core</AssemblyName>
-    <PackageId>iTextSharp.LGPLv2.Core</PackageId>
+    <PackageId>iTextSharp.LGPLv2.Eti</PackageId>
     <PackageTags>PdfReport;Excel;Export;iTextSharp;PDF;Report;Reporting;Persian;.NET Core;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/VahidN/iTextSharp.LGPLv2.Core</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/bacelar-eticadata/iTextSharp.LGPLv2.Core</PackageProjectUrl>
     <PackageLicenseUrl>http://www.gnu.org/licenses/old-licenses/lgpl-2.0-standalone.html</PackageLicenseUrl>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.3' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.1</NetStandardImplicitPackageVersion>
@@ -24,6 +24,11 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>iTextSharp.LGPLv2.Core.snk</AssemblyOriginatorKeyFile>
+    <Version>1.8.0</Version>
+    <AssemblyVersion>1.8.0.0</AssemblyVersion>
+    <FileVersion>1.8.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="iTextSharp\text\pdf\fonts\*.*;iTextSharp\text\pdf\fonts\cmaps\*.*" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
@@ -50,8 +55,8 @@
     <DefineConstants>NETSTANDARD1_3</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="System.Drawing.Common" Version="5.0.1" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.9" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
     <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
     <PackageReference Include="System.Net.Requests" Version="4.3.0" />
     <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
@@ -64,10 +69,10 @@
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <DefineConstants>NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
     <PackageReference Include="Portable.BouncyCastle" Version="1.8.9" />
   </ItemGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
     <DefineConstants>NET40</DefineConstants>
   </PropertyGroup>
 </Project>

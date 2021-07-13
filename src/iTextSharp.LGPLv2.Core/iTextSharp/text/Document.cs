@@ -82,7 +82,7 @@ namespace iTextSharp.text
         protected bool MarginMirroringTopBottom;
 
         ///<summary> The IDocListener. </summary>
-        private readonly ArrayList _listeners = new ArrayList();
+        private readonly ArrayList _listeners = new();
         /// <summary>
         /// membervariables concerning the layout
         /// </summary>
@@ -291,8 +291,7 @@ namespace iTextSharp.text
                 throw new DocumentException("The document is not open yet; you can only add Meta information.");
             }
             bool success = false;
-            var number = element as ChapterAutoNumber;
-            if (number != null)
+            if (element is ChapterAutoNumber number)
             {
                 Chapternumber = number.SetAutomaticNumber(Chapternumber);
             }
@@ -300,8 +299,7 @@ namespace iTextSharp.text
             {
                 success |= listener.Add(element);
             }
-            var largeElement = element as ILargeElement;
-            if (largeElement != null)
+            if (element is ILargeElement largeElement)
             {
                 ILargeElement e = largeElement;
                 if (!e.ElementComplete)

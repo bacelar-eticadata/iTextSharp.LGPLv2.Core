@@ -9,19 +9,14 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfStructureTreeRoot : PdfDictionary
     {
-        private readonly Hashtable _parentTree = new Hashtable();
-
-        /// <summary>
-        /// Holds value of property writer.
-        /// </summary>
-        private readonly PdfWriter _writer;
+        private readonly Hashtable _parentTree = new();
 
         /// <summary>
         /// Creates a new instance of PdfStructureTreeRoot
         /// </summary>
         internal PdfStructureTreeRoot(PdfWriter writer) : base(PdfName.Structtreeroot)
         {
-            _writer = writer;
+            Writer = writer;
             Reference = writer.PdfIndirectReference;
         }
 
@@ -35,13 +30,7 @@ namespace iTextSharp.text.pdf
         /// Gets the writer.
         /// </summary>
         /// <returns>the writer</returns>
-        public PdfWriter Writer
-        {
-            get
-            {
-                return _writer;
-            }
-        }
+        public PdfWriter Writer { get; private set; }
 
         /// <summary>
         /// Maps the user tags to the standard tags. The mapping will allow a standard application to make some sense of the tagged
@@ -62,17 +51,17 @@ namespace iTextSharp.text.pdf
 
         internal void BuildTree()
         {
-            Hashtable numTree = new Hashtable();
+            var numTree = new Hashtable();
             foreach (int i in _parentTree.Keys)
             {
                 PdfArray ar = (PdfArray)_parentTree[i];
-                numTree[i] = _writer.AddToBody(ar).IndirectReference;
+                numTree[i] = Writer.AddToBody(ar).IndirectReference;
             }
-            PdfDictionary dicTree = PdfNumberTree.WriteTree(numTree, _writer);
+            PdfDictionary dicTree = PdfNumberTree.WriteTree(numTree, Writer);
             if (dicTree != null)
-                Put(PdfName.Parenttree, _writer.AddToBody(dicTree).IndirectReference);
+                Put(PdfName.Parenttree, Writer.AddToBody(dicTree).IndirectReference);
 
-            nodeProcess(this, Reference);
+            NodeProcess(this, Reference);
         }
 
         internal void SetPageMark(int page, PdfIndirectReference struc)
@@ -86,7 +75,7 @@ namespace iTextSharp.text.pdf
             ar.Add(struc);
         }
 
-        private void nodeProcess(PdfDictionary struc, PdfIndirectReference reference)
+        private void NodeProcess(PdfDictionary struc, PdfIndirectReference reference)
         {
             PdfObject obj = struc.Get(PdfName.K);
             if (obj != null && obj.IsArray() && !((PdfObject)((PdfArray)obj).ArrayList[0]).IsNumber())
@@ -97,11 +86,11 @@ namespace iTextSharp.text.pdf
                 {
                     PdfStructureElement e = (PdfStructureElement)a[k];
                     a[k] = e.Reference;
-                    nodeProcess(e, e.Reference);
+                    NodeProcess(e, e.Reference);
                 }
             }
             if (reference != null)
-                _writer.AddToBody(struc, reference);
+                Writer.AddToBody(struc, reference);
         }
     }
 }
