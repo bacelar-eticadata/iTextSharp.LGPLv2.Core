@@ -1,10 +1,9 @@
-using System.IO;
-using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.X509;
+using System.IO;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A signature dictionary representation for the standard filters.
     /// </summary>
@@ -14,6 +13,7 @@ namespace iTextSharp.text.pdf
         /// The hash algorith, for example "SHA1"
         /// </summary>
         protected string HashAlgorithm;
+
         /// <summary>
         /// The subject name in the signing certificate (the element "CN")
         /// </summary>
@@ -23,9 +23,11 @@ namespace iTextSharp.text.pdf
         /// The class instance that calculates the PKCS#1 and PKCS#7
         /// </summary>
         protected PdfPkcs7 Pkcs;
+
         private string _digestEncryptionAlgorithm;
         private byte[] _externalDigest;
         private byte[] _externalRsAdata;
+
         /// <summary>
         /// Creates a generic standard filter.
         /// </summary>
@@ -39,25 +41,13 @@ namespace iTextSharp.text.pdf
         /// Gets the subject name in the signing certificate (the element "CN")
         /// </summary>
         /// <returns>the subject name in the signing certificate (the element "CN")</returns>
-        public new string Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public new string Name => name;
 
         /// <summary>
         /// Gets the class instance that does the actual signing.
         /// </summary>
         /// <returns>the class instance that does the actual signing</returns>
-        public PdfPkcs7 Signer
-        {
-            get
-            {
-                return Pkcs;
-            }
-        }
+        public PdfPkcs7 Signer => Pkcs;
 
         /// <summary>
         /// Gets the signature content. This can be a PKCS#1 or a PKCS#7. It corresponds to
@@ -69,9 +59,13 @@ namespace iTextSharp.text.pdf
             get
             {
                 if (PdfName.AdbeX509RsaSha1.Equals(Get(PdfName.Subfilter)))
+                {
                     return Pkcs.GetEncodedPkcs1();
+                }
                 else
+                {
                     return Pkcs.GetEncodedPkcs7();
+                }
             }
         }
 
@@ -102,23 +96,30 @@ namespace iTextSharp.text.pdf
             Pkcs.SetExternalDigest(_externalDigest, _externalRsAdata, _digestEncryptionAlgorithm);
             if (PdfName.AdbeX509RsaSha1.Equals(Get(PdfName.Subfilter)))
             {
-                MemoryStream bout = new MemoryStream();
-                for (int k = 0; k < certChain.Length; ++k)
+                var bout = new MemoryStream();
+                for (var k = 0; k < certChain.Length; ++k)
                 {
-                    byte[] tmp = certChain[k].GetEncoded();
+                    var tmp = certChain[k].GetEncoded();
                     bout.Write(tmp, 0, tmp.Length);
                 }
                 Cert = bout.ToArray();
                 Contents = Pkcs.GetEncodedPkcs1();
             }
             else
+            {
                 Contents = Pkcs.GetEncodedPkcs7();
+            }
+
             name = PdfPkcs7.GetSubjectFields(Pkcs.SigningCertificate).GetField("CN");
             if (name != null)
+            {
                 Put(PdfName.Name, new PdfString(name, TEXT_UNICODE));
+            }
+
             Pkcs = new PdfPkcs7(privKey, certChain, crlList, HashAlgorithm, PdfName.AdbePkcs7Sha1.Equals(Get(PdfName.Subfilter)));
             Pkcs.SetExternalDigest(_externalDigest, _externalRsAdata, _digestEncryptionAlgorithm);
         }
+
         /// <summary>
         /// Creates a standard filter of the type self signed.
         /// </summary>

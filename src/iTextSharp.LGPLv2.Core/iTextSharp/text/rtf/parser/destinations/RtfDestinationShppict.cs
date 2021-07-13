@@ -1,9 +1,9 @@
-using System.IO;
-using System.Text;
-using System.Globalization;
 using iTextSharp.text.pdf;
 using iTextSharp.text.rtf.direct;
 using iTextSharp.text.rtf.parser.ctrlwords;
+using System.Globalization;
+using System.IO;
+using System.Text;
 
 namespace iTextSharp.text.rtf.parser.destinations
 {
@@ -296,9 +296,15 @@ namespace iTextSharp.text.rtf.parser.destinations
             if (RtfParser.IsImport())
             {
                 if (_buffer.Length > 254)
+                {
                     writeBuffer();
+                }
             }
-            if (_data == null) _data = new ByteBuffer();
+            if (_data == null)
+            {
+                _data = new ByteBuffer();
+            }
+
             switch (_dataFormat)
             {
                 case FORMAT_HEXADECIMAL:
@@ -370,8 +376,8 @@ namespace iTextSharp.text.rtf.parser.destinations
 
         public override bool HandleControlWord(RtfCtrlWordData ctrlWordData)
         {
-            bool result = false;
-            bool skipCtrlWord = false;
+            var result = false;
+            var skipCtrlWord = false;
             if (RtfParser.IsImport())
             {
                 skipCtrlWord = true;
@@ -592,7 +598,7 @@ namespace iTextSharp.text.rtf.parser.destinations
                 {
                     if (RtfParser.IsImport())
                     {
-                        Document doc = RtfParser.GetDocument();
+                        var doc = RtfParser.GetDocument();
                         doc.Add(img);
                     }
                     if (RtfParser.IsConvert())

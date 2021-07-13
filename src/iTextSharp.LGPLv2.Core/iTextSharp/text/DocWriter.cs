@@ -1,6 +1,6 @@
+using iTextSharp.text.pdf;
 using System.IO;
 using System.util;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text
 {
@@ -21,7 +21,6 @@ namespace iTextSharp.text
     /// <seealso cref="T:iTextSharp.text.IDocListener"/>
     public abstract class DocWriter : IDocListener
     {
-
         /// <summary> This is some byte that is often used. </summary>
         public const byte EQUALS = (byte)'=';
 
@@ -45,6 +44,7 @@ namespace iTextSharp.text
 
         /// <summary> This is some byte that is often used. </summary>
         public const byte TAB = (byte)'\t';
+
         /// <summary>
         /// membervariables
         /// </summary>
@@ -65,8 +65,10 @@ namespace iTextSharp.text
 
         /// <summary> The pageSize. </summary>
         protected Rectangle PageSize;
+
         /// <summary> Do we have to pause all writing actions? </summary>
         protected bool pause;
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -74,6 +76,7 @@ namespace iTextSharp.text
         protected DocWriter()
         {
         }
+
         /// <summary>
         /// Constructs a DocWriter.
         /// </summary>
@@ -91,14 +94,8 @@ namespace iTextSharp.text
 
         public virtual bool CloseStream
         {
-            get
-            {
-                return closeStream;
-            }
-            set
-            {
-                closeStream = value;
-            }
+            get => closeStream;
+            set => closeStream = value;
         }
 
         /// <summary>
@@ -151,11 +148,17 @@ namespace iTextSharp.text
         public static byte[] GetIsoBytes(string text)
         {
             if (text == null)
+            {
                 return null;
-            int len = text.Length;
-            byte[] b = new byte[len];
-            for (int k = 0; k < len; ++k)
+            }
+
+            var len = text.Length;
+            var b = new byte[len];
+            for (var k = 0; k < len; ++k)
+            {
                 b[k] = (byte)text[k];
+            }
+
             return b;
         }
 
@@ -182,7 +185,9 @@ namespace iTextSharp.text
             open = false;
             Os.Flush();
             if (closeStream)
+            {
                 Os.Dispose();
+            }
         }
 
         /// <summary>
@@ -321,6 +326,7 @@ namespace iTextSharp.text
             PageSize = pageSize;
             return true;
         }
+
         /// <summary>
         /// Writes a number of tabs.
         /// </summary>
@@ -328,7 +334,7 @@ namespace iTextSharp.text
         protected void AddTabs(int indent)
         {
             Os.WriteByte(NEWLINE);
-            for (int i = 0; i < indent; i++)
+            for (var i = 0; i < indent; i++)
             {
                 Os.WriteByte(TAB);
             }
@@ -340,9 +346,10 @@ namespace iTextSharp.text
         /// <param name="str">the string to write</param>
         protected void Write(string str)
         {
-            byte[] tmp = GetIsoBytes(str);
+            var tmp = GetIsoBytes(str);
             Os.Write(tmp, 0, tmp.Length);
         }
+
         /// <summary>
         /// Writes a key-value pair to the stream.
         /// </summary>
@@ -388,7 +395,11 @@ namespace iTextSharp.text
         /// <returns></returns>
         protected bool WriteMarkupAttributes(Properties markup)
         {
-            if (markup == null) return false;
+            if (markup == null)
+            {
+                return false;
+            }
+
             foreach (string name in markup.Keys)
             {
                 Write(name, markup[name]);

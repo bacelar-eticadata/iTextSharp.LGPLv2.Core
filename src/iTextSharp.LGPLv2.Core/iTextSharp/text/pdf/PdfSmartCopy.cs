@@ -1,11 +1,10 @@
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// PdfSmartCopy has the same functionality as PdfCopy,
     /// but when resources (such as fonts, images,...) are
@@ -16,7 +15,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfSmartCopy : PdfCopy
     {
-
         /// <summary>
         /// the cache with the streams and references.
         /// </summary>
@@ -29,6 +27,7 @@ namespace iTextSharp.text.pdf
         {
             _streamMap = new Hashtable();
         }
+
         /// <summary>
         /// Translate a PRIndirectReference to a PdfIndirectReference
         /// In addition, translates the object numbers, and copies the
@@ -42,14 +41,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected override PdfIndirectReference CopyIndirect(PrIndirectReference inp)
         {
-            PdfObject srcObj = PdfReader.GetPdfObjectRelease(inp);
+            var srcObj = PdfReader.GetPdfObjectRelease(inp);
             ByteStore streamKey = null;
-            bool validStream = false;
+            var validStream = false;
             if (srcObj.IsStream())
             {
                 streamKey = new ByteStore((PrStream)srcObj);
                 validStream = true;
-                PdfIndirectReference streamRef = (PdfIndirectReference)_streamMap[streamKey];
+                var streamRef = (PdfIndirectReference)_streamMap[streamKey];
                 if (streamRef != null)
                 {
                     return streamRef;
@@ -57,8 +56,8 @@ namespace iTextSharp.text.pdf
             }
 
             PdfIndirectReference theRef;
-            RefKey key = new RefKey(inp);
-            IndirectReferences iRef = (IndirectReferences)Indirects[key];
+            var key = new RefKey(inp);
+            var iRef = (IndirectReferences)Indirects[key];
             if (iRef != null)
             {
                 theRef = iRef.Ref;
@@ -75,7 +74,7 @@ namespace iTextSharp.text.pdf
             }
             if (srcObj != null && srcObj.IsDictionary())
             {
-                PdfObject type = PdfReader.GetPdfObjectRelease(((PdfDictionary)srcObj).Get(PdfName.TYPE));
+                var type = PdfReader.GetPdfObjectRelease(((PdfDictionary)srcObj).Get(PdfName.TYPE));
                 if (type != null && PdfName.Page.Equals(type))
                 {
                     return theRef;
@@ -88,7 +87,7 @@ namespace iTextSharp.text.pdf
                 _streamMap[streamKey] = theRef;
             }
 
-            PdfObject obj = CopyObject(srcObj);
+            var obj = CopyObject(srcObj);
             AddToBody(obj, theRef);
             return theRef;
         }
@@ -99,8 +98,8 @@ namespace iTextSharp.text.pdf
 
             internal ByteStore(PrStream str)
             {
-                ByteBuffer bb = new ByteBuffer();
-                int level = 100;
+                var bb = new ByteBuffer();
+                var level = 100;
                 serObject(str, level, bb);
                 _b = bb.ToByteArray();
             }
@@ -108,17 +107,28 @@ namespace iTextSharp.text.pdf
             public override bool Equals(object obj)
             {
                 if (obj == null || !(obj is ByteStore))
+                {
                     return false;
+                }
+
                 if (GetHashCode() != obj.GetHashCode())
+                {
                     return false;
-                byte[] b2 = ((ByteStore)obj)._b;
+                }
+
+                var b2 = ((ByteStore)obj)._b;
                 if (b2.Length != _b.Length)
+                {
                     return false;
-                int len = _b.Length;
-                for (int k = 0; k < len; ++k)
+                }
+
+                var len = _b.Length;
+                for (var k = 0; k < len; ++k)
                 {
                     if (_b[k] != b2[k])
+                    {
                         return false;
+                    }
                 }
                 return true;
             }
@@ -126,8 +136,8 @@ namespace iTextSharp.text.pdf
             public override int GetHashCode()
             {
                 var hash = 0;
-                int len = _b.Length;
-                for (int k = 0; k < len; ++k)
+                var len = _b.Length;
+                for (var k = 0; k < len; ++k)
                 {
                     hash = hash * 31 + _b[k];
                 }
@@ -138,8 +148,11 @@ namespace iTextSharp.text.pdf
             {
                 bb.Append("$A");
                 if (level <= 0)
+                {
                     return;
-                for (int k = 0; k < array.Size; ++k)
+                }
+
+                for (var k = 0; k < array.Size; ++k)
                 {
                     serObject(array[k], level, bb);
                 }
@@ -149,11 +162,14 @@ namespace iTextSharp.text.pdf
             {
                 bb.Append("$D");
                 if (level <= 0)
+                {
                     return;
-                object[] keys = new object[dic.Size];
+                }
+
+                var keys = new object[dic.Size];
                 dic.Keys.CopyTo(keys, 0);
                 Array.Sort(keys);
-                for (int k = 0; k < keys.Length; ++k)
+                for (var k = 0; k < keys.Length; ++k)
                 {
                     serObject((PdfObject)keys[k], level, bb);
                     serObject(dic.Get((PdfName)keys[k]), level, bb);
@@ -163,7 +179,10 @@ namespace iTextSharp.text.pdf
             private void serObject(PdfObject obj, int level, ByteBuffer bb)
             {
                 if (level <= 0)
+                {
                     return;
+                }
+
                 if (obj == null)
                 {
                     bb.Append("$Lnull");
@@ -199,7 +218,9 @@ namespace iTextSharp.text.pdf
                     bb.Append("$N").Append(obj.ToString());
                 }
                 else
+                {
                     bb.Append("$L").Append(obj.ToString());
+                }
             }
         }
     }

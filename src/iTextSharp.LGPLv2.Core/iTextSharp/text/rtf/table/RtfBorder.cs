@@ -1,7 +1,7 @@
-using System;
-using System.IO;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.style;
+using System;
+using System.IO;
 
 namespace iTextSharp.text.rtf.table
 {

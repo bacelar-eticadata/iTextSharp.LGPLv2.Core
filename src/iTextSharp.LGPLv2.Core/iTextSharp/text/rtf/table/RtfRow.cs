@@ -1,7 +1,7 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.pdf;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.table
 {
@@ -183,9 +183,9 @@ namespace iTextSharp.text.rtf.table
         {
             writeRowDefinition(result);
 
-            for (int i = 0; i < _cells.Count; i++)
+            for (var i = 0; i < _cells.Count; i++)
             {
-                RtfCell rtfCell = (RtfCell)_cells[i];
+                var rtfCell = (RtfCell)_cells[i];
                 rtfCell.WriteContent(result);
             }
 
@@ -205,7 +205,7 @@ namespace iTextSharp.text.rtf.table
         /// </summary>
         protected internal void CleanRow()
         {
-            int i = 0;
+            var i = 0;
             while (i < _cells.Count)
             {
                 if (((RtfCell)_cells[i]).IsDeleted())
@@ -242,18 +242,18 @@ namespace iTextSharp.text.rtf.table
         /// </summary>
         protected internal void HandleCellSpanning()
         {
-            RtfCell deletedCell = new RtfCell(true);
-            for (int i = 0; i < _cells.Count; i++)
+            var deletedCell = new RtfCell(true);
+            for (var i = 0; i < _cells.Count; i++)
             {
-                RtfCell rtfCell = (RtfCell)_cells[i];
+                var rtfCell = (RtfCell)_cells[i];
                 if (rtfCell.Colspan > 1)
                 {
-                    int cSpan = rtfCell.Colspan;
-                    for (int j = i + 1; j < i + cSpan; j++)
+                    var cSpan = rtfCell.Colspan;
+                    for (var j = i + 1; j < i + cSpan; j++)
                     {
                         if (j < _cells.Count)
                         {
-                            RtfCell rtfCellMerge = (RtfCell)_cells[j];
+                            var rtfCellMerge = (RtfCell)_cells[j];
                             rtfCell.SetCellRight(rtfCell.GetCellRight() + rtfCellMerge.GetCellWidth());
                             rtfCell.SetCellWidth(rtfCell.GetCellWidth() + rtfCellMerge.GetCellWidth());
                             _cells[j] = deletedCell;
@@ -262,19 +262,19 @@ namespace iTextSharp.text.rtf.table
                 }
                 if (rtfCell.Rowspan > 1)
                 {
-                    ArrayList rows = _parentTable.GetRows();
-                    for (int j = 1; j < rtfCell.Rowspan; j++)
+                    var rows = _parentTable.GetRows();
+                    for (var j = 1; j < rtfCell.Rowspan; j++)
                     {
-                        RtfRow mergeRow = (RtfRow)rows[_rowNumber + j];
+                        var mergeRow = (RtfRow)rows[_rowNumber + j];
                         if (_rowNumber + j < rows.Count)
                         {
-                            RtfCell rtfCellMerge = (RtfCell)mergeRow.GetCells()[i];
+                            var rtfCellMerge = (RtfCell)mergeRow.GetCells()[i];
                             rtfCellMerge.SetCellMergeChild(rtfCell);
                         }
                         if (rtfCell.Colspan > 1)
                         {
-                            int cSpan = rtfCell.Colspan;
-                            for (int k = i + 1; k < i + cSpan; k++)
+                            var cSpan = rtfCell.Colspan;
+                            for (var k = i + 1; k < i + cSpan; k++)
                             {
                                 if (k < mergeRow.GetCells().Count)
                                 {
@@ -297,15 +297,15 @@ namespace iTextSharp.text.rtf.table
             _width = Document.GetDocumentHeader().GetPageSetting().GetPageWidth() - Document.GetDocumentHeader().GetPageSetting().GetMarginLeft() - Document.GetDocumentHeader().GetPageSetting().GetMarginRight();
             _width = (int)(_width * _parentTable.GetTableWidthPercent() / 100);
 
-            int cellRight = 0;
-            int cellWidth = 0;
-            for (int i = 0; i < row.Columns; i++)
+            var cellRight = 0;
+            var cellWidth = 0;
+            for (var i = 0; i < row.Columns; i++)
             {
                 cellWidth = (int)(_width * _parentTable.GetProportionalWidths()[i] / 100);
                 cellRight = cellRight + cellWidth;
 
-                Cell cell = (Cell)row.GetCell(i);
-                RtfCell rtfCell = new RtfCell(Document, this, cell);
+                var cell = (Cell)row.GetCell(i);
+                var rtfCell = new RtfCell(Document, this, cell);
                 rtfCell.SetCellRight(cellRight);
                 rtfCell.SetCellWidth(cellWidth);
                 _cells.Add(rtfCell);
@@ -323,16 +323,16 @@ namespace iTextSharp.text.rtf.table
             _width = Document.GetDocumentHeader().GetPageSetting().GetPageWidth() - Document.GetDocumentHeader().GetPageSetting().GetMarginLeft() - Document.GetDocumentHeader().GetPageSetting().GetMarginRight();
             _width = (int)(_width * _parentTable.GetTableWidthPercent() / 100);
 
-            int cellRight = 0;
-            int cellWidth = 0;
-            PdfPCell[] cells = row.GetCells();
-            for (int i = 0; i < cells.Length; i++)
+            var cellRight = 0;
+            var cellWidth = 0;
+            var cells = row.GetCells();
+            for (var i = 0; i < cells.Length; i++)
             {
                 cellWidth = (int)(_width * _parentTable.GetProportionalWidths()[i] / 100);
                 cellRight = cellRight + cellWidth;
 
-                PdfPCell cell = cells[i];
-                RtfCell rtfCell = new RtfCell(Document, this, cell);
+                var cell = cells[i];
+                var rtfCell = new RtfCell(Document, this, cell);
                 rtfCell.SetCellRight(cellRight);
                 rtfCell.SetCellWidth(cellWidth);
                 _cells.Add(rtfCell);
@@ -376,7 +376,7 @@ namespace iTextSharp.text.rtf.table
             }
             result.Write(_rowGraph, 0, _rowGraph.Length);
 
-            RtfBorderGroup borders = _parentTable.GetBorders();
+            var borders = _parentTable.GetBorders();
             if (borders != null)
             {
                 borders.WriteContent(result);
@@ -407,9 +407,9 @@ namespace iTextSharp.text.rtf.table
 
             Document.OutputDebugLinebreak(result);
 
-            for (int i = 0; i < _cells.Count; i++)
+            for (var i = 0; i < _cells.Count; i++)
             {
-                RtfCell rtfCell = (RtfCell)_cells[i];
+                var rtfCell = (RtfCell)_cells[i];
                 rtfCell.WriteDefinition(result);
             }
         }

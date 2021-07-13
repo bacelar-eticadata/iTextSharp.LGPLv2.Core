@@ -1,6 +1,5 @@
 using Org.BouncyCastle.X509;
 
-
 namespace iTextSharp.text.pdf
 {
     /// <summary>

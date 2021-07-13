@@ -16,6 +16,9 @@ namespace iTextSharp.text.pdf
     {
         public BadPdfFormatException()
         { }
-        public BadPdfFormatException(string message) : base(message) { }
+
+        public BadPdfFormatException(string message) : base(message)
+        {
+        }
     }
 }

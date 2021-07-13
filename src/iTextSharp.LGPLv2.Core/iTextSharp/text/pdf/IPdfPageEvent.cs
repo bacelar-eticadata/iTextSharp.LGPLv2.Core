@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Allows a class to catch several document events.
     /// @author  Paulo Soares (psoares@consiste.pt)

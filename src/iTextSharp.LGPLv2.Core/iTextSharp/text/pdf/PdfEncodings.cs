@@ -1,10 +1,10 @@
+using iTextSharp.text.xml.simpleparser;
 using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.util;
-using iTextSharp.text.xml.simpleparser;
 
 namespace iTextSharp.text.pdf
 {
@@ -14,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfEncodings
     {
-
         /// <summary>
         /// Assumes that '\\n' and '\\r\\n' are the newline sequences. It may not work for
         /// all CJK encodings. To be used with LoadCmap().
@@ -24,6 +23,7 @@ namespace iTextSharp.text.pdf
         internal static Hashtable Cmaps = new Hashtable();
         internal static Hashtable ExtraEncodings = new Hashtable();
         internal static IntHashtable PdfEncoding = new IntHashtable();
+
         internal static char[] PdfEncodingByteToChar = {
         (char)0, (char)1, (char)2, (char)3, (char)4, (char)5, (char)6, (char)7, (char)8, (char)9, (char)10, (char)11, (char)12, (char)13, (char)14, (char)15,
         (char)16, (char)17, (char)18, (char)19, (char)20, (char)21, (char)22, (char)23, (char)24, (char)25, (char)26, (char)27, (char)28, (char)29, (char)30, (char)31,
@@ -43,6 +43,7 @@ namespace iTextSharp.text.pdf
         (char)240, (char)241, (char)242, (char)243, (char)244, (char)245, (char)246, (char)247, (char)248, (char)249, (char)250, (char)251, (char)252, (char)253, (char)254, (char)255};
 
         internal static IntHashtable Winansi = new IntHashtable();
+
         internal static char[] WinansiByteToChar = {
         (char)0, (char)1, (char)2, (char)3, (char)4, (char)5, (char)6, (char)7, (char)8, (char)9, (char)10, (char)11, (char)12, (char)13, (char)14, (char)15,
         (char)16, (char)17, (char)18, (char)19, (char)20, (char)21, (char)22, (char)23, (char)24, (char)25, (char)26, (char)27, (char)28, (char)29, (char)30, (char)31,
@@ -64,20 +65,25 @@ namespace iTextSharp.text.pdf
         protected const int CIDCHAR = 2;
         protected const int CIDNONE = 0;
         protected const int CIDRANGE = 1;
+
         static PdfEncodings()
         {
-            for (int k = 128; k < 161; ++k)
+            for (var k = 128; k < 161; ++k)
             {
-                char c = WinansiByteToChar[k];
+                var c = WinansiByteToChar[k];
                 if (c != 65533)
+                {
                     Winansi[c] = k;
+                }
             }
 
-            for (int k = 128; k < 161; ++k)
+            for (var k = 128; k < 161; ++k)
             {
-                char c = PdfEncodingByteToChar[k];
+                var c = PdfEncodingByteToChar[k];
                 if (c != 65533)
+                {
                     PdfEncoding[c] = k;
+                }
             }
 
             AddExtraEncoding("Wingdings", new WingdingsConversion());
@@ -96,8 +102,8 @@ namespace iTextSharp.text.pdf
         {
             lock (ExtraEncodings)
             { // This serializes concurrent updates
-                Hashtable newEncodings = (Hashtable)ExtraEncodings.Clone();
-                newEncodings[name.ToLower(CultureInfo.InvariantCulture)] = enc;
+                var newEncodings = (Hashtable)ExtraEncodings.Clone();
+                newEncodings[name.ToLowerInvariant()] = enc;
                 ExtraEncodings = newEncodings;  // This swap does not require synchronization with reader
             }
         }
@@ -114,9 +120,13 @@ namespace iTextSharp.text.pdf
             lock (Cmaps)
             {
                 if (name.Length == 0)
+                {
                     Cmaps.Clear();
+                }
                 else
+                {
                     Cmaps.Remove(name);
+                }
             }
         }
 
@@ -177,56 +187,82 @@ namespace iTextSharp.text.pdf
         public static byte[] ConvertToBytes(string text, string encoding)
         {
             if (text == null)
+            {
                 return new byte[0];
+            }
+
             if (string.IsNullOrEmpty(encoding))
             {
-                int len = text.Length;
-                byte[] b = new byte[len];
-                for (int k = 0; k < len; ++k)
+                var len = text.Length;
+                var b = new byte[len];
+                for (var k = 0; k < len; ++k)
+                {
                     b[k] = (byte)text[k];
+                }
+
                 return b;
             }
-            IExtraEncoding extra = (IExtraEncoding)ExtraEncodings[encoding.ToLower(CultureInfo.InvariantCulture)];
+            var extra = (IExtraEncoding)ExtraEncodings[encoding.ToLowerInvariant()];
             if (extra != null)
             {
-                byte[] b = extra.CharToByte(text, encoding);
+                var b = extra.CharToByte(text, encoding);
                 if (b != null)
+                {
                     return b;
+                }
             }
             IntHashtable hash = null;
             if (encoding.Equals(BaseFont.CP1252))
+            {
                 hash = Winansi;
+            }
             else if (encoding.Equals(PdfObject.TEXT_PDFDOCENCODING))
+            {
                 hash = PdfEncoding;
+            }
+
             if (hash != null)
             {
-                char[] cc = text.ToCharArray();
-                int len = cc.Length;
-                int ptr = 0;
-                byte[] b = new byte[len];
-                int c = 0;
-                for (int k = 0; k < len; ++k)
+                var cc = text.ToCharArray();
+                var len = cc.Length;
+                var ptr = 0;
+                var b = new byte[len];
+                var c = 0;
+                for (var k = 0; k < len; ++k)
                 {
-                    char char1 = cc[k];
+                    var char1 = cc[k];
                     if (char1 < 128 || (char1 > 160 && char1 <= 255))
+                    {
                         c = char1;
+                    }
                     else
+                    {
                         c = hash[char1];
+                    }
+
                     if (c != 0)
+                    {
                         b[ptr++] = (byte)c;
+                    }
                 }
                 if (ptr == len)
+                {
                     return b;
-                byte[] b2 = new byte[ptr];
+                }
+
+                var b2 = new byte[ptr];
                 Array.Copy(b, 0, b2, 0, ptr);
                 return b2;
             }
-            Encoding encw = IanaEncodings.GetEncodingEncoding(encoding);
-            byte[] preamble = encw.GetPreamble();
+            var encw = IanaEncodings.GetEncodingEncoding(encoding);
+            var preamble = encw.GetPreamble();
             if (preamble.Length == 0)
+            {
                 return encw.GetBytes(text);
-            byte[] encoded = encw.GetBytes(text);
-            byte[] total = new byte[encoded.Length + preamble.Length];
+            }
+
+            var encoded = encw.GetBytes(text);
+            var total = new byte[encoded.Length + preamble.Length];
             Array.Copy(preamble, 0, total, 0, preamble.Length);
             Array.Copy(encoded, 0, total, preamble.Length, encoded.Length);
             return total;
@@ -242,38 +278,60 @@ namespace iTextSharp.text.pdf
         public static byte[] ConvertToBytes(char char1, string encoding)
         {
             if (string.IsNullOrEmpty(encoding))
+            {
                 return new[] { (byte)char1 };
-            IExtraEncoding extra = (IExtraEncoding)ExtraEncodings[encoding.ToLower(CultureInfo.InvariantCulture)];
+            }
+
+            var extra = (IExtraEncoding)ExtraEncodings[encoding.ToLowerInvariant()];
             if (extra != null)
             {
-                byte[] b = extra.CharToByte(char1, encoding);
+                var b = extra.CharToByte(char1, encoding);
                 if (b != null)
+                {
                     return b;
+                }
             }
             IntHashtable hash = null;
             if (encoding.Equals(BaseFont.WINANSI))
+            {
                 hash = Winansi;
+            }
             else if (encoding.Equals(PdfObject.TEXT_PDFDOCENCODING))
+            {
                 hash = PdfEncoding;
+            }
+
             if (hash != null)
             {
-                int c = 0;
+                var c = 0;
                 if (char1 < 128 || (char1 > 160 && char1 <= 255))
+                {
                     c = char1;
+                }
                 else
+                {
                     c = hash[char1];
+                }
+
                 if (c != 0)
+                {
                     return new[] { (byte)c };
+                }
                 else
+                {
                     return new byte[0];
+                }
             }
-            Encoding encw = IanaEncodings.GetEncodingEncoding(encoding);
-            byte[] preamble = encw.GetPreamble();
+            var encw = IanaEncodings.GetEncodingEncoding(encoding);
+            var preamble = encw.GetPreamble();
             char[] text = { char1 };
             if (preamble.Length == 0)
+            {
                 return encw.GetBytes(text);
-            byte[] encoded = encw.GetBytes(text);
-            byte[] total = new byte[encoded.Length + preamble.Length];
+            }
+
+            var encoded = encw.GetBytes(text);
+            var total = new byte[encoded.Length + preamble.Length];
             Array.Copy(preamble, 0, total, 0, preamble.Length);
             Array.Copy(encoded, 0, total, preamble.Length, encoded.Length);
             return total;
@@ -282,40 +340,53 @@ namespace iTextSharp.text.pdf
         public static string ConvertToString(byte[] bytes, string encoding)
         {
             if (bytes == null)
+            {
                 return PdfObject.NOTHING;
+            }
+
             if (string.IsNullOrEmpty(encoding))
             {
-                char[] c = new char[bytes.Length];
-                for (int k = 0; k < bytes.Length; ++k)
+                var c = new char[bytes.Length];
+                for (var k = 0; k < bytes.Length; ++k)
+                {
                     c[k] = (char)(bytes[k] & 0xff);
+                }
+
                 return new string(c);
             }
-            IExtraEncoding extra = (IExtraEncoding)ExtraEncodings[encoding.ToLower(CultureInfo.InvariantCulture)];
+            var extra = (IExtraEncoding)ExtraEncodings[encoding.ToLowerInvariant()];
             if (extra != null)
             {
-                string text = extra.ByteToChar(bytes, encoding);
+                var text = extra.ByteToChar(bytes, encoding);
                 if (text != null)
+                {
                     return text;
+                }
             }
             char[] ch = null;
             if (encoding.Equals(BaseFont.WINANSI))
+            {
                 ch = WinansiByteToChar;
+            }
             else if (encoding.Equals(PdfObject.TEXT_PDFDOCENCODING))
+            {
                 ch = PdfEncodingByteToChar;
+            }
+
             if (ch != null)
             {
-                int len = bytes.Length;
-                char[] c = new char[len];
-                for (int k = 0; k < len; ++k)
+                var len = bytes.Length;
+                var c = new char[len];
+                for (var k = 0; k < len; ++k)
                 {
                     c[k] = ch[bytes[k] & 0xff];
                 }
                 return new string(c);
             }
-            string nameU = encoding.ToUpper(CultureInfo.InvariantCulture);
-            bool marker = false;
-            bool big = false;
-            int offset = 0;
+            var nameU = encoding.ToUpper(CultureInfo.InvariantCulture);
+            var marker = false;
+            var big = false;
+            var offset = 0;
             if (bytes.Length >= 2)
             {
                 if (bytes[0] == 254 && bytes[1] == 255)
@@ -333,11 +404,20 @@ namespace iTextSharp.text.pdf
             }
             Encoding enc = null;
             if (nameU.Equals("UNICODEBIGUNMARKED") || nameU.Equals("UNICODEBIG"))
+            {
                 enc = new UnicodeEncoding(marker ? big : true, false);
+            }
+
             if (nameU.Equals("UNICODELITTLEUNMARKED") || nameU.Equals("UNICODELITTLE"))
+            {
                 enc = new UnicodeEncoding(marker ? big : false, false);
+            }
+
             if (enc != null)
+            {
                 return enc.GetString(bytes, offset, bytes.Length - offset);
+            }
+
             return IanaEncodings.GetEncodingEncoding(encoding).GetString(bytes);
         }
 
@@ -349,18 +429,27 @@ namespace iTextSharp.text.pdf
         public static bool IsPdfDocEncoding(string text)
         {
             if (text == null)
-                return true;
-            int len = text.Length;
-            for (int k = 0; k < len; ++k)
             {
-                char char1 = text[k];
+                return true;
+            }
+
+            var len = text.Length;
+            for (var k = 0; k < len; ++k)
+            {
+                var char1 = text[k];
                 if (char1 < 128 || (char1 > 160 && char1 <= 255))
+                {
                     continue;
+                }
+
                 if (!PdfEncoding.ContainsKey(char1))
+                {
                     return false;
+                }
             }
             return true;
         }
+
         /// <summary>
         /// Loads a CJK cmap to the cache with the option of associating
         /// sequences to the newline.
@@ -383,9 +472,10 @@ namespace iTextSharp.text.pdf
                 }
             }
         }
+
         internal static void BreakLong(long n, int size, byte[] seqs)
         {
-            for (int k = 0; k < size; ++k)
+            for (var k = 0; k < size; ++k)
             {
                 seqs[k] = (byte)(n >> ((size - 1 - k) * 8));
             }
@@ -393,13 +483,13 @@ namespace iTextSharp.text.pdf
 
         internal static string DecodeSequence(byte[] seq, int start, int length, char[][] planes)
         {
-            StringBuilder buf = new StringBuilder();
-            int end = start + length;
-            int currentPlane = 0;
-            for (int k = start; k < end; ++k)
+            var buf = new StringBuilder();
+            var end = start + length;
+            var currentPlane = 0;
+            for (var k = start; k < end; ++k)
             {
-                int one = seq[k] & 0xff;
-                char[] plane = planes[currentPlane];
+                var one = seq[k] & 0xff;
+                var plane = planes[currentPlane];
                 int cid = plane[one];
                 if ((cid & 0x8000) == 0)
                 {
@@ -407,7 +497,9 @@ namespace iTextSharp.text.pdf
                     currentPlane = 0;
                 }
                 else
+                {
                     currentPlane = cid & 0x7fff;
+                }
             }
             return buf.ToString();
         }
@@ -415,15 +507,18 @@ namespace iTextSharp.text.pdf
         internal static void EncodeSequence(int size, byte[] seqs, char cid, ArrayList planes)
         {
             --size;
-            int nextPlane = 0;
+            var nextPlane = 0;
             char[] plane;
-            for (int idx = 0; idx < size; ++idx)
+            for (var idx = 0; idx < size; ++idx)
             {
                 plane = (char[])planes[nextPlane];
-                int one = seqs[idx] & 0xff;
-                char c = plane[one];
+                var one = seqs[idx] & 0xff;
+                var c = plane[one];
                 if (c != 0 && (c & 0x8000) == 0)
+                {
                     throw new Exception("Inconsistent mapping.");
+                }
+
                 if (c == 0)
                 {
                     planes.Add(new char[256]);
@@ -433,35 +528,45 @@ namespace iTextSharp.text.pdf
                 nextPlane = c & 0x7fff;
             }
             plane = (char[])planes[nextPlane];
-            int ones = seqs[size] & 0xff;
-            char cc = plane[ones];
+            var ones = seqs[size] & 0xff;
+            var cc = plane[ones];
             if ((cc & 0x8000) != 0)
+            {
                 throw new Exception("Inconsistent mapping.");
+            }
+
             plane[ones] = cid;
         }
 
         internal static void EncodeStream(Stream inp, ArrayList planes)
         {
-            StreamReader rd = new StreamReader(inp, Encoding.ASCII);
+            var rd = new StreamReader(inp, Encoding.ASCII);
             string line = null;
-            int state = CIDNONE;
-            byte[] seqs = new byte[7];
+            var state = CIDNONE;
+            var seqs = new byte[7];
             while ((line = rd.ReadLine()) != null)
             {
                 if (line.Length < 6)
+                {
                     continue;
+                }
+
                 switch (state)
                 {
                     case CIDNONE:
                         {
                             if (line.IndexOf("begincidrange", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
                                 state = CIDRANGE;
+                            }
                             else if (line.IndexOf("begincidchar", StringComparison.OrdinalIgnoreCase) >= 0)
+                            {
                                 state = CIDCHAR;
+                            }
                             else if (line.IndexOf("usecmap", StringComparison.OrdinalIgnoreCase) >= 0)
                             {
-                                StringTokenizer tk = new StringTokenizer(line);
-                                string t = tk.NextToken();
+                                var tk = new StringTokenizer(line);
+                                var t = tk.NextToken();
                                 ReadCmap(t.Substring(1), planes);
                             }
                             break;
@@ -473,15 +578,15 @@ namespace iTextSharp.text.pdf
                                 state = CIDNONE;
                                 break;
                             }
-                            StringTokenizer tk = new StringTokenizer(line);
-                            string t = tk.NextToken();
-                            int size = t.Length / 2 - 1;
-                            long start = long.Parse(t.Substring(1, t.Length - 2), NumberStyles.HexNumber);
+                            var tk = new StringTokenizer(line);
+                            var t = tk.NextToken();
+                            var size = t.Length / 2 - 1;
+                            var start = long.Parse(t.Substring(1, t.Length - 2), NumberStyles.HexNumber);
                             t = tk.NextToken();
-                            long end = long.Parse(t.Substring(1, t.Length - 2), NumberStyles.HexNumber);
+                            var end = long.Parse(t.Substring(1, t.Length - 2), NumberStyles.HexNumber);
                             t = tk.NextToken();
-                            int cid = int.Parse(t);
-                            for (long k = start; k <= end; ++k)
+                            var cid = int.Parse(t);
+                            for (var k = start; k <= end; ++k)
                             {
                                 BreakLong(k, size, seqs);
                                 EncodeSequence(size, seqs, (char)cid, planes);
@@ -496,12 +601,12 @@ namespace iTextSharp.text.pdf
                                 state = CIDNONE;
                                 break;
                             }
-                            StringTokenizer tk = new StringTokenizer(line);
-                            string t = tk.NextToken();
-                            int size = t.Length / 2 - 1;
-                            long start = long.Parse(t.Substring(1, t.Length - 2), NumberStyles.HexNumber);
+                            var tk = new StringTokenizer(line);
+                            var t = tk.NextToken();
+                            var size = t.Length / 2 - 1;
+                            var start = long.Parse(t.Substring(1, t.Length - 2), NumberStyles.HexNumber);
                             t = tk.NextToken();
-                            int cid = int.Parse(t);
+                            var cid = int.Parse(t);
                             BreakLong(start, size, seqs);
                             EncodeSequence(size, seqs, (char)cid, planes);
                             break;
@@ -512,28 +617,36 @@ namespace iTextSharp.text.pdf
 
         internal static char[][] ReadCmap(string name, byte[][] newline)
         {
-            ArrayList planes = new ArrayList();
-            planes.Add(new char[256]);
+            var planes = new ArrayList
+            {
+                new char[256]
+            };
             ReadCmap(name, planes);
             if (newline != null)
             {
-                for (int k = 0; k < newline.Length; ++k)
+                for (var k = 0; k < newline.Length; ++k)
+                {
                     EncodeSequence(newline[k].Length, newline[k], BaseFont.CID_NEWLINE, planes);
+                }
             }
-            char[][] ret = new char[planes.Count][];
+            var ret = new char[planes.Count][];
             planes.CopyTo(ret, 0);
             return ret;
         }
 
         internal static void ReadCmap(string name, ArrayList planes)
         {
-            string fullName = BaseFont.RESOURCE_PATH + "cmaps." + name;
-            Stream inp = BaseFont.GetResourceStream(fullName);
+            var fullName = BaseFont.RESOURCE_PATH + "cmaps." + name;
+            var inp = BaseFont.GetResourceStream(fullName);
             if (inp == null)
+            {
                 throw new IOException("The Cmap " + name + " was not found.");
+            }
+
             EncodeStream(inp, planes);
             inp.Dispose();
         }
+
         private class Cp437Conversion : IExtraEncoding
         {
             private static readonly IntHashtable _c2B = new IntHashtable();
@@ -551,25 +664,32 @@ namespace iTextSharp.text.pdf
 
             static Cp437Conversion()
             {
-                for (int k = 0; k < _table.Length; ++k)
+                for (var k = 0; k < _table.Length; ++k)
+                {
                     _c2B[_table[k]] = k + 128;
+                }
             }
 
             public string ByteToChar(byte[] b, string encoding)
             {
-                int len = b.Length;
-                char[] cc = new char[len];
-                int ptr = 0;
-                for (int k = 0; k < len; ++k)
+                var len = b.Length;
+                var cc = new char[len];
+                var ptr = 0;
+                for (var k = 0; k < len; ++k)
                 {
-                    int c = b[k] & 0xff;
+                    var c = b[k] & 0xff;
                     if (c < ' ')
+                    {
                         continue;
+                    }
+
                     if (c < 128)
+                    {
                         cc[ptr++] = (char)c;
+                    }
                     else
                     {
-                        char v = _table[c - 128];
+                        var v = _table[c - 128];
                         cc[ptr++] = v;
                     }
                 }
@@ -578,25 +698,32 @@ namespace iTextSharp.text.pdf
 
             public byte[] CharToByte(string text, string encoding)
             {
-                char[] cc = text.ToCharArray();
-                byte[] b = new byte[cc.Length];
-                int ptr = 0;
-                int len = cc.Length;
-                for (int k = 0; k < len; ++k)
+                var cc = text.ToCharArray();
+                var b = new byte[cc.Length];
+                var ptr = 0;
+                var len = cc.Length;
+                for (var k = 0; k < len; ++k)
                 {
-                    char c = cc[k];
+                    var c = cc[k];
                     if (c < 128)
+                    {
                         b[ptr++] = (byte)c;
+                    }
                     else
                     {
-                        byte v = (byte)_c2B[c];
+                        var v = (byte)_c2B[c];
                         if (v != 0)
+                        {
                             b[ptr++] = v;
+                        }
                     }
                 }
                 if (ptr == len)
+                {
                     return b;
-                byte[] b2 = new byte[ptr];
+                }
+
+                var b2 = new byte[ptr];
                 Array.Copy(b, 0, b2, 0, ptr);
                 return b2;
             }
@@ -604,23 +731,29 @@ namespace iTextSharp.text.pdf
             public byte[] CharToByte(char char1, string encoding)
             {
                 if (char1 < 128)
+                {
                     return new[] { (byte)char1 };
+                }
                 else
                 {
-                    byte v = (byte)_c2B[char1];
+                    var v = (byte)_c2B[char1];
                     if (v != 0)
+                    {
                         return new[] { v };
+                    }
                     else
+                    {
                         return new byte[0];
+                    }
                 }
             }
         }
 
         private class SymbolConversion : IExtraEncoding
         {
-
             private static readonly IntHashtable _t1 = new IntHashtable();
             private static readonly IntHashtable _t2 = new IntHashtable();
+
             private static readonly char[] _table1 = {
             ' ','!','\u2200','#','\u2203','%','&','\u220b','(',')','*','+',',','-','.','/',
             '0','1','2','3','4','5','6','7','8','9',':',';','<','=','>','?',
@@ -659,26 +792,34 @@ namespace iTextSharp.text.pdf
 
             static SymbolConversion()
             {
-                for (int k = 0; k < _table1.Length; ++k)
+                for (var k = 0; k < _table1.Length; ++k)
                 {
                     int v = _table1[k];
                     if (v != 0)
+                    {
                         _t1[v] = k + 32;
+                    }
                 }
-                for (int k = 0; k < _table2.Length; ++k)
+                for (var k = 0; k < _table2.Length; ++k)
                 {
                     int v = _table2[k];
                     if (v != 0)
+                    {
                         _t2[v] = k + 32;
+                    }
                 }
             }
 
             internal SymbolConversion(bool symbol)
             {
                 if (symbol)
+                {
                     _translation = _t1;
+                }
                 else
+                {
                     _translation = _t2;
+                }
             }
 
             public string ByteToChar(byte[] b, string encoding)
@@ -688,37 +829,45 @@ namespace iTextSharp.text.pdf
 
             public byte[] CharToByte(string text, string encoding)
             {
-                char[] cc = text.ToCharArray();
-                byte[] b = new byte[cc.Length];
-                int ptr = 0;
-                int len = cc.Length;
-                for (int k = 0; k < len; ++k)
+                var cc = text.ToCharArray();
+                var b = new byte[cc.Length];
+                var ptr = 0;
+                var len = cc.Length;
+                for (var k = 0; k < len; ++k)
                 {
-                    char c = cc[k];
-                    byte v = (byte)_translation[c];
+                    var c = cc[k];
+                    var v = (byte)_translation[c];
                     if (v != 0)
+                    {
                         b[ptr++] = v;
+                    }
                 }
                 if (ptr == len)
+                {
                     return b;
-                byte[] b2 = new byte[ptr];
+                }
+
+                var b2 = new byte[ptr];
                 Array.Copy(b, 0, b2, 0, ptr);
                 return b2;
             }
 
             public byte[] CharToByte(char char1, string encoding)
             {
-                byte v = (byte)_translation[char1];
+                var v = (byte)_translation[char1];
                 if (v != 0)
+                {
                     return new[] { v };
+                }
                 else
+                {
                     return new byte[0];
+                }
             }
         }
 
         private class SymbolTtConversion : IExtraEncoding
         {
-
             public string ByteToChar(byte[] b, string encoding)
             {
                 return null;
@@ -727,26 +876,35 @@ namespace iTextSharp.text.pdf
             public byte[] CharToByte(char char1, string encoding)
             {
                 if ((char1 & 0xff00) == 0 || (char1 & 0xff00) == 0xf000)
+                {
                     return new[] { (byte)char1 };
+                }
                 else
+                {
                     return new byte[0];
+                }
             }
 
             public byte[] CharToByte(string text, string encoding)
             {
-                char[] ch = text.ToCharArray();
-                byte[] b = new byte[ch.Length];
-                int ptr = 0;
-                int len = ch.Length;
-                for (int k = 0; k < len; ++k)
+                var ch = text.ToCharArray();
+                var b = new byte[ch.Length];
+                var ptr = 0;
+                var len = ch.Length;
+                for (var k = 0; k < len; ++k)
                 {
-                    char c = ch[k];
+                    var c = ch[k];
                     if ((c & 0xff00) == 0 || (c & 0xff00) == 0xf000)
+                    {
                         b[ptr++] = (byte)c;
+                    }
                 }
                 if (ptr == len)
+                {
                     return b;
-                byte[] b2 = new byte[ptr];
+                }
+
+                var b2 = new byte[ptr];
                 Array.Copy(b, 0, b2, 0, ptr);
                 return b2;
             }
@@ -754,7 +912,6 @@ namespace iTextSharp.text.pdf
 
         private class WingdingsConversion : IExtraEncoding
         {
-
             private static readonly byte[] _table = {
             0, 35, 34, 0, 0, 0, 41, 62, 81, 42,
             0, 0, 65, 63, 0, 0, 0, 0, 0, 256-4,
@@ -786,37 +943,48 @@ namespace iTextSharp.text.pdf
             public byte[] CharToByte(char char1, string encoding)
             {
                 if (char1 == ' ')
+                {
                     return new[] { (byte)char1 };
+                }
                 else if (char1 >= '\u2701' && char1 <= '\u27BE')
                 {
-                    byte v = _table[char1 - 0x2700];
+                    var v = _table[char1 - 0x2700];
                     if (v != 0)
+                    {
                         return new[] { v };
+                    }
                 }
                 return new byte[0];
             }
 
             public byte[] CharToByte(string text, string encoding)
             {
-                char[] cc = text.ToCharArray();
-                byte[] b = new byte[cc.Length];
-                int ptr = 0;
-                int len = cc.Length;
-                for (int k = 0; k < len; ++k)
+                var cc = text.ToCharArray();
+                var b = new byte[cc.Length];
+                var ptr = 0;
+                var len = cc.Length;
+                for (var k = 0; k < len; ++k)
                 {
-                    char c = cc[k];
+                    var c = cc[k];
                     if (c == ' ')
+                    {
                         b[ptr++] = (byte)c;
+                    }
                     else if (c >= '\u2701' && c <= '\u27BE')
                     {
-                        byte v = _table[c - 0x2700];
+                        var v = _table[c - 0x2700];
                         if (v != 0)
+                        {
                             b[ptr++] = v;
+                        }
                     }
                 }
                 if (ptr == len)
+                {
                     return b;
-                byte[] b2 = new byte[ptr];
+                }
+
+                var b2 = new byte[ptr];
                 Array.Copy(b, 0, b2, 0, ptr);
                 return b2;
             }

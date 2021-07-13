@@ -1,6 +1,6 @@
+using iTextSharp.LGPLv2.Core.System.Encodings;
 using System;
 using System.Collections;
-using iTextSharp.LGPLv2.Core.System.Encodings;
 
 namespace iTextSharp.text.pdf
 {
@@ -31,11 +31,11 @@ namespace iTextSharp.text.pdf
 
         internal static readonly string[] TableNamesSimple = {"cvt ", "fpgm", "glyf", "head",
                                                "hhea", "hmtx", "loca", "maxp", "prep"};
+
         internal static readonly int TableOffset = 1;
         internal static readonly int WeHaveAnXAndYScale = 64;
         internal static readonly int WeHaveAScale = 8;
         internal static readonly int WeHaveATwoByTwo = 128;
-
 
         protected int DirectoryOffset;
 
@@ -82,6 +82,7 @@ namespace iTextSharp.text.pdf
         /// and position 2 is the length of the table.
         /// </summary>
         protected Hashtable TableDirectory;
+
         protected int TableGlyphOffset;
 
         /// <summary>
@@ -139,48 +140,63 @@ namespace iTextSharp.text.pdf
         protected void AssembleFont()
         {
             int[] tableLocation;
-            int fullFontSize = 0;
+            var fullFontSize = 0;
             string[] tableNames;
             if (IncludeExtras)
+            {
                 tableNames = TableNamesExtra;
+            }
             else
             {
                 if (IncludeCmap)
+                {
                     tableNames = TableNamesCmap;
+                }
                 else
+                {
                     tableNames = TableNamesSimple;
+                }
             }
-            int tablesUsed = 2;
-            int len = 0;
-            for (int k = 0; k < tableNames.Length; ++k)
+            var tablesUsed = 2;
+            var len = 0;
+            for (var k = 0; k < tableNames.Length; ++k)
             {
-                string name = tableNames[k];
+                var name = tableNames[k];
                 if (name.Equals("glyf") || name.Equals("loca"))
+                {
                     continue;
+                }
+
                 tableLocation = (int[])TableDirectory[name];
                 if (tableLocation == null)
+                {
                     continue;
+                }
+
                 ++tablesUsed;
                 fullFontSize += (tableLocation[TableLength] + 3) & (~3);
             }
             fullFontSize += NewLocaTableOut.Length;
             fullFontSize += NewGlyfTable.Length;
-            int iref = 16 * tablesUsed + 12;
+            var iref = 16 * tablesUsed + 12;
             fullFontSize += iref;
             OutFont = new byte[fullFontSize];
             FontPtr = 0;
             WriteFontInt(0x00010000);
             WriteFontShort(tablesUsed);
-            int selector = EntrySelectors[tablesUsed];
+            var selector = EntrySelectors[tablesUsed];
             WriteFontShort((1 << selector) * 16);
             WriteFontShort(selector);
             WriteFontShort((tablesUsed - (1 << selector)) * 16);
-            for (int k = 0; k < tableNames.Length; ++k)
+            for (var k = 0; k < tableNames.Length; ++k)
             {
-                string name = tableNames[k];
+                var name = tableNames[k];
                 tableLocation = (int[])TableDirectory[name];
                 if (tableLocation == null)
+                {
                     continue;
+                }
+
                 WriteFontString(name);
                 if (name.Equals("glyf"))
                 {
@@ -201,12 +217,15 @@ namespace iTextSharp.text.pdf
                 WriteFontInt(len);
                 iref += (len + 3) & (~3);
             }
-            for (int k = 0; k < tableNames.Length; ++k)
+            for (var k = 0; k < tableNames.Length; ++k)
             {
-                string name = tableNames[k];
+                var name = tableNames[k];
                 tableLocation = (int[])TableDirectory[name];
                 if (tableLocation == null)
+                {
                     continue;
+                }
+
                 if (name.Equals("glyf"))
                 {
                     Array.Copy(NewGlyfTable, 0, OutFont, FontPtr, NewGlyfTable.Length);
@@ -230,13 +249,13 @@ namespace iTextSharp.text.pdf
 
         protected int CalculateChecksum(byte[] b)
         {
-            int len = b.Length / 4;
-            int v0 = 0;
-            int v1 = 0;
-            int v2 = 0;
-            int v3 = 0;
-            int ptr = 0;
-            for (int k = 0; k < len; ++k)
+            var len = b.Length / 4;
+            var v0 = 0;
+            var v1 = 0;
+            var v2 = 0;
+            var v3 = 0;
+            var ptr = 0;
+            for (var k = 0; k < len; ++k)
             {
                 v3 += b[ptr++] & 0xff;
                 v2 += b[ptr++] & 0xff;
@@ -248,36 +267,58 @@ namespace iTextSharp.text.pdf
 
         protected void CheckGlyphComposite(int glyph)
         {
-            int start = LocaTable[glyph];
+            var start = LocaTable[glyph];
             if (start == LocaTable[glyph + 1]) // no contour
+            {
                 return;
+            }
+
             Rf.Seek(TableGlyphOffset + start);
             int numContours = Rf.ReadShort();
             if (numContours >= 0)
-                return;
-            Rf.SkipBytes(8);
-            for (;;)
             {
-                int flags = Rf.ReadUnsignedShort();
-                int cGlyph = Rf.ReadUnsignedShort();
+                return;
+            }
+
+            Rf.SkipBytes(8);
+            for (; ; )
+            {
+                var flags = Rf.ReadUnsignedShort();
+                var cGlyph = Rf.ReadUnsignedShort();
                 if (!GlyphsUsed.ContainsKey(cGlyph))
                 {
                     GlyphsUsed[cGlyph] = null;
                     GlyphsInList.Add(cGlyph);
                 }
                 if ((flags & MoreComponents) == 0)
+                {
                     return;
+                }
+
                 int skip;
                 if ((flags & Arg1And2AreWords) != 0)
+                {
                     skip = 4;
+                }
                 else
+                {
                     skip = 2;
+                }
+
                 if ((flags & WeHaveAScale) != 0)
+                {
                     skip += 2;
+                }
                 else if ((flags & WeHaveAnXAndYScale) != 0)
+                {
                     skip += 4;
+                }
+
                 if ((flags & WeHaveATwoByTwo) != 0)
+                {
                     skip += 8;
+                }
+
                 Rf.SkipBytes(skip);
             }
         }
@@ -285,30 +326,33 @@ namespace iTextSharp.text.pdf
         protected void CreateNewGlyphTables()
         {
             NewLocaTable = new int[LocaTable.Length];
-            int[] activeGlyphs = new int[GlyphsInList.Count];
-            for (int k = 0; k < activeGlyphs.Length; ++k)
-                activeGlyphs[k] = (int)GlyphsInList[k];
-            Array.Sort(activeGlyphs);
-            int glyfSize = 0;
-            for (int k = 0; k < activeGlyphs.Length; ++k)
+            var activeGlyphs = new int[GlyphsInList.Count];
+            for (var k = 0; k < activeGlyphs.Length; ++k)
             {
-                int glyph = activeGlyphs[k];
+                activeGlyphs[k] = (int)GlyphsInList[k];
+            }
+
+            Array.Sort(activeGlyphs);
+            var glyfSize = 0;
+            for (var k = 0; k < activeGlyphs.Length; ++k)
+            {
+                var glyph = activeGlyphs[k];
                 glyfSize += LocaTable[glyph + 1] - LocaTable[glyph];
             }
             GlyfTableRealSize = glyfSize;
             glyfSize = (glyfSize + 3) & (~3);
             NewGlyfTable = new byte[glyfSize];
-            int glyfPtr = 0;
-            int listGlyf = 0;
-            for (int k = 0; k < NewLocaTable.Length; ++k)
+            var glyfPtr = 0;
+            var listGlyf = 0;
+            for (var k = 0; k < NewLocaTable.Length; ++k)
             {
                 NewLocaTable[k] = glyfPtr;
                 if (listGlyf < activeGlyphs.Length && activeGlyphs[listGlyf] == k)
                 {
                     ++listGlyf;
                     NewLocaTable[k] = glyfPtr;
-                    int start = LocaTable[k];
-                    int len = LocaTable[k + 1] - start;
+                    var start = LocaTable[k];
+                    var len = LocaTable[k + 1] - start;
                     if (len > 0)
                     {
                         Rf.Seek(TableGlyphOffset + start);
@@ -323,15 +367,18 @@ namespace iTextSharp.text.pdf
         {
             TableDirectory = new Hashtable();
             Rf.Seek(DirectoryOffset);
-            int id = Rf.ReadInt();
+            var id = Rf.ReadInt();
             if (id != 0x00010000)
-                throw new DocumentException(FileName + " is not a true type file.");
-            int numTables = Rf.ReadUnsignedShort();
-            Rf.SkipBytes(6);
-            for (int k = 0; k < numTables; ++k)
             {
-                string tag = ReadStandardString(4);
-                int[] tableLocation = new int[3];
+                throw new DocumentException(FileName + " is not a true type file.");
+            }
+
+            var numTables = Rf.ReadUnsignedShort();
+            Rf.SkipBytes(6);
+            for (var k = 0; k < numTables; ++k)
+            {
+                var tag = ReadStandardString(4);
+                var tableLocation = new int[3];
                 tableLocation[TableChecksum] = Rf.ReadInt();
                 tableLocation[TableOffset] = Rf.ReadInt();
                 tableLocation[TableLength] = Rf.ReadInt();
@@ -344,17 +391,20 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])TableDirectory["glyf"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'glyf' does not exist in " + FileName);
-            int glyph0 = 0;
+            }
+
+            var glyph0 = 0;
             if (!GlyphsUsed.ContainsKey(glyph0))
             {
                 GlyphsUsed[glyph0] = null;
                 GlyphsInList.Add(glyph0);
             }
             TableGlyphOffset = tableLocation[TableOffset];
-            for (int k = 0; k < GlyphsInList.Count; ++k)
+            for (var k = 0; k < GlyphsInList.Count; ++k)
             {
-                int glyph = (int)GlyphsInList[k];
+                var glyph = (int)GlyphsInList[k];
                 CheckGlyphComposite(glyph);
             }
         }
@@ -362,20 +412,28 @@ namespace iTextSharp.text.pdf
         protected void LocaTobytes()
         {
             if (LocaShortTable)
+            {
                 LocaTableRealSize = NewLocaTable.Length * 2;
+            }
             else
+            {
                 LocaTableRealSize = NewLocaTable.Length * 4;
+            }
+
             NewLocaTableOut = new byte[(LocaTableRealSize + 3) & (~3)];
             OutFont = NewLocaTableOut;
             FontPtr = 0;
-            for (int k = 0; k < NewLocaTable.Length; ++k)
+            for (var k = 0; k < NewLocaTable.Length; ++k)
             {
                 if (LocaShortTable)
+                {
                     WriteFontShort(NewLocaTable[k] / 2);
+                }
                 else
+                {
                     WriteFontInt(NewLocaTable[k]);
+                }
             }
-
         }
 
         protected void ReadLoca()
@@ -383,26 +441,36 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])TableDirectory["head"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'head' does not exist in " + FileName);
+            }
+
             Rf.Seek(tableLocation[TableOffset] + HeadLocaFormatOffset);
             LocaShortTable = (Rf.ReadUnsignedShort() == 0);
             tableLocation = (int[])TableDirectory["loca"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'loca' does not exist in " + FileName);
+            }
+
             Rf.Seek(tableLocation[TableOffset]);
             if (LocaShortTable)
             {
-                int entries = tableLocation[TableLength] / 2;
+                var entries = tableLocation[TableLength] / 2;
                 LocaTable = new int[entries];
-                for (int k = 0; k < entries; ++k)
+                for (var k = 0; k < entries; ++k)
+                {
                     LocaTable[k] = Rf.ReadUnsignedShort() * 2;
+                }
             }
             else
             {
-                int entries = tableLocation[TableLength] / 4;
+                var entries = tableLocation[TableLength] / 4;
                 LocaTable = new int[entries];
-                for (int k = 0; k < entries; ++k)
+                for (var k = 0; k < entries; ++k)
+                {
                     LocaTable[k] = Rf.ReadInt();
+                }
             }
         }
 
@@ -415,7 +483,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the  string  read</returns>
         protected string ReadStandardString(int length)
         {
-            byte[] buf = new byte[length];
+            var buf = new byte[length];
             Rf.ReadFully(buf);
             return EncodingsRegistry.Instance.GetEncoding(1252).GetString(buf);
         }
@@ -436,7 +504,7 @@ namespace iTextSharp.text.pdf
 
         protected void WriteFontString(string s)
         {
-            byte[] b = PdfEncodings.ConvertToBytes(s, BaseFont.WINANSI);
+            var b = PdfEncodings.ConvertToBytes(s, BaseFont.WINANSI);
             Array.Copy(b, 0, OutFont, FontPtr, b.Length);
             FontPtr += b.Length;
         }

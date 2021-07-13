@@ -30,7 +30,6 @@ namespace iTextSharp.text.html
     /// </summary>
     public static class HtmlEncoder
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -42,17 +41,17 @@ namespace iTextSharp.text.html
 
         static HtmlEncoder()
         {
-            for (int i = 0; i < 10; i++)
+            for (var i = 0; i < 10; i++)
             {
                 _htmlCode[i] = "&#00" + i + ";";
             }
 
-            for (int i = 10; i < 32; i++)
+            for (var i = 10; i < 32; i++)
             {
                 _htmlCode[i] = "&#0" + i + ";";
             }
 
-            for (int i = 32; i < 128; i++)
+            for (var i = 32; i < 128; i++)
             {
                 _htmlCode[i] = ((char)i).ToString();
             }
@@ -65,12 +64,11 @@ namespace iTextSharp.text.html
             _htmlCode['<'] = "&lt;"; // lower than
             _htmlCode['>'] = "&gt;"; // greater than
 
-            for (int i = 128; i < 256; i++)
+            for (var i = 128; i < 256; i++)
             {
                 _htmlCode[i] = "&#" + i + ";";
             }
         }
-
 
         /// <summary>
         /// methods
@@ -83,11 +81,11 @@ namespace iTextSharp.text.html
         /// <returns>a  String </returns>
         public static string Encode(string str)
         {
-            int n = str.Length;
+            var n = str.Length;
             char character;
-            StringBuilder buffer = new StringBuilder();
+            var buffer = new StringBuilder();
             // loop over all the characters of the String.
-            for (int i = 0; i < n; i++)
+            for (var i = 0; i < n; i++)
             {
                 character = str[i];
                 // the Htmlcode of these characters are added to a StringBuilder one by one
@@ -112,7 +110,7 @@ namespace iTextSharp.text.html
 
         public static string Encode(BaseColor color)
         {
-            StringBuilder buffer = new StringBuilder("#");
+            var buffer = new StringBuilder("#");
             if (color.R < 16)
             {
                 buffer.Append('0');
@@ -143,21 +141,29 @@ namespace iTextSharp.text.html
             {
                 case Element.ALIGN_LEFT:
                     return HtmlTags.ALIGN_LEFT;
+
                 case Element.ALIGN_CENTER:
                     return HtmlTags.ALIGN_CENTER;
+
                 case Element.ALIGN_RIGHT:
                     return HtmlTags.ALIGN_RIGHT;
+
                 case Element.ALIGN_JUSTIFIED:
                 case Element.ALIGN_JUSTIFIED_ALL:
                     return HtmlTags.ALIGN_JUSTIFIED;
+
                 case Element.ALIGN_TOP:
                     return HtmlTags.ALIGN_TOP;
+
                 case Element.ALIGN_MIDDLE:
                     return HtmlTags.ALIGN_MIDDLE;
+
                 case Element.ALIGN_BOTTOM:
                     return HtmlTags.ALIGN_BOTTOM;
+
                 case Element.ALIGN_BASELINE:
                     return HtmlTags.ALIGN_BASELINE;
+
                 default:
                     return "";
             }

@@ -3,7 +3,6 @@ using System.util;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A row in a PdfPTable.
     /// @author Paulo Soares (psoares@consiste.pt)
@@ -14,6 +13,7 @@ namespace iTextSharp.text.pdf
         /// the bottom limit (bottom right y)
         /// </summary>
         public const float BOTTOM_LIMIT = -(1 << 30);
+
         /// <summary>
         /// the right limit
         /// @since    2.1.5
@@ -54,10 +54,12 @@ namespace iTextSharp.text.pdf
             MaxHeight = row.MaxHeight;
             Calculated = row.Calculated;
             Cells = new PdfPCell[row.Cells.Length];
-            for (int k = 0; k < Cells.Length; ++k)
+            for (var k = 0; k < Cells.Length; ++k)
             {
                 if (row.Cells[k] != null)
+                {
                     Cells[k] = new PdfPCell(row.Cells[k]);
+                }
             }
             Widths = new float[Cells.Length];
             Array.Copy(row.Widths, 0, Widths, 0, Cells.Length);
@@ -73,14 +75,15 @@ namespace iTextSharp.text.pdf
             get
             {
                 if (Calculated)
+                {
                     return MaxHeight;
+                }
                 else
+                {
                     return CalculateHeights();
+                }
             }
-            set
-            {
-                MaxHeight = value;
-            }
+            set => MaxHeight = value;
         }
 
         /// <summary>
@@ -89,9 +92,15 @@ namespace iTextSharp.text.pdf
         public static float SetColumn(ColumnText ct, float left, float bottom, float right, float top)
         {
             if (left > right)
+            {
                 right = left;
+            }
+
             if (bottom > top)
+            {
                 top = bottom;
+            }
+
             ct.SetSimpleColumn(left, bottom, right, top);
             return top;
         }
@@ -103,9 +112,9 @@ namespace iTextSharp.text.pdf
         public float CalculateHeights()
         {
             MaxHeight = 0;
-            for (int k = 0; k < Cells.Length; ++k)
+            for (var k = 0; k < Cells.Length; ++k)
             {
-                PdfPCell cell = Cells[k];
+                var cell = Cells[k];
                 float height = 0;
                 if (cell == null)
                 {
@@ -115,7 +124,9 @@ namespace iTextSharp.text.pdf
                 {
                     height = cell.GetMaxHeight();
                     if ((height > MaxHeight) && (cell.Rowspan == 1))
+                    {
                         MaxHeight = height;
+                    }
                 }
             }
             Calculated = true;
@@ -141,7 +152,7 @@ namespace iTextSharp.text.pdf
         public void InitExtraHeights()
         {
             ExtraHeights = new float[Cells.Length];
-            for (int i = 0; i < ExtraHeights.Length; i++)
+            for (var i = 0; i < ExtraHeights.Length; i++)
             {
                 ExtraHeights[i] = 0;
             }
@@ -165,7 +176,10 @@ namespace iTextSharp.text.pdf
         public void SetExtraHeight(int cell, float height)
         {
             if (cell < 0 || cell >= Cells.Length)
+            {
                 return;
+            }
+
             ExtraHeights[cell] = height;
         }
 
@@ -177,13 +191,16 @@ namespace iTextSharp.text.pdf
         public bool SetWidths(float[] widths)
         {
             if (widths.Length != Cells.Length)
+            {
                 return false;
+            }
+
             Array.Copy(widths, 0, Widths, 0, Cells.Length);
             float total = 0;
             Calculated = false;
-            for (int k = 0; k < widths.Length; ++k)
+            for (var k = 0; k < widths.Length; ++k)
             {
-                PdfPCell cell = Cells[k];
+                var cell = Cells[k];
 
                 if (cell == null)
                 {
@@ -192,15 +209,19 @@ namespace iTextSharp.text.pdf
                 }
 
                 cell.Left = total;
-                int last = k + cell.Colspan;
+                var last = k + cell.Colspan;
                 for (; k < last; ++k)
+                {
                     total += widths[k];
+                }
+
                 --k;
                 cell.Right = total;
                 cell.Top = 0;
             }
             return true;
         }
+
         /// <summary>
         /// Splits a row to newHeight.
         /// The returned row is the remainder. It will return null if the newHeight
@@ -210,17 +231,17 @@ namespace iTextSharp.text.pdf
         /// <returns>the remainder row or null if the newHeight was so small that only</returns>
         public PdfPRow SplitRow(PdfPTable table, int rowIndex, float new_height)
         {
-            PdfPCell[] newCells = new PdfPCell[Cells.Length];
-            float[] fixHs = new float[Cells.Length];
-            float[] minHs = new float[Cells.Length];
-            bool allEmpty = true;
-            for (int k = 0; k < Cells.Length; ++k)
+            var newCells = new PdfPCell[Cells.Length];
+            var fixHs = new float[Cells.Length];
+            var minHs = new float[Cells.Length];
+            var allEmpty = true;
+            for (var k = 0; k < Cells.Length; ++k)
             {
-                float newHeight = new_height;
-                PdfPCell cell = Cells[k];
+                var newHeight = new_height;
+                var cell = Cells[k];
                 if (cell == null)
                 {
-                    int index = rowIndex;
+                    var index = rowIndex;
                     if (table.RowSpanAbove(index, k))
                     {
                         newHeight += table.GetRowHeight(index);
@@ -228,7 +249,7 @@ namespace iTextSharp.text.pdf
                         {
                             newHeight += table.GetRowHeight(index);
                         }
-                        PdfPRow row = table.GetRow(index);
+                        var row = table.GetRow(index);
                         if (row != null && row.GetCells()[k] != null)
                         {
                             newCells[k] = new PdfPCell(row.GetCells()[k]);
@@ -241,8 +262,8 @@ namespace iTextSharp.text.pdf
                 }
                 fixHs[k] = cell.FixedHeight;
                 minHs[k] = cell.MinimumHeight;
-                Image img = cell.Image;
-                PdfPCell newCell = new PdfPCell(cell);
+                var img = cell.Image;
+                var newCell = new PdfPCell(cell);
                 if (img != null)
                 {
                     if (newHeight > cell.EffectivePaddingBottom + cell.EffectivePaddingTop + 2)
@@ -254,24 +275,25 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     float y;
-                    ColumnText ct = ColumnText.Duplicate(cell.Column);
-                    float left = cell.Left + cell.EffectivePaddingLeft;
-                    float bottom = cell.Top + cell.EffectivePaddingBottom - newHeight;
-                    float right = cell.Right - cell.EffectivePaddingRight;
-                    float top = cell.Top - cell.EffectivePaddingTop;
+                    var ct = ColumnText.Duplicate(cell.Column);
+                    var left = cell.Left + cell.EffectivePaddingLeft;
+                    var bottom = cell.Top + cell.EffectivePaddingBottom - newHeight;
+                    var right = cell.Right - cell.EffectivePaddingRight;
+                    var top = cell.Top - cell.EffectivePaddingTop;
                     switch (cell.Rotation)
                     {
                         case 90:
                         case 270:
                             y = SetColumn(ct, bottom, left, top, right);
                             break;
+
                         default:
                             y = SetColumn(ct, left, bottom, cell.NoWrap ? RIGHT_LIMIT : right, top);
                             break;
                     }
                     int status;
                     status = ct.Go(true);
-                    bool thisEmpty = (ct.YLine.ApproxEquals(y));
+                    var thisEmpty = (ct.YLine.ApproxEquals(y));
                     if (thisEmpty)
                     {
                         newCell.Column = ColumnText.Duplicate(cell.Column);
@@ -283,7 +305,10 @@ namespace iTextSharp.text.pdf
                         ct.FilledWidth = 0;
                     }
                     else
+                    {
                         newCell.Phrase = null;
+                    }
+
                     allEmpty = (allEmpty && thisEmpty);
                 }
                 newCells[k] = newCell;
@@ -291,21 +316,30 @@ namespace iTextSharp.text.pdf
             }
             if (allEmpty)
             {
-                for (int k = 0; k < Cells.Length; ++k)
+                for (var k = 0; k < Cells.Length; ++k)
                 {
-                    PdfPCell cell = Cells[k];
+                    var cell = Cells[k];
                     if (cell == null)
+                    {
                         continue;
+                    }
+
                     if (fixHs[k] > 0)
+                    {
                         cell.FixedHeight = fixHs[k];
+                    }
                     else
+                    {
                         cell.MinimumHeight = minHs[k];
+                    }
                 }
                 return null;
             }
             CalculateHeights();
-            PdfPRow split = new PdfPRow(newCells);
-            split.Widths = (float[])Widths.Clone();
+            var split = new PdfPRow(newCells)
+            {
+                Widths = (float[])Widths.Clone()
+            };
             split.CalculateHeights();
             return split;
         }
@@ -321,30 +355,30 @@ namespace iTextSharp.text.pdf
         /// <param name="canvases"></param>
         public void WriteBorderAndBackground(float xPos, float yPos, float currentMaxHeight, PdfPCell cell, PdfContentByte[] canvases)
         {
-            BaseColor background = cell.BackgroundColor;
+            var background = cell.BackgroundColor;
             if (background != null || cell.HasBorders())
             {
                 // Add xPos resp. yPos to the cell's coordinates for absolute coordinates
-                float right = cell.Right + xPos;
-                float top = cell.Top + yPos;
-                float left = cell.Left + xPos;
-                float bottom = top - currentMaxHeight;
+                var right = cell.Right + xPos;
+                var top = cell.Top + yPos;
+                var left = cell.Left + xPos;
+                var bottom = top - currentMaxHeight;
 
                 if (background != null)
                 {
-                    PdfContentByte backgr = canvases[PdfPTable.BACKGROUNDCANVAS];
+                    var backgr = canvases[PdfPTable.BACKGROUNDCANVAS];
                     backgr.SetColorFill(background);
                     backgr.Rectangle(left, bottom, right - left, top - bottom);
                     backgr.Fill();
                 }
                 if (cell.HasBorders())
                 {
-                    Rectangle newRect = new Rectangle(left, bottom, right, top);
+                    var newRect = new Rectangle(left, bottom, right, top);
                     // Clone non-position parameters except for the background color
                     newRect.CloneNonPositionParameters(cell);
                     newRect.BackgroundColor = null;
                     // Write the borders on the line canvas
-                    PdfContentByte lineCanvas = canvases[PdfPTable.LINECANVAS];
+                    var lineCanvas = canvases[PdfPTable.LINECANVAS];
                     lineCanvas.Rectangle(newRect);
                 }
             }
@@ -364,42 +398,68 @@ namespace iTextSharp.text.pdf
         public void WriteCells(int colStart, int colEnd, float xPos, float yPos, PdfContentByte[] canvases)
         {
             if (!Calculated)
+            {
                 CalculateHeights();
+            }
+
             if (colEnd < 0)
+            {
                 colEnd = Cells.Length;
+            }
             else
+            {
                 colEnd = Math.Min(colEnd, Cells.Length);
+            }
+
             if (colStart < 0)
+            {
                 colStart = 0;
+            }
+
             if (colStart >= colEnd)
+            {
                 return;
+            }
 
             int newStart;
             for (newStart = colStart; newStart >= 0; --newStart)
             {
                 if (Cells[newStart] != null)
+                {
                     break;
+                }
+
                 if (newStart > 0)
+                {
                     xPos -= Widths[newStart - 1];
+                }
             }
 
             if (newStart < 0)
-                newStart = 0;
-            if (Cells[newStart] != null)
-                xPos -= Cells[newStart].Left;
-
-            for (int k = newStart; k < colEnd; ++k)
             {
-                PdfPCell cell = Cells[k];
+                newStart = 0;
+            }
+
+            if (Cells[newStart] != null)
+            {
+                xPos -= Cells[newStart].Left;
+            }
+
+            for (var k = newStart; k < colEnd; ++k)
+            {
+                var cell = Cells[k];
                 if (cell == null)
+                {
                     continue;
-                float currentMaxHeight = MaxHeight + ExtraHeights[k];
+                }
+
+                var currentMaxHeight = MaxHeight + ExtraHeights[k];
 
                 WriteBorderAndBackground(xPos, yPos, currentMaxHeight, cell, canvases);
 
-                Image img = cell.Image;
+                var img = cell.Image;
 
-                float tly = cell.Top + yPos - cell.EffectivePaddingTop;
+                var tly = cell.Top + yPos - cell.EffectivePaddingTop;
                 if (cell.Height <= currentMaxHeight)
                 {
                     switch (cell.VerticalAlignment)
@@ -408,10 +468,12 @@ namespace iTextSharp.text.pdf
                             tly = cell.Top + yPos - currentMaxHeight + cell.Height
                                     - cell.EffectivePaddingTop;
                             break;
+
                         case Element.ALIGN_MIDDLE:
                             tly = cell.Top + yPos + (cell.Height - currentMaxHeight) / 2
                                     - cell.EffectivePaddingTop;
                             break;
+
                         default:
                             break;
                     }
@@ -423,17 +485,17 @@ namespace iTextSharp.text.pdf
                         img = Image.GetInstance(img);
                         img.Rotation = img.GetImageRotation() + (float)(cell.Rotation * Math.PI / 180.0);
                     }
-                    bool vf = false;
+                    var vf = false;
                     if (cell.Height > currentMaxHeight)
                     {
                         img.ScalePercent(100);
-                        float scale = (currentMaxHeight - cell.EffectivePaddingTop - cell
+                        var scale = (currentMaxHeight - cell.EffectivePaddingTop - cell
                                 .EffectivePaddingBottom)
                                 / img.ScaledHeight;
                         img.ScalePercent(scale * 100);
                         vf = true;
                     }
-                    float left = cell.Left + xPos
+                    var left = cell.Left + xPos
                             + cell.EffectivePaddingLeft;
                     if (vf)
                     {
@@ -446,11 +508,13 @@ namespace iTextSharp.text.pdf
                                                 - cell.EffectivePaddingRight - img
                                                 .ScaledWidth) / 2;
                                 break;
+
                             case Element.ALIGN_RIGHT:
                                 left = xPos + cell.Right
                                         - cell.EffectivePaddingRight
                                         - img.ScaledWidth;
                                 break;
+
                             default:
                                 break;
                         }
@@ -464,19 +528,25 @@ namespace iTextSharp.text.pdf
                     // rotation sponsored by Connection GmbH
                     if (cell.Rotation == 90 || cell.Rotation == 270)
                     {
-                        float netWidth = currentMaxHeight - cell.EffectivePaddingTop - cell.EffectivePaddingBottom;
-                        float netHeight = cell.Width - cell.EffectivePaddingLeft - cell.EffectivePaddingRight;
-                        ColumnText ct = ColumnText.Duplicate(cell.Column);
+                        var netWidth = currentMaxHeight - cell.EffectivePaddingTop - cell.EffectivePaddingBottom;
+                        var netHeight = cell.Width - cell.EffectivePaddingLeft - cell.EffectivePaddingRight;
+                        var ct = ColumnText.Duplicate(cell.Column);
                         ct.Canvases = canvases;
                         ct.SetSimpleColumn(0, 0, netWidth + 0.001f, -netHeight);
                         ct.Go(true);
-                        float calcHeight = -ct.YLine;
+                        var calcHeight = -ct.YLine;
                         if (netWidth <= 0 || netHeight <= 0)
+                        {
                             calcHeight = 0;
+                        }
+
                         if (calcHeight > 0)
                         {
                             if (cell.UseDescender)
+                            {
                                 calcHeight -= ct.Descender;
+                            }
+
                             ct = ColumnText.Duplicate(cell.Column);
                             ct.Canvases = canvases;
                             ct.SetSimpleColumn(-0.003f, -0.001f, netWidth + 0.003f, calcHeight);
@@ -490,9 +560,11 @@ namespace iTextSharp.text.pdf
                                     case Element.ALIGN_BOTTOM:
                                         pivotX = cell.Left + xPos + cell.Width - cell.EffectivePaddingRight;
                                         break;
+
                                     case Element.ALIGN_MIDDLE:
                                         pivotX = cell.Left + xPos + (cell.Width + cell.EffectivePaddingLeft - cell.EffectivePaddingRight + calcHeight) / 2;
                                         break;
+
                                     default: //top
                                         pivotX = cell.Left + xPos + cell.EffectivePaddingLeft + calcHeight;
                                         break;
@@ -507,9 +579,11 @@ namespace iTextSharp.text.pdf
                                     case Element.ALIGN_BOTTOM:
                                         pivotX = cell.Left + xPos + cell.EffectivePaddingLeft;
                                         break;
+
                                     case Element.ALIGN_MIDDLE:
                                         pivotX = cell.Left + xPos + (cell.Width + cell.EffectivePaddingLeft - cell.EffectivePaddingRight - calcHeight) / 2;
                                         break;
+
                                     default: //top
                                         pivotX = cell.Left + xPos + cell.Width - cell.EffectivePaddingRight - calcHeight;
                                         break;
@@ -528,10 +602,10 @@ namespace iTextSharp.text.pdf
                     }
                     else
                     {
-                        float fixedHeight = cell.FixedHeight;
-                        float rightLimit = cell.Right + xPos
+                        var fixedHeight = cell.FixedHeight;
+                        var rightLimit = cell.Right + xPos
                                 - cell.EffectivePaddingRight;
-                        float leftLimit = cell.Left + xPos
+                        var leftLimit = cell.Left + xPos
                                 + cell.EffectivePaddingLeft;
                         if (cell.NoWrap)
                         {
@@ -541,6 +615,7 @@ namespace iTextSharp.text.pdf
                                     rightLimit += 10000;
                                     leftLimit -= 10000;
                                     break;
+
                                 case Element.ALIGN_RIGHT:
                                     if (cell.Rotation == 180)
                                     {
@@ -551,6 +626,7 @@ namespace iTextSharp.text.pdf
                                         leftLimit -= RIGHT_LIMIT;
                                     }
                                     break;
+
                                 default:
                                     if (cell.Rotation == 180)
                                     {
@@ -563,9 +639,9 @@ namespace iTextSharp.text.pdf
                                     break;
                             }
                         }
-                        ColumnText ct = ColumnText.Duplicate(cell.Column);
+                        var ct = ColumnText.Duplicate(cell.Column);
                         ct.Canvases = canvases;
-                        float bry = tly
+                        var bry = tly
                                 - (currentMaxHeight
                                 - cell.EffectivePaddingTop - cell.EffectivePaddingBottom);
                         if (fixedHeight > 0)
@@ -581,8 +657,8 @@ namespace iTextSharp.text.pdf
                             ct.SetSimpleColumn(leftLimit, bry - 0.001f, rightLimit, tly);
                             if (cell.Rotation == 180)
                             {
-                                float shx = leftLimit + rightLimit;
-                                float shy = yPos + yPos - currentMaxHeight + cell.EffectivePaddingBottom - cell.EffectivePaddingTop;
+                                var shx = leftLimit + rightLimit;
+                                var shy = yPos + yPos - currentMaxHeight + cell.EffectivePaddingBottom - cell.EffectivePaddingTop;
                                 SaveAndRotateCanvases(canvases, -1, 0, 0, -1, shx, shy);
                             }
                             try
@@ -599,10 +675,10 @@ namespace iTextSharp.text.pdf
                         }
                     }
                 }
-                IPdfPCellEvent evt = cell.CellEvent;
+                var evt = cell.CellEvent;
                 if (evt != null)
                 {
-                    Rectangle rect = new Rectangle(cell.Left + xPos, cell.Top
+                    var rect = new Rectangle(cell.Left + xPos, cell.Top
                             + yPos - currentMaxHeight, cell.Right + xPos, cell.Top
                             + yPos);
                     evt.CellLayout(cell, rect, canvases);
@@ -612,16 +688,18 @@ namespace iTextSharp.text.pdf
 
         internal float[] GetEventWidth(float xPos)
         {
-            int n = 0;
-            for (int k = 0; k < Cells.Length; ++k)
+            var n = 0;
+            for (var k = 0; k < Cells.Length; ++k)
             {
                 if (Cells[k] != null)
+                {
                     ++n;
+                }
             }
-            float[] width = new float[n + 1];
+            var width = new float[n + 1];
             n = 0;
             width[n++] = xPos;
-            for (int k = 0; k < Cells.Length; ++k)
+            for (var k = 0; k < Cells.Length; ++k)
             {
                 if (Cells[k] != null)
                 {
@@ -637,14 +715,16 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected void RestoreCanvases(PdfContentByte[] canvases)
         {
-            int last = PdfPTable.TEXTCANVAS + 1;
-            for (int k = 0; k < last; ++k)
+            var last = PdfPTable.TEXTCANVAS + 1;
+            for (var k = 0; k < last; ++k)
             {
-                ByteBuffer bb = canvases[k].InternalBuffer;
-                int p1 = bb.Size;
+                var bb = canvases[k].InternalBuffer;
+                var p1 = bb.Size;
                 canvases[k].RestoreState();
                 if (p1 == _canvasesPos[k * 2 + 1])
+                {
                     bb.Size = _canvasesPos[k * 2];
+                }
             }
         }
 
@@ -653,12 +733,15 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected void SaveAndRotateCanvases(PdfContentByte[] canvases, float a, float b, float c, float d, float e, float f)
         {
-            int last = PdfPTable.TEXTCANVAS + 1;
+            var last = PdfPTable.TEXTCANVAS + 1;
             if (_canvasesPos == null)
-                _canvasesPos = new int[last * 2];
-            for (int k = 0; k < last; ++k)
             {
-                ByteBuffer bb = canvases[k].InternalBuffer;
+                _canvasesPos = new int[last * 2];
+            }
+
+            for (var k = 0; k < last; ++k)
+            {
+                var bb = canvases[k].InternalBuffer;
                 _canvasesPos[k * 2] = bb.Size;
                 canvases[k].SaveState();
                 canvases[k].ConcatCtm(a, b, c, d, e, f);

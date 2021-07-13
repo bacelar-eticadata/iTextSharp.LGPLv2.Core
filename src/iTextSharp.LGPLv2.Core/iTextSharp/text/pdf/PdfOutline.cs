@@ -1,10 +1,9 @@
-using System.Text;
-using System.IO;
 using System.Collections;
+using System.IO;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfOutline  is an object that represents a PDF outline entry.
     ///
@@ -15,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfOutline : PdfDictionary
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -58,6 +56,7 @@ namespace iTextSharp.text.pdf
         /// the  PdfIndirectReference  of this object
         /// </summary>
         private PdfIndirectReference _reference;
+
         /// <summary>
         /// Holds value of property style.
         /// </summary>
@@ -67,6 +66,7 @@ namespace iTextSharp.text.pdf
         /// Holds value of property tag.
         /// </summary>
         private string _tag;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -77,7 +77,9 @@ namespace iTextSharp.text.pdf
         /// This is the constructor for the  outlines object .
         /// </summary>
 
-        public PdfOutline(PdfOutline parent, PdfAction action, string title) : this(parent, action, title, true) { }
+        public PdfOutline(PdfOutline parent, PdfAction action, string title) : this(parent, action, title, true)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfOutline .
@@ -94,7 +96,9 @@ namespace iTextSharp.text.pdf
             InitOutline(parent, title, open);
         }
 
-        public PdfOutline(PdfOutline parent, PdfDestination destination, string title) : this(parent, destination, title, true) { }
+        public PdfOutline(PdfOutline parent, PdfDestination destination, string title) : this(parent, destination, title, true)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfOutline .
@@ -133,7 +137,9 @@ namespace iTextSharp.text.pdf
         /// <param name="open"> true  if the children are visible</param>
         public PdfOutline(PdfOutline parent, PdfAction action, PdfString title, bool open) : this(parent, action, title.ToString(), open) { }
 
-        public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title) : this(parent, destination, title, true) { }
+        public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title) : this(parent, destination, title, true)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfOutline .
@@ -146,7 +152,9 @@ namespace iTextSharp.text.pdf
         /// <param name="open"> true  if the children are visible</param>
         public PdfOutline(PdfOutline parent, PdfDestination destination, PdfString title, bool open) : this(parent, destination, title.ToString(), true) { }
 
-        public PdfOutline(PdfOutline parent, PdfAction action, Paragraph title) : this(parent, action, title, true) { }
+        public PdfOutline(PdfOutline parent, PdfAction action, Paragraph title) : this(parent, action, title, true)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfOutline .
@@ -159,7 +167,7 @@ namespace iTextSharp.text.pdf
         /// <param name="open"> true  if the children are visible</param>
         public PdfOutline(PdfOutline parent, PdfAction action, Paragraph title, bool open)
         {
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
             foreach (Chunk chunk in title.Chunks)
             {
                 buf.Append(chunk.Content);
@@ -168,7 +176,9 @@ namespace iTextSharp.text.pdf
             InitOutline(parent, buf.ToString(), open);
         }
 
-        public PdfOutline(PdfOutline parent, PdfDestination destination, Paragraph title) : this(parent, destination, title, true) { }
+        public PdfOutline(PdfOutline parent, PdfDestination destination, Paragraph title) : this(parent, destination, title, true)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfOutline .
@@ -181,7 +191,7 @@ namespace iTextSharp.text.pdf
         /// <param name="open"> true  if the children are visible</param>
         public PdfOutline(PdfOutline parent, PdfDestination destination, Paragraph title, bool open)
         {
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
             foreach (Chunk chunk in title.Chunks)
             {
                 buf.Append(chunk.Content);
@@ -196,46 +206,29 @@ namespace iTextSharp.text.pdf
             _parent = null;
             Writer = writer;
         }
+
         /// <summary>
         /// methods
         /// </summary>
 
         public BaseColor Color
         {
-            get
-            {
-                return _color;
-            }
-            set
-            {
-                _color = value;
-            }
+            get => _color;
+            set => _color = value;
         }
 
         public PdfIndirectReference IndirectReference
         {
-            get
-            {
-                return _reference;
-            }
+            get => _reference;
 
-            set
-            {
-                _reference = value;
-            }
+            set => _reference = value;
         }
 
         public ArrayList Kids
         {
-            get
-            {
-                return kids;
-            }
+            get => kids;
 
-            set
-            {
-                kids = value;
-            }
+            set => kids = value;
         }
 
         public int Level
@@ -255,46 +248,22 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool Open
         {
-            set
-            {
-                _open = value;
-            }
-            get
-            {
-                return _open;
-            }
+            set => _open = value;
+            get => _open;
         }
 
-        public PdfOutline Parent
-        {
-            get
-            {
-                return _parent;
-            }
-        }
+        public PdfOutline Parent => _parent;
 
         /// <summary>
         /// Gets the destination for this outline.
         /// </summary>
         /// <returns>the destination</returns>
-        public PdfDestination PdfDestination
-        {
-            get
-            {
-                return _destination;
-            }
-        }
+        public PdfDestination PdfDestination => _destination;
 
         public int Style
         {
-            get
-            {
-                return _style;
-            }
-            set
-            {
-                _style = value;
-            }
+            get => _style;
+            set => _style = value;
         }
 
         /// <summary>
@@ -303,42 +272,27 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property tag.</returns>
         public string Tag
         {
-            get
-            {
-                return _tag;
-            }
+            get => _tag;
 
-            set
-            {
-                _tag = value;
-            }
+            set => _tag = value;
         }
 
         public string Title
         {
             get
             {
-                PdfString title = (PdfString)Get(PdfName.Title);
+                var title = (PdfString)Get(PdfName.Title);
                 return title.ToString();
             }
 
-            set
-            {
-                Put(PdfName.Title, new PdfString(value, TEXT_UNICODE));
-            }
+            set => Put(PdfName.Title, new PdfString(value, TEXT_UNICODE));
         }
 
         internal int Count
         {
-            get
-            {
-                return _count;
-            }
+            get => _count;
 
-            set
-            {
-                _count = value;
-            }
+            set => _count = value;
         }
 
         public void AddKid(PdfOutline outline)
@@ -361,13 +315,22 @@ namespace iTextSharp.text.pdf
             {
                 Put(PdfName.C, new PdfArray(new[] { _color.R / 255f, _color.G / 255f, _color.B / 255f }));
             }
-            int flag = 0;
+            var flag = 0;
             if ((_style & text.Font.BOLD) != 0)
+            {
                 flag |= 2;
+            }
+
             if ((_style & text.Font.ITALIC) != 0)
+            {
                 flag |= 1;
+            }
+
             if (flag != 0)
+            {
                 Put(PdfName.F, new PdfNumber(flag));
+            }
+
             if (_parent != null)
             {
                 Put(PdfName.Parent, _parent.IndirectReference);
@@ -377,7 +340,10 @@ namespace iTextSharp.text.pdf
                 Put(PdfName.Dest, _destination);
             }
             if (_action != null)
+            {
                 Put(PdfName.A, _action);
+            }
+
             if (_count != 0)
             {
                 Put(PdfName.Count, new PdfNumber(_count));
@@ -399,7 +365,9 @@ namespace iTextSharp.text.pdf
             Put(PdfName.Title, new PdfString(title, TEXT_UNICODE));
             parent.AddKid(this);
             if (_destination != null && !_destination.HasPage()) // bugfix Finn Bock
+            {
                 SetDestinationPage(Writer.CurrentPage);
+            }
         }
     }
 }

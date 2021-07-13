@@ -29,33 +29,35 @@ namespace iTextSharp.text.rtf.document
         /// @author Howard Shank (hgshank@yahoo.com)
         /// </summary>
         public const int LEVEL_REVPROT = 0x0001; // protlevel0
-                                                 /// <summary>
-                                                 /// ANNNOTPROT
-                                                 /// Mutually exclusive
-                                                 /// This document is protected for comments (annotations).
-                                                 /// The user cannot edit the document but can insert comments (annotations).
-                                                 /// @since 2.1.1
-                                                 /// @author Howard Shank (hgshank@yahoo.com)
-                                                 /// </summary>
-        public const int LEVEL_ANNOTPROT = 0x0002; // protlevel1
-                                                   /// <summary>
-                                                   /// FORMPROT
-                                                   /// Mutually exclusive
-                                                   /// Document is protected for forms.
-                                                   /// see also \allprot (forms controlword)
-                                                   /// @since 2.1.1
-                                                   /// @author Howard Shank (hgshank@yahoo.com)
-                                                   /// </summary>
-        public const int LEVEL_FORMPROT = 0x0004; // protlevel2
-                                                  /// <summary>
-                                                  /// READPROT
-                                                  /// Mutually exclusive but can be combined with ANNOTPROT for backward compatibility
-                                                  /// Document is protected for editing, except areas marked as exceptions by \protstart and\protend
-                                                  /// @since 2.1.1
-                                                  /// @author Howard Shank (hgshank@yahoo.com)
-                                                  /// </summary>
-        public const int LEVEL_READPROT = 0x0008; // protlevel3
 
+        /// <summary>
+        /// ANNNOTPROT
+        /// Mutually exclusive
+        /// This document is protected for comments (annotations).
+        /// The user cannot edit the document but can insert comments (annotations).
+        /// @since 2.1.1
+        /// @author Howard Shank (hgshank@yahoo.com)
+        /// </summary>
+        public const int LEVEL_ANNOTPROT = 0x0002; // protlevel1
+
+        /// <summary>
+        /// FORMPROT
+        /// Mutually exclusive
+        /// Document is protected for forms.
+        /// see also \allprot (forms controlword)
+        /// @since 2.1.1
+        /// @author Howard Shank (hgshank@yahoo.com)
+        /// </summary>
+        public const int LEVEL_FORMPROT = 0x0004; // protlevel2
+
+        /// <summary>
+        /// READPROT
+        /// Mutually exclusive but can be combined with ANNOTPROT for backward compatibility
+        /// Document is protected for editing, except areas marked as exceptions by \protstart and\protend
+        /// @since 2.1.1
+        /// @author Howard Shank (hgshank@yahoo.com)
+        /// </summary>
+        public const int LEVEL_READPROT = 0x0008; // protlevel3
 
         /// <summary>
         /// STYLELOCK
@@ -64,6 +66,7 @@ namespace iTextSharp.text.rtf.document
         /// @author Howard Shank (hgshank@yahoo.com)
         /// </summary>
         public const int STYLELOCK = 0x0001;
+
         /// <summary>
         /// STYLELOCKENFORCED
         /// The styles and formatting restrictions are being enforced.
@@ -71,6 +74,7 @@ namespace iTextSharp.text.rtf.document
         /// @author Howard Shank (hgshank@yahoo.com)
         /// </summary>
         public const int STYLELOCKENFORCED = 0x0002;
+
         /// <summary>
         /// STYLELOCKBACKCOMP
         /// Style lockdown backward compatibility flag, indicating we emitted protection
@@ -80,6 +84,7 @@ namespace iTextSharp.text.rtf.document
         /// @author Howard Shank (hgshank@yahoo.com)
         /// </summary>
         public const int STYLELOCKBACKCOMP = 0x0004;
+
         /// <summary>
         /// STYLELOCKBACKCOMP
         /// Allow AutoFormat to override styles and formatting restrictions.  When style
@@ -89,7 +94,6 @@ namespace iTextSharp.text.rtf.document
         /// @author Howard Shank (hgshank@yahoo.com)
         /// </summary>
         public const int AUTOFMTOVERRIDE = 0x0008;
-
 
         /// <summary>
         ///  initialCodeArray  Table from ECMA-376 Specification
@@ -147,15 +151,15 @@ namespace iTextSharp.text.rtf.document
         /// <returns>hex encoded password hash</returns>
         public static string GenerateHash(string pwd)
         {
-            string encryptedPwd = "00000000";
-            string password = pwd;
+            var encryptedPwd = "00000000";
+            var password = pwd;
 
             // if there is no password or the length is 0, then skip this and return "00000000" as default
             // otherwise process the password
             if (!string.IsNullOrEmpty(password))
             {
-                int hi = 0;
-                int lo = 0;
+                var hi = 0;
+                var lo = 0;
 
                 // Truncate the password to 15 characters.
                 if (password.Length > 15)
@@ -167,8 +171,8 @@ namespace iTextSharp.text.rtf.document
                 // initialize to table value
                 hi = _initialCodeArray[password.Length - 1];
 
-                int fidx = 0;
-                int idxR = password.Length - 1;
+                var fidx = 0;
+                var idxR = password.Length - 1;
                 // process each character left to right.
                 // check each bit and if it is set, xor the hi word with
                 // the table entry for the position in password and bit position.
@@ -218,7 +222,7 @@ namespace iTextSharp.text.rtf.document
 
                 // correct for little-endian -
                 // Java always uses big-endian. According to tests - RTF wants little-endian but is not documented
-                string s = lo.ToString("x8");
+                var s = lo.ToString("x8");
                 encryptedPwd = s.Substring(6, 2) + s.Substring(4, 2);
                 s = hi.ToString("x8");
                 encryptedPwd += s.Substring(6, 2) + s.Substring(4, 2);

@@ -24,6 +24,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// <summary>
         /// </summary>
         RtfCtrlWordData BeforeCtrlWord(RtfCtrlWordData ctrlWordData);
+
         /// <summary>
         /// </summary>
         int OnCharacter(int ch);
@@ -36,6 +37,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// <summary>
         /// </summary>
         RtfCtrlWordData OnCtrlWord(RtfCtrlWordData ctrlWordData);
+
         /// <summary>
         /// </summary>
         /// <returns></returns>

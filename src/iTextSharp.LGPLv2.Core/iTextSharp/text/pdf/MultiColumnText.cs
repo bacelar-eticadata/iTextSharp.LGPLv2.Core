@@ -14,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class MultiColumnText : IElement
     {
-
         /// <summary>
         /// special constant for automatic calculation of height
         /// </summary>
@@ -64,6 +63,7 @@ namespace iTextSharp.text.pdf
         private bool _columnsRightToLeft;
 
         private PdfDocument _document;
+
         /// <summary>
         /// Default constructor.  Sets height to  AUTOMATIC .
         /// Columns will repeat on each page as necessary to accomodate content length.
@@ -138,8 +138,12 @@ namespace iTextSharp.text.pdf
         /// <param name="right">limits for right column</param>
         public void AddColumn(float[] left, float[] right)
         {
-            ColumnDef nextDef = new ColumnDef(left, right, this);
-            if (!nextDef.IsSimple()) _simple = false;
+            var nextDef = new ColumnDef(left, right, this);
+            if (!nextDef.IsSimple())
+            {
+                _simple = false;
+            }
+
             _columnDefs.Add(nextDef);
         }
 
@@ -151,7 +155,7 @@ namespace iTextSharp.text.pdf
         /// <param name="right">right boundary</param>
         public void AddSimpleColumn(float left, float right)
         {
-            ColumnDef newCol = new ColumnDef(left, right, this);
+            var newCol = new ColumnDef(left, right, this);
             _columnDefs.Add(newCol);
         }
 
@@ -165,10 +169,10 @@ namespace iTextSharp.text.pdf
         /// <param name="numColumns">number of columns to add</param>
         public void AddRegularColumns(float left, float right, float gutterWidth, int numColumns)
         {
-            float currX = left;
-            float width = right - left;
-            float colWidth = (width - (gutterWidth * (numColumns - 1))) / numColumns;
-            for (int i = 0; i < numColumns; i++)
+            var currX = left;
+            var width = right - left;
+            var colWidth = (width - (gutterWidth * (numColumns - 1))) / numColumns;
+            for (var i = 0; i < numColumns; i++)
             {
                 AddSimpleColumn(currX, currX + colWidth);
                 currX += colWidth + gutterWidth;
@@ -196,6 +200,7 @@ namespace iTextSharp.text.pdf
         {
             _columnText.AddText(chunk);
         }
+
         /// <summary>
         /// Add an element to be rendered in a column.
         /// Note that you can only add a  Phrase
@@ -225,7 +230,6 @@ namespace iTextSharp.text.pdf
             }
         }
 
-
         /// <summary>
         /// Write out the columns.  After writing, use
         /// {@link #isOverflow()} to see if all text was written.
@@ -245,7 +249,7 @@ namespace iTextSharp.text.pdf
             }
             _overflow = false;
             float currentHeight = 0;
-            bool done = false;
+            var done = false;
             while (!done)
             {
                 if (_top.ApproxEquals(AUTOMATIC))
@@ -257,21 +261,21 @@ namespace iTextSharp.text.pdf
                     _nextY = document.GetVerticalPosition(true); // RS - 07/07/2005 - - Get current doc writing position for top of columns on new page.
                 }
 
-                ColumnDef currentDef = (ColumnDef)_columnDefs[CurrentColumn];
+                var currentDef = (ColumnDef)_columnDefs[CurrentColumn];
                 _columnText.YLine = _top;
 
-                float[] left = currentDef.ResolvePositions(Rectangle.LEFT_BORDER);
-                float[] right = currentDef.ResolvePositions(Rectangle.RIGHT_BORDER);
+                var left = currentDef.ResolvePositions(Rectangle.LEFT_BORDER);
+                var right = currentDef.ResolvePositions(Rectangle.RIGHT_BORDER);
                 if (document.IsMarginMirroring() && document.PageNumber % 2 == 0)
                 {
-                    float delta = document.RightMargin - document.Left;
+                    var delta = document.RightMargin - document.Left;
                     left = (float[])left.Clone();
                     right = (float[])right.Clone();
-                    for (int i = 0; i < left.Length; i += 2)
+                    for (var i = 0; i < left.Length; i += 2)
                     {
                         left[i] -= delta;
                     }
-                    for (int i = 0; i < right.Length; i += 2)
+                    for (var i = 0; i < right.Length; i += 2)
                     {
                         right[i] -= delta;
                     }
@@ -287,7 +291,7 @@ namespace iTextSharp.text.pdf
                     _columnText.SetColumns(left, right);
                 }
 
-                int result = _columnText.Go();
+                var result = _columnText.Go();
                 if ((result & ColumnText.NO_MORE_TEXT) != 0)
                 {
                     done = true;
@@ -347,21 +351,20 @@ namespace iTextSharp.text.pdf
         /// <returns>height</returns>
         private float getHeight(float[] left, float[] right)
         {
-            float max = float.MinValue;
-            float min = float.MaxValue;
-            for (int i = 0; i < left.Length; i += 2)
+            var max = float.MinValue;
+            var min = float.MaxValue;
+            for (var i = 0; i < left.Length; i += 2)
             {
                 min = Math.Min(min, left[i + 1]);
                 max = Math.Max(max, left[i + 1]);
             }
-            for (int i = 0; i < right.Length; i += 2)
+            for (var i = 0; i < right.Length; i += 2)
             {
                 min = Math.Min(min, right[i + 1]);
                 max = Math.Max(max, right[i + 1]);
             }
             return max - min;
         }
-
 
         /// <summary>
         /// Processes the element by adding it to an
@@ -386,26 +389,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a type</returns>
 
-        public int Type
-        {
-            get
-            {
-                return Element.MULTI_COLUMN_TEXT;
-            }
-        }
+        public int Type => Element.MULTI_COLUMN_TEXT;
 
         /// <summary>
         /// Returns null - not used
         /// </summary>
         /// <returns>null</returns>
 
-        public ArrayList Chunks
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public ArrayList Chunks => null;
 
         /// <summary>
         /// @see com.lowagie.text.Element#isContent()
@@ -513,10 +504,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float SpaceCharRatio
         {
-            set
-            {
-                _columnText.SpaceCharRatio = value;
-            }
+            set => _columnText.SpaceCharRatio = value;
         }
 
         /// <summary>
@@ -524,10 +512,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int RunDirection
         {
-            set
-            {
-                _columnText.RunDirection = value;
-            }
+            set => _columnText.RunDirection = value;
         }
 
         /// <summary>
@@ -536,10 +521,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int ArabicOptions
         {
-            set
-            {
-                _columnText.ArabicOptions = value;
-            }
+            set => _columnText.ArabicOptions = value;
         }
 
         /// <summary>
@@ -547,10 +529,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int Alignment
         {
-            set
-            {
-                _columnText.Alignment = value;
-            }
+            set => _columnText.Alignment = value;
         }
 
         /// <summary>
@@ -644,7 +623,6 @@ namespace iTextSharp.text.pdf
             {
                 return (_left.Length == 4 && _right.Length == 4) && (_left[0].ApproxEquals(_left[2]) && _right[0].ApproxEquals(_right[2]));
             }
-
         }
     }
 }

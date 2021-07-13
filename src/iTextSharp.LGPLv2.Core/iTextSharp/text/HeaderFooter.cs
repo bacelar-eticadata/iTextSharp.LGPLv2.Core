@@ -100,15 +100,9 @@ namespace iTextSharp.text
         /// <value>a Phrase</value>
         public Phrase After
         {
-            get
-            {
-                return _after;
-            }
+            get => _after;
 
-            set
-            {
-                _after = value;
-            }
+            set => _after = value;
         }
 
         /// <summary>
@@ -117,14 +111,8 @@ namespace iTextSharp.text
         /// <value>the new alignment</value>
         public int Alignment
         {
-            set
-            {
-                _alignment = value;
-            }
-            get
-            {
-                return _alignment;
-            }
+            set => _alignment = value;
+            get => _alignment;
         }
 
         /// <summary>
@@ -133,15 +121,9 @@ namespace iTextSharp.text
         /// <value>a Phrase</value>
         public Phrase Before
         {
-            get
-            {
-                return _before;
-            }
+            get => _before;
 
-            set
-            {
-                _before = value;
-            }
+            set => _before = value;
         }
 
         /// <summary>
@@ -150,10 +132,7 @@ namespace iTextSharp.text
         /// <value>the new page number</value>
         public int PageNumber
         {
-            set
-            {
-                _pageN = value;
-            }
+            set => _pageN = value;
         }
 
         /// <summary>
@@ -164,8 +143,10 @@ namespace iTextSharp.text
         {
             get
             {
-                Paragraph paragraph = new Paragraph(_before.Leading);
-                paragraph.Add(_before);
+                var paragraph = new Paragraph(_before.Leading)
+                {
+                    _before
+                };
                 if (_numbered)
                 {
                     paragraph.AddSpecial(new Chunk(_pageN.ToString(), _before.Font));

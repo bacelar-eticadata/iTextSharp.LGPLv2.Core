@@ -1,7 +1,7 @@
+using iTextSharp.LGPLv2.Core.System.NetUtils;
 using System;
 using System.IO;
 using System.Text;
-using iTextSharp.LGPLv2.Core.System.NetUtils;
 
 namespace iTextSharp.text.pdf
 {
@@ -12,7 +12,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class RandomAccessFileOrArray
     {
-
         internal byte[] ArrayIn;
         internal int ArrayInPtr;
         internal byte Back;
@@ -44,7 +43,7 @@ namespace iTextSharp.text.pdf
                     filename.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
                     filename.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
                 {
-                    Stream isp = filename.GetResponseStream();
+                    var isp = filename.GetResponseStream();
                     try
                     {
                         ArrayIn = InputStreamToArray(isp);
@@ -69,7 +68,10 @@ namespace iTextSharp.text.pdf
                     }
 
                     if (isp == null)
+                    {
                         throw new IOException(filename + " not found as file or resource.");
+                    }
+
                     try
                     {
                         ArrayIn = InputStreamToArray(isp);
@@ -91,7 +93,7 @@ namespace iTextSharp.text.pdf
                 }
                 finally
                 {
-                    try { if (s != null) s.Dispose(); } catch { }
+                    try { if (s != null) { s.Dispose(); } } catch { }
                 }
                 return;
             }
@@ -101,7 +103,7 @@ namespace iTextSharp.text.pdf
 
         public RandomAccessFileOrArray(Uri url)
         {
-            Stream isp = url.GetResponseStream();
+            var isp = url.GetResponseStream();
             try
             {
                 ArrayIn = InputStreamToArray(isp);
@@ -142,13 +144,15 @@ namespace iTextSharp.text.pdf
             get
             {
                 InsureOpen();
-                int n = IsBack ? 1 : 0;
+                var n = IsBack ? 1 : 0;
                 if (ArrayIn == null)
                 {
                     return (int)Rf.Position - n - _startOffset;
                 }
                 else
+                {
                     return ArrayInPtr - n - _startOffset;
+                }
             }
         }
 
@@ -162,35 +166,35 @@ namespace iTextSharp.text.pdf
                     return (int)Rf.Length - _startOffset;
                 }
                 else
+                {
                     return ArrayIn.Length - _startOffset;
+                }
             }
         }
 
         public int StartOffset
         {
-            get
-            {
-                return _startOffset;
-            }
-            set
-            {
-                _startOffset = value;
-            }
+            get => _startOffset;
+            set => _startOffset = value;
         }
 
         public static byte[] InputStreamToArray(Stream isp)
         {
-            byte[] b = new byte[8192];
-            MemoryStream outp = new MemoryStream();
+            var b = new byte[8192];
+            var outp = new MemoryStream();
             while (true)
             {
-                int read = isp.Read(b, 0, b.Length);
+                var read = isp.Read(b, 0, b.Length);
                 if (read < 1)
+                {
                     break;
+                }
+
                 outp.Write(b, 0, read);
             }
             return outp.ToArray();
         }
+
         public void Close()
         {
             IsBack = false;
@@ -220,11 +224,16 @@ namespace iTextSharp.text.pdf
                 return Back & 0xff;
             }
             if (ArrayIn == null)
+            {
                 return Rf.ReadByte();
+            }
             else
             {
                 if (ArrayInPtr >= ArrayIn.Length)
+                {
                     return -1;
+                }
+
                 return ArrayIn[ArrayInPtr++] & 0xff;
             }
         }
@@ -232,8 +241,11 @@ namespace iTextSharp.text.pdf
         public int Read(byte[] b, int off, int len)
         {
             if (len == 0)
+            {
                 return 0;
-            int n = 0;
+            }
+
+            var n = 0;
             if (IsBack)
             {
                 IsBack = false;
@@ -256,9 +268,15 @@ namespace iTextSharp.text.pdf
             else
             {
                 if (ArrayInPtr >= ArrayIn.Length)
+                {
                     return -1;
+                }
+
                 if (ArrayInPtr + len > ArrayIn.Length)
+                {
                     len = ArrayIn.Length - ArrayInPtr;
+                }
+
                 Array.Copy(ArrayIn, ArrayInPtr, b, off, len);
                 ArrayInPtr += len;
                 return len + n;
@@ -272,26 +290,35 @@ namespace iTextSharp.text.pdf
 
         public bool ReadBoolean()
         {
-            int ch = Read();
+            var ch = Read();
             if (ch < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (ch != 0);
         }
 
         public byte ReadByte()
         {
-            int ch = Read();
+            var ch = Read();
             if (ch < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (byte)(ch);
         }
 
         public char ReadChar()
         {
-            int ch1 = Read();
-            int ch2 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (char)((ch1 << 8) + ch2);
         }
 
@@ -308,10 +335,13 @@ namespace iTextSharp.text.pdf
         /// <returns>the next two bytes of this stream as a Unicode character.</returns>
         public char ReadCharLe()
         {
-            int ch1 = Read();
-            int ch2 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (char)((ch2 << 8) + (ch1 << 0));
         }
 
@@ -355,25 +385,34 @@ namespace iTextSharp.text.pdf
         public void ReadFully(byte[] b, int off, int len)
         {
             if (len == 0)
+            {
                 return;
-            int n = 0;
+            }
+
+            var n = 0;
             do
             {
-                int count = Read(b, off + n, len - n);
+                var count = Read(b, off + n, len - n);
                 if (count <= 0)
+                {
                     throw new EndOfStreamException();
+                }
+
                 n += count;
             } while (n < len);
         }
 
         public int ReadInt()
         {
-            int ch1 = Read();
-            int ch2 = Read();
-            int ch3 = Read();
-            int ch4 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
+            var ch3 = Read();
+            var ch4 = Read();
             if ((ch1 | ch2 | ch3 | ch4) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + ch4);
         }
 
@@ -391,20 +430,23 @@ namespace iTextSharp.text.pdf
         /// <returns>the next four bytes of this stream, interpreted as an</returns>
         public int ReadIntLe()
         {
-            int ch1 = Read();
-            int ch2 = Read();
-            int ch3 = Read();
-            int ch4 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
+            var ch3 = Read();
+            var ch4 = Read();
             if ((ch1 | ch2 | ch3 | ch4) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
         }
 
         public string ReadLine()
         {
-            StringBuilder input = new StringBuilder();
-            int c = -1;
-            bool eol = false;
+            var input = new StringBuilder();
+            var c = -1;
+            var eol = false;
 
             while (!eol)
             {
@@ -414,14 +456,16 @@ namespace iTextSharp.text.pdf
                     case '\n':
                         eol = true;
                         break;
+
                     case '\r':
                         eol = true;
-                        int cur = FilePointer;
+                        var cur = FilePointer;
                         if ((Read()) != '\n')
                         {
                             Seek(cur);
                         }
                         break;
+
                     default:
                         input.Append((char)c);
                         break;
@@ -442,17 +486,20 @@ namespace iTextSharp.text.pdf
 
         public long ReadLongLe()
         {
-            int i1 = ReadIntLe();
-            int i2 = ReadIntLe();
+            var i1 = ReadIntLe();
+            var i2 = ReadIntLe();
             return ((long)i2 << 32) + (i1 & 0xFFFFFFFFL);
         }
 
         public short ReadShort()
         {
-            int ch1 = Read();
-            int ch2 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (short)((ch1 << 8) + ch2);
         }
 
@@ -478,18 +525,24 @@ namespace iTextSharp.text.pdf
         /// <returns>the next two bytes of this stream, interpreted as a signed</returns>
         public short ReadShortLe()
         {
-            int ch1 = Read();
-            int ch2 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (short)((ch2 << 8) + (ch1 << 0));
         }
 
         public int ReadUnsignedByte()
         {
-            int ch = Read();
+            var ch = Read();
             if (ch < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return ch;
         }
 
@@ -511,7 +564,10 @@ namespace iTextSharp.text.pdf
             long ch3 = Read();
             long ch4 = Read();
             if ((ch1 | ch2 | ch3 | ch4) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
         }
 
@@ -522,16 +578,22 @@ namespace iTextSharp.text.pdf
             long ch3 = Read();
             long ch4 = Read();
             if ((ch1 | ch2 | ch3 | ch4) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
         }
 
         public int ReadUnsignedShort()
         {
-            int ch1 = Read();
-            int ch2 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (ch1 << 8) + ch2;
         }
 
@@ -549,17 +611,23 @@ namespace iTextSharp.text.pdf
         /// <returns>the next two bytes of this stream, interpreted as an</returns>
         public int ReadUnsignedShortLe()
         {
-            int ch1 = Read();
-            int ch2 = Read();
+            var ch1 = Read();
+            var ch2 = Read();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
+
             return (ch2 << 8) + (ch1 << 0);
         }
 
         public void ReOpen()
         {
             if (Filename != null && Rf == null)
+            {
                 Rf = new FileStream(Filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+            }
+
             Seek(0);
         }
 
@@ -573,7 +641,9 @@ namespace iTextSharp.text.pdf
                 Rf.Position = pos;
             }
             else
+            {
                 ArrayInPtr = pos;
+            }
         }
 
         public void Seek(long pos)
@@ -592,7 +662,7 @@ namespace iTextSharp.text.pdf
             {
                 return 0;
             }
-            int adj = 0;
+            var adj = 0;
             if (IsBack)
             {
                 IsBack = false;
@@ -622,6 +692,7 @@ namespace iTextSharp.text.pdf
             /* return the actual number of bytes skipped */
             return newpos - pos + adj;
         }
+
         protected void InsureOpen()
         {
             if (Filename != null && Rf == null)

@@ -1,16 +1,14 @@
-using System.util;
 using System.Collections;
+using System.util;
 
 namespace iTextSharp.text.html
 {
-
     /// <summary>
     /// The  Tags -class maps several XHTML-tags to iText-objects.
     /// </summary>
 
     public class HtmlTagMap : Hashtable
     {
-
         /// <summary>
         /// Constructs an HtmlTagMap.
         /// </summary>
@@ -202,6 +200,7 @@ namespace iTextSharp.text.html
         {
             return Util.EqualsIgnoreCase(HtmlTags.HTML, tag);
         }
+
         /// <summary>
         /// Checks if this is the linl tag.
         /// </summary>
@@ -221,6 +220,7 @@ namespace iTextSharp.text.html
         {
             return Util.EqualsIgnoreCase(HtmlTags.META, tag);
         }
+
         /// <summary>
         /// Checks if this is a special tag.
         /// </summary>

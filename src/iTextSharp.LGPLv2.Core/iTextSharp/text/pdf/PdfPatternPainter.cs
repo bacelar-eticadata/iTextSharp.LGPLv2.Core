@@ -2,7 +2,6 @@ using System;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Implements the pattern.
     /// </summary>
@@ -28,66 +27,55 @@ namespace iTextSharp.text.pdf
         {
             Stencil = true;
             if (defaultColor == null)
+            {
                 this.defaultColor = new BaseColor(System.Drawing.Color.Gray);
+            }
             else
+            {
                 this.defaultColor = defaultColor;
+            }
         }
 
         private PdfPatternPainter()
         {
             type = TYPE_PATTERN;
         }
-        public BaseColor DefaultColor
-        {
-            get
-            {
-                return defaultColor;
-            }
-        }
+
+        public BaseColor DefaultColor => defaultColor;
 
         public override PdfContentByte Duplicate
         {
             get
             {
-                PdfPatternPainter tpl = new PdfPatternPainter();
-                tpl.Writer = Writer;
-                tpl.Pdf = Pdf;
-                tpl.ThisReference = ThisReference;
-                tpl.pageResources = pageResources;
-                tpl.BBox = new Rectangle(BBox);
-                tpl.Xstep = Xstep;
-                tpl.Ystep = Ystep;
-                tpl.matrix = matrix;
-                tpl.Stencil = Stencil;
-                tpl.defaultColor = defaultColor;
+                var tpl = new PdfPatternPainter
+                {
+                    Writer = Writer,
+                    Pdf = Pdf,
+                    ThisReference = ThisReference,
+                    pageResources = pageResources,
+                    BBox = new Rectangle(BBox),
+                    Xstep = Xstep,
+                    Ystep = Ystep,
+                    matrix = matrix,
+                    Stencil = Stencil,
+                    defaultColor = defaultColor
+                };
                 return tpl;
             }
         }
 
         public float XStep
         {
-            get
-            {
-                return Xstep;
-            }
+            get => Xstep;
 
-            set
-            {
-                Xstep = value;
-            }
+            set => Xstep = value;
         }
 
         public float YStep
         {
-            get
-            {
-                return Ystep;
-            }
+            get => Ystep;
 
-            set
-            {
-                Ystep = value;
-            }
+            set => Ystep = value;
         }
 
         /// <summary>
@@ -96,7 +84,10 @@ namespace iTextSharp.text.pdf
         public override void AddImage(Image image, float a, float b, float c, float d, float e, float f)
         {
             if (Stencil && !image.IsMask())
+            {
                 CheckNoColor();
+            }
+
             base.AddImage(image, a, b, c, d, e, f);
         }
 
@@ -334,7 +325,9 @@ namespace iTextSharp.text.pdf
         internal void CheckNoColor()
         {
             if (Stencil)
+            {
                 throw new ArgumentException("Colors are not allowed in uncolored tile patterns.");
+            }
         }
 
         /// <summary>

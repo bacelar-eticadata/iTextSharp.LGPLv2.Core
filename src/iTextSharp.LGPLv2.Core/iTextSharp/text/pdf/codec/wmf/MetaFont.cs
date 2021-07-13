@@ -1,5 +1,5 @@
-using System;
 using iTextSharp.LGPLv2.Core.System.Encodings;
+using System;
 
 namespace iTextSharp.text.pdf.codec.wmf
 {
@@ -43,20 +43,20 @@ namespace iTextSharp.text.pdf.codec.wmf
 
         internal const int VARIABLE_PITCH = 2;
 
-        static readonly string[] _fontNames = {
+        private static readonly string[] _fontNames = {
                                         "Courier", "Courier-Bold", "Courier-Oblique", "Courier-BoldOblique",
                                         "Helvetica", "Helvetica-Bold", "Helvetica-Oblique", "Helvetica-BoldOblique",
                                         "Times-Roman", "Times-Bold", "Times-Italic", "Times-BoldItalic",
                                         "Symbol", "ZapfDingbats"};
-        int _bold;
-        int _charset;
-        string _faceName = "arial";
-        BaseFont _font;
-        int _height;
-        int _italic;
-        int _pitchAndFamily;
-        bool _strikeout;
-        bool _underline;
+
+        private int _bold;
+        private string _faceName = "arial";
+        private BaseFont _font;
+        private int _height;
+        private int _italic;
+        private int _pitchAndFamily;
+        private bool _strikeout;
+        private bool _underline;
 
         public MetaFont()
         {
@@ -70,11 +70,17 @@ namespace iTextSharp.text.pdf.codec.wmf
             get
             {
                 if (_font != null)
+                {
                     return _font;
-                Font ff2 = FontFactory.GetFont(_faceName, BaseFont.CP1252, true, 10, ((_italic != 0) ? text.Font.ITALIC : 0) | ((_bold != 0) ? text.Font.BOLD : 0));
+                }
+
+                var ff2 = FontFactory.GetFont(_faceName, BaseFont.CP1252, true, 10, ((_italic != 0) ? text.Font.ITALIC : 0) | ((_bold != 0) ? text.Font.BOLD : 0));
                 _font = ff2.BaseFont;
                 if (_font != null)
+                {
                     return _font;
+                }
+
                 string fontName;
                 if (_faceName.IndexOf("courier", StringComparison.OrdinalIgnoreCase) != -1 || _faceName.IndexOf("terminal", StringComparison.OrdinalIgnoreCase) != -1
                     || _faceName.IndexOf("fixedsys", StringComparison.OrdinalIgnoreCase) != -1)
@@ -101,21 +107,24 @@ namespace iTextSharp.text.pdf.codec.wmf
                 }
                 else
                 {
-                    int pitch = _pitchAndFamily & 3;
-                    int family = (_pitchAndFamily >> 4) & 7;
+                    var pitch = _pitchAndFamily & 3;
+                    var family = (_pitchAndFamily >> 4) & 7;
                     switch (family)
                     {
                         case FF_MODERN:
                             fontName = _fontNames[MARKER_COURIER + _italic + _bold];
                             break;
+
                         case FF_ROMAN:
                             fontName = _fontNames[MARKER_TIMES + _italic + _bold];
                             break;
+
                         case FF_SWISS:
                         case FF_SCRIPT:
                         case FF_DECORATIVE:
                             fontName = _fontNames[MARKER_HELVETICA + _italic + _bold];
                             break;
+
                         default:
                             {
                                 switch (pitch)
@@ -123,6 +132,7 @@ namespace iTextSharp.text.pdf.codec.wmf
                                     case FIXED_PITCH:
                                         fontName = _fontNames[MARKER_COURIER + _italic + _bold];
                                         break;
+
                                     default:
                                         fontName = _fontNames[MARKER_HELVETICA + _italic + _bold];
                                         break;
@@ -152,14 +162,14 @@ namespace iTextSharp.text.pdf.codec.wmf
             _italic = (meta.ReadByte() != 0 ? MARKER_ITALIC : 0);
             _underline = (meta.ReadByte() != 0);
             _strikeout = (meta.ReadByte() != 0);
-            _charset = meta.ReadByte();
+            var charset = meta.ReadByte();
             meta.Skip(3);
             _pitchAndFamily = meta.ReadByte();
-            byte[] name = new byte[nameSize];
+            var name = new byte[nameSize];
             int k;
             for (k = 0; k < nameSize; ++k)
             {
-                int c = meta.ReadByte();
+                var c = meta.ReadByte();
                 if (c == 0)
                 {
                     break;
@@ -174,8 +184,9 @@ namespace iTextSharp.text.pdf.codec.wmf
             {
                 _faceName = System.Text.Encoding.ASCII.GetString(name, 0, k);
             }
-            _faceName = _faceName.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+            _faceName = _faceName.ToLowerInvariant();
         }
+
         public bool IsStrikeout()
         {
             return _strikeout;

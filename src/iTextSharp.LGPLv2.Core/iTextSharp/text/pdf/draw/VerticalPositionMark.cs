@@ -37,8 +37,10 @@ namespace iTextSharp.text.pdf.draw
         {
             get
             {
-                ArrayList list = new ArrayList();
-                list.Add(new Chunk(this, true));
+                var list = new ArrayList
+                {
+                    new Chunk(this, true)
+                };
                 return list;
             }
         }

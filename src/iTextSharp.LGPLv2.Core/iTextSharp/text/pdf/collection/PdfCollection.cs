@@ -9,6 +9,7 @@ namespace iTextSharp.text.pdf.collection
         /// A type of PDF Collection
         /// </summary>
         public const int DETAILS = 0;
+
         /// <summary>
         /// A type of PDF Collection
         /// </summary>
@@ -30,9 +31,11 @@ namespace iTextSharp.text.pdf.collection
                 case TILE:
                     Put(PdfName.View, PdfName.T);
                     break;
+
                 case HIDDEN:
                     Put(PdfName.View, PdfName.H);
                     break;
+
                 default:
                     Put(PdfName.View, PdfName.D);
                     break;
@@ -45,10 +48,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public string InitialDocument
         {
-            set
-            {
-                Put(PdfName.D, new PdfString(value, null));
-            }
+            set => Put(PdfName.D, new PdfString(value, null));
         }
 
         /// <summary>
@@ -56,14 +56,8 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public PdfCollectionSchema Schema
         {
-            set
-            {
-                Put(PdfName.Schema, value);
-            }
-            get
-            {
-                return (PdfCollectionSchema)Get(PdfName.Schema);
-            }
+            set => Put(PdfName.Schema, value);
+            get => (PdfCollectionSchema)Get(PdfName.Schema);
         }
 
         /// <summary>
@@ -71,10 +65,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public PdfCollectionSort Sort
         {
-            set
-            {
-                Put(PdfName.Sort, value);
-            }
+            set => Put(PdfName.Sort, value);
         }
     }
 }

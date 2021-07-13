@@ -50,11 +50,11 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                StringBuilder buf = new StringBuilder();
-                int state = First;
+                var buf = new StringBuilder();
+                var state = First;
                 while (true)
                 {
-                    char c = NextChar();
+                    var c = NextChar();
                     if (c == EOT)
                     {
                         if (state == Digit)
@@ -64,7 +64,7 @@ namespace iTextSharp.text.pdf
                         }
                         else if (state == Other)
                         {
-                            other = buf.ToString().ToLower(System.Globalization.CultureInfo.InvariantCulture);
+                            other = buf.ToString().ToLowerInvariant();
                             return TEXT;
                         }
                         return END;
@@ -76,20 +76,30 @@ namespace iTextSharp.text.pdf
                             {
                                 case '!':
                                     return NOT;
+
                                 case '-':
                                     return MINUS;
+
                                 case ',':
                                     return COMMA;
                             }
                             buf.Append(c);
                             if (c >= '0' && c <= '9')
+                            {
                                 state = Digit;
+                            }
                             else
+                            {
                                 state = Other;
+                            }
+
                             break;
+
                         case Digit:
                             if (c >= '0' && c <= '9')
+                            {
                                 buf.Append(c);
+                            }
                             else
                             {
                                 PutBack();
@@ -97,13 +107,16 @@ namespace iTextSharp.text.pdf
                                 return NUMBER;
                             }
                             break;
+
                         case Other:
                             if (NotOther.IndexOf(c.ToString(), StringComparison.Ordinal) < 0)
+                            {
                                 buf.Append(c);
+                            }
                             else
                             {
                                 PutBack();
-                                other = buf.ToString().ToLower(System.Globalization.CultureInfo.InvariantCulture);
+                                other = buf.ToString().ToLowerInvariant();
                                 return TEXT;
                             }
                             break;
@@ -120,40 +133,59 @@ namespace iTextSharp.text.pdf
         /// <returns>a list with the numbers as  Integer </returns>
         public static ArrayList Expand(string ranges, int maxNumber)
         {
-            SequenceList parse = new SequenceList(ranges);
-            ArrayList list = new ArrayList();
-            bool sair = false;
+            var parse = new SequenceList(ranges);
+            var list = new ArrayList();
+            var sair = false;
             while (!sair)
             {
                 sair = parse.GetAttributes();
                 if (parse.Low == -1 && parse.High == -1 && !parse.Even && !parse.Odd)
+                {
                     continue;
+                }
+
                 if (parse.Low < 1)
+                {
                     parse.Low = 1;
+                }
+
                 if (parse.High < 1 || parse.High > maxNumber)
+                {
                     parse.High = maxNumber;
+                }
+
                 if (parse.Low > maxNumber)
+                {
                     parse.Low = maxNumber;
+                }
 
                 //System.out.Println("low="+parse.low+",high="+parse.high+",odd="+parse.odd+",even="+parse.even+",inverse="+parse.inverse);
-                int inc = 1;
+                var inc = 1;
                 if (parse.Inverse)
                 {
                     if (parse.Low > parse.High)
                     {
-                        int t = parse.Low;
+                        var t = parse.Low;
                         parse.Low = parse.High;
                         parse.High = t;
                     }
-                    for (ListIterator it = new ListIterator(list); it.HasNext();)
+                    for (var it = new ListIterator(list); it.HasNext();)
                     {
-                        int n = (int)it.Next();
+                        var n = (int)it.Next();
                         if (parse.Even && (n & 1) == 1)
+                        {
                             continue;
+                        }
+
                         if (parse.Odd && (n & 1) == 0)
+                        {
                             continue;
+                        }
+
                         if (n >= parse.Low && n <= parse.High)
+                        {
                             it.Remove();
+                        }
                     }
                 }
                 else
@@ -165,11 +197,15 @@ namespace iTextSharp.text.pdf
                         {
                             --inc;
                             if (parse.Even)
+                            {
                                 parse.Low &= ~1;
+                            }
                             else
+                            {
                                 parse.Low -= ((parse.Low & 1) == 1 ? 0 : 1);
+                            }
                         }
-                        for (int k = parse.Low; k >= parse.High; k += inc)
+                        for (var k = parse.Low; k >= parse.High; k += inc)
                         {
                             list.Add(k);
                         }
@@ -180,12 +216,18 @@ namespace iTextSharp.text.pdf
                         {
                             ++inc;
                             if (parse.Odd)
+                            {
                                 parse.Low |= 1;
+                            }
                             else
+                            {
                                 parse.Low += ((parse.Low & 1) == 1 ? 1 : 0);
+                            }
                         }
-                        for (int k = parse.Low; k <= parse.High; k += inc)
+                        for (var k = parse.Low; k <= parse.High; k += inc)
+                        {
                             list.Add(k);
+                        }
                     }
                 }
             }
@@ -197,14 +239,17 @@ namespace iTextSharp.text.pdf
             Low = -1;
             High = -1;
             Odd = Even = Inverse = false;
-            int state = Other;
+            var state = Other;
             while (true)
             {
-                int type = Type;
+                var type = Type;
                 if (type == END || type == COMMA)
                 {
                     if (state == Digit)
+                    {
                         High = Low;
+                    }
+
                     return (type == END);
                 }
                 switch (state)
@@ -215,9 +260,11 @@ namespace iTextSharp.text.pdf
                             case NOT:
                                 Inverse = true;
                                 break;
+
                             case MINUS:
                                 state = Digit2;
                                 break;
+
                             default:
                                 if (type == NUMBER)
                                 {
@@ -225,10 +272,14 @@ namespace iTextSharp.text.pdf
                                     state = Digit;
                                 }
                                 else
+                                {
                                     otherProc();
+                                }
+
                                 break;
                         }
                         break;
+
                     case Digit:
                         switch (type)
                         {
@@ -237,9 +288,11 @@ namespace iTextSharp.text.pdf
                                 state = Other;
                                 High = Low;
                                 break;
+
                             case MINUS:
                                 state = Digit2;
                                 break;
+
                             default:
                                 High = Low;
                                 state = Other;
@@ -247,6 +300,7 @@ namespace iTextSharp.text.pdf
                                 break;
                         }
                         break;
+
                     case Digit2:
                         switch (type)
                         {
@@ -254,12 +308,15 @@ namespace iTextSharp.text.pdf
                                 Inverse = true;
                                 state = Other;
                                 break;
+
                             case MINUS:
                                 break;
+
                             case NUMBER:
                                 High = Number;
                                 state = Other;
                                 break;
+
                             default:
                                 state = Other;
                                 otherProc();
@@ -275,10 +332,15 @@ namespace iTextSharp.text.pdf
             while (true)
             {
                 if (Ptr >= Text.Length)
+                {
                     return EOT;
-                char c = Text[Ptr++];
+                }
+
+                var c = Text[Ptr++];
                 if (c > ' ')
+                {
                     return c;
+                }
             }
         }
 
@@ -286,7 +348,9 @@ namespace iTextSharp.text.pdf
         {
             --Ptr;
             if (Ptr < 0)
+            {
                 Ptr = 0;
+            }
         }
 
         private void otherProc()

@@ -29,49 +29,27 @@ namespace System.util.zlib
         }
 
 
-        public override bool CanRead
-        {
-            get
-            {
+        public override bool CanRead =>
                 // TODO:  Add DeflaterOutputStream.CanRead getter implementation
-                return false;
-            }
-        }
+                false;
 
-        public override bool CanSeek
-        {
-            get
-            {
+        public override bool CanSeek =>
                 // TODO:  Add DeflaterOutputStream.CanSeek getter implementation
-                return false;
-            }
-        }
+                false;
 
-        public override bool CanWrite
-        {
-            get
-            {
+        public override bool CanWrite =>
                 // TODO:  Add DeflaterOutputStream.CanWrite getter implementation
-                return true;
-            }
-        }
+                true;
 
-        public override long Length
-        {
-            get
-            {
+        public override long Length =>
                 // TODO:  Add DeflaterOutputStream.Length getter implementation
-                return 0;
-            }
-        }
+                0;
 
         public override long Position
         {
-            get
-            {
+            get =>
                 // TODO:  Add DeflaterOutputStream.Position getter implementation
-                return 0;
-            }
+                0;
             set
             {
                 // TODO:  Add DeflaterOutputStream.Position setter implementation
@@ -100,7 +78,10 @@ namespace System.util.zlib
         public void End()
         {
             if (Z == null)
+            {
                 return;
+            }
+
             Z.DeflateEnd();
             Z.Free();
             Z = null;
@@ -116,7 +97,10 @@ namespace System.util.zlib
                 Z.AvailOut = Bufsize;
                 err = Z.Deflate(JZlib.Z_FINISH);
                 if (err != JZlib.Z_STREAM_END && err != JZlib.Z_OK)
+                {
                     throw new IOException("deflating: " + Z.Msg);
+                }
+
                 if (Bufsize - Z.AvailOut > 0)
                 {
                     Outp.Write(Buf, 0, Bufsize - Z.AvailOut);
@@ -152,7 +136,10 @@ namespace System.util.zlib
         public override void Write(byte[] b, int off, int len)
         {
             if (len == 0)
+            {
                 return;
+            }
+
             int err;
             Z.NextIn = b;
             Z.NextInIndex = off;
@@ -164,9 +151,14 @@ namespace System.util.zlib
                 Z.AvailOut = Bufsize;
                 err = Z.Deflate(FlushLevel);
                 if (err != JZlib.Z_OK)
+                {
                     throw new IOException("deflating: " + Z.Msg);
+                }
+
                 if (Z.AvailOut < Bufsize)
+                {
                     Outp.Write(Buf, 0, Bufsize - Z.AvailOut);
+                }
             }
             while (Z.AvailIn > 0 || Z.AvailOut == 0);
         }

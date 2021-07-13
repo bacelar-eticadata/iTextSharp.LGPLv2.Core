@@ -10,7 +10,9 @@ namespace iTextSharp.text.pdf.collection
         {
             Put(PdfName.R, PdfName.P);
             if (nested != null)
+            {
                 AdditionalPath = nested;
+            }
         }
 
         /// <summary>
@@ -35,10 +37,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public PdfTargetDictionary AdditionalPath
         {
-            set
-            {
-                Put(PdfName.T, value);
-            }
+            set => Put(PdfName.T, value);
         }
 
         /// <summary>
@@ -47,10 +46,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public string EmbeddedFileName
         {
-            set
-            {
-                Put(PdfName.N, new PdfString(value, null));
-            }
+            set => Put(PdfName.N, new PdfString(value, null));
         }
 
         /// <summary>
@@ -60,10 +56,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public int FileAttachmentIndex
         {
-            set
-            {
-                Put(PdfName.A, new PdfNumber(value));
-            }
+            set => Put(PdfName.A, new PdfNumber(value));
         }
 
         /// <summary>
@@ -73,10 +66,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public string FileAttachmentName
         {
-            set
-            {
-                Put(PdfName.A, new PdfString(value, TEXT_UNICODE));
-            }
+            set => Put(PdfName.A, new PdfString(value, TEXT_UNICODE));
         }
 
         /// <summary>
@@ -86,10 +76,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public int FileAttachmentPage
         {
-            set
-            {
-                Put(PdfName.P, new PdfNumber(value));
-            }
+            set => Put(PdfName.P, new PdfNumber(value));
         }
 
         /// <summary>
@@ -99,10 +86,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public string FileAttachmentPagename
         {
-            set
-            {
-                Put(PdfName.P, new PdfString(value, null));
-            }
+            set => Put(PdfName.P, new PdfString(value, null));
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.codec;
 using iTextSharp.text.pdf.qrcode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
 {
@@ -23,7 +23,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
             PdfWriter.GetInstance(document, stream);
             document.AddAuthor(TestUtils.Author);
             document.Open();
-            Image qrcodeImage = CreateQrCodeImage("This is a text ...");
+            var qrcodeImage = CreateQrCodeImage("This is a text ...");
 
             //qrcodeImage.SetAbsolutePosition(10, 500);
             qrcodeImage.ScalePercent(200);
@@ -44,14 +44,14 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
             var stride = (width + 7) / 8;
             var bitMatrix = new byte[stride * height];
             var byteMatrixArray = byteMatrix.GetArray();
-            for (int y = 0; y < height; ++y)
+            for (var y = 0; y < height; ++y)
             {
                 var line = byteMatrixArray[y];
                 for (var x = 0; x < width; ++x)
                 {
                     if (line[x] != 0)
                     {
-                        int offset = stride * y + x / 8;
+                        var offset = stride * y + x / 8;
                         bitMatrix[offset] |= (byte)(0x80 >> (x % 8));
                     }
                 }

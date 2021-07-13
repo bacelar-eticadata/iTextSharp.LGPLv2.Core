@@ -25,20 +25,11 @@ namespace iTextSharp.text.xml.xmp
         /// <summary>
         /// </summary>
         /// <returns>Returns the xmlns.</returns>
-        public string Xmlns
-        {
-            get
-            {
-                return xmlns;
-            }
-        }
+        public string Xmlns => xmlns;
 
         public override string this[string key]
         {
-            set
-            {
-                base[key] = Escape(value);
-            }
+            set => base[key] = Escape(value);
         }
 
         /// <summary>
@@ -47,8 +38,8 @@ namespace iTextSharp.text.xml.xmp
         /// <returns></returns>
         public static string Escape(string content)
         {
-            StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < content.Length; i++)
+            var buf = new StringBuilder();
+            for (var i = 0; i < content.Length; i++)
             {
                 switch (content[i])
                 {
@@ -107,8 +98,8 @@ namespace iTextSharp.text.xml.xmp
         /// <returns>a String representation.</returns>
         public override string ToString()
         {
-            StringBuilder buf = new StringBuilder();
-            foreach (object key in Keys)
+            var buf = new StringBuilder();
+            foreach (var key in Keys)
             {
                 Process(buf, key);
             }

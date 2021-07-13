@@ -1,7 +1,7 @@
-using System;
-using System.IO;
 using iTextSharp.LGPLv2.Core.System.NetUtils;
 using iTextSharp.text.pdf.collection;
+using System;
+using System.IO;
 
 namespace iTextSharp.text.pdf
 {
@@ -28,10 +28,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public byte[] MultiByteFileName
         {
-            set
-            {
-                Put(PdfName.F, new PdfString(value).SetHexWriting(true));
-            }
+            set => Put(PdfName.F, new PdfString(value).SetHexWriting(true));
         }
 
         /// <summary>
@@ -45,7 +42,10 @@ namespace iTextSharp.text.pdf
             get
             {
                 if (Refi != null)
+                {
                     return Refi;
+                }
+
                 Refi = Writer.AddToBody(this).IndirectReference;
                 return Refi;
             }
@@ -58,10 +58,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool Volatile
         {
-            set
-            {
-                Put(PdfName.V, new PdfBoolean(value));
-            }
+            set => Put(PdfName.V, new PdfBoolean(value));
         }
 
         /// <summary>
@@ -154,8 +151,10 @@ namespace iTextSharp.text.pdf
         /// <returns>the file specification</returns>
         public static PdfFileSpecification FileEmbedded(PdfWriter writer, string filePath, string fileDisplay, byte[] fileStore, string mimeType, PdfDictionary fileParameter, int compressionLevel)
         {
-            PdfFileSpecification fs = new PdfFileSpecification();
-            fs.Writer = writer;
+            var fs = new PdfFileSpecification
+            {
+                Writer = writer
+            };
             fs.Put(PdfName.F, new PdfString(fileDisplay));
             PdfEFStream stream;
             Stream inp = null;
@@ -182,35 +181,48 @@ namespace iTextSharp.text.pdf
                         {
                             inp = BaseFont.GetResourceStream(filePath);
                             if (inp == null)
+                            {
                                 throw new IOException(filePath + " not found as file or resource.");
+                            }
                         }
                     }
                     stream = new PdfEFStream(inp, writer);
                 }
                 else
+                {
                     stream = new PdfEFStream(fileStore);
+                }
+
                 stream.Put(PdfName.TYPE, PdfName.Embeddedfile);
                 stream.FlateCompress(compressionLevel);
                 stream.Put(PdfName.Params, refFileLength);
                 if (mimeType != null)
+                {
                     stream.Put(PdfName.Subtype, new PdfName(mimeType));
+                }
+
                 refi = writer.AddToBody(stream).IndirectReference;
                 if (fileStore == null)
                 {
                     stream.WriteLength();
                 }
-                PdfDictionary param = new PdfDictionary();
+                var param = new PdfDictionary();
                 if (fileParameter != null)
+                {
                     param.Merge(fileParameter);
+                }
+
                 param.Put(PdfName.Size, new PdfNumber(stream.RawLength));
                 writer.AddToBody(param, refFileLength);
             }
             finally
             {
                 if (inp != null)
+                {
                     try { inp.Dispose(); } catch { }
+                }
             }
-            PdfDictionary f = new PdfDictionary();
+            var f = new PdfDictionary();
             f.Put(PdfName.F, refi);
             fs.Put(PdfName.EF, f);
             return fs;
@@ -224,8 +236,10 @@ namespace iTextSharp.text.pdf
         /// <returns>the file specification</returns>
         public static PdfFileSpecification FileExtern(PdfWriter writer, string filePath)
         {
-            PdfFileSpecification fs = new PdfFileSpecification();
-            fs.Writer = writer;
+            var fs = new PdfFileSpecification
+            {
+                Writer = writer
+            };
             fs.Put(PdfName.F, new PdfString(filePath));
             return fs;
         }
@@ -238,12 +252,15 @@ namespace iTextSharp.text.pdf
         /// <returns>the file specification</returns>
         public static PdfFileSpecification Url(PdfWriter writer, string url)
         {
-            PdfFileSpecification fs = new PdfFileSpecification();
-            fs.Writer = writer;
+            var fs = new PdfFileSpecification
+            {
+                Writer = writer
+            };
             fs.Put(PdfName.Fs, PdfName.Url);
             fs.Put(PdfName.F, new PdfString(url));
             return fs;
         }
+
         /// <summary>
         /// Adds the Collection item dictionary.
         /// </summary>

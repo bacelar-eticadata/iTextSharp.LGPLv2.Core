@@ -2,14 +2,12 @@ using System.Collections;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Implements form fields.
     /// @author Paulo Soares (psoares@consiste.pt)
     /// </summary>
     public class PdfFormField : PdfAnnotation
     {
-
         public const int FF_COMB = 16777216;
         public const int FF_COMBO = 131072;
         public const int FF_DONOTSCROLL = 8388608;
@@ -54,6 +52,7 @@ namespace iTextSharp.text.pdf
         /// Holds value of property parent.
         /// </summary>
         internal PdfFormField parent;
+
         /// <summary>
         /// Constructs a new  PdfAnnotation  of subtype link (Action).
         /// </summary>
@@ -80,24 +79,20 @@ namespace iTextSharp.text.pdf
             {
                 Put(PdfName.Ft, PdfName.Btn);
                 if (value != 0)
+                {
                     Put(PdfName.Ff, new PdfNumber(value));
+                }
             }
         }
 
         public string DefaultValueAsName
         {
-            set
-            {
-                Put(PdfName.Dv, new PdfName(value));
-            }
+            set => Put(PdfName.Dv, new PdfName(value));
         }
 
         public string DefaultValueAsString
         {
-            set
-            {
-                Put(PdfName.Dv, new PdfString(value, TEXT_UNICODE));
-            }
+            set => Put(PdfName.Dv, new PdfString(value, TEXT_UNICODE));
         }
 
         public string FieldName
@@ -105,76 +100,48 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value != null)
+                {
                     Put(PdfName.T, new PdfString(value, TEXT_UNICODE));
+                }
             }
         }
 
-        public ArrayList Kids
-        {
-            get
-            {
-                return kids;
-            }
-        }
+        public ArrayList Kids => kids;
 
         public string MappingName
         {
-            set
-            {
-                Put(PdfName.Tm, new PdfString(value, TEXT_UNICODE));
-            }
+            set => Put(PdfName.Tm, new PdfString(value, TEXT_UNICODE));
         }
 
         /// <summary>
         /// Getter for property parent.
         /// </summary>
         /// <returns>Value of property parent.</returns>
-        public PdfFormField Parent
-        {
-            get
-            {
-                return parent;
-            }
-        }
+        public PdfFormField Parent => parent;
 
         public int Quadding
         {
-            set
-            {
-                Put(PdfName.Q, new PdfNumber(value));
-            }
+            set => Put(PdfName.Q, new PdfNumber(value));
         }
 
         public string UserName
         {
-            set
-            {
-                Put(PdfName.Tu, new PdfString(value, TEXT_UNICODE));
-            }
+            set => Put(PdfName.Tu, new PdfString(value, TEXT_UNICODE));
         }
 
         public string ValueAsName
         {
-            set
-            {
-                Put(PdfName.V, new PdfName(value));
-            }
+            set => Put(PdfName.V, new PdfName(value));
         }
 
         public PdfSignature ValueAsSig
         {
-            set
-            {
-                Put(PdfName.V, value);
-            }
+            set => Put(PdfName.V, value);
         }
 
         public string ValueAsString
         {
-            set
-            {
-                Put(PdfName.V, new PdfString(value, TEXT_UNICODE));
-            }
+            set => Put(PdfName.V, new PdfString(value, TEXT_UNICODE));
         }
 
         public static PdfFormField CreateCheckBox(PdfWriter writer)
@@ -194,7 +161,7 @@ namespace iTextSharp.text.pdf
 
         public static PdfFormField CreateEmpty(PdfWriter writer)
         {
-            PdfFormField field = new PdfFormField(writer);
+            var field = new PdfFormField(writer);
             return field;
         }
 
@@ -220,20 +187,23 @@ namespace iTextSharp.text.pdf
 
         public static PdfFormField CreateSignature(PdfWriter writer)
         {
-            PdfFormField field = new PdfFormField(writer);
+            var field = new PdfFormField(writer);
             field.Put(PdfName.Ft, PdfName.Sig);
             return field;
         }
 
         public static PdfFormField CreateTextField(PdfWriter writer, bool multiline, bool password, int maxLen)
         {
-            PdfFormField field = new PdfFormField(writer);
+            var field = new PdfFormField(writer);
             field.Put(PdfName.Ft, PdfName.Tx);
-            int flags = (multiline ? FF_MULTILINE : 0);
+            var flags = (multiline ? FF_MULTILINE : 0);
             flags += (password ? FF_PASSWORD : 0);
             field.Put(PdfName.Ff, new PdfNumber(flags));
             if (maxLen > 0)
+            {
                 field.Put(PdfName.Maxlen, new PdfNumber(maxLen));
+            }
+
             return field;
         }
 
@@ -241,19 +211,27 @@ namespace iTextSharp.text.pdf
         {
             field.parent = this;
             if (kids == null)
+            {
                 kids = new ArrayList();
+            }
+
             kids.Add(field);
         }
 
         public int SetFieldFlags(int flags)
         {
-            PdfNumber obj = (PdfNumber)Get(PdfName.Ff);
+            var obj = (PdfNumber)Get(PdfName.Ff);
             int old;
             if (obj == null)
+            {
                 old = 0;
+            }
             else
+            {
                 old = obj.IntValue;
-            int v = old | flags;
+            }
+
+            var v = old | flags;
             Put(PdfName.Ff, new PdfNumber(v));
             return old;
         }
@@ -262,17 +240,26 @@ namespace iTextSharp.text.pdf
         {
             Used = true;
             if (parent != null)
+            {
                 Put(PdfName.Parent, parent.IndirectReference);
+            }
+
             if (kids != null)
             {
-                PdfArray array = new PdfArray();
-                for (int k = 0; k < kids.Count; ++k)
+                var array = new PdfArray();
+                for (var k = 0; k < kids.Count; ++k)
+                {
                     array.Add(((PdfFormField)kids[k]).IndirectReference);
+                }
+
                 Put(PdfName.Kids, array);
             }
             if (templates == null)
+            {
                 return;
-            PdfDictionary dic = new PdfDictionary();
+            }
+
+            var dic = new PdfDictionary();
             foreach (PdfTemplate template in templates.Keys)
             {
                 MergeResources(dic, (PdfDictionary)template.Resources);
@@ -287,17 +274,20 @@ namespace iTextSharp.text.pdf
             Put(PdfName.Rect, new PdfRectangle(rect));
             Annotation = true;
             if (highlight != null && !highlight.Equals(HighlightInvert))
+            {
                 Put(PdfName.H, highlight);
+            }
         }
+
         internal static void MergeResources(PdfDictionary result, PdfDictionary source, PdfStamperImp writer)
         {
             PdfDictionary dic = null;
             PdfDictionary res = null;
             PdfName target = null;
-            for (int k = 0; k < MergeTarget.Length; ++k)
+            for (var k = 0; k < MergeTarget.Length; ++k)
             {
                 target = MergeTarget[k];
-                PdfDictionary pdfDict = source.GetAsDict(target);
+                var pdfDict = source.GetAsDict(target);
                 if ((dic = pdfDict) != null)
                 {
                     if ((res = (PdfDictionary)PdfReader.GetPdfObject(result.Get(target), result)) == null)
@@ -307,7 +297,9 @@ namespace iTextSharp.text.pdf
                     res.MergeDifferent(dic);
                     result.Put(target, res);
                     if (writer != null)
+                    {
                         writer.MarkUsed(res);
+                    }
                 }
             }
         }
@@ -319,24 +311,31 @@ namespace iTextSharp.text.pdf
 
         protected static PdfFormField CreateButton(PdfWriter writer, int flags)
         {
-            PdfFormField field = new PdfFormField(writer);
-            field.Button = flags;
+            var field = new PdfFormField(writer)
+            {
+                Button = flags
+            };
             return field;
         }
+
         protected static PdfFormField CreateChoice(PdfWriter writer, int flags, PdfArray options, int topIndex)
         {
-            PdfFormField field = new PdfFormField(writer);
+            var field = new PdfFormField(writer);
             field.Put(PdfName.Ft, PdfName.Ch);
             field.Put(PdfName.Ff, new PdfNumber(flags));
             field.Put(PdfName.Opt, options);
             if (topIndex > 0)
+            {
                 field.Put(PdfName.Ti, new PdfNumber(topIndex));
+            }
+
             return field;
         }
+
         protected static PdfArray ProcessOptions(string[] options)
         {
-            PdfArray array = new PdfArray();
-            for (int k = 0; k < options.Length; ++k)
+            var array = new PdfArray();
+            for (var k = 0; k < options.Length; ++k)
             {
                 array.Add(new PdfString(options[k], TEXT_UNICODE));
             }
@@ -345,10 +344,10 @@ namespace iTextSharp.text.pdf
 
         protected static PdfArray ProcessOptions(string[,] options)
         {
-            PdfArray array = new PdfArray();
-            for (int k = 0; k < options.GetLength(0); ++k)
+            var array = new PdfArray();
+            for (var k = 0; k < options.GetLength(0); ++k)
             {
-                PdfArray ar2 = new PdfArray(new PdfString(options[k, 0], TEXT_UNICODE));
+                var ar2 = new PdfArray(new PdfString(options[k, 0], TEXT_UNICODE));
                 ar2.Add(new PdfString(options[k, 1], TEXT_UNICODE));
                 array.Add(ar2);
             }

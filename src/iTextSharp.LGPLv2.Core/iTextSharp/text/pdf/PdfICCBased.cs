@@ -1,13 +1,11 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfICCBased  defines a ColorSpace
     /// @see        PdfStream
     /// </summary>
     public class PdfIccBased : PdfStream
     {
-
         /// <summary>
         /// Creates an ICC stream.
         /// </summary>
@@ -24,18 +22,21 @@ namespace iTextSharp.text.pdf
         /// <param name="profile">an ICC profile</param>
         public PdfIccBased(IccProfile profile, int compressionLevel)
         {
-            int numberOfComponents = profile.NumComponents;
+            var numberOfComponents = profile.NumComponents;
             switch (numberOfComponents)
             {
                 case 1:
                     Put(PdfName.Alternate, PdfName.Devicegray);
                     break;
+
                 case 3:
                     Put(PdfName.Alternate, PdfName.Devicergb);
                     break;
+
                 case 4:
                     Put(PdfName.Alternate, PdfName.Devicecmyk);
                     break;
+
                 default:
                     throw new PdfException(numberOfComponents + " Component(s) is not supported in iText");
             }

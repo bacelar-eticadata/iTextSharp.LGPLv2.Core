@@ -13,6 +13,7 @@ namespace iTextSharp.text.pdf.hyphenation
         /// Capacity increment size
         /// </summary>
         private static readonly int _defaultBlockSize = 2048;
+
         private readonly int _blockSize;
 
         /// <summary>
@@ -25,14 +26,21 @@ namespace iTextSharp.text.pdf.hyphenation
         /// </summary>
         private int _n;
 
-        public CharVector() : this(_defaultBlockSize) { }
+        public CharVector() : this(_defaultBlockSize)
+        {
+        }
 
         public CharVector(int capacity)
         {
             if (capacity > 0)
+            {
                 _blockSize = capacity;
+            }
             else
+            {
                 _blockSize = _defaultBlockSize;
+            }
+
             _array = new char[_blockSize];
             _n = 0;
         }
@@ -47,63 +55,44 @@ namespace iTextSharp.text.pdf.hyphenation
         public CharVector(char[] a, int capacity)
         {
             if (capacity > 0)
+            {
                 _blockSize = capacity;
+            }
             else
+            {
                 _blockSize = _defaultBlockSize;
+            }
+
             _array = a;
             _n = a.Length;
         }
 
-        public char[] Arr
-        {
-            get
-            {
-                return _array;
-            }
-        }
+        public char[] Arr => _array;
 
         /// <summary>
         /// returns current capacity of array
         /// </summary>
-        public int Capacity
-        {
-            get
-            {
-                return _array.Length;
-            }
-        }
+        public int Capacity => _array.Length;
 
         /// <summary>
         /// return number of items in array
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return _n;
-            }
-        }
+        public int Length => _n;
 
         public char this[int index]
         {
-            get
-            {
-                return _array[index];
-            }
+            get => _array[index];
 
-            set
-            {
-                _array[index] = value;
-            }
+            set => _array[index] = value;
         }
 
         public int Alloc(int size)
         {
-            int index = _n;
-            int len = _array.Length;
+            var index = _n;
+            var len = _array.Length;
             if (_n + size >= len)
             {
-                char[] aux = new char[len + _blockSize];
+                var aux = new char[len + _blockSize];
                 Array.Copy(_array, 0, aux, 0, len);
                 _array = aux;
             }
@@ -121,8 +110,10 @@ namespace iTextSharp.text.pdf.hyphenation
 
         public object Clone()
         {
-            CharVector cv = new CharVector((char[])_array.Clone(), _blockSize);
-            cv._n = _n;
+            var cv = new CharVector((char[])_array.Clone(), _blockSize)
+            {
+                _n = _n
+            };
             return cv;
         }
 
@@ -130,7 +121,7 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             if (_n < _array.Length)
             {
-                char[] aux = new char[_n];
+                var aux = new char[_n];
                 Array.Copy(_array, 0, aux, 0, _n);
                 _array = aux;
             }

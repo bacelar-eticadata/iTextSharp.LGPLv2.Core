@@ -1,10 +1,9 @@
+using iTextSharp.text.rtf.document;
 using System.IO;
 using ST = iTextSharp.text.rtf.style;
-using iTextSharp.text.rtf.document;
 
 namespace iTextSharp.text.rtf.field
 {
-
     /// <summary>
     /// The RtfField class is an abstract base class for all rtf field functionality.
     /// Subclasses only need to implement the two abstract methods writeFieldInstContent
@@ -16,7 +15,6 @@ namespace iTextSharp.text.rtf.field
     /// </summary>
     public abstract class RtfField : Chunk, IRtfBasicElement
     {
-
         /// <summary>
         /// The factor to use for translating from iText to rtf measurments
         /// </summary>
@@ -41,6 +39,7 @@ namespace iTextSharp.text.rtf.field
         /// Constant for the beginning of a rtf group
         /// </summary>
         public static readonly byte[] OpenGroup = { (byte)'{' };
+
         /// <summary>
         /// The RtfDocument this RtfField belongs to
         /// </summary>
@@ -55,10 +54,12 @@ namespace iTextSharp.text.rtf.field
         /// Constant for a rtf field
         /// </summary>
         private static readonly byte[] _fieldBytes = DocWriter.GetIsoBytes("\\field");
+
         /// <summary>
         /// Constant for a dirty field
         /// </summary>
         private static readonly byte[] _fieldDirtyBytes = DocWriter.GetIsoBytes("\\flddirty");
+
         /// <summary>
         /// Constant for a edited field
         /// </summary>
@@ -78,6 +79,7 @@ namespace iTextSharp.text.rtf.field
         /// Constant for a private field
         /// </summary>
         private static readonly byte[] _fieldPrivateBytes = DocWriter.GetIsoBytes("\\fldpriv");
+
         /// <summary>
         /// Constant for the field result
         /// </summary>
@@ -122,6 +124,7 @@ namespace iTextSharp.text.rtf.field
         /// Whether this RtfField is in a table
         /// </summary>
         private bool _inTable;
+
         /// <summary>
         /// Constructs a RtfField for a RtfDocument. This is not very usefull,
         /// since the RtfField by itself does not do anything. Use one of the
@@ -336,10 +339,25 @@ namespace iTextSharp.text.rtf.field
         {
             result.Write(OpenGroup, 0, OpenGroup.Length);
             result.Write(_fieldBytes, 0, _fieldBytes.Length);
-            if (_fieldDirty) result.Write(_fieldDirtyBytes, 0, _fieldDirtyBytes.Length);
-            if (_fieldEdit) result.Write(_fieldEditBytes, 0, _fieldEditBytes.Length);
-            if (_fieldLocked) result.Write(_fieldLockedBytes, 0, _fieldLockedBytes.Length);
-            if (_fieldPrivate) result.Write(_fieldPrivateBytes, 0, _fieldPrivateBytes.Length);
+            if (_fieldDirty)
+            {
+                result.Write(_fieldDirtyBytes, 0, _fieldDirtyBytes.Length);
+            }
+
+            if (_fieldEdit)
+            {
+                result.Write(_fieldEditBytes, 0, _fieldEditBytes.Length);
+            }
+
+            if (_fieldLocked)
+            {
+                result.Write(_fieldLockedBytes, 0, _fieldLockedBytes.Length);
+            }
+
+            if (_fieldPrivate)
+            {
+                result.Write(_fieldPrivateBytes, 0, _fieldPrivateBytes.Length);
+            }
         }
 
         /// <summary>
@@ -361,6 +379,7 @@ namespace iTextSharp.text.rtf.field
             result.Write(_fieldInstructionsBytes, 0, _fieldInstructionsBytes.Length);
             result.Write(Delimiter, 0, Delimiter.Length);
         }
+
         /// <summary>
         /// Writes the end of the field instruction area.
         /// </summary>
@@ -383,6 +402,7 @@ namespace iTextSharp.text.rtf.field
             result.Write(_fieldResultBytes, 0, _fieldResultBytes.Length);
             result.Write(Delimiter, 0, Delimiter.Length);
         }
+
         /// <summary>
         /// Writes the end of the field result area
         /// </summary>

@@ -1,23 +1,21 @@
-using System;
-using System.Collections;
-using System.Text;
-using System.Globalization;
-using System.IO;
-using System.Security.Cryptography;
 using iTextSharp.LGPLv2.Core.System.Encodings;
-using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Asn1.Tsp;
 using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Ocsp;
+using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tsp;
 using Org.BouncyCastle.Utilities;
+using Org.BouncyCastle.X509;
+using System;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
@@ -29,7 +27,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfPkcs7
     {
-
         private const string IdAdbeRevocation = "1.2.840.113583.1.1.8";
         private const string IdContentType = "1.2.840.113549.1.9.3";
         private const string IdDsa = "1.2.840.10040.4.1";
@@ -52,12 +49,14 @@ namespace iTextSharp.text.pdf
         private string _digestEncryptionAlgorithm;
         private byte[] _externalDigest;
         private byte[] _externalRsAdata;
+
         /// <summary>
         /// Holds value of property location.
         /// </summary>
         private string _location;
 
-        private ICipherParameters _privKey;
+        private readonly ICipherParameters _privKey;
+
         /// <summary>
         /// Holds value of property reason.
         /// </summary>
@@ -65,6 +64,7 @@ namespace iTextSharp.text.pdf
 
         private byte[] _rsAdata;
         private ArrayList _signCerts;
+
         /// <summary>
         /// Holds value of property signDate.
         /// </summary>
@@ -77,6 +77,7 @@ namespace iTextSharp.text.pdf
 
         private bool _verified;
         private bool _verifyResult;
+
         static PdfPkcs7()
         {
             _digestNames["1.2.840.113549.2.5"] = "MD5";
@@ -152,8 +153,7 @@ namespace iTextSharp.text.pdf
         /// <param name="certsKey">the /Cert key</param>
         public PdfPkcs7(byte[] contentsKey, byte[] certsKey)
         {
-
-            X509CertificateParser cf = new X509CertificateParser();
+            var cf = new X509CertificateParser();
             _certs = new ArrayList();
             foreach (X509Certificate cc in cf.ReadCertificates(certsKey))
             {
@@ -162,7 +162,7 @@ namespace iTextSharp.text.pdf
             _signCerts = _certs;
             SigningCertificate = (X509Certificate)_certs[0];
             CrLs = new ArrayList();
-            Asn1InputStream inp = new Asn1InputStream(new MemoryStream(contentsKey));
+            var inp = new Asn1InputStream(new MemoryStream(contentsKey));
             _digest = ((DerOctetString)inp.ReadObject()).GetOctets();
             _sig = SignerUtilities.GetSigner("SHA1withRSA");
             _sig.Init(false, SigningCertificate.GetPublicKey());
@@ -181,7 +181,7 @@ namespace iTextSharp.text.pdf
         /// <param name="contentsKey">the /Contents key</param>
         public PdfPkcs7(byte[] contentsKey)
         {
-            Asn1InputStream din = new Asn1InputStream(new MemoryStream(contentsKey));
+            var din = new Asn1InputStream(new MemoryStream(contentsKey));
 
             //
             // Basic checks to make sure it's a PKCS#7 SignedData Object
@@ -200,11 +200,14 @@ namespace iTextSharp.text.pdf
             {
                 throw new ArgumentException("Not a valid PKCS#7 object - not a sequence");
             }
-            Asn1Sequence signedData = (Asn1Sequence)pkcs;
-            DerObjectIdentifier objId = (DerObjectIdentifier)signedData[0];
+            var signedData = (Asn1Sequence)pkcs;
+            var objId = (DerObjectIdentifier)signedData[0];
             if (!objId.Id.Equals(IdPkcs7SignedData))
+            {
                 throw new ArgumentException("Not a valid PKCS#7 object - not signed data");
-            Asn1Sequence content = (Asn1Sequence)((DerTaggedObject)signedData[1]).GetObject();
+            }
+
+            var content = (Asn1Sequence)((DerTaggedObject)signedData[1]).GetObject();
             // the positions that we care are:
             //     0 - version
             //     1 - digestAlgorithms
@@ -217,16 +220,16 @@ namespace iTextSharp.text.pdf
 
             // the digestAlgorithms
             _digestalgos = new Hashtable();
-            IEnumerator e = ((Asn1Set)content[1]).GetEnumerator();
+            var e = ((Asn1Set)content[1]).GetEnumerator();
             while (e.MoveNext())
             {
-                Asn1Sequence s = (Asn1Sequence)e.Current;
-                DerObjectIdentifier o = (DerObjectIdentifier)s[0];
+                var s = (Asn1Sequence)e.Current;
+                var o = (DerObjectIdentifier)s[0];
                 _digestalgos[o.Id] = null;
             }
 
             // the certificates and crls
-            X509CertificateParser cf = new X509CertificateParser();
+            var cf = new X509CertificateParser();
             _certs = new ArrayList();
             foreach (X509Certificate cc in cf.ReadCertificates(contentsKey))
             {
@@ -235,21 +238,27 @@ namespace iTextSharp.text.pdf
             CrLs = new ArrayList();
 
             // the possible ID_PKCS7_DATA
-            Asn1Sequence rsaData = (Asn1Sequence)content[2];
+            var rsaData = (Asn1Sequence)content[2];
             if (rsaData.Count > 1)
             {
-                DerOctetString rsaDataContent = (DerOctetString)((DerTaggedObject)rsaData[1]).GetObject();
+                var rsaDataContent = (DerOctetString)((DerTaggedObject)rsaData[1]).GetObject();
                 _rsAdata = rsaDataContent.GetOctets();
             }
 
             // the signerInfos
-            int next = 3;
+            var next = 3;
             while (content[next] is DerTaggedObject)
+            {
                 ++next;
-            Asn1Set signerInfos = (Asn1Set)content[next];
+            }
+
+            var signerInfos = (Asn1Set)content[next];
             if (signerInfos.Count != 1)
+            {
                 throw new ArgumentException("This PKCS#7 object has multiple SignerInfos - only one is supported at this time");
-            Asn1Sequence signerInfo = (Asn1Sequence)signerInfos[0];
+            }
+
+            var signerInfo = (Asn1Sequence)signerInfos[0];
             // the positions that we care are
             //     0 - version
             //     1 - the signing certificate serial number
@@ -258,8 +267,8 @@ namespace iTextSharp.text.pdf
             //     4 or 5 - encryptedDigest
             SigningInfoVersion = ((DerInteger)signerInfo[0]).Value.IntValue;
             // Get the signing certificate
-            Asn1Sequence issuerAndSerialNumber = (Asn1Sequence)signerInfo[1];
-            BigInteger serialNumber = ((DerInteger)issuerAndSerialNumber[1]).Value;
+            var issuerAndSerialNumber = (Asn1Sequence)signerInfo[1];
+            var serialNumber = ((DerInteger)issuerAndSerialNumber[1]).Value;
             foreach (X509Certificate cert in _certs)
             {
                 if (serialNumber.Equals(cert.SerialNumber))
@@ -277,49 +286,55 @@ namespace iTextSharp.text.pdf
             next = 3;
             if (signerInfo[next] is Asn1TaggedObject)
             {
-                Asn1TaggedObject tagsig = (Asn1TaggedObject)signerInfo[next];
-                Asn1Set sseq = Asn1Set.GetInstance(tagsig, false);
+                var tagsig = (Asn1TaggedObject)signerInfo[next];
+                var sseq = Asn1Set.GetInstance(tagsig, false);
                 _sigAttr = sseq.GetEncoded(Asn1Encodable.Der);
 
-                for (int k = 0; k < sseq.Count; ++k)
+                for (var k = 0; k < sseq.Count; ++k)
                 {
-                    Asn1Sequence seq2 = (Asn1Sequence)sseq[k];
+                    var seq2 = (Asn1Sequence)sseq[k];
                     if (((DerObjectIdentifier)seq2[0]).Id.Equals(IdMessageDigest))
                     {
-                        Asn1Set sset = (Asn1Set)seq2[1];
+                        var sset = (Asn1Set)seq2[1];
                         _digestAttr = ((DerOctetString)sset[0]).GetOctets();
                     }
                     else if (((DerObjectIdentifier)seq2[0]).Id.Equals(IdAdbeRevocation))
                     {
-                        Asn1Set setout = (Asn1Set)seq2[1];
-                        Asn1Sequence seqout = (Asn1Sequence)setout[0];
-                        for (int j = 0; j < seqout.Count; ++j)
+                        var setout = (Asn1Set)seq2[1];
+                        var seqout = (Asn1Sequence)setout[0];
+                        for (var j = 0; j < seqout.Count; ++j)
                         {
-                            Asn1TaggedObject tg = (Asn1TaggedObject)seqout[j];
+                            var tg = (Asn1TaggedObject)seqout[j];
                             if (tg.TagNo != 1)
+                            {
                                 continue;
-                            Asn1Sequence seqin = (Asn1Sequence)tg.GetObject();
+                            }
+
+                            var seqin = (Asn1Sequence)tg.GetObject();
                             findOcsp(seqin);
                         }
                     }
                 }
                 if (_digestAttr == null)
+                {
                     throw new ArgumentException("Authenticated attribute is missing the digest.");
+                }
+
                 ++next;
             }
             _digestEncryptionAlgorithm = ((DerObjectIdentifier)((Asn1Sequence)signerInfo[next++])[0]).Id;
             _digest = ((DerOctetString)signerInfo[next++]).GetOctets();
             if (next < signerInfo.Count && (signerInfo[next] is DerTaggedObject))
             {
-                DerTaggedObject taggedObject = (DerTaggedObject)signerInfo[next];
-                Asn1Set unat = Asn1Set.GetInstance(taggedObject, false);
-                Org.BouncyCastle.Asn1.Cms.AttributeTable attble = new Org.BouncyCastle.Asn1.Cms.AttributeTable(unat);
-                Org.BouncyCastle.Asn1.Cms.Attribute ts = attble[PkcsObjectIdentifiers.IdAASignatureTimeStampToken];
+                var taggedObject = (DerTaggedObject)signerInfo[next];
+                var unat = Asn1Set.GetInstance(taggedObject, false);
+                var attble = new Org.BouncyCastle.Asn1.Cms.AttributeTable(unat);
+                var ts = attble[PkcsObjectIdentifiers.IdAASignatureTimeStampToken];
                 if (ts != null)
                 {
-                    Asn1Set attributeValues = ts.AttrValues;
-                    Asn1Sequence tokenSequence = Asn1Sequence.GetInstance(attributeValues[0]);
-                    Org.BouncyCastle.Asn1.Cms.ContentInfo contentInfo = Org.BouncyCastle.Asn1.Cms.ContentInfo.GetInstance(tokenSequence);
+                    var attributeValues = ts.AttrValues;
+                    var tokenSequence = Asn1Sequence.GetInstance(attributeValues[0]);
+                    var contentInfo = Org.BouncyCastle.Asn1.Cms.ContentInfo.GetInstance(tokenSequence);
                     TimeStampToken = new TimeStampToken(contentInfo);
                 }
             }
@@ -350,19 +365,23 @@ namespace iTextSharp.text.pdf
 
             _digestAlgorithm = (string)_allowedDigests[hashAlgorithm.ToUpper(CultureInfo.InvariantCulture)];
             if (_digestAlgorithm == null)
+            {
                 throw new ArgumentException("Unknown Hash Algorithm " + hashAlgorithm);
+            }
 
             Version = SigningInfoVersion = 1;
             _certs = new ArrayList();
             CrLs = new ArrayList();
-            _digestalgos = new Hashtable();
-            _digestalgos[_digestAlgorithm] = null;
+            _digestalgos = new Hashtable
+            {
+                [_digestAlgorithm] = null
+            };
 
             //
             // Copy in the certificates and crls used to sign the private key.
             //
             SigningCertificate = certChain[0];
-            for (int i = 0; i < certChain.Length; i++)
+            for (var i = 0; i < certChain.Length; i++)
             {
                 _certs.Add(certChain[i]);
             }
@@ -379,12 +398,17 @@ namespace iTextSharp.text.pdf
                 // Now we have private key, find out what the digestEncryptionAlgorithm is.
                 //
                 if (privKey is RsaKeyParameters)
+                {
                     _digestEncryptionAlgorithm = IdRsa;
+                }
                 else if (privKey is DsaKeyParameters)
+                {
                     _digestEncryptionAlgorithm = IdDsa;
+                }
                 else
+                {
                     throw new ArgumentException("Unknown Key Algorithm " + privKey);
-
+                }
             }
             if (hasRsAdata)
             {
@@ -408,7 +432,7 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                X509Certificate[] c = new X509Certificate[_certs.Count];
+                var c = new X509Certificate[_certs.Count];
                 _certs.CopyTo(c);
                 return c;
             }
@@ -422,14 +446,8 @@ namespace iTextSharp.text.pdf
 
         public string Location
         {
-            get
-            {
-                return _location;
-            }
-            set
-            {
-                _location = value;
-            }
+            get => _location;
+            set => _location = value;
         }
 
         /// <summary>
@@ -441,14 +459,8 @@ namespace iTextSharp.text.pdf
 
         public string Reason
         {
-            get
-            {
-                return _reason;
-            }
-            set
-            {
-                _reason = value;
-            }
+            get => _reason;
+            set => _reason = value;
         }
 
         /// <summary>
@@ -462,7 +474,7 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                X509Certificate[] ret = new X509Certificate[_signCerts.Count];
+                var ret = new X509Certificate[_signCerts.Count];
                 _signCerts.CopyTo(ret);
                 return ret;
             }
@@ -470,14 +482,8 @@ namespace iTextSharp.text.pdf
 
         public DateTime SignDate
         {
-            get
-            {
-                return _signDate;
-            }
-            set
-            {
-                _signDate = value;
-            }
+            get => _signDate;
+            set => _signDate = value;
         }
 
         /// <summary>
@@ -494,14 +500,8 @@ namespace iTextSharp.text.pdf
 
         public string SignName
         {
-            get
-            {
-                return _signName;
-            }
-            set
-            {
-                _signName = value;
-            }
+            get => _signName;
+            set => _signName = value;
         }
 
         /// <summary>
@@ -514,7 +514,10 @@ namespace iTextSharp.text.pdf
             get
             {
                 if (TimeStampToken == null)
+                {
                     return DateTime.MaxValue;
+                }
+
                 return TimeStampToken.TimeStampInfo.GenTime;
             }
         }
@@ -540,11 +543,15 @@ namespace iTextSharp.text.pdf
         /// <returns>an algorithm name (for instance "RSA")</returns>
         public static string GetAlgorithm(string oid)
         {
-            string ret = (string)_algorithmNames[oid];
+            var ret = (string)_algorithmNames[oid];
             if (ret == null)
+            {
                 return oid;
+            }
             else
+            {
                 return ret;
+            }
         }
 
         /// <summary>
@@ -555,12 +562,17 @@ namespace iTextSharp.text.pdf
         /// <returns>a digest name (for instance "MD5")</returns>
         public static string GetDigest(string oid)
         {
-            string ret = (string)_digestNames[oid];
+            var ret = (string)_digestNames[oid];
             if (ret == null)
+            {
                 return oid;
+            }
             else
+            {
                 return ret;
+            }
         }
+
         /// <summary>
         /// Get the issuer fields from an X509 Certificate
         /// </summary>
@@ -582,16 +594,16 @@ namespace iTextSharp.text.pdf
         {
             try
             {
-                Asn1Object obj = getExtensionValue(certificate, X509Extensions.AuthorityInfoAccess.Id);
+                var obj = getExtensionValue(certificate, X509Extensions.AuthorityInfoAccess.Id);
                 if (obj == null)
                 {
                     return null;
                 }
 
-                Asn1Sequence accessDescriptions = (Asn1Sequence)obj;
-                for (int i = 0; i < accessDescriptions.Count; i++)
+                var accessDescriptions = (Asn1Sequence)obj;
+                for (var i = 0; i < accessDescriptions.Count; i++)
                 {
-                    Asn1Sequence accessDescription = (Asn1Sequence)accessDescriptions[i];
+                    var accessDescription = (Asn1Sequence)accessDescriptions[i];
                     if (accessDescription.Count != 2)
                     {
                         continue;
@@ -600,7 +612,7 @@ namespace iTextSharp.text.pdf
                     {
                         if ((accessDescription[0] is DerObjectIdentifier) && ((DerObjectIdentifier)accessDescription[0]).Id.Equals("1.3.6.1.5.5.7.48.1"))
                         {
-                            string accessLocation = getStringFromGeneralName((Asn1Object)accessDescription[1]);
+                            var accessLocation = getStringFromGeneralName((Asn1Object)accessDescription[1]);
                             if (accessLocation == null)
                             {
                                 return "";
@@ -642,7 +654,9 @@ namespace iTextSharp.text.pdf
             try
             {
                 if (!cert.IsValid(calendar))
+                {
                     return "The certificate has expired or is not yet valid";
+                }
             }
             catch (Exception e)
             {
@@ -663,18 +677,24 @@ namespace iTextSharp.text.pdf
         /// <returns> null  if the certificate chain could be validade or a</returns>
         public static object[] VerifyCertificates(X509Certificate[] certs, ArrayList keystore, object[] crls, DateTime calendar)
         {
-            for (int k = 0; k < certs.Length; ++k)
+            for (var k = 0; k < certs.Length; ++k)
             {
-                X509Certificate cert = certs[k];
-                string err = VerifyCertificate(cert, crls, calendar);
+                var cert = certs[k];
+                var err = VerifyCertificate(cert, crls, calendar);
                 if (err != null)
+                {
                     return new object[] { cert, err };
+                }
+
                 foreach (X509Certificate certStoreX509 in keystore)
                 {
                     try
                     {
                         if (VerifyCertificate(certStoreX509, crls, calendar) != null)
+                        {
                             continue;
+                        }
+
                         try
                         {
                             cert.Verify(certStoreX509.GetPublicKey());
@@ -693,8 +713,11 @@ namespace iTextSharp.text.pdf
                 for (j = 0; j < certs.Length; ++j)
                 {
                     if (j == k)
+                    {
                         continue;
-                    X509Certificate certNext = certs[j];
+                    }
+
+                    var certNext = certs[j];
                     try
                     {
                         cert.Verify(certNext.GetPublicKey());
@@ -705,7 +728,9 @@ namespace iTextSharp.text.pdf
                     }
                 }
                 if (j == certs.Length)
+                {
                     return new object[] { cert, "Cannot be verified against the KeyStore or the certificate chain" };
+                }
             }
             return new object[] { null, "Invalid state. Possible circular certificate chain" };
         }
@@ -740,7 +765,9 @@ namespace iTextSharp.text.pdf
                     try
                     {
                         if (ocsp.Verify(certStoreX509.GetPublicKey()))
+                        {
                             return true;
+                        }
                     }
                     catch
                     {
@@ -821,9 +848,11 @@ namespace iTextSharp.text.pdf
         /// <returns>the algorithm used to calculate the message digest</returns>
         public string GetDigestAlgorithm()
         {
-            string dea = GetAlgorithm(_digestEncryptionAlgorithm);
+            var dea = GetAlgorithm(_digestEncryptionAlgorithm);
             if (dea == null)
+            {
                 dea = _digestEncryptionAlgorithm;
+            }
 
             return GetHashAlgorithm() + "with" + dea;
         }
@@ -835,12 +864,17 @@ namespace iTextSharp.text.pdf
         public byte[] GetEncodedPkcs1()
         {
             if (_externalDigest != null)
+            {
                 _digest = _externalDigest;
+            }
             else
+            {
                 _digest = _sig.GenerateSignature();
-            MemoryStream bOut = new MemoryStream();
+            }
 
-            Asn1OutputStream dout = new Asn1OutputStream(bOut);
+            var bOut = new MemoryStream();
+
+            var dout = new Asn1OutputStream(bOut);
             dout.WriteObject(new DerOctetString(_digest));
             dout.Dispose();
 
@@ -885,7 +919,9 @@ namespace iTextSharp.text.pdf
             {
                 _digest = _externalDigest;
                 if (_rsAdata != null)
+                {
                     _rsAdata = _externalRsAdata;
+                }
             }
             else if (_externalRsAdata != null && _rsAdata != null)
             {
@@ -905,50 +941,62 @@ namespace iTextSharp.text.pdf
             }
 
             // Create the set of Hash algorithms
-            Asn1EncodableVector digestAlgorithms = new Asn1EncodableVector();
+            var digestAlgorithms = new Asn1EncodableVector();
             foreach (string dal in _digestalgos.Keys)
             {
-                Asn1EncodableVector algos = new Asn1EncodableVector();
-                algos.Add(new DerObjectIdentifier(dal));
-                algos.Add(DerNull.Instance);
+                var algos = new Asn1EncodableVector
+                {
+                    new DerObjectIdentifier(dal),
+                    DerNull.Instance
+                };
                 digestAlgorithms.Add(new DerSequence(algos));
             }
 
             // Create the contentInfo.
-            Asn1EncodableVector v = new Asn1EncodableVector();
-            v.Add(new DerObjectIdentifier(IdPkcs7Data));
+            var v = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(IdPkcs7Data)
+            };
             if (_rsAdata != null)
+            {
                 v.Add(new DerTaggedObject(0, new DerOctetString(_rsAdata)));
-            DerSequence contentinfo = new DerSequence(v);
+            }
+
+            var contentinfo = new DerSequence(v);
 
             // Get all the certificates
             //
             v = new Asn1EncodableVector();
             foreach (X509Certificate xcert in _certs)
             {
-                Asn1InputStream tempstream = new Asn1InputStream(new MemoryStream(xcert.GetEncoded()));
+                var tempstream = new Asn1InputStream(new MemoryStream(xcert.GetEncoded()));
                 v.Add(tempstream.ReadObject());
             }
 
-            DerSet dercertificates = new DerSet(v);
+            var dercertificates = new DerSet(v);
 
             // Create signerinfo structure.
             //
-            Asn1EncodableVector signerinfo = new Asn1EncodableVector();
+            var signerinfo = new Asn1EncodableVector
+            {
+                // Add the signerInfo version
+                //
+                new DerInteger(SigningInfoVersion)
+            };
 
-            // Add the signerInfo version
-            //
-            signerinfo.Add(new DerInteger(SigningInfoVersion));
-
-            v = new Asn1EncodableVector();
-            v.Add(getIssuer(SigningCertificate.GetTbsCertificate()));
-            v.Add(new DerInteger(SigningCertificate.SerialNumber));
+            v = new Asn1EncodableVector
+            {
+                getIssuer(SigningCertificate.GetTbsCertificate()),
+                new DerInteger(SigningCertificate.SerialNumber)
+            };
             signerinfo.Add(new DerSequence(v));
 
             // Add the digestAlgorithm
-            v = new Asn1EncodableVector();
-            v.Add(new DerObjectIdentifier(_digestAlgorithm));
-            v.Add(DerNull.Instance);
+            v = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(_digestAlgorithm),
+                DerNull.Instance
+            };
             signerinfo.Add(new DerSequence(v));
 
             // add the authenticated attribute if present
@@ -957,9 +1005,11 @@ namespace iTextSharp.text.pdf
                 signerinfo.Add(new DerTaggedObject(false, 0, getAuthenticatedAttributeSet(secondDigest, signingTime, ocsp)));
             }
             // Add the digestEncryptionAlgorithm
-            v = new Asn1EncodableVector();
-            v.Add(new DerObjectIdentifier(_digestEncryptionAlgorithm));
-            v.Add(DerNull.Instance);
+            v = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(_digestEncryptionAlgorithm),
+                DerNull.Instance
+            };
             signerinfo.Add(new DerSequence(v));
 
             // Add the digest
@@ -970,11 +1020,11 @@ namespace iTextSharp.text.pdf
             // Sam found Adobe expects time-stamped SHA1-1 of the encrypted digest
             if (tsaClient != null)
             {
-                byte[] tsImprint = SHA1.Create().ComputeHash(_digest);
-                byte[] tsToken = tsaClient.GetTimeStampToken(this, tsImprint);
+                var tsImprint = SHA1.Create().ComputeHash(_digest);
+                var tsToken = tsaClient.GetTimeStampToken(this, tsImprint);
                 if (tsToken != null)
                 {
-                    Asn1EncodableVector unauthAttributes = buildUnauthenticatedAttributes(tsToken);
+                    var unauthAttributes = buildUnauthenticatedAttributes(tsToken);
                     if (unauthAttributes != null)
                     {
                         signerinfo.Add(new DerTaggedObject(false, 1, new DerSet(unauthAttributes)));
@@ -983,35 +1033,39 @@ namespace iTextSharp.text.pdf
             }
 
             // Finally build the body out of all the components above
-            Asn1EncodableVector body = new Asn1EncodableVector();
-            body.Add(new DerInteger(Version));
-            body.Add(new DerSet(digestAlgorithms));
-            body.Add(contentinfo);
-            body.Add(new DerTaggedObject(false, 0, dercertificates));
+            var body = new Asn1EncodableVector
+            {
+                new DerInteger(Version),
+                new DerSet(digestAlgorithms),
+                contentinfo,
+                new DerTaggedObject(false, 0, dercertificates),
 
-            //                if (crls.Count > 0) {
-            //                    v = new Asn1EncodableVector();
-            //                    for (Iterator i = crls.Iterator();i.HasNext();) {
-            //                        Asn1InputStream t = new Asn1InputStream(new ByteArrayInputStream((((X509CRL)i.Next()).GetEncoded())));
-            //                        v.Add(t.ReadObject());
-            //                    }
-            //                    DERSet dercrls = new DERSet(v);
-            //                    body.Add(new DERTaggedObject(false, 1, dercrls));
-            //                }
+                //                if (crls.Count > 0) {
+                //                    v = new Asn1EncodableVector();
+                //                    for (Iterator i = crls.Iterator();i.HasNext();) {
+                //                        Asn1InputStream t = new Asn1InputStream(new ByteArrayInputStream((((X509CRL)i.Next()).GetEncoded())));
+                //                        v.Add(t.ReadObject());
+                //                    }
+                //                    DERSet dercrls = new DERSet(v);
+                //                    body.Add(new DERTaggedObject(false, 1, dercrls));
+                //                }
 
-            // Only allow one signerInfo
-            body.Add(new DerSet(new DerSequence(signerinfo)));
+                // Only allow one signerInfo
+                new DerSet(new DerSequence(signerinfo))
+            };
 
             // Now we have the body, wrap it in it's PKCS7Signed shell
             // and return it
             //
-            Asn1EncodableVector whole = new Asn1EncodableVector();
-            whole.Add(new DerObjectIdentifier(IdPkcs7SignedData));
-            whole.Add(new DerTaggedObject(0, new DerSequence(body)));
+            var whole = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(IdPkcs7SignedData),
+                new DerTaggedObject(0, new DerSequence(body))
+            };
 
-            MemoryStream bOut = new MemoryStream();
+            var bOut = new MemoryStream();
 
-            Asn1OutputStream dout = new Asn1OutputStream(bOut);
+            var dout = new Asn1OutputStream(bOut);
             dout.WriteObject(new DerSequence(whole));
 
             return bOut.ToArray();
@@ -1034,17 +1088,23 @@ namespace iTextSharp.text.pdf
         public bool IsRevocationValid()
         {
             if (Ocsp == null)
+            {
                 return false;
+            }
+
             if (_signCerts.Count < 2)
+            {
                 return false;
+            }
+
             try
             {
-                X509Certificate[] cs = SignCertificateChain;
-                SingleResp sr = Ocsp.Responses[0];
-                CertificateID cid = sr.GetCertID();
-                X509Certificate sigcer = SigningCertificate;
-                X509Certificate isscer = cs[1];
-                CertificateID tis = new CertificateID(CertificateID.HashSha1, isscer, sigcer.SerialNumber);
+                var cs = SignCertificateChain;
+                var sr = Ocsp.Responses[0];
+                var cid = sr.GetCertID();
+                var sigcer = SigningCertificate;
+                var isscer = cs[1];
+                var tis = new CertificateID(CertificateID.HashSha1, isscer, sigcer.SerialNumber);
                 return tis.Equals(cid);
             }
             catch
@@ -1076,7 +1136,9 @@ namespace iTextSharp.text.pdf
                     _digestEncryptionAlgorithm = IdDsa;
                 }
                 else
+                {
                     throw new ArgumentException("Unknown Key Algorithm " + digestEncryptionAlgorithm);
+                }
             }
         }
 
@@ -1090,9 +1152,13 @@ namespace iTextSharp.text.pdf
         public void Update(byte[] buf, int off, int len)
         {
             if (_rsAdata != null || _digestAttr != null)
+            {
                 _messageDigest.BlockUpdate(buf, off, len);
+            }
             else
+            {
                 _sig.BlockUpdate(buf, off, len);
+            }
         }
 
         /// <summary>
@@ -1103,10 +1169,13 @@ namespace iTextSharp.text.pdf
         public bool Verify()
         {
             if (_verified)
+            {
                 return _verifyResult;
+            }
+
             if (_sigAttr != null)
             {
-                byte[] msd = new byte[_messageDigest.GetDigestSize()];
+                var msd = new byte[_messageDigest.GetDigestSize()];
                 _sig.BlockUpdate(_sigAttr, 0, _sigAttr.Length);
                 if (_rsAdata != null)
                 {
@@ -1120,7 +1189,7 @@ namespace iTextSharp.text.pdf
             {
                 if (_rsAdata != null)
                 {
-                    byte[] msd = new byte[_messageDigest.GetDigestSize()];
+                    var msd = new byte[_messageDigest.GetDigestSize()];
                     _messageDigest.DoFinal(msd, 0);
                     _sig.BlockUpdate(msd, 0, msd.Length);
                 }
@@ -1139,11 +1208,14 @@ namespace iTextSharp.text.pdf
         public bool VerifyTimestampImprint()
         {
             if (TimeStampToken == null)
+            {
                 return false;
-            MessageImprint imprint = TimeStampToken.TimeStampInfo.TstInfo.MessageImprint;
-            byte[] md = SHA1.Create().ComputeHash(_digest);
-            byte[] imphashed = imprint.GetHashedMessage();
-            bool res = Arrays.AreEqual(md, imphashed);
+            }
+
+            var imprint = TimeStampToken.TimeStampInfo.TstInfo.MessageImprint;
+            var md = SHA1.Create().ComputeHash(_digest);
+            var imphashed = imprint.GetHashedMessage();
+            var res = Arrays.AreEqual(md, imphashed);
             return res;
         }
 
@@ -1154,13 +1226,13 @@ namespace iTextSharp.text.pdf
 
         private static Asn1Object getExtensionValue(X509Certificate cert, string oid)
         {
-            byte[] bytes = cert.GetExtensionValue(new DerObjectIdentifier(oid)).GetDerEncoded();
+            var bytes = cert.GetExtensionValue(new DerObjectIdentifier(oid)).GetDerEncoded();
             if (bytes == null)
             {
                 return null;
             }
-            Asn1InputStream aIn = new Asn1InputStream(new MemoryStream(bytes));
-            Asn1OctetString octs = (Asn1OctetString)aIn.ReadObject();
+            var aIn = new Asn1InputStream(new MemoryStream(bytes));
+            var octs = (Asn1OctetString)aIn.ReadObject();
             aIn = new Asn1InputStream(new MemoryStream(octs.GetOctets()));
             return aIn.ReadObject();
         }
@@ -1172,14 +1244,14 @@ namespace iTextSharp.text.pdf
         /// <returns>a DERObject</returns>
         private static Asn1Object getIssuer(byte[] enc)
         {
-            Asn1InputStream inp = new Asn1InputStream(new MemoryStream(enc));
-            Asn1Sequence seq = (Asn1Sequence)inp.ReadObject();
+            var inp = new Asn1InputStream(new MemoryStream(enc));
+            var seq = (Asn1Sequence)inp.ReadObject();
             return (Asn1Object)seq[seq[0] is DerTaggedObject ? 3 : 2];
         }
 
         private static string getStringFromGeneralName(Asn1Object names)
         {
-            DerTaggedObject taggedObject = (DerTaggedObject)names;
+            var taggedObject = (DerTaggedObject)names;
             return EncodingsRegistry.Instance.GetEncoding(1252).GetString(Asn1OctetString.GetInstance(taggedObject, false).GetOctets());
         }
 
@@ -1190,8 +1262,8 @@ namespace iTextSharp.text.pdf
         /// <returns>a DERObject</returns>
         private static Asn1Object getSubject(byte[] enc)
         {
-            Asn1InputStream inp = new Asn1InputStream(new MemoryStream(enc));
-            Asn1Sequence seq = (Asn1Sequence)inp.ReadObject();
+            var inp = new Asn1InputStream(new MemoryStream(enc));
+            var seq = (Asn1Sequence)inp.ReadObject();
             return (Asn1Object)seq[seq[0] is DerTaggedObject ? 5 : 4];
         }
 
@@ -1207,17 +1279,21 @@ namespace iTextSharp.text.pdf
         private Asn1EncodableVector buildUnauthenticatedAttributes(byte[] timeStampToken)
         {
             if (timeStampToken == null)
+            {
                 return null;
+            }
 
             // @todo: move this together with the rest of the defintions
-            string idTimeStampToken = "1.2.840.113549.1.9.16.2.14"; // RFC 3161 id-aa-timeStampToken
+            var idTimeStampToken = "1.2.840.113549.1.9.16.2.14"; // RFC 3161 id-aa-timeStampToken
 
-            Asn1InputStream tempstream = new Asn1InputStream(new MemoryStream(timeStampToken));
-            Asn1EncodableVector unauthAttributes = new Asn1EncodableVector();
+            var tempstream = new Asn1InputStream(new MemoryStream(timeStampToken));
+            var unauthAttributes = new Asn1EncodableVector();
 
-            Asn1EncodableVector v = new Asn1EncodableVector();
-            v.Add(new DerObjectIdentifier(idTimeStampToken)); // id-aa-timeStampToken
-            Asn1Sequence seq = (Asn1Sequence)tempstream.ReadObject();
+            var v = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(idTimeStampToken) // id-aa-timeStampToken
+            };
+            var seq = (Asn1Sequence)tempstream.ReadObject();
             v.Add(new DerSet(seq));
 
             unauthAttributes.Add(new DerSequence(v));
@@ -1226,10 +1302,12 @@ namespace iTextSharp.text.pdf
 
         private void calcSignCertificateChain()
         {
-            ArrayList cc = new ArrayList();
-            cc.Add(SigningCertificate);
-            ArrayList oc = new ArrayList(_certs);
-            for (int k = 0; k < oc.Count; ++k)
+            var cc = new ArrayList
+            {
+                SigningCertificate
+            };
+            var oc = new ArrayList(_certs);
+            for (var k = 0; k < oc.Count; ++k)
             {
                 if (SigningCertificate.SerialNumber.Equals(((X509Certificate)oc[k]).SerialNumber))
                 {
@@ -1238,12 +1316,12 @@ namespace iTextSharp.text.pdf
                     continue;
                 }
             }
-            bool found = true;
+            var found = true;
             while (found)
             {
-                X509Certificate v = (X509Certificate)cc[cc.Count - 1];
+                var v = (X509Certificate)cc[cc.Count - 1];
                 found = false;
-                for (int k = 0; k < oc.Count; ++k)
+                for (var k = 0; k < oc.Count; ++k)
                 {
                     try
                     {
@@ -1264,7 +1342,7 @@ namespace iTextSharp.text.pdf
         private void findOcsp(Asn1Sequence seq)
         {
             Ocsp = null;
-            bool ret = false;
+            var ret = false;
             while (true)
             {
                 if ((seq[0] is DerObjectIdentifier)
@@ -1273,7 +1351,7 @@ namespace iTextSharp.text.pdf
                     break;
                 }
                 ret = true;
-                for (int k = 0; k < seq.Count; ++k)
+                for (var k = 0; k < seq.Count; ++k)
                 {
                     if (seq[k] is Asn1Sequence)
                     {
@@ -1283,7 +1361,7 @@ namespace iTextSharp.text.pdf
                     }
                     if (seq[k] is Asn1TaggedObject)
                     {
-                        Asn1TaggedObject tag = (Asn1TaggedObject)seq[k];
+                        var tag = (Asn1TaggedObject)seq[k];
                         if (tag.GetObject() is Asn1Sequence)
                         {
                             seq = (Asn1Sequence)tag.GetObject();
@@ -1291,51 +1369,69 @@ namespace iTextSharp.text.pdf
                             break;
                         }
                         else
+                        {
                             return;
+                        }
                     }
                 }
                 if (ret)
+                {
                     return;
+                }
             }
-            DerOctetString os = (DerOctetString)seq[1];
-            Asn1InputStream inp = new Asn1InputStream(os.GetOctets());
-            BasicOcspResponse resp = BasicOcspResponse.GetInstance(inp.ReadObject());
+            var os = (DerOctetString)seq[1];
+            var inp = new Asn1InputStream(os.GetOctets());
+            var resp = BasicOcspResponse.GetInstance(inp.ReadObject());
             Ocsp = new BasicOcspResp(resp);
         }
+
         private DerSet getAuthenticatedAttributeSet(byte[] secondDigest, DateTime signingTime, byte[] ocsp)
         {
-            Asn1EncodableVector attribute = new Asn1EncodableVector();
-            Asn1EncodableVector v = new Asn1EncodableVector();
-            v.Add(new DerObjectIdentifier(IdContentType));
-            v.Add(new DerSet(new DerObjectIdentifier(IdPkcs7Data)));
+            var attribute = new Asn1EncodableVector();
+            var v = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(IdContentType),
+                new DerSet(new DerObjectIdentifier(IdPkcs7Data))
+            };
             attribute.Add(new DerSequence(v));
-            v = new Asn1EncodableVector();
-            v.Add(new DerObjectIdentifier(IdSigningTime));
-            v.Add(new DerSet(new DerUtcTime(signingTime)));
+            v = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(IdSigningTime),
+                new DerSet(new DerUtcTime(signingTime))
+            };
             attribute.Add(new DerSequence(v));
-            v = new Asn1EncodableVector();
-            v.Add(new DerObjectIdentifier(IdMessageDigest));
-            v.Add(new DerSet(new DerOctetString(secondDigest)));
+            v = new Asn1EncodableVector
+            {
+                new DerObjectIdentifier(IdMessageDigest),
+                new DerSet(new DerOctetString(secondDigest))
+            };
             attribute.Add(new DerSequence(v));
             if (ocsp != null)
             {
-                v = new Asn1EncodableVector();
-                v.Add(new DerObjectIdentifier(IdAdbeRevocation));
-                DerOctetString doctet = new DerOctetString(ocsp);
-                Asn1EncodableVector vo1 = new Asn1EncodableVector();
-                Asn1EncodableVector v2 = new Asn1EncodableVector();
-                v2.Add(OcspObjectIdentifiers.PkixOcspBasic);
-                v2.Add(doctet);
-                DerEnumerated den = new DerEnumerated(0);
-                Asn1EncodableVector v3 = new Asn1EncodableVector();
-                v3.Add(den);
-                v3.Add(new DerTaggedObject(true, 0, new DerSequence(v2)));
+                v = new Asn1EncodableVector
+                {
+                    new DerObjectIdentifier(IdAdbeRevocation)
+                };
+                var doctet = new DerOctetString(ocsp);
+                var vo1 = new Asn1EncodableVector();
+                var v2 = new Asn1EncodableVector
+                {
+                    OcspObjectIdentifiers.PkixOcspBasic,
+                    doctet
+                };
+                var den = new DerEnumerated(0);
+                var v3 = new Asn1EncodableVector
+                {
+                    den,
+                    new DerTaggedObject(true, 0, new DerSequence(v2))
+                };
                 vo1.Add(new DerSequence(v3));
                 v.Add(new DerSet(new DerSequence(new DerTaggedObject(true, 1, new DerSequence(vo1)))));
                 attribute.Add(new DerSequence(v));
             }
             return new DerSet(attribute);
         }
+
         /// <summary>
         /// a class that holds an X509 name
         /// </summary>
@@ -1421,6 +1517,7 @@ namespace iTextSharp.text.pdf
             /// Title
             /// </summary>
             public static DerObjectIdentifier T = new DerObjectIdentifier("2.5.4.12");
+
             /// <summary>
             /// LDAP User id.
             /// </summary>
@@ -1430,6 +1527,7 @@ namespace iTextSharp.text.pdf
             /// Naming attribute of type X520name
             /// </summary>
             public static DerObjectIdentifier UniqueIdentifier = new DerObjectIdentifier("2.5.4.45");
+
             /// <summary>
             /// A Hashtable with values
             /// </summary>
@@ -1453,25 +1551,29 @@ namespace iTextSharp.text.pdf
                 DefaultSymbols[Initials] = "INITIALS";
                 DefaultSymbols[Generation] = "GENERATION";
             }
+
             /// <summary>
             /// Constructs an X509 name
             /// </summary>
             /// <param name="seq">an Asn1 Sequence</param>
             public X509Name(Asn1Sequence seq)
             {
-                IEnumerator e = seq.GetEnumerator();
+                var e = seq.GetEnumerator();
 
                 while (e.MoveNext())
                 {
-                    Asn1Set sett = (Asn1Set)e.Current;
+                    var sett = (Asn1Set)e.Current;
 
-                    for (int i = 0; i < sett.Count; i++)
+                    for (var i = 0; i < sett.Count; i++)
                     {
-                        Asn1Sequence s = (Asn1Sequence)sett[i];
-                        string id = (string)DefaultSymbols[s[0]];
+                        var s = (Asn1Sequence)sett[i];
+                        var id = (string)DefaultSymbols[s[0]];
                         if (id == null)
+                        {
                             continue;
-                        ArrayList vs = (ArrayList)Values[id];
+                        }
+
+                        var vs = (ArrayList)Values[id];
                         if (vs == null)
                         {
                             vs = new ArrayList();
@@ -1481,27 +1583,28 @@ namespace iTextSharp.text.pdf
                     }
                 }
             }
+
             /// <summary>
             /// Constructs an X509 name
             /// </summary>
             /// <param name="dirName">a directory name</param>
             public X509Name(string dirName)
             {
-                X509NameTokenizer nTok = new X509NameTokenizer(dirName);
+                var nTok = new X509NameTokenizer(dirName);
 
                 while (nTok.HasMoreTokens())
                 {
-                    string token = nTok.NextToken();
-                    int index = token.IndexOf("=", StringComparison.Ordinal);
+                    var token = nTok.NextToken();
+                    var index = token.IndexOf("=", StringComparison.Ordinal);
 
                     if (index == -1)
                     {
                         throw new ArgumentException("badly formated directory string");
                     }
 
-                    string id = token.Substring(0, index).ToUpper(CultureInfo.InvariantCulture);
-                    string value = token.Substring(index + 1);
-                    ArrayList vs = (ArrayList)Values[id];
+                    var id = token.Substring(0, index).ToUpper(CultureInfo.InvariantCulture);
+                    var value = token.Substring(index + 1);
+                    var vs = (ArrayList)Values[id];
                     if (vs == null)
                     {
                         vs = new ArrayList();
@@ -1509,12 +1612,11 @@ namespace iTextSharp.text.pdf
                     }
                     vs.Add(value);
                 }
-
             }
 
             public string GetField(string name)
             {
-                ArrayList vs = (ArrayList)Values[name];
+                var vs = (ArrayList)Values[name];
                 return vs == null ? null : (string)vs[0];
             }
 
@@ -1525,7 +1627,7 @@ namespace iTextSharp.text.pdf
             /// <returns>an ArrayList</returns>
             public ArrayList GetFieldArray(string name)
             {
-                ArrayList vs = (ArrayList)Values[name];
+                var vs = (ArrayList)Values[name];
                 return vs == null ? null : vs;
             }
 
@@ -1558,6 +1660,7 @@ namespace iTextSharp.text.pdf
             private readonly StringBuilder _buf = new StringBuilder();
             private readonly string _oid;
             private int _index;
+
             public X509NameTokenizer(
             string oid)
             {
@@ -1577,15 +1680,15 @@ namespace iTextSharp.text.pdf
                     return null;
                 }
 
-                int end = _index + 1;
-                bool quoted = false;
-                bool escaped = false;
+                var end = _index + 1;
+                var quoted = false;
+                var escaped = false;
 
                 _buf.Length = 0;
 
                 while (end != _oid.Length)
                 {
-                    char c = _oid[end];
+                    var c = _oid[end];
 
                     if (c == '"')
                     {
@@ -1628,4 +1731,3 @@ namespace iTextSharp.text.pdf
         }
     }
 }
-

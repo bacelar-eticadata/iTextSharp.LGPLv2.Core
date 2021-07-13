@@ -1,7 +1,7 @@
-using System.IO;
-using System.Collections;
-using System.Text;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
+using System.Text;
 using FD = iTextSharp.text.rtf.field;
 
 namespace iTextSharp.text.rtf.text
@@ -43,7 +43,7 @@ namespace iTextSharp.text.rtf.text
                 }
                 if (Document.GetAutogenerateTocEntries())
                 {
-                    StringBuilder titleText = new StringBuilder();
+                    var titleText = new StringBuilder();
                     foreach (IElement element in section.Title)
                     {
                         if (element.Type == Element.CHUNK)
@@ -53,15 +53,15 @@ namespace iTextSharp.text.rtf.text
                     }
                     if (titleText.ToString().Trim().Length > 0)
                     {
-                        FD.RtfTocEntry tocEntry = new FD.RtfTocEntry(titleText.ToString());
+                        var tocEntry = new FD.RtfTocEntry(titleText.ToString());
                         tocEntry.SetRtfDocument(Document);
                         Items.Add(tocEntry);
                     }
                 }
                 foreach (IElement element in section)
                 {
-                    IRtfBasicElement[] rtfElements = doc.GetMapper().MapElement(element);
-                    for (int i = 0; i < rtfElements.Length; i++)
+                    var rtfElements = doc.GetMapper().MapElement(element);
+                    for (var i = 0; i < rtfElements.Length; i++)
                     {
                         if (rtfElements[i] != null)
                         {
@@ -84,7 +84,7 @@ namespace iTextSharp.text.rtf.text
         public override void SetInHeader(bool inHeader)
         {
             base.SetInHeader(inHeader);
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 ((IRtfBasicElement)Items[i]).SetInHeader(inHeader);
             }
@@ -98,7 +98,7 @@ namespace iTextSharp.text.rtf.text
         public override void SetInTable(bool inTable)
         {
             base.SetInTable(inTable);
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
                 ((IRtfBasicElement)Items[i]).SetInTable(inTable);
             }
@@ -133,9 +133,9 @@ namespace iTextSharp.text.rtf.text
                 Title.SetIndentLeft((int)(Title.GetIndentLeft() + indentLeft * TWIPS_FACTOR));
                 Title.SetIndentRight((int)(Title.GetIndentRight() + indentRight * TWIPS_FACTOR));
             }
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
-                IRtfBasicElement rtfElement = (IRtfBasicElement)Items[i];
+                var rtfElement = (IRtfBasicElement)Items[i];
                 if (rtfElement is RtfSection)
                 {
                     ((RtfSection)rtfElement).updateIndentation(indentLeft + indentContent, indentRight, 0);

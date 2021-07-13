@@ -13,11 +13,11 @@ namespace iTextSharp.text.rtf.field
     /// </summary>
     public class RtfTableOfContents : RtfField
     {
-
         /// <summary>
         /// field inst content
         /// </summary>
         private const string FieldInst = "TOC \\\\f \\\\h \\\\u \\\\o \"1-5\" ";
+
         /// <summary>
         /// The default text to display
         /// </summary>
@@ -38,7 +38,7 @@ namespace iTextSharp.text.rtf.field
         /// </summary>
         protected override void WriteFieldInstContent(Stream outp)
         {
-            byte[] t = DocWriter.GetIsoBytes(FieldInst);
+            var t = DocWriter.GetIsoBytes(FieldInst);
             outp.Write(t, 0, t.Length);
         }
 

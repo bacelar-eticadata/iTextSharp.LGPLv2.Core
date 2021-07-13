@@ -1,5 +1,5 @@
-using System.IO;
 using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.pdf
 {
@@ -23,7 +23,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfDictionary : PdfObject
     {
-
         /// <summary>
         /// static membervariables (types of dictionary's)
         /// </summary>
@@ -52,6 +51,7 @@ namespace iTextSharp.text.pdf
         /// This is a possible type of dictionary
         /// </summary>
         public static PdfName Pages = PdfName.Pages;
+
         /// <summary>
         /// membervariables
         /// </summary>
@@ -65,6 +65,7 @@ namespace iTextSharp.text.pdf
         /// This is the type of this dictionary
         /// </summary>
         private readonly PdfName _dictionaryType;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -93,21 +94,9 @@ namespace iTextSharp.text.pdf
         /// methods overriding some methods in PdfObject
         /// </summary>
 
-        public ICollection Keys
-        {
-            get
-            {
-                return HashMap.Keys;
-            }
-        }
+        public ICollection Keys => HashMap.Keys;
 
-        public int Size
-        {
-            get
-            {
-                return HashMap.Count;
-            }
-        }
+        public int Size => HashMap.Count;
 
         public bool Contains(PdfName key)
         {
@@ -122,18 +111,24 @@ namespace iTextSharp.text.pdf
         public PdfArray GetAsArray(PdfName key)
         {
             PdfArray array = null;
-            PdfObject orig = GetDirectObject(key);
+            var orig = GetDirectObject(key);
             if (orig != null && orig.IsArray())
+            {
                 array = (PdfArray)orig;
+            }
+
             return array;
         }
 
         public PdfBoolean GetAsBoolean(PdfName key)
         {
             PdfBoolean b = null;
-            PdfObject orig = GetDirectObject(key);
+            var orig = GetDirectObject(key);
             if (orig != null && orig.IsBoolean())
+            {
                 b = (PdfBoolean)orig;
+            }
+
             return b;
         }
 
@@ -149,54 +144,72 @@ namespace iTextSharp.text.pdf
         public PdfDictionary GetAsDict(PdfName key)
         {
             PdfDictionary dict = null;
-            PdfObject orig = GetDirectObject(key);
+            var orig = GetDirectObject(key);
             if (orig != null && orig.IsDictionary())
+            {
                 dict = (PdfDictionary)orig;
+            }
+
             return dict;
         }
 
         public PdfIndirectReference GetAsIndirectObject(PdfName key)
         {
             PdfIndirectReference refi = null;
-            PdfObject orig = Get(key); // not getDirect this time.
+            var orig = Get(key); // not getDirect this time.
             if (orig != null && orig.IsIndirect())
+            {
                 refi = (PdfIndirectReference)orig;
+            }
+
             return refi;
         }
 
         public PdfName GetAsName(PdfName key)
         {
             PdfName name = null;
-            PdfObject orig = GetDirectObject(key);
+            var orig = GetDirectObject(key);
             if (orig != null && orig.IsName())
+            {
                 name = (PdfName)orig;
+            }
+
             return name;
         }
 
         public PdfNumber GetAsNumber(PdfName key)
         {
             PdfNumber number = null;
-            PdfObject orig = GetDirectObject(key);
+            var orig = GetDirectObject(key);
             if (orig != null && orig.IsNumber())
+            {
                 number = (PdfNumber)orig;
+            }
+
             return number;
         }
 
         public PdfStream GetAsStream(PdfName key)
         {
             PdfStream stream = null;
-            PdfObject orig = GetDirectObject(key);
+            var orig = GetDirectObject(key);
             if (orig != null && orig.IsStream())
+            {
                 stream = (PdfStream)orig;
+            }
+
             return stream;
         }
 
         public PdfString GetAsString(PdfName key)
         {
             PdfString str = null;
-            PdfObject orig = GetDirectObject(key);
+            var orig = GetDirectObject(key);
             if (orig != null && orig.IsString())
+            {
                 str = (PdfString)orig;
+            }
+
             return str;
         }
 
@@ -263,7 +276,7 @@ namespace iTextSharp.text.pdf
         /// <returns> true  if it is,  false  if it isn't.</returns>
         public void Merge(PdfDictionary other)
         {
-            foreach (object key in other.HashMap.Keys)
+            foreach (var key in other.HashMap.Keys)
             {
                 HashMap[key] = other.HashMap[key];
             }
@@ -274,7 +287,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public void MergeDifferent(PdfDictionary other)
         {
-            foreach (object key in other.HashMap.Keys)
+            foreach (var key in other.HashMap.Keys)
             {
                 if (!HashMap.ContainsKey(key))
                 {
@@ -286,10 +299,15 @@ namespace iTextSharp.text.pdf
         public void Put(PdfName key, PdfObject value)
         {
             if (value == null || value.IsNull())
+            {
                 HashMap.Remove(key);
+            }
             else
+            {
                 HashMap[key] = value;
+            }
         }
+
         /// <summary>
         /// Adds a  PdfObject  and its key to the  PdfDictionary .
         /// If the value is null it does nothing.
@@ -299,7 +317,10 @@ namespace iTextSharp.text.pdf
         public void PutEx(PdfName key, PdfObject value)
         {
             if (value == null)
+            {
                 return;
+            }
+
             Put(key, value);
         }
 
@@ -323,19 +344,25 @@ namespace iTextSharp.text.pdf
             {
                 value = (PdfObject)HashMap[key];
                 key.ToPdf(writer, os);
-                int localType = value.Type;
+                var localType = value.Type;
                 if (localType != ARRAY && localType != DICTIONARY && localType != NAME && localType != STRING)
+                {
                     os.WriteByte((byte)' ');
+                }
+
                 value.ToPdf(writer, os);
             }
             os.WriteByte((byte)'>');
             os.WriteByte((byte)'>');
         }
 
-
         public override string ToString()
         {
-            if (Get(PdfName.TYPE) == null) return "Dictionary";
+            if (Get(PdfName.TYPE) == null)
+            {
+                return "Dictionary";
+            }
+
             return "Dictionary of type: " + Get(PdfName.TYPE);
         }
     }

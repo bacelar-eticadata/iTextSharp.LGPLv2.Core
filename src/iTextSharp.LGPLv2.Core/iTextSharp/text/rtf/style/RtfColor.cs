@@ -1,5 +1,5 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
+using System.IO;
 
 namespace iTextSharp.text.rtf.style
 {
@@ -136,7 +136,7 @@ namespace iTextSharp.text.rtf.style
             {
                 return false;
             }
-            RtfColor color = (RtfColor)obj;
+            var color = (RtfColor)obj;
             return (_red == color.GetRed() && _green == color.GetGreen() && _blue == color.GetBlue());
         }
 

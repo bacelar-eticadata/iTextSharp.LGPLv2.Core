@@ -1,6 +1,6 @@
-using System.Collections;
 using iTextSharp.text.rtf.parser.ctrlwords;
 using iTextSharp.text.rtf.parser.enumerations;
+using System.Collections;
 
 namespace iTextSharp.text.rtf.parser.destinations
 {
@@ -11,7 +11,6 @@ namespace iTextSharp.text.rtf.parser.destinations
     /// </summary>
     public class RtfDestinationColorTable : RtfDestination
     {
-
         /// <summary>
         /// The blue component of the current color being parsed.
         /// </summary>
@@ -63,10 +62,12 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// The RtfImportHeader to add color mappings to.
         /// </summary>
         private RtfImportMgr _importHeader;
+
         /// <summary>
         /// The red component of the current color being parsed.
         /// </summary>
         private int _red = -1;
+
         /// <summary>
         /// Specifies the use of a theme color.
         /// @see com.lowagie.text.rtf.parser.enumerations.RtfColorThemes
@@ -74,6 +75,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// @see com.lowagie.text.rtf.parser.destinations.RtfDestinationColorTable#cshade
         /// </summary>
         private int _themeColor = RtfColorThemes.THEME_UNDEFINED;
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -130,11 +132,30 @@ namespace iTextSharp.text.rtf.parser.destinations
 
         public override bool HandleControlWord(RtfCtrlWordData ctrlWordData)
         {
-            if (ctrlWordData.CtrlWord.Equals("blue")) setBlue(ctrlWordData.IntValue());
-            if (ctrlWordData.CtrlWord.Equals("red")) setRed(ctrlWordData.IntValue());
-            if (ctrlWordData.CtrlWord.Equals("green")) setGreen(ctrlWordData.IntValue());
-            if (ctrlWordData.CtrlWord.Equals("cshade")) setShade(ctrlWordData.IntValue());
-            if (ctrlWordData.CtrlWord.Equals("ctint")) setTint(ctrlWordData.IntValue());
+            if (ctrlWordData.CtrlWord.Equals("blue"))
+            {
+                setBlue(ctrlWordData.IntValue());
+            }
+
+            if (ctrlWordData.CtrlWord.Equals("red"))
+            {
+                setRed(ctrlWordData.IntValue());
+            }
+
+            if (ctrlWordData.CtrlWord.Equals("green"))
+            {
+                setGreen(ctrlWordData.IntValue());
+            }
+
+            if (ctrlWordData.CtrlWord.Equals("cshade"))
+            {
+                setShade(ctrlWordData.IntValue());
+            }
+
+            if (ctrlWordData.CtrlWord.Equals("ctint"))
+            {
+                setTint(ctrlWordData.IntValue());
+            }
             //if(ctrlWordData.ctrlWord.Equals("cmaindarkone")) this.SetThemeColor(ctrlWordData.ctrlWord);
             //if(ctrlWordData.ctrlWord.Equals("cmainlightone")) this.SetThemeColor(ctrlWordData.ctrlWord);
             //if(ctrlWordData.ctrlWord.Equals("cmaindarktwo")) this.SetThemeColor(ctrlWordData.ctrlWord);
@@ -176,6 +197,7 @@ namespace iTextSharp.text.rtf.parser.destinations
             _importHeader = parser.GetImportManager();
             SetToDefaults();
         }
+
         /// <summary>
         /// Set default values.
         /// </summary>
@@ -189,6 +211,7 @@ namespace iTextSharp.text.rtf.parser.destinations
             _themeColor = RtfColorThemes.THEME_UNDEFINED;
             // do not reset colorNr
         }
+
         /// <summary>
         /// Processes the color triplet parsed from the document.
         /// Add it to the import mapping so colors can be mapped when encountered
@@ -211,6 +234,7 @@ namespace iTextSharp.text.rtf.parser.destinations
             SetToDefaults();
             _colorNr++;
         }
+
         /// <summary>
         /// Set the blue color value.
         /// </summary>
@@ -246,6 +270,7 @@ namespace iTextSharp.text.rtf.parser.destinations
                 _red = value;
             }
         }
+
         /// <summary>
         /// Set the shade value
         /// @see com.lowagie.text.rtf.parser.destinations.RtfDestinationColorTable#cshade

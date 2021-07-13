@@ -1,6 +1,6 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
 using ST = iTextSharp.text.rtf.style;
 
 namespace iTextSharp.text.rtf.text
@@ -17,7 +17,7 @@ namespace iTextSharp.text.rtf.text
         /// <summary>
         /// Constant for phrase in a table indication
         /// </summary>
-        public new static readonly byte[] InTable = DocWriter.GetIsoBytes("\\intbl");
+        public static new readonly byte[] InTable = DocWriter.GetIsoBytes("\\intbl");
 
         /// <summary>
         /// Constant for the line spacing.
@@ -63,18 +63,18 @@ namespace iTextSharp.text.rtf.text
                 _lineLeading = 0;
             }
 
-            ST.RtfFont phraseFont = new ST.RtfFont(null, phrase.Font);
-            for (int i = 0; i < phrase.Count; i++)
+            var phraseFont = new ST.RtfFont(null, phrase.Font);
+            for (var i = 0; i < phrase.Count; i++)
             {
-                IElement chunk = (IElement)phrase[i];
+                var chunk = (IElement)phrase[i];
                 if (chunk is Chunk)
                 {
                     ((Chunk)chunk).Font = phraseFont.Difference(((Chunk)chunk).Font);
                 }
                 try
                 {
-                    IRtfBasicElement[] rtfElements = doc.GetMapper().MapElement(chunk);
-                    for (int j = 0; j < rtfElements.Length; j++)
+                    var rtfElements = doc.GetMapper().MapElement(chunk);
+                    for (var j = 0; j < rtfElements.Length; j++)
                     {
                         Chunks.Add(rtfElements[j]);
                     }
@@ -100,7 +100,7 @@ namespace iTextSharp.text.rtf.text
         public override void SetInHeader(bool inHeader)
         {
             base.SetInHeader(inHeader);
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
                 ((IRtfBasicElement)Chunks[i]).SetInHeader(inHeader);
             }
@@ -114,7 +114,7 @@ namespace iTextSharp.text.rtf.text
         public override void SetInTable(bool inTable)
         {
             base.SetInTable(inTable);
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
                 ((IRtfBasicElement)Chunks[i]).SetInTable(inTable);
             }
@@ -128,7 +128,7 @@ namespace iTextSharp.text.rtf.text
         public override void SetRtfDocument(RtfDocument doc)
         {
             base.SetRtfDocument(doc);
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
                 ((IRtfBasicElement)Chunks[i]).SetRtfDocument(Document);
             }

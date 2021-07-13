@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests
 {
@@ -38,7 +38,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
             table1.AddCell(footerCell);
 
             //adding some rows
-            for (int i = 0; i < 400; i++)
+            for (var i = 0; i < 400; i++)
             {
                 var rowCell = new PdfPCell(new Phrase(i.ToString()));
                 table1.AddCell(rowCell);
@@ -47,20 +47,20 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
             table1.SkipFirstHeader = true;
 
             // wrapping table1 in multiple columns
-            ColumnText ct = new ColumnText(pdfWriter.DirectContent)
+            var ct = new ColumnText(pdfWriter.DirectContent)
             {
                 RunDirection = PdfWriter.RUN_DIRECTION_RTL
             };
             ct.AddElement(table1);
 
-            int status = 0;
-            int count = 0;
-            int l = 0;
-            int columnsWidth = 100;
-            int columnsMargin = 7;
-            int columnsPerPage = 4;
-            int r = columnsWidth;
-            bool isRtl = true;
+            var status = 0;
+            var count = 0;
+            var l = 0;
+            var columnsWidth = 100;
+            var columnsMargin = 7;
+            var columnsPerPage = 4;
+            var r = columnsWidth;
+            var isRtl = true;
 
             // render the column as long as it has content
             while (ColumnText.HasMoreText(status))

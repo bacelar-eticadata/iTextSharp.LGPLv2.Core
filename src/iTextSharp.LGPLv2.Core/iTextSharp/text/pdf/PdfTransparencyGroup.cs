@@ -22,9 +22,13 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value)
+                {
                     Put(PdfName.I, PdfBoolean.Pdftrue);
+                }
                 else
+                {
                     Remove(PdfName.I);
+                }
             }
         }
 
@@ -36,11 +40,14 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value)
+                {
                     Put(PdfName.K, PdfBoolean.Pdftrue);
+                }
                 else
+                {
                     Remove(PdfName.K);
+                }
             }
         }
-
     }
 }

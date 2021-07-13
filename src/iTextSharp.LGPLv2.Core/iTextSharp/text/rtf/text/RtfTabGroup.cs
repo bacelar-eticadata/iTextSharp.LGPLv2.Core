@@ -1,5 +1,5 @@
-using System.IO;
 using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.text
 {
@@ -40,7 +40,7 @@ namespace iTextSharp.text.rtf.text
         public RtfTabGroup(ArrayList tabs)
         {
             _tabs = new ArrayList();
-            for (int i = 0; i < tabs.Count; i++)
+            for (var i = 0; i < tabs.Count; i++)
             {
                 if (tabs[i] is RtfTab)
                 {

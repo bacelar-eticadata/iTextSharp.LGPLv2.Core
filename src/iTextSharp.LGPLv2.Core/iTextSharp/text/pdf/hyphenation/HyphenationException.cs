@@ -7,7 +7,6 @@ namespace iTextSharp.text.pdf.hyphenation
     /// </summary>
     public class HyphenationException : Exception
     {
-
         public HyphenationException(string msg) : base(msg)
         {
         }

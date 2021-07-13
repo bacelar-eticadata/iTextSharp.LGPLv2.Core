@@ -2,7 +2,6 @@ using System;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  A Hashtable that uses ints as the keys.
     /// </summary>
@@ -16,6 +15,7 @@ namespace iTextSharp.text.pdf
 
         /// The hash table data.
         private IntHashtableEntry[] _table;
+
         /// Rehashes the table when count exceeds this threshold.
         private int _threshold;
 
@@ -27,7 +27,10 @@ namespace iTextSharp.text.pdf
         public IntHashtable(int initialCapacity, float loadFactor)
         {
             if (initialCapacity <= 0 || loadFactor <= 0.0)
+            {
                 throw new ArgumentException();
+            }
+
             _loadFactor = loadFactor;
             _table = new IntHashtableEntry[initialCapacity];
             _threshold = (int)(initialCapacity * loadFactor);
@@ -48,13 +51,7 @@ namespace iTextSharp.text.pdf
         public IntHashtable() : this(101, 0.75f) { }
 
         /// Returns the number of elements contained in the hashtable.
-        public int Size
-        {
-            get
-            {
-                return _count;
-            }
-        }
+        public int Size => _count;
 
         /// <summary>
         ///
@@ -65,23 +62,25 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                IntHashtableEntry[] tab = _table;
-                int hash = key;
-                int index = (hash & 0x7FFFFFFF) % tab.Length;
-                for (IntHashtableEntry e = tab[index]; e != null; e = e.Next)
+                var tab = _table;
+                var hash = key;
+                var index = (hash & 0x7FFFFFFF) % tab.Length;
+                for (var e = tab[index]; e != null; e = e.Next)
                 {
                     if (e.Hash == hash && e.key == key)
+                    {
                         return e.value;
+                    }
                 }
                 return 0;
             }
 
             set
             {
-                IntHashtableEntry[] tab = _table;
-                int hash = key;
-                int index = (hash & 0x7FFFFFFF) % tab.Length;
-                for (IntHashtableEntry e = tab[index]; e != null; e = e.Next)
+                var tab = _table;
+                var hash = key;
+                var index = (hash & 0x7FFFFFFF) % tab.Length;
+                for (var e = tab[index]; e != null; e = e.Next)
                 {
                     if (e.Hash == hash && e.key == key)
                     {
@@ -97,11 +96,13 @@ namespace iTextSharp.text.pdf
                     return;
                 }
 
-                IntHashtableEntry en = new IntHashtableEntry();
-                en.Hash = hash;
-                en.key = key;
-                en.value = value;
-                en.Next = tab[index];
+                var en = new IntHashtableEntry
+                {
+                    Hash = hash,
+                    key = key,
+                    value = value,
+                    Next = tab[index]
+                };
                 tab[index] = en;
                 ++_count;
             }
@@ -110,20 +111,25 @@ namespace iTextSharp.text.pdf
         /// Clears the hash table so that it has no more elements in it.
         public void Clear()
         {
-            IntHashtableEntry[] tab = _table;
-            for (int index = tab.Length; --index >= 0;)
+            var tab = _table;
+            for (var index = tab.Length; --index >= 0;)
+            {
                 tab[index] = null;
+            }
+
             _count = 0;
         }
 
         public IntHashtable Clone()
         {
-            IntHashtable t = new IntHashtable();
-            t._count = _count;
-            t._loadFactor = _loadFactor;
-            t._threshold = _threshold;
-            t._table = new IntHashtableEntry[_table.Length];
-            for (int i = _table.Length; i-- > 0;)
+            var t = new IntHashtable
+            {
+                _count = _count,
+                _loadFactor = _loadFactor,
+                _threshold = _threshold,
+                _table = new IntHashtableEntry[_table.Length]
+            };
+            for (var i = _table.Length; i-- > 0;)
             {
                 t._table[i] = (_table[i] != null)
                 ? _table[i].Clone() : null;
@@ -149,13 +155,15 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool Contains(int value)
         {
-            IntHashtableEntry[] tab = _table;
-            for (int i = tab.Length; i-- > 0;)
+            var tab = _table;
+            for (var i = tab.Length; i-- > 0;)
             {
-                for (IntHashtableEntry e = tab[i]; e != null; e = e.Next)
+                for (var e = tab[i]; e != null; e = e.Next)
                 {
                     if (e.value == value)
+                    {
                         return true;
+                    }
                 }
             }
             return false;
@@ -170,13 +178,15 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool ContainsKey(int key)
         {
-            IntHashtableEntry[] tab = _table;
-            int hash = key;
-            int index = (hash & 0x7FFFFFFF) % tab.Length;
-            for (IntHashtableEntry e = tab[index]; e != null; e = e.Next)
+            var tab = _table;
+            var hash = key;
+            var index = (hash & 0x7FFFFFFF) % tab.Length;
+            for (var e = tab[index]; e != null; e = e.Next)
             {
                 if (e.Hash == hash && e.key == key)
+                {
                     return true;
+                }
             }
             return false;
         }
@@ -188,17 +198,26 @@ namespace iTextSharp.text.pdf
 
         public int[] GetKeys()
         {
-            int[] res = new int[_count];
-            int ptr = 0;
-            int index = _table.Length;
+            var res = new int[_count];
+            var ptr = 0;
+            var index = _table.Length;
             IntHashtableEntry entry = null;
             while (true)
             {
                 if (entry == null)
-                    while ((index-- > 0) && ((entry = _table[index]) == null)) ;
+                {
+                    while ((index-- > 0) && ((entry = _table[index]) == null))
+                    {
+                        ;
+                    }
+                }
+
                 if (entry == null)
+                {
                     break;
-                IntHashtableEntry e = entry;
+                }
+
+                var e = entry;
                 entry = e.Next;
                 res[ptr++] = e.key;
             }
@@ -210,6 +229,7 @@ namespace iTextSharp.text.pdf
         {
             return _count == 0;
         }
+
         /// Removes the element corresponding to the key. Does nothing if the
         /// <summary>
         /// key is not present.
@@ -222,17 +242,22 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int Remove(int key)
         {
-            IntHashtableEntry[] tab = _table;
-            int hash = key;
-            int index = (hash & 0x7FFFFFFF) % tab.Length;
+            var tab = _table;
+            var hash = key;
+            var index = (hash & 0x7FFFFFFF) % tab.Length;
             for (IntHashtableEntry e = tab[index], prev = null; e != null; prev = e, e = e.Next)
             {
                 if (e.Hash == hash && e.key == key)
                 {
                     if (prev != null)
+                    {
                         prev.Next = e.Next;
+                    }
                     else
+                    {
                         tab[index] = e.Next;
+                    }
+
                     --_count;
                     return e.value;
                 }
@@ -242,7 +267,7 @@ namespace iTextSharp.text.pdf
 
         public int[] ToOrderedKeys()
         {
-            int[] res = GetKeys();
+            var res = GetKeys();
             Array.Sort(res);
             return res;
         }
@@ -256,71 +281,64 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected void Rehash()
         {
-            int oldCapacity = _table.Length;
-            IntHashtableEntry[] oldTable = _table;
+            var oldCapacity = _table.Length;
+            var oldTable = _table;
 
-            int newCapacity = oldCapacity * 2 + 1;
-            IntHashtableEntry[] newTable = new IntHashtableEntry[newCapacity];
+            var newCapacity = oldCapacity * 2 + 1;
+            var newTable = new IntHashtableEntry[newCapacity];
 
             _threshold = (int)(newCapacity * _loadFactor);
             _table = newTable;
 
-            for (int i = oldCapacity; i-- > 0;)
+            for (var i = oldCapacity; i-- > 0;)
             {
-                for (IntHashtableEntry old = oldTable[i]; old != null;)
+                for (var old = oldTable[i]; old != null;)
                 {
-                    IntHashtableEntry e = old;
+                    var e = old;
                     old = old.Next;
 
-                    int index = (e.Hash & 0x7FFFFFFF) % newCapacity;
+                    var index = (e.Hash & 0x7FFFFFFF) % newCapacity;
                     e.Next = newTable[index];
                     newTable[index] = e;
                 }
             }
         }
+
         public class IntHashtableEntry
         {
             internal int Hash;
             internal int key;
             internal IntHashtableEntry Next;
             internal int value;
-            public int Key
-            {
-                get
-                {
-                    return key;
-                }
-            }
 
-            public int Value
-            {
-                get
-                {
-                    return value;
-                }
-            }
+            public int Key => key;
+
+            public int Value => value;
 
             protected internal IntHashtableEntry Clone()
             {
-                IntHashtableEntry entry = new IntHashtableEntry();
-                entry.Hash = Hash;
-                entry.key = key;
-                entry.value = value;
-                entry.Next = (Next != null) ? Next.Clone() : null;
+                var entry = new IntHashtableEntry
+                {
+                    Hash = Hash,
+                    key = key,
+                    value = value,
+                    Next = (Next != null) ? Next.Clone() : null
+                };
                 return entry;
             }
         }
 
         public class IntHashtableIterator
         {
-            readonly IntHashtableEntry[] _table;
+            private readonly IntHashtableEntry[] _table;
 
-            IntHashtableEntry _entry;
+            private IntHashtableEntry _entry;
 
             /// <summary>
             /// boolean keys;
             /// </summary>
-            int _index;
+            private int _index;
+
             internal IntHashtableIterator(IntHashtableEntry[] table)
             {
                 _table = table;
@@ -347,11 +365,14 @@ namespace iTextSharp.text.pdf
             {
                 if (_entry == null)
                 {
-                    while ((_index-- > 0) && ((_entry = _table[_index]) == null)) ;
+                    while ((_index-- > 0) && ((_entry = _table[_index]) == null))
+                    {
+                        ;
+                    }
                 }
                 if (_entry != null)
                 {
-                    IntHashtableEntry e = _entry;
+                    var e = _entry;
                     _entry = e.Next;
                     return e;
                 }

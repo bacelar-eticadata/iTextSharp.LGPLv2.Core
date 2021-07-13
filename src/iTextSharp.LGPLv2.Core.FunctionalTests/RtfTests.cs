@@ -1,9 +1,9 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.rtf;
 using iTextSharp.text.rtf.parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests
 {

@@ -7,7 +7,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfAppearance : PdfTemplate
     {
-
         public static Hashtable StdFieldFontNames = new Hashtable();
 
         static PdfAppearance()
@@ -52,6 +51,7 @@ namespace iTextSharp.text.pdf
         {
             ThisReference = iref;
         }
+
         /// <summary>
         /// Creates new PdfTemplate
         /// </summary>
@@ -66,14 +66,16 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                PdfAppearance tpl = new PdfAppearance();
-                tpl.Writer = Writer;
-                tpl.Pdf = Pdf;
-                tpl.ThisReference = ThisReference;
-                tpl.pageResources = pageResources;
-                tpl.BBox = new Rectangle(BBox);
-                tpl.group = group;
-                tpl.layer = layer;
+                var tpl = new PdfAppearance
+                {
+                    Writer = Writer,
+                    Pdf = Pdf,
+                    ThisReference = ThisReference,
+                    pageResources = pageResources,
+                    BBox = new Rectangle(BBox),
+                    group = group,
+                    layer = layer
+                };
                 if (matrix != null)
                 {
                     tpl.matrix = new PdfArray(matrix);
@@ -109,28 +111,35 @@ namespace iTextSharp.text.pdf
                 State.FontDetails = new FontDetails(null, ((DocumentFont)bf).IndirectReference, bf);
             }
             else
+            {
                 State.FontDetails = Writer.AddSimple(bf);
-            PdfName psn = (PdfName)StdFieldFontNames[bf.PostscriptFontName];
+            }
+
+            var psn = (PdfName)StdFieldFontNames[bf.PostscriptFontName];
             if (psn == null)
             {
                 if (bf.Subset && bf.FontType == BaseFont.FONT_TYPE_TTUNI)
+                {
                     psn = State.FontDetails.FontName;
+                }
                 else
                 {
                     psn = new PdfName(bf.PostscriptFontName);
                     State.FontDetails.Subset = false;
                 }
             }
-            PageResources prs = PageResources;
+            var prs = PageResources;
             prs.AddFont(psn, State.FontDetails.IndirectReference);
             Content.Append(psn.GetBytes()).Append(' ').Append(size).Append(" Tf").Append_i(Separator);
         }
 
         internal static PdfAppearance CreateAppearance(PdfWriter writer, float width, float height, PdfName forcedName)
         {
-            PdfAppearance template = new PdfAppearance(writer);
-            template.Width = width;
-            template.Height = height;
+            var template = new PdfAppearance(writer)
+            {
+                Width = width,
+                Height = height
+            };
             writer.AddDirectTemplateSimple(template, forcedName);
             return template;
         }

@@ -1,7 +1,7 @@
+using iTextSharp.text.pdf;
 using System;
 using System.Collections;
 using System.util;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text
 {
@@ -108,7 +108,7 @@ namespace iTextSharp.text
         protected float width;
 
         ///<summary> This is the leading. </summary>
-        float _leading = float.NaN;
+        private float _leading = float.NaN;
 
         /// <summary>
         /// If a truncation happens due to the {@link #maxLines} property, then this text will
@@ -184,9 +184,11 @@ namespace iTextSharp.text
         {
             get
             {
-                Cell cell = new Cell(true);
-                cell.Colspan = 3;
-                cell.Border = NO_BORDER;
+                var cell = new Cell(true)
+                {
+                    Colspan = 3,
+                    Border = NO_BORDER
+                };
                 return cell;
             }
         }
@@ -200,15 +202,9 @@ namespace iTextSharp.text
         /// <value>none</value>
         public override float Bottom
         {
-            get
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            get => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
 
-            set
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            set => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
         }
 
         /// <summary>
@@ -219,7 +215,7 @@ namespace iTextSharp.text
         {
             get
             {
-                ArrayList tmp = new ArrayList();
+                var tmp = new ArrayList();
                 foreach (IElement ele in ArrayList)
                 {
                     tmp.AddRange(ele.Chunks);
@@ -238,43 +234,25 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public int Colspan
         {
-            get
-            {
-                return colspan;
-            }
+            get => colspan;
 
-            set
-            {
-                colspan = value;
-            }
+            set => colspan = value;
         }
 
         /// <summary>
         /// Gets Elements.
         /// </summary>
         /// <value>an ArrayList</value>
-        public ArrayList Elements
-        {
-            get
-            {
-                return ArrayList;
-            }
-        }
+        public ArrayList Elements => ArrayList;
 
         /// <summary>
         /// Does this  Cell  force a group change?
         /// </summary>
         public bool GroupChange
         {
-            get
-            {
-                return groupChange;
-            }
+            get => groupChange;
 
-            set
-            {
-                groupChange = value;
-            }
+            set => groupChange = value;
         }
 
         /// <summary>
@@ -283,15 +261,9 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public bool Header
         {
-            get
-            {
-                return header;
-            }
+            get => header;
 
-            set
-            {
-                header = value;
-            }
+            set => header = value;
         }
 
         /// <summary>
@@ -300,15 +272,9 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public int HorizontalAlignment
         {
-            get
-            {
-                return horizontalAlignment;
-            }
+            get => horizontalAlignment;
 
-            set
-            {
-                horizontalAlignment = value;
-            }
+            set => horizontalAlignment = value;
         }
 
         /// <summary>
@@ -326,10 +292,7 @@ namespace iTextSharp.text
                 return _leading;
             }
 
-            set
-            {
-                _leading = value;
-            }
+            set => _leading = value;
         }
 
         /// <summary>
@@ -338,15 +301,9 @@ namespace iTextSharp.text
         /// <value>none</value>
         public override float Left
         {
-            get
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            get => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
 
-            set
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            set => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
         }
 
         /// <summary>
@@ -354,15 +311,9 @@ namespace iTextSharp.text
         /// </summary>
         public int MaxLines
         {
-            get
-            {
-                return maxLines;
-            }
+            get => maxLines;
 
-            set
-            {
-                maxLines = value;
-            }
+            set => maxLines = value;
         }
 
         /// <summary>
@@ -375,15 +326,9 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public bool NoWrap
         {
-            get
-            {
-                return (maxLines == 1);
-            }
+            get => (maxLines == 1);
 
-            set
-            {
-                maxLines = 1;
-            }
+            set => maxLines = 1;
         }
 
         /// <summary>
@@ -392,15 +337,9 @@ namespace iTextSharp.text
         /// <value>none</value>
         public override float Right
         {
-            get
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            get => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
 
-            set
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            set => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
         }
 
         /// <summary>
@@ -409,15 +348,9 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public int Rowspan
         {
-            get
-            {
-                return rowspan;
-            }
+            get => rowspan;
 
-            set
-            {
-                rowspan = value;
-            }
+            set => rowspan = value;
         }
 
         /// <summary>
@@ -425,28 +358,16 @@ namespace iTextSharp.text
         /// </summary>
         public string ShowTruncation
         {
-            get
-            {
-                return _showTruncation;
-            }
+            get => _showTruncation;
 
-            set
-            {
-                _showTruncation = value;
-            }
+            set => _showTruncation = value;
         }
 
         /// <summary>
         /// Gets the number of Elements in the Cell.
         /// </summary>
         /// <value>a size</value>
-        public int Size
-        {
-            get
-            {
-                return ArrayList.Count;
-            }
-        }
+        public int Size => ArrayList.Count;
 
         /// <summary>
         /// This property throws an Exception.
@@ -454,43 +375,25 @@ namespace iTextSharp.text
         /// <value>none</value>
         public override float Top
         {
-            get
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            get => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
 
-            set
-            {
-                throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
-            }
+            set => throw new Exception("Dimensions of a Cell can't be calculated. See the FAQ.");
         }
 
         /// <summary>
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public override int Type
-        {
-            get
-            {
-                return CELL;
-            }
-        }
+        public override int Type => CELL;
 
         /// <summary>
         /// get/set useAscender value
         /// </summary>
         public bool UseAscender
         {
-            get
-            {
-                return useAscender;
-            }
+            get => useAscender;
 
-            set
-            {
-                useAscender = value;
-            }
+            set => useAscender = value;
         }
 
         /// <summary>
@@ -498,15 +401,9 @@ namespace iTextSharp.text
         /// </summary>
         public bool UseBorderPadding
         {
-            get
-            {
-                return useBorderPadding;
-            }
+            get => useBorderPadding;
 
-            set
-            {
-                useBorderPadding = value;
-            }
+            set => useBorderPadding = value;
         }
 
         /// <summary>
@@ -514,15 +411,9 @@ namespace iTextSharp.text
         /// </summary>
         public bool UseDescender
         {
-            get
-            {
-                return useDescender;
-            }
+            get => useDescender;
 
-            set
-            {
-                useDescender = value;
-            }
+            set => useDescender = value;
         }
 
         /// <summary>
@@ -531,15 +422,9 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public int VerticalAlignment
         {
-            get
-            {
-                return verticalAlignment;
-            }
+            get => verticalAlignment;
 
-            set
-            {
-                verticalAlignment = value;
-            }
+            set => verticalAlignment = value;
         }
 
         /// <summary>
@@ -548,14 +433,8 @@ namespace iTextSharp.text
         /// <value>the new value</value>
         public override float Width
         {
-            set
-            {
-                width = value;
-            }
-            get
-            {
-                return width;
-            }
+            set => width = value;
+            get => width;
         }
 
         /// <summary>
@@ -602,10 +481,12 @@ namespace iTextSharp.text
         {
             if (IsTable())
             {
-                Table table = (Table)ArrayList[0];
-                Cell tmp = new Cell(element);
-                tmp.Border = NO_BORDER;
-                tmp.Colspan = table.Columns;
+                var table = (Table)ArrayList[0];
+                var tmp = new Cell(element)
+                {
+                    Border = NO_BORDER,
+                    Colspan = table.Columns
+                };
                 table.AddCell(tmp);
                 return;
             }
@@ -625,7 +506,11 @@ namespace iTextSharp.text
                     {
                         _leading = ((List)element).TotalLeading;
                     }
-                    if (((List)element).IsEmpty()) return;
+                    if (((List)element).IsEmpty())
+                    {
+                        return;
+                    }
+
                     ArrayList.Add(element);
                     return;
                 case ANCHOR:
@@ -635,16 +520,24 @@ namespace iTextSharp.text
                     {
                         _leading = ((Phrase)element).Leading;
                     }
-                    if (((Phrase)element).IsEmpty()) return;
+                    if (((Phrase)element).IsEmpty())
+                    {
+                        return;
+                    }
+
                     ArrayList.Add(element);
                     return;
                 case CHUNK:
-                    if (((Chunk)element).IsEmpty()) return;
+                    if (((Chunk)element).IsEmpty())
+                    {
+                        return;
+                    }
+
                     ArrayList.Add(element);
                     return;
                 case TABLE:
-                    Table table = new Table(3);
-                    float[] widths = new float[3];
+                    var table = new Table(3);
+                    var widths = new float[3];
                     widths[1] = ((Table)element).Width;
 
                     switch (((Table)element).Alignment)
@@ -670,21 +563,27 @@ namespace iTextSharp.text
                     }
                     else
                     {
-                        tmp = new Cell();
-                        tmp.Border = NO_BORDER;
-                        tmp.Colspan = 3;
+                        tmp = new Cell
+                        {
+                            Border = NO_BORDER,
+                            Colspan = 3
+                        };
                         foreach (IElement ele in ArrayList)
                         {
                             tmp.Add(ele);
                         }
                         table.AddCell(tmp);
                     }
-                    tmp = new Cell();
-                    tmp.Border = NO_BORDER;
+                    tmp = new Cell
+                    {
+                        Border = NO_BORDER
+                    };
                     table.AddCell(tmp);
                     table.InsertTable((Table)element);
-                    tmp = new Cell();
-                    tmp.Border = NO_BORDER;
+                    tmp = new Cell
+                    {
+                        Border = NO_BORDER
+                    };
                     table.AddCell(tmp);
                     table.AddCell(DummyCell);
                     Clear();
@@ -711,14 +610,24 @@ namespace iTextSharp.text
         /// <returns>a PdfPCell</returns>
         public PdfPCell CreatePdfPCell()
         {
-            if (rowspan > 1) throw new BadElementException("PdfPCells can't have a rowspan > 1");
-            if (IsTable()) return new PdfPCell(((Table)ArrayList[0]).CreatePdfPTable());
-            PdfPCell cell = new PdfPCell();
-            cell.VerticalAlignment = verticalAlignment;
-            cell.HorizontalAlignment = horizontalAlignment;
-            cell.Colspan = colspan;
-            cell.UseBorderPadding = useBorderPadding;
-            cell.UseDescender = useDescender;
+            if (rowspan > 1)
+            {
+                throw new BadElementException("PdfPCells can't have a rowspan > 1");
+            }
+
+            if (IsTable())
+            {
+                return new PdfPCell(((Table)ArrayList[0]).CreatePdfPTable());
+            }
+
+            var cell = new PdfPCell
+            {
+                VerticalAlignment = verticalAlignment,
+                HorizontalAlignment = horizontalAlignment,
+                Colspan = colspan,
+                UseBorderPadding = useBorderPadding,
+                UseDescender = useDescender
+            };
             cell.SetLeading(Leading, 0);
             cell.CloneNonPositionParameters(this);
             cell.NoWrap = noWrap;
@@ -726,12 +635,16 @@ namespace iTextSharp.text
             {
                 if (i.Type == PHRASE || i.Type == PARAGRAPH)
                 {
-                    Paragraph p = new Paragraph((Phrase)i);
-                    p.Alignment = horizontalAlignment;
+                    var p = new Paragraph((Phrase)i)
+                    {
+                        Alignment = horizontalAlignment
+                    };
                     cell.AddElement(p);
                 }
                 else
+                {
                     cell.AddElement(i);
+                }
             }
             return cell;
         }
@@ -782,9 +695,17 @@ namespace iTextSharp.text
         /// <returns>a value</returns>
         public string GetWidthAsString()
         {
-            string w = width.ToString(System.Globalization.CultureInfo.InvariantCulture);
-            if (w.EndsWith(".0")) w = w.Substring(0, w.Length - 2);
-            if (Percentage) w += "%";
+            var w = width.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (w.EndsWith(".0"))
+            {
+                w = w.Substring(0, w.Length - 2);
+            }
+
+            if (Percentage)
+            {
+                w += "%";
+            }
+
             return w;
         }
 
@@ -802,7 +723,7 @@ namespace iTextSharp.text
                 case 0:
                     return true;
                 case 1:
-                    IElement element = (IElement)ArrayList[0];
+                    var element = (IElement)ArrayList[0];
                     switch (element.Type)
                     {
                         case CHUNK:
@@ -921,7 +842,10 @@ namespace iTextSharp.text
         /// </summary>
         internal void Fill()
         {
-            if (Size == 0) ArrayList.Add(new Paragraph(0));
+            if (Size == 0)
+            {
+                ArrayList.Add(new Paragraph(0));
+            }
         }
     }
 }

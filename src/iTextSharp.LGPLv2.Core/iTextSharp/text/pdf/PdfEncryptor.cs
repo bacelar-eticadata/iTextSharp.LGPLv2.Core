@@ -1,5 +1,5 @@
-using System.IO;
 using System.Collections;
+using System.IO;
 using System.Text;
 
 namespace iTextSharp.text.pdf
@@ -30,7 +30,7 @@ namespace iTextSharp.text.pdf
         /// <param name="strength128Bits"> true  for 128 bit key length,  false  for 40 bit key length</param>
         public static void Encrypt(PdfReader reader, Stream os, byte[] userPassword, byte[] ownerPassword, int permissions, bool strength128Bits)
         {
-            PdfStamper stamper = new PdfStamper(reader, os);
+            var stamper = new PdfStamper(reader, os);
             stamper.SetEncryption(userPassword, ownerPassword, permissions, strength128Bits);
             stamper.Close();
         }
@@ -57,7 +57,7 @@ namespace iTextSharp.text.pdf
         /// <param name="newInfo">an optional  String  map to add or change</param>
         public static void Encrypt(PdfReader reader, Stream os, byte[] userPassword, byte[] ownerPassword, int permissions, bool strength128Bits, Hashtable newInfo)
         {
-            PdfStamper stamper = new PdfStamper(reader, os);
+            var stamper = new PdfStamper(reader, os);
             stamper.SetEncryption(userPassword, ownerPassword, permissions, strength128Bits);
             stamper.MoreInfo = newInfo;
             stamper.Close();
@@ -82,7 +82,7 @@ namespace iTextSharp.text.pdf
         /// <param name="permissions">the user permissions</param>
         public static void Encrypt(PdfReader reader, Stream os, bool strength, string userPassword, string ownerPassword, int permissions)
         {
-            PdfStamper stamper = new PdfStamper(reader, os);
+            var stamper = new PdfStamper(reader, os);
             stamper.SetEncryption(strength, userPassword, ownerPassword, permissions);
             stamper.Close();
         }
@@ -109,7 +109,7 @@ namespace iTextSharp.text.pdf
         /// <param name="newInfo">an optional  String  map to add or change</param>
         public static void Encrypt(PdfReader reader, Stream os, bool strength, string userPassword, string ownerPassword, int permissions, Hashtable newInfo)
         {
-            PdfStamper stamper = new PdfStamper(reader, os);
+            var stamper = new PdfStamper(reader, os);
             stamper.SetEncryption(strength, userPassword, ownerPassword, permissions);
             stamper.MoreInfo = newInfo;
             stamper.Close();
@@ -138,7 +138,7 @@ namespace iTextSharp.text.pdf
         /// <param name="newInfo">an optional  String  map to add or change</param>
         public static void Encrypt(PdfReader reader, Stream os, int type, string userPassword, string ownerPassword, int permissions, Hashtable newInfo)
         {
-            PdfStamper stamper = new PdfStamper(reader, os);
+            var stamper = new PdfStamper(reader, os);
             stamper.SetEncryption(type, userPassword, ownerPassword, permissions);
             stamper.MoreInfo = newInfo;
             stamper.Close();
@@ -165,7 +165,7 @@ namespace iTextSharp.text.pdf
         /// <param name="permissions">the user permissions</param>
         public static void Encrypt(PdfReader reader, Stream os, int type, string userPassword, string ownerPassword, int permissions)
         {
-            PdfStamper stamper = new PdfStamper(reader, os);
+            var stamper = new PdfStamper(reader, os);
             stamper.SetEncryption(type, userPassword, ownerPassword, permissions);
             stamper.Close();
         }
@@ -177,15 +177,47 @@ namespace iTextSharp.text.pdf
         /// <returns>a String that explains the meaning of the permissions value</returns>
         public static string GetPermissionsVerbose(int permissions)
         {
-            StringBuilder buf = new StringBuilder("Allowed:");
-            if ((PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING) buf.Append(" Printing");
-            if ((PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS) buf.Append(" Modify contents");
-            if ((PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY) buf.Append(" Copy");
-            if ((PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS) buf.Append(" Modify annotations");
-            if ((PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN) buf.Append(" Fill in");
-            if ((PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS) buf.Append(" Screen readers");
-            if ((PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY) buf.Append(" Assembly");
-            if ((PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING) buf.Append(" Degraded printing");
+            var buf = new StringBuilder("Allowed:");
+            if ((PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING)
+            {
+                buf.Append(" Printing");
+            }
+
+            if ((PdfWriter.ALLOW_MODIFY_CONTENTS & permissions) == PdfWriter.ALLOW_MODIFY_CONTENTS)
+            {
+                buf.Append(" Modify contents");
+            }
+
+            if ((PdfWriter.ALLOW_COPY & permissions) == PdfWriter.ALLOW_COPY)
+            {
+                buf.Append(" Copy");
+            }
+
+            if ((PdfWriter.ALLOW_MODIFY_ANNOTATIONS & permissions) == PdfWriter.ALLOW_MODIFY_ANNOTATIONS)
+            {
+                buf.Append(" Modify annotations");
+            }
+
+            if ((PdfWriter.ALLOW_FILL_IN & permissions) == PdfWriter.ALLOW_FILL_IN)
+            {
+                buf.Append(" Fill in");
+            }
+
+            if ((PdfWriter.ALLOW_SCREENREADERS & permissions) == PdfWriter.ALLOW_SCREENREADERS)
+            {
+                buf.Append(" Screen readers");
+            }
+
+            if ((PdfWriter.ALLOW_ASSEMBLY & permissions) == PdfWriter.ALLOW_ASSEMBLY)
+            {
+                buf.Append(" Assembly");
+            }
+
+            if ((PdfWriter.ALLOW_DEGRADED_PRINTING & permissions) == PdfWriter.ALLOW_DEGRADED_PRINTING)
+            {
+                buf.Append(" Degraded printing");
+            }
+
             return buf.ToString();
         }
 
@@ -265,6 +297,7 @@ namespace iTextSharp.text.pdf
         {
             return (PdfWriter.ALLOW_PRINTING & permissions) == PdfWriter.ALLOW_PRINTING;
         }
+
         /// <summary>
         /// Tells you if repurposing for screenreaders is allowed.
         /// @since 2.0.7

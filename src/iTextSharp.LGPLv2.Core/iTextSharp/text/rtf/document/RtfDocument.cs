@@ -1,8 +1,8 @@
-using System;
-using System.IO;
-using System.Collections;
 using iTextSharp.text.rtf.document.output;
 using iTextSharp.text.rtf.graphic;
+using System;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.document
 {
@@ -66,10 +66,12 @@ namespace iTextSharp.text.rtf.document
         /// Stores the actual document data
         /// </summary>
         private IRtfDataCache _data;
+
         /// <summary>
         /// The last RtfBasicElement that was added directly to the RtfDocument.
         /// </summary>
         private IRtfBasicElement _lastElementWritten;
+
         /// <summary>
         /// The default constructor for a RtfDocument
         /// </summary>
@@ -125,20 +127,20 @@ namespace iTextSharp.text.rtf.document
                 throw new ArgumentException("null OutpuStream");
             }
 
-            bool alwaysUseUniCode = _documentSettings.IsAlwaysUseUnicode();
+            var alwaysUseUniCode = _documentSettings.IsAlwaysUseUnicode();
             if (str == null)
             {
                 return;
             }
-            int len = str.Length;
+            var len = str.Length;
             if (len == 0)
             {
                 return;
             }
             byte[] t = null;
-            for (int k = 0; k < len; k++)
+            for (var k = 0; k < len; k++)
             {
-                char c = str[k];
+                var c = str[k];
                 if (c < 0x20)
                 {
                     //allow return and tab only
@@ -180,8 +182,8 @@ namespace iTextSharp.text.rtf.document
                         {
                             //encode as decimal, signed short value
                             outp.Write(_fscUniPrefix, 0, _fscUniPrefix.Length);
-                            string s = ((short)c).ToString();
-                            for (int x = 0; x < s.Length; x++)
+                            var s = ((short)c).ToString();
+                            for (var x = 0; x < s.Length; x++)
                             {
                                 outp.WriteByte((byte)s[x]);
                             }
@@ -273,12 +275,15 @@ namespace iTextSharp.text.rtf.document
                     case RtfDataCache.CACHE_MEMORY_EFFICIENT:
                         _data = new RtfEfficientMemoryCache();
                         break;
+
                     case RtfDataCache.CACHE_MEMORY:
                         _data = new RtfMemoryCache();
                         break;
+
                     case RtfDataCache.CACHE_DISK:
                         _data = new RtfDiskCache();
                         break;
+
                     default:
                         throw new ArgumentException("unknown");
                 }
@@ -298,7 +303,9 @@ namespace iTextSharp.text.rtf.document
         public void OutputDebugLinebreak(Stream result)
         {
             if (GetDocumentSettings().IsOutputDebugLineBreaks())
+            {
                 result.WriteByte((byte)'\n');
+            }
         }
 
         /// <summary>
@@ -336,6 +343,7 @@ namespace iTextSharp.text.rtf.document
             {
             }
         }
+
         /// <summary>
         /// Returns  true  if  m.length  characters in  str , starting at offset  soff
         /// match the bytes in the given array  m .
@@ -346,7 +354,7 @@ namespace iTextSharp.text.rtf.document
         /// <returns> true  if there is match</returns>
         private static bool subMatch(string str, int soff, byte[] m)
         {
-            for (int k = 0; k < m.Length; k++)
+            for (var k = 0; k < m.Length; k++)
             {
                 if (str[soff++] != (char)m[k])
                 {

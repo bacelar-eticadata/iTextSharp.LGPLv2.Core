@@ -1,7 +1,7 @@
+using iTextSharp.text.pdf;
 using System.Collections;
 using System.Collections.Generic;
 using System.util;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text
 {
@@ -23,6 +23,7 @@ namespace iTextSharp.text
 
         /// <summary> This is a possible value of a base 14 type 1 font </summary>
         public const string COURIER_OBLIQUE = BaseFont.COURIER_OBLIQUE;
+
         /// <summary> This is a possible value of a base 14 type 1 font </summary>
         public const string HELVETICA = BaseFont.HELVETICA;
 
@@ -34,6 +35,7 @@ namespace iTextSharp.text
 
         /// <summary> This is a possible value of a base 14 type 1 font </summary>
         public const string HELVETICA_OBLIQUE = BaseFont.HELVETICA_OBLIQUE;
+
         /// <summary> This is a possible value of a base 14 type 1 font </summary>
         public const string SYMBOL = BaseFont.SYMBOL;
 
@@ -51,30 +53,15 @@ namespace iTextSharp.text
 
         /// <summary> This is a possible value of a base 14 type 1 font </summary>
         public const string TIMES_ROMAN = BaseFont.TIMES_ROMAN;
+
         /// <summary> This is a possible value of a base 14 type 1 font </summary>
         public const string ZAPFDINGBATS = BaseFont.ZAPFDINGBATS;
 
         /// <summary> This is the default value of the <VAR>embedded</VAR> variable. </summary>
-        private static readonly bool _defaultEmbedding = BaseFont.NOT_EMBEDDED;
+        public static bool DefaultEmbedding { get; } = BaseFont.NOT_EMBEDDED;
 
         /// <summary> This is the default encoding to use. </summary>
-        private static readonly string _defaultEncoding = BaseFont.WINANSI;
-
-        public static bool DefaultEmbedding
-        {
-            get
-            {
-                return _defaultEmbedding;
-            }
-        }
-
-        public static string DefaultEncoding
-        {
-            get
-            {
-                return _defaultEncoding;
-            }
-        }
+        public static string DefaultEncoding { get; } = BaseFont.WINANSI;
 
         public static FontFactoryImp FontImp { set; get; } = FontFactoryImp.Instance;
 
@@ -82,25 +69,13 @@ namespace iTextSharp.text
         /// Gets a set of registered font families.
         /// </summary>
         /// <value>a set of registered font families</value>
-        public static ICollection<string> RegisteredFamilies
-        {
-            get
-            {
-                return FontImp.RegisteredFamilies;
-            }
-        }
+        public static ICollection<string> RegisteredFamilies => FontImp.RegisteredFamilies;
 
         /// <summary>
         /// Gets a set of registered fontnames.
         /// </summary>
         /// <value>a set of registered fontnames</value>
-        public static ICollection RegisteredFonts
-        {
-            get
-            {
-                return FontImp.RegisteredFonts;
-            }
-        }
+        public static ICollection RegisteredFonts => FontImp.RegisteredFonts;
 
         /// <summary>
         /// Checks whether the given font is contained within the object
@@ -150,8 +125,8 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(Properties attributes)
         {
-            FontImp.DefaultEmbedding = _defaultEmbedding;
-            FontImp.DefaultEncoding = _defaultEncoding;
+            FontImp.DefaultEmbedding = DefaultEmbedding;
+            FontImp.DefaultEncoding = DefaultEncoding;
             return FontImp.GetFont(attributes);
         }
 
@@ -205,7 +180,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, string encoding, float size, int style, BaseColor color)
         {
-            return GetFont(fontname, encoding, _defaultEmbedding, size, style, color);
+            return GetFont(fontname, encoding, DefaultEmbedding, size, style, color);
         }
 
         /// <summary>
@@ -218,7 +193,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, string encoding, float size, int style)
         {
-            return GetFont(fontname, encoding, _defaultEmbedding, size, style, null);
+            return GetFont(fontname, encoding, DefaultEmbedding, size, style, null);
         }
 
         /// <summary>
@@ -230,7 +205,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, string encoding, float size)
         {
-            return GetFont(fontname, encoding, _defaultEmbedding, size, Font.UNDEFINED, null);
+            return GetFont(fontname, encoding, DefaultEmbedding, size, Font.UNDEFINED, null);
         }
 
         /// <summary>
@@ -241,7 +216,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, string encoding)
         {
-            return GetFont(fontname, encoding, _defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
+            return GetFont(fontname, encoding, DefaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
         }
 
         /// <summary>
@@ -254,7 +229,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, float size, int style, BaseColor color)
         {
-            return GetFont(fontname, _defaultEncoding, _defaultEmbedding, size, style, color);
+            return GetFont(fontname, DefaultEncoding, DefaultEmbedding, size, style, color);
         }
 
         /// <summary>
@@ -266,7 +241,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, float size, BaseColor color)
         {
-            return GetFont(fontname, _defaultEncoding, _defaultEmbedding, size, Font.UNDEFINED, color);
+            return GetFont(fontname, DefaultEncoding, DefaultEmbedding, size, Font.UNDEFINED, color);
         }
 
         /// <summary>
@@ -278,7 +253,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, float size, int style)
         {
-            return GetFont(fontname, _defaultEncoding, _defaultEmbedding, size, style, null);
+            return GetFont(fontname, DefaultEncoding, DefaultEmbedding, size, style, null);
         }
 
         /// <summary>
@@ -289,7 +264,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname, float size)
         {
-            return GetFont(fontname, _defaultEncoding, _defaultEmbedding, size, Font.UNDEFINED, null);
+            return GetFont(fontname, DefaultEncoding, DefaultEmbedding, size, Font.UNDEFINED, null);
         }
 
         /// <summary>
@@ -299,7 +274,7 @@ namespace iTextSharp.text
         /// <returns>a Font object</returns>
         public static Font GetFont(string fontname)
         {
-            return GetFont(fontname, _defaultEncoding, _defaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
+            return GetFont(fontname, DefaultEncoding, DefaultEmbedding, Font.UNDEFINED, Font.UNDEFINED, null);
         }
 
         /// <summary>
@@ -314,12 +289,8 @@ namespace iTextSharp.text
 
         public static void Register(Properties attributes)
         {
-            string path;
-            string alias = null;
-
-            path = attributes.Remove("path");
-            alias = attributes.Remove("alias");
-
+            var path = attributes.Remove("path");
+            var alias = attributes.Remove("alias");
             FontImp.Register(path, alias);
         }
 

@@ -1,7 +1,7 @@
-using System.Collections;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.list;
 using iTextSharp.text.rtf.style;
+using System.Collections;
 
 namespace iTextSharp.text.rtf.parser
 {
@@ -49,7 +49,7 @@ namespace iTextSharp.text.rtf.parser
         /// The Document.
         /// Used for conversions, but not imports.
         /// </summary>
-        private Document _doc;
+        private readonly Document _doc;
 
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="color">The color to import.</param>
         public void ImportColor(string colorNr, BaseColor color)
         {
-            RtfColor rtfColor = new RtfColor(_rtfDoc, color);
+            var rtfColor = new RtfColor(_rtfDoc, color);
             _importColorMapping[colorNr] = rtfColor.GetColorNumber().ToString();
         }
 
@@ -88,7 +88,7 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="fontName">The font name to look up.</param>
         public bool ImportFont(string fontNr, string fontName)
         {
-            RtfFont rtfFont = new RtfFont(fontName);
+            var rtfFont = new RtfFont(fontName);
             rtfFont.SetRtfDocument(_rtfDoc);
             _importFontMapping[fontNr] = _rtfDoc.GetDocumentHeader().GetFontNumber(rtfFont).ToString();
             return true;
@@ -102,9 +102,12 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="charset">The characterset to use for the font.</param>
         public bool ImportFont(string fontNr, string fontName, int charset)
         {
-            RtfFont rtfFont = new RtfFont(fontName);
+            var rtfFont = new RtfFont(fontName);
             if (charset >= 0)
+            {
                 rtfFont.SetCharset(charset);
+            }
+
             rtfFont.SetRtfDocument(_rtfDoc);
             _importFontMapping[fontNr] = _rtfDoc.GetDocumentHeader().GetFontNumber(rtfFont).ToString();
             return true;
@@ -120,12 +123,18 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="charset">The characterset to use for the font.</param>
         public bool ImportFont(string fontNr, string fontName, string fontFamily, int charset)
         {
-            RtfFont rtfFont = new RtfFont(fontName);
+            var rtfFont = new RtfFont(fontName);
 
             if (charset >= 0)
+            {
                 rtfFont.SetCharset(charset);
+            }
+
             if (!string.IsNullOrEmpty(fontFamily))
+            {
                 rtfFont.SetFamily(fontFamily);
+            }
+
             rtfFont.SetRtfDocument(_rtfDoc);
             _importFontMapping[fontNr] = _rtfDoc.GetDocumentHeader().GetFontNumber(rtfFont).ToString();
             return true;
@@ -145,7 +154,7 @@ namespace iTextSharp.text.rtf.parser
         /// </summary>
         public bool ImportStylesheetList(string listNr, List listIn)
         {
-            RtfList rtfList = new RtfList(_rtfDoc, listIn);
+            var rtfList = new RtfList(_rtfDoc, listIn);
             rtfList.SetRtfDocument(_rtfDoc);
             return true;
         }

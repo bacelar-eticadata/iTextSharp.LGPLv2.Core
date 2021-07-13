@@ -34,8 +34,11 @@ namespace iTextSharp.text.pdf
                 ostr = new ZDeflaterOutputStream(StreamBytes, text.PdfWriter.CompressionLevel);
             }
             else
+            {
                 ostr = StreamBytes;
-            int rotation = page.Rotation;
+            }
+
+            var rotation = page.Rotation;
             byte[] tmp;
             switch (rotation)
             {
@@ -47,6 +50,7 @@ namespace iTextSharp.text.pdf
                     ostr.WriteByte((byte)'0');
                     ostr.Write(Rotatefinal, 0, Rotatefinal.Length);
                     break;
+
                 case 180:
                     ostr.Write(Rotate180, 0, Rotate180.Length);
                     tmp = DocWriter.GetIsoBytes(ByteBuffer.FormatDouble(page.Right));
@@ -56,6 +60,7 @@ namespace iTextSharp.text.pdf
                     ostr.Write(tmp, 0, tmp.Length);
                     ostr.Write(Rotatefinal, 0, Rotatefinal.Length);
                     break;
+
                 case 270:
                     ostr.Write(Rotate270, 0, Rotate270.Length);
                     ostr.WriteByte((byte)'0');
@@ -89,10 +94,15 @@ namespace iTextSharp.text.pdf
             }
 
             if (ostr is ZDeflaterOutputStream)
+            {
                 ((ZDeflaterOutputStream)ostr).Finish();
+            }
+
             Put(PdfName.LENGTH, new PdfNumber(StreamBytes.Length));
             if (Compressed)
+            {
                 Put(PdfName.Filter, PdfName.Flatedecode);
+            }
         }
     }
 }

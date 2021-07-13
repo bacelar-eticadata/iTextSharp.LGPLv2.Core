@@ -33,14 +33,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public PrTokeniser Tokeniser
         {
-            set
-            {
-                _tokeniser = value;
-            }
-            get
-            {
-                return _tokeniser;
-            }
+            set => _tokeniser = value;
+            get => _tokeniser;
         }
 
         /// <summary>
@@ -62,7 +56,10 @@ namespace iTextSharp.text.pdf
             while (_tokeniser.NextToken())
             {
                 if (_tokeniser.TokenType == PrTokeniser.TK_COMMENT)
+                {
                     continue;
+                }
+
                 return true;
             }
             return false;
@@ -80,18 +77,26 @@ namespace iTextSharp.text.pdf
         public ArrayList Parse(ArrayList ls)
         {
             if (ls == null)
+            {
                 ls = new ArrayList();
+            }
             else
+            {
                 ls.Clear();
+            }
+
             PdfObject ob = null;
             while ((ob = ReadPrObject()) != null)
             {
                 ls.Add(ob);
                 if (ob.Type == COMMAND_TYPE)
+                {
                     break;
+                }
             }
             return ls;
         }
+
         /// <summary>
         /// Reads an array. The tokeniser must be positioned past the "[" token.
         /// @throws IOException on error
@@ -99,15 +104,21 @@ namespace iTextSharp.text.pdf
         /// <returns>an array</returns>
         public PdfArray ReadArray()
         {
-            PdfArray array = new PdfArray();
+            var array = new PdfArray();
             while (true)
             {
-                PdfObject obj = ReadPrObject();
-                int type = obj.Type;
+                var obj = ReadPrObject();
+                var type = obj.Type;
                 if (-type == PrTokeniser.TK_END_ARRAY)
+                {
                     break;
+                }
+
                 if (-type == PrTokeniser.TK_END_DIC)
+                {
                     throw new IOException("Unexpected '>>'");
+                }
+
                 array.Add(obj);
             }
             return array;
@@ -120,26 +131,42 @@ namespace iTextSharp.text.pdf
         /// <returns>the dictionary</returns>
         public PdfDictionary ReadDictionary()
         {
-            PdfDictionary dic = new PdfDictionary();
+            var dic = new PdfDictionary();
             while (true)
             {
                 if (!NextValidToken())
+                {
                     throw new IOException("Unexpected end of file.");
+                }
+
                 if (_tokeniser.TokenType == PrTokeniser.TK_END_DIC)
+                {
                     break;
+                }
+
                 if (_tokeniser.TokenType != PrTokeniser.TK_NAME)
+                {
                     throw new IOException("Dictionary key is not a name.");
-                PdfName name = new PdfName(_tokeniser.StringValue, false);
-                PdfObject obj = ReadPrObject();
-                int type = obj.Type;
+                }
+
+                var name = new PdfName(_tokeniser.StringValue, false);
+                var obj = ReadPrObject();
+                var type = obj.Type;
                 if (-type == PrTokeniser.TK_END_DIC)
+                {
                     throw new IOException("Unexpected '>>'");
+                }
+
                 if (-type == PrTokeniser.TK_END_ARRAY)
+                {
                     throw new IOException("Unexpected ']'");
+                }
+
                 dic.Put(name, obj);
             }
             return dic;
         }
+
         /// <summary>
         /// Reads a pdf object.
         /// @throws IOException on error
@@ -148,26 +175,34 @@ namespace iTextSharp.text.pdf
         public PdfObject ReadPrObject()
         {
             if (!NextValidToken())
+            {
                 return null;
-            int type = _tokeniser.TokenType;
+            }
+
+            var type = _tokeniser.TokenType;
             switch (type)
             {
                 case PrTokeniser.TK_START_DIC:
                     {
-                        PdfDictionary dic = ReadDictionary();
+                        var dic = ReadDictionary();
                         return dic;
                     }
                 case PrTokeniser.TK_START_ARRAY:
                     return ReadArray();
+
                 case PrTokeniser.TK_STRING:
-                    PdfString str = new PdfString(_tokeniser.StringValue, null).SetHexWriting(_tokeniser.IsHexString());
+                    var str = new PdfString(_tokeniser.StringValue, null).SetHexWriting(_tokeniser.IsHexString());
                     return str;
+
                 case PrTokeniser.TK_NAME:
                     return new PdfName(_tokeniser.StringValue, false);
+
                 case PrTokeniser.TK_NUMBER:
                     return new PdfNumber(_tokeniser.StringValue);
+
                 case PrTokeniser.TK_OTHER:
                     return new PdfLiteral(COMMAND_TYPE, _tokeniser.StringValue);
+
                 default:
                     return new PdfLiteral(-type, _tokeniser.StringValue);
             }

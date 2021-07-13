@@ -34,10 +34,10 @@ namespace System.util
 
         public int CountTokens()
         {
-            int count = 0;
-            int delimiterCount = 0;
-            bool tokenFound = false;
-            int tmpPos = _pos;
+            var count = 0;
+            var delimiterCount = 0;
+            var tokenFound = false;
+            var tmpPos = _pos;
 
             while (tmpPos < _len)
             {
@@ -55,11 +55,16 @@ namespace System.util
                     tokenFound = true;
                     while (tmpPos < _len
                         && _delim.IndexOf(_str[tmpPos].ToString(), StringComparison.Ordinal) < 0)
+                    {
                         ++tmpPos;
+                    }
                 }
             }
             if (tokenFound)
+            {
                 count++;
+            }
+
             return _retDelims ? count + delimiterCount : count;
         }
 
@@ -68,7 +73,9 @@ namespace System.util
             if (!_retDelims)
             {
                 while (_pos < _len && _delim.IndexOf(_str[_pos].ToString(), StringComparison.Ordinal) >= 0)
+                {
                     _pos++;
+                }
             }
             return _pos < _len;
         }
@@ -84,13 +91,22 @@ namespace System.util
             if (_pos < _len && _delim.IndexOf(_str[_pos].ToString(), StringComparison.Ordinal) >= 0)
             {
                 if (_retDelims)
+                {
                     return _str.Substring(_pos++, 1);
-                while (++_pos < _len && _delim.IndexOf(_str[_pos].ToString(), StringComparison.Ordinal) >= 0) ;
+                }
+
+                while (++_pos < _len && _delim.IndexOf(_str[_pos].ToString(), StringComparison.Ordinal) >= 0)
+                {
+                    ;
+                }
             }
             if (_pos < _len)
             {
-                int start = _pos;
-                while (++_pos < _len && _delim.IndexOf(_str[_pos].ToString(), StringComparison.Ordinal) < 0) ;
+                var start = _pos;
+                while (++_pos < _len && _delim.IndexOf(_str[_pos].ToString(), StringComparison.Ordinal) < 0)
+                {
+                    ;
+                }
 
                 return _str.Substring(start, _pos - start);
             }

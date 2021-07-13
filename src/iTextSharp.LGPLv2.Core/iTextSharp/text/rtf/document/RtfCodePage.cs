@@ -41,7 +41,7 @@ namespace iTextSharp.text.rtf.document
         {
             result.Write(_ansi, 0, _ansi.Length);
             result.Write(_ansiCodepage, 0, _ansiCodepage.Length);
-            byte[] t = IntToByteArray(1252);
+            var t = IntToByteArray(1252);
             result.Write(t, 0, t.Length);
             Document.OutputDebugLinebreak(result);
         }

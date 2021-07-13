@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfResources  is the PDF Resources-object.
     ///
@@ -26,12 +25,19 @@ namespace iTextSharp.text.pdf
         internal void Add(PdfName key, PdfDictionary resource)
         {
             if (resource.Size == 0)
+            {
                 return;
-            PdfDictionary dic = GetAsDict(key);
+            }
+
+            var dic = GetAsDict(key);
             if (dic == null)
+            {
                 Put(key, resource);
+            }
             else
+            {
                 dic.Merge(resource);
+            }
         }
     }
 }

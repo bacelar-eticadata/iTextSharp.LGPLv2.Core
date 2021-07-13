@@ -1,25 +1,22 @@
-using System;
-using System.Globalization;
-using System.Collections;
 using iTextSharp.text.xml;
+using System.Collections;
+using System.Globalization;
 using System.util;
 
 namespace iTextSharp.text.html
 {
-
     /// <summary>
     /// This interface is implemented by the peer of all the iText objects.
     /// </summary>
 
     public class HtmlPeer : XmlPeer
     {
-
         /// <summary>
         /// Creates a XmlPeer.
         /// </summary>
         /// <param name="name">the iText name of the tag</param>
         /// <param name="alias">the Html name of the tag</param>
-        public HtmlPeer(string name, string alias) : base(name, alias.ToLower(CultureInfo.InvariantCulture))
+        public HtmlPeer(string name, string alias) : base(name, alias.ToLowerInvariant())
         {
         }
 
@@ -30,7 +27,7 @@ namespace iTextSharp.text.html
         /// <param name="alias">the custom tagname</param>
         public override void AddAlias(string name, string alias)
         {
-            AttributeAliases.Add(alias.ToLower(CultureInfo.InvariantCulture), name);
+            AttributeAliases.Add(alias.ToLowerInvariant(), name);
         }
 
         /// <summary>
@@ -38,7 +35,7 @@ namespace iTextSharp.text.html
         /// </summary>
         public override Properties GetAttributes(Hashtable attrs)
         {
-            Properties attributes = new Properties();
+            var attributes = new Properties();
             attributes.AddAll(AttributeValues);
             if (DefaultContent != null)
             {
@@ -48,7 +45,7 @@ namespace iTextSharp.text.html
             {
                 foreach (string key in attrs.Keys)
                 {
-                    attributes.Add(GetName(key).ToLower(CultureInfo.InvariantCulture), (string)attrs[key]);
+                    attributes.Add(GetName(key).ToLowerInvariant(), (string)attrs[key]);
                 }
             }
             return attributes;

@@ -1,5 +1,5 @@
-using System.Collections;
 using iTextSharp.text.rtf.parser.ctrlwords;
+using System.Collections;
 
 namespace iTextSharp.text.rtf.parser.properties
 {
@@ -301,7 +301,7 @@ namespace iTextSharp.text.rtf.parser.properties
         /// <returns>Properties object with requested values.</returns>
         public Hashtable GetProperties(string propertyGroup)
         {
-            Hashtable props = new Hashtable();
+            var props = new Hashtable();
             if (Properties.Count != 0)
             {
                 //properties.get
@@ -448,7 +448,7 @@ namespace iTextSharp.text.rtf.parser.properties
         /// <returns> true  for handled or  false  if  propertyName  or  propertyValue  is  null </returns>
         public bool SetProperty(RtfCtrlWordData ctrlWordData)
         { //String propertyName, Object propertyValueNew) {
-            string propertyName = ctrlWordData.SpecialHandler;
+            var propertyName = ctrlWordData.SpecialHandler;
             object propertyValueNew = ctrlWordData.Param;
             // depending on the control word, set mulitiple or reset settings, etc.
             //if pard then reset settings
@@ -536,11 +536,14 @@ namespace iTextSharp.text.rtf.parser.properties
         public bool ToggleProperty(RtfCtrlWordData ctrlWordData)
         { //String propertyName) {
 
-            string propertyName = ctrlWordData.SpecialHandler;
+            var propertyName = ctrlWordData.SpecialHandler;
 
-            if (string.IsNullOrEmpty(propertyName)) return false;
+            if (string.IsNullOrEmpty(propertyName))
+            {
+                return false;
+            }
 
-            object propertyValue = GetProperty(propertyName);
+            var propertyValue = GetProperty(propertyName);
             if (propertyValue == null)
             {
                 propertyValue = ON;
@@ -549,7 +552,7 @@ namespace iTextSharp.text.rtf.parser.properties
             {
                 if (propertyValue is int)
                 {
-                    int value = (int)propertyValue;
+                    var value = (int)propertyValue;
                     if (value != 0)
                     {
                         removeProperty(propertyName);
@@ -560,7 +563,7 @@ namespace iTextSharp.text.rtf.parser.properties
                 {
                     if (propertyValue is long)
                     {
-                        long value = (long)propertyValue;
+                        var value = (long)propertyValue;
                         if (value != 0)
                         {
                             removeProperty(propertyName);
@@ -580,9 +583,17 @@ namespace iTextSharp.text.rtf.parser.properties
         /// <returns> true  for handled or  false  if  propertyName  is  null </returns>
         private bool addToProperty(string propertyName, int propertyValue)
         {
-            if (propertyName == null) return false;
-            int value = (int)Properties[propertyName];
-            if ((value | propertyValue) == value) return true;
+            if (propertyName == null)
+            {
+                return false;
+            }
+
+            var value = (int)Properties[propertyName];
+            if ((value | propertyValue) == value)
+            {
+                return true;
+            }
+
             value |= propertyValue;
             BeforeChange(propertyName);
             Properties[propertyName] = value;
@@ -599,9 +610,17 @@ namespace iTextSharp.text.rtf.parser.properties
         /// <returns> true  for handled or  false  if  propertyName  is  null </returns>
         private bool addToProperty(string propertyName, long propertyValue)
         {
-            if (propertyName == null) return false;
-            long value = (long)Properties[propertyName];
-            if ((value | propertyValue) == value) return true;
+            if (propertyName == null)
+            {
+                return false;
+            }
+
+            var value = (long)Properties[propertyName];
+            if ((value | propertyValue) == value)
+            {
+                return true;
+            }
+
             value |= propertyValue;
             BeforeChange(propertyName);
             Properties[propertyName] = value;
@@ -612,7 +631,11 @@ namespace iTextSharp.text.rtf.parser.properties
 
         private bool removeProperty(string propertyName)
         {
-            if (propertyName == null) return false;
+            if (propertyName == null)
+            {
+                return false;
+            }
+
             if (Properties.ContainsKey(propertyName))
             {
                 BeforeChange(propertyName);
@@ -631,22 +654,31 @@ namespace iTextSharp.text.rtf.parser.properties
         /// <returns> true  for handled or  false  if  propertyName  or  propertyValue  is  null </returns>
         private bool setProperty(string propertyName, object propertyValueNew)
         {
-            if (propertyName == null || propertyValueNew == null) return false;
+            if (propertyName == null || propertyValueNew == null)
+            {
+                return false;
+            }
 
-            object propertyValueOld = GetProperty(propertyName);
+            var propertyValueOld = GetProperty(propertyName);
             if (propertyValueOld is int && propertyValueNew is int)
             {
-                int valueOld = (int)propertyValueOld;
-                int valueNew = (int)propertyValueNew;
-                if (valueOld == valueNew) return true;
+                var valueOld = (int)propertyValueOld;
+                var valueNew = (int)propertyValueNew;
+                if (valueOld == valueNew)
+                {
+                    return true;
+                }
             }
             else
             {
                 if (propertyValueOld is long && propertyValueNew is long)
                 {
-                    long valueOld = (long)propertyValueOld;
-                    long valueNew = (long)propertyValueNew;
-                    if (valueOld == valueNew) return true;
+                    var valueOld = (long)propertyValueOld;
+                    var valueNew = (long)propertyValueNew;
+                    if (valueOld == valueNew)
+                    {
+                        return true;
+                    }
                 }
             }
             BeforeChange(propertyName);
@@ -663,12 +695,19 @@ namespace iTextSharp.text.rtf.parser.properties
         /// <returns> true  for handled or  false  if  propertyName  is  null </returns>
         private bool setProperty(string propertyName, int propertyValueNew)
         {
-            if (propertyName == null) return false;
-            object propertyValueOld = GetProperty(propertyName);
+            if (propertyName == null)
+            {
+                return false;
+            }
+
+            var propertyValueOld = GetProperty(propertyName);
             if (propertyValueOld is int)
             {
-                int valueOld = (int)propertyValueOld;
-                if (valueOld == propertyValueNew) return true;
+                var valueOld = (int)propertyValueOld;
+                if (valueOld == propertyValueNew)
+                {
+                    return true;
+                }
             }
             BeforeChange(propertyName);
             Properties[propertyName] = propertyValueNew;
@@ -684,12 +723,19 @@ namespace iTextSharp.text.rtf.parser.properties
         /// <returns> true  for handled or  false  if  propertyName  is  null </returns>
         private bool setProperty(string propertyName, long propertyValueNew)
         {
-            if (propertyName == null) return false;
-            object propertyValueOld = GetProperty(propertyName);
+            if (propertyName == null)
+            {
+                return false;
+            }
+
+            var propertyValueOld = GetProperty(propertyName);
             if (propertyValueOld is long)
             {
-                long valueOld = (long)propertyValueOld;
-                if (valueOld == propertyValueNew) return true;
+                var valueOld = (long)propertyValueOld;
+                if (valueOld == propertyValueNew)
+                {
+                    return true;
+                }
             }
             BeforeChange(propertyName);
             Properties[propertyName] = propertyValueNew;

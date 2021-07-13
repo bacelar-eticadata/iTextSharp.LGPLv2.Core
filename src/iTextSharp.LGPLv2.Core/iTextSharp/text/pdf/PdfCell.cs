@@ -3,7 +3,6 @@ using System.Collections;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfCell  is the PDF translation of a  Cell .
     ///
@@ -15,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfCell : Rectangle
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -81,6 +79,7 @@ namespace iTextSharp.text.pdf
         /// These are the PdfLines in the Cell.
         /// </summary>
         private ArrayList _lines;
+
         /// <summary>
         /// Indicates that the largest ascender height should be used to
         /// determine the height of the first line. Setting this to true can help
@@ -98,6 +97,7 @@ namespace iTextSharp.text.pdf
         /// the last line (so characters like y don't dip into the border).
         /// </summary>
         private bool _useDescender;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -130,7 +130,7 @@ namespace iTextSharp.text.pdf
             _lines = new ArrayList();
             _images = new ArrayList();
             _leading = cell.Leading;
-            int alignment = cell.HorizontalAlignment;
+            var alignment = cell.HorizontalAlignment;
             left += cellspacing + cellpadding;
             right -= cellspacing + cellpadding;
 
@@ -170,16 +170,16 @@ namespace iTextSharp.text.pdf
                         ProcessActions(ele, null, allActions);
                         aCounter = 0;
 
-                        float currentLineLeading = _leading;
-                        float currentLeft = left;
-                        float currentRight = right;
+                        var currentLineLeading = _leading;
+                        var currentLeft = left;
+                        var currentRight = right;
                         if (ele is Phrase)
                         {
                             currentLineLeading = ((Phrase)ele).Leading;
                         }
                         if (ele is Paragraph)
                         {
-                            Paragraph p = (Paragraph)ele;
+                            var p = (Paragraph)ele;
                             currentLeft += p.IndentationLeft;
                             currentRight -= p.IndentationRight;
                         }
@@ -188,7 +188,7 @@ namespace iTextSharp.text.pdf
                             _line = new PdfLine(currentLeft, currentRight, alignment, currentLineLeading);
                         }
                         // we loop over the chunks
-                        ArrayList chunks = ele.Chunks;
+                        var chunks = ele.Chunks;
                         if (chunks.Count == 0)
                         {
                             addLine(_line); // add empty line - all cells need some lines even if they are empty
@@ -229,15 +229,15 @@ namespace iTextSharp.text.pdf
                 }
                 if (cell.MaxLines > 0)
                 {
-                    string more = cell.ShowTruncation;
+                    var more = cell.ShowTruncation;
                     if (!string.IsNullOrEmpty(more))
                     {
                         // Denote that the content has been truncated
                         _lastLine = (PdfLine)_lines[_lines.Count - 1];
                         if (_lastLine.Size >= 0)
                         {
-                            PdfChunk lastChunk = _lastLine.GetChunk(_lastLine.Size - 1);
-                            float moreWidth = new PdfChunk(more, lastChunk).Width;
+                            var lastChunk = _lastLine.GetChunk(_lastLine.Size - 1);
+                            var moreWidth = new PdfChunk(more, lastChunk).Width;
                             while (lastChunk.ToString().Length > 0 && lastChunk.Width + moreWidth > right - left)
                             {
                                 // Remove characters to leave room for the 'more' indicator
@@ -262,13 +262,13 @@ namespace iTextSharp.text.pdf
             if (_lines.Count > 0)
             {
                 _firstLine = (PdfLine)_lines[0];
-                float firstLineRealHeight = FirstLineRealHeight;
+                var firstLineRealHeight = FirstLineRealHeight;
                 _contentHeight -= _firstLine.Height;
                 _firstLine.height = firstLineRealHeight;
                 _contentHeight += firstLineRealHeight;
             }
 
-            float newBottom = top - _contentHeight - (2f * Cellpadding) - (2f * Cellspacing);
+            var newBottom = top - _contentHeight - (2f * Cellpadding) - (2f * Cellspacing);
             newBottom -= getBorderWidthInside(TOP_BORDER) + getBorderWidthInside(BOTTOM_BORDER);
             Bottom = newBottom;
 
@@ -277,30 +277,29 @@ namespace iTextSharp.text.pdf
 
         public override float Bottom
         {
-            get
-            {
-                return GetBottom(_cellspacing);
-            }
+            get => GetBottom(_cellspacing);
             set
             {
                 base.Bottom = value;
-                float firstLineRealHeight = FirstLineRealHeight;
+                var firstLineRealHeight = FirstLineRealHeight;
 
-                float totalHeight = Ury - value; // can't use top (already compensates for cellspacing)
-                float nonContentHeight = (Cellpadding * 2f) + (Cellspacing * 2f);
+                var totalHeight = Ury - value; // can't use top (already compensates for cellspacing)
+                var nonContentHeight = (Cellpadding * 2f) + (Cellspacing * 2f);
                 nonContentHeight += getBorderWidthInside(TOP_BORDER) + getBorderWidthInside(BOTTOM_BORDER);
 
-                float interiorHeight = totalHeight - nonContentHeight;
-                float extraHeight = 0.0f;
+                var interiorHeight = totalHeight - nonContentHeight;
+                var extraHeight = 0.0f;
 
                 switch (_verticalAlignment)
                 {
                     case ALIGN_BOTTOM:
                         extraHeight = interiorHeight - _contentHeight;
                         break;
+
                     case ALIGN_MIDDLE:
                         extraHeight = (interiorHeight - _contentHeight) / 2.0f;
                         break;
+
                     default:    // ALIGN_TOP
                         extraHeight = 0f;
                         break;
@@ -315,55 +314,25 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        public float Cellpadding
-        {
-            get
-            {
-                return _cellpadding;
-            }
-        }
+        public float Cellpadding => _cellpadding;
 
-        public float Cellspacing
-        {
-            get
-            {
-                return _cellspacing;
-            }
-        }
+        public float Cellspacing => _cellspacing;
 
         public int GroupNumber
         {
-            get
-            {
-                return _groupNumber;
-            }
-            set
-            {
-                _groupNumber = value;
-            }
+            get => _groupNumber;
+            set => _groupNumber = value;
         }
 
-        public float Leading
-        {
-            get
-            {
-                return _leading;
-            }
-        }
+        public float Leading => _leading;
 
-        public override float Left
-        {
-            get
-            {
-                return GetLeft(_cellspacing);
-            }
-        }
+        public override float Left => GetLeft(_cellspacing);
 
         public float RemainingHeight
         {
             get
             {
-                float result = 0f;
+                var result = 0f;
                 foreach (Image image in _images)
                 {
                     result += image.ScaledHeight;
@@ -372,45 +341,15 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        public override float Right
-        {
-            get
-            {
-                return GetRight(_cellspacing);
-            }
-        }
+        public override float Right => GetRight(_cellspacing);
 
-        public int Rownumber
-        {
-            get
-            {
-                return _rownumber;
-            }
-        }
+        public int Rownumber => _rownumber;
 
-        public int Rowspan
-        {
-            get
-            {
-                return _rowspan;
-            }
-        }
+        public int Rowspan => _rowspan;
 
-        public int Size
-        {
-            get
-            {
-                return _lines.Count;
-            }
-        }
+        public int Size => _lines.Count;
 
-        public override float Top
-        {
-            get
-            {
-                return GetTop(_cellspacing);
-            }
-        }
+        public override float Top => GetTop(_cellspacing);
 
         /// <summary>
         /// Gets the value of {@link #useAscender}
@@ -418,14 +357,8 @@ namespace iTextSharp.text.pdf
         /// <returns>useAscender</returns>
         public bool UseAscender
         {
-            get
-            {
-                return _useAscender;
-            }
-            set
-            {
-                _useAscender = value;
-            }
+            get => _useAscender;
+            set => _useAscender = value;
         }
 
         /// <summary>
@@ -433,14 +366,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool UseBorderPadding
         {
-            set
-            {
-                _useBorderPadding = value;
-            }
-            get
-            {
-                return _useBorderPadding;
-            }
+            set => _useBorderPadding = value;
+            get => _useBorderPadding;
         }
 
         /// <summary>
@@ -449,23 +376,11 @@ namespace iTextSharp.text.pdf
         /// <returns>useDescender</returns>
         public bool UseDescender
         {
-            get
-            {
-                return _useDescender;
-            }
-            set
-            {
-                _useDescender = value;
-            }
+            get => _useDescender;
+            set => _useDescender = value;
         }
 
-        internal bool Header
-        {
-            get
-            {
-                return _header;
-            }
-        }
+        internal bool Header => _header;
 
         /// <summary>
         /// Calculates what the height of the first line should be so that the content will be
@@ -477,13 +392,13 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                float firstLineRealHeight = 0f;
+                var firstLineRealHeight = 0f;
                 if (_firstLine != null)
                 {
-                    PdfChunk chunk = _firstLine.GetChunk(0);
+                    var chunk = _firstLine.GetChunk(0);
                     if (chunk != null)
                     {
-                        Image image = chunk.Image;
+                        var image = chunk.Image;
                         if (image != null)
                         {
                             firstLineRealHeight = _firstLine.GetChunk(0).Image.ScaledHeight;
@@ -500,7 +415,6 @@ namespace iTextSharp.text.pdf
 
         public ArrayList GetImages(float top, float bottom)
         {
-
             // if the bottom of the page is higher than the top of the cell: do nothing
             if (Top < bottom)
             {
@@ -509,9 +423,9 @@ namespace iTextSharp.text.pdf
             top = Math.Min(Top, top);
             // initialisations
             float height;
-            ArrayList result = new ArrayList();
+            var result = new ArrayList();
             // we loop over the images
-            ArrayList remove = new ArrayList();
+            var remove = new ArrayList();
             foreach (Image image in _images)
             {
                 height = image.AbsoluteY;
@@ -533,9 +447,9 @@ namespace iTextSharp.text.pdf
         public ArrayList GetLines(float top, float bottom)
         {
             float lineHeight;
-            float currentPosition = Math.Min(Top, top);
+            var currentPosition = Math.Min(Top, top);
             Top = currentPosition + _cellspacing;
-            ArrayList result = new ArrayList();
+            var result = new ArrayList();
 
             // if the bottom of the page is higher than the top of the cell: do nothing
             if (Top < bottom)
@@ -544,9 +458,9 @@ namespace iTextSharp.text.pdf
             }
 
             // we loop over the lines
-            int size = _lines.Count;
-            bool aboveBottom = true;
-            for (int i = 0; i < size && aboveBottom; i++)
+            var size = _lines.Count;
+            var aboveBottom = true;
+            for (var i = 0; i < size && aboveBottom; i++)
             {
                 _line = (PdfLine)_lines[i];
                 lineHeight = _line.Height;
@@ -562,7 +476,7 @@ namespace iTextSharp.text.pdf
                 }
             }
             // if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
-            float difference = 0f;
+            var difference = 0f;
             if (!_header)
             {
                 if (aboveBottom)
@@ -573,7 +487,7 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     size = result.Count;
-                    for (int i = 0; i < size; i++)
+                    for (var i = 0; i < size; i++)
                     {
                         _line = removeLine(0);
                         difference += _line.Height;
@@ -592,7 +506,7 @@ namespace iTextSharp.text.pdf
 
         public Rectangle Rectangle(float top, float bottom)
         {
-            Rectangle tmp = new Rectangle(Left, Bottom, Right, Top);
+            var tmp = new Rectangle(Left, Bottom, Right, Top);
             tmp.CloneNonPositionParameters(this);
             if (Top > top)
             {
@@ -621,7 +535,7 @@ namespace iTextSharp.text.pdf
         {
             if (element.Type == ANCHOR)
             {
-                string url = ((Anchor)element).Reference;
+                var url = ((Anchor)element).Reference;
                 if (url != null)
                 {
                     action = new PdfAction(url);
@@ -640,26 +554,32 @@ namespace iTextSharp.text.pdf
                         ProcessActions(ele, action, allActions);
                     }
                     break;
+
                 case CHUNK:
                     allActions.Add(action);
                     break;
+
                 case LIST:
                     foreach (IElement ele in ((List)element).Items)
                     {
                         ProcessActions(ele, action, allActions);
                     }
                     break;
+
                 default:
-                    int n = element.Chunks.Count;
+                    var n = element.Chunks.Count;
                     while (n-- > 0)
+                    {
                         allActions.Add(action);
+                    }
+
                     break;
             }
         }
 
         private float addImage(Image i, float left, float right, float extraHeight, int alignment)
         {
-            Image image = Image.GetInstance(i);
+            var image = Image.GetInstance(i);
             if (image.ScaledWidth > right - left)
             {
                 image.ScaleToFit(right - left, float.MaxValue);
@@ -669,7 +589,7 @@ namespace iTextSharp.text.pdf
             {
                 _line = new PdfLine(left, right, alignment, _leading);
             }
-            PdfLine imageLine = _line;
+            var imageLine = _line;
 
             // left and right in chunk is relative to the start of the line
             right = right - left;
@@ -683,7 +603,7 @@ namespace iTextSharp.text.pdf
             {
                 left = left + ((right - left - image.ScaledWidth) / 2f);
             }
-            Chunk imageChunk = new Chunk(image, left, 0);
+            var imageChunk = new Chunk(image, left, 0);
             imageLine.Add(new PdfChunk(imageChunk, null));
             addLine(imageLine);
             return imageLine.Height;
@@ -701,17 +621,19 @@ namespace iTextSharp.text.pdf
         {
             PdfChunk chunk;
             PdfChunk overflow;
-            ArrayList allActions = new ArrayList();
+            var allActions = new ArrayList();
             ProcessActions(list, null, allActions);
-            int aCounter = 0;
+            var aCounter = 0;
             foreach (IElement ele in list.Items)
             {
                 switch (ele.Type)
                 {
                     case LISTITEM:
-                        ListItem item = (ListItem)ele;
-                        _line = new PdfLine(left + item.IndentationLeft, right, alignment, item.Leading);
-                        _line.ListItem = item;
+                        var item = (ListItem)ele;
+                        _line = new PdfLine(left + item.IndentationLeft, right, alignment, item.Leading)
+                        {
+                            ListItem = item
+                        };
                         foreach (Chunk c in item.Chunks)
                         {
                             chunk = new PdfChunk(c, (PdfAction)(allActions[aCounter++]));
@@ -726,8 +648,9 @@ namespace iTextSharp.text.pdf
                             _line = new PdfLine(left + item.IndentationLeft, right, alignment, _leading);
                         }
                         break;
+
                     case LIST:
-                        List sublist = (List)ele;
+                        var sublist = (List)ele;
                         addList(sublist, left + sublist.IndentationLeft, right, alignment);
                         break;
                 }
@@ -755,7 +678,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the borderwidth inside the cell</returns>
         private float getBorderWidthInside(int side)
         {
-            float width = 0f;
+            var width = 0f;
             if (_useBorderPadding)
             {
                 switch (side)
@@ -787,11 +710,15 @@ namespace iTextSharp.text.pdf
 
         private float remainingLinesHeight()
         {
-            if (_lines.Count == 0) return 0;
+            if (_lines.Count == 0)
+            {
+                return 0;
+            }
+
             float result = 0;
-            int size = _lines.Count;
+            var size = _lines.Count;
             PdfLine line;
-            for (int i = 0; i < size; i++)
+            for (var i = 0; i < size; i++)
             {
                 line = (PdfLine)_lines[i];
                 result += line.Height;
@@ -820,7 +747,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private PdfLine removeLine(int index)
         {
-            PdfLine oldLine = (PdfLine)_lines[index];
+            var oldLine = (PdfLine)_lines[index];
             _lines.RemoveAt(index);
             _contentHeight -= oldLine.Height;
             if (index == 0)
@@ -828,7 +755,7 @@ namespace iTextSharp.text.pdf
                 if (_lines.Count > 0)
                 {
                     _firstLine = (PdfLine)_lines[0];
-                    float firstLineRealHeight = FirstLineRealHeight;
+                    var firstLineRealHeight = FirstLineRealHeight;
                     _contentHeight -= _firstLine.Height;
                     _firstLine.height = firstLineRealHeight;
                     _contentHeight += firstLineRealHeight;

@@ -2,7 +2,6 @@ using System.Text;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Shape arabic characters. This code was inspired by an LGPL'ed C library:
     /// Pango ( see http://www.pango.com/ ). Note that the code of this is the
@@ -12,7 +11,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class ArabicLigaturizer
     {
-
         public const int ar_composedtashkeel = 0x4;
 
         public const int ar_lig = 0x8;
@@ -209,13 +207,18 @@ namespace iTextSharp.text.pdf
 
         internal static int Arabic_shape(char[] src, int srcoffset, int srclength, char[] dest, int destoffset, int destlength, int level)
         {
-            char[] str = new char[srclength];
-            for (int k = srclength + srcoffset - 1; k >= srcoffset; --k)
+            var str = new char[srclength];
+            for (var k = srclength + srcoffset - 1; k >= srcoffset; --k)
+            {
                 str[k - srcoffset] = src[k];
-            StringBuilder str2 = new StringBuilder(srclength);
+            }
+
+            var str2 = new StringBuilder(srclength);
             Shape(str, str2, level);
             if ((level & (ar_composedtashkeel | ar_lig)) != 0)
+            {
                 Doublelig(str2, level);
+            }
             //        string.Reverse();
             System.Array.Copy(str2.ToString().ToCharArray(), 0, dest, destoffset, str2.Length);
             return str2.Length;
@@ -228,7 +231,7 @@ namespace iTextSharp.text.pdf
         /* Ok. We have presentation ligatures in our font. */
         {
             int len;
-            int olen = len = str.Length;
+            var olen = len = str.Length;
             int j = 0, si = 1;
             char lapresult;
 
@@ -245,31 +248,47 @@ namespace iTextSharp.text.pdf
                                 case Kasra:
                                     lapresult = '\uFC62';
                                     break;
+
                                 case Fatha:
                                     lapresult = '\uFC60';
                                     break;
+
                                 case Damma:
                                     lapresult = '\uFC61';
                                     break;
+
                                 case '\u064C':
                                     lapresult = '\uFC5E';
                                     break;
+
                                 case '\u064D':
                                     lapresult = '\uFC5F';
                                     break;
                             }
                             break;
+
                         case Kasra:
                             if (str[si] == Shadda)
+                            {
                                 lapresult = '\uFC62';
+                            }
+
                             break;
+
                         case Fatha:
                             if (str[si] == Shadda)
+                            {
                                 lapresult = '\uFC60';
+                            }
+
                             break;
+
                         case Damma:
                             if (str[si] == Shadda)
+                            {
                                 lapresult = '\uFC61';
+                            }
+
                             break;
                     }
                 }
@@ -307,6 +326,7 @@ namespace iTextSharp.text.pdf
                                     break;        /* MEEM medial */
                             }
                             break;
+
                         case '\uFE97':       /* TEH inital */
                             switch (str[si])
                             {
@@ -321,6 +341,7 @@ namespace iTextSharp.text.pdf
                                     break;        /* KHAH medial */
                             }
                             break;
+
                         case '\uFE91':       /* BEH inital */
                             switch (str[si])
                             {
@@ -335,6 +356,7 @@ namespace iTextSharp.text.pdf
                                     break;        /* KHAH medial */
                             }
                             break;
+
                         case '\uFEE7':       /* NOON inital */
                             switch (str[si])
                             {
@@ -361,6 +383,7 @@ namespace iTextSharp.text.pdf
                                     break;        /* ZAIN final */
                             }
                             break;
+
                         case '\uFEE3':       /* MEEM initial */
                             switch (str[si])
                             {
@@ -411,10 +434,10 @@ namespace iTextSharp.text.pdf
 
         internal static void ProcessNumbers(char[] text, int offset, int length, int options)
         {
-            int limit = offset + length;
+            var limit = offset + length;
             if ((options & DIGITS_MASK) != 0)
             {
-                char digitBase = '\u0030'; // European digits
+                var digitBase = '\u0030'; // European digits
                 switch (options & DIGIT_TYPE_MASK)
                 {
                     case DIGIT_TYPE_AN:
@@ -433,10 +456,10 @@ namespace iTextSharp.text.pdf
                 {
                     case DIGITS_EN2AN:
                         {
-                            int digitDelta = digitBase - '\u0030';
-                            for (int i = offset; i < limit; ++i)
+                            var digitDelta = digitBase - '\u0030';
+                            for (var i = offset; i < limit; ++i)
                             {
-                                char ch = text[i];
+                                var ch = text[i];
                                 if (ch <= '\u0039' && ch >= '\u0030')
                                 {
                                     text[i] += (char)digitDelta;
@@ -447,11 +470,11 @@ namespace iTextSharp.text.pdf
 
                     case DIGITS_AN2EN:
                         {
-                            char digitTop = (char)(digitBase + 9);
-                            int digitDelta = '\u0030' - digitBase;
-                            for (int i = offset; i < limit; ++i)
+                            var digitTop = (char)(digitBase + 9);
+                            var digitDelta = '\u0030' - digitBase;
+                            for (var i = offset; i < limit; ++i)
                             {
-                                char ch = text[i];
+                                var ch = text[i];
                                 if (ch <= digitTop && ch >= digitBase)
                                 {
                                     text[i] += (char)digitDelta;
@@ -487,9 +510,9 @@ namespace iTextSharp.text.pdf
             int which;
             char nextletter;
 
-            int p = 0;                     /* initialize for output */
-            Charstruct oldchar = new Charstruct();
-            Charstruct curchar = new Charstruct();
+            var p = 0;                     /* initialize for output */
+            var oldchar = new Charstruct();
+            var curchar = new Charstruct();
             while (p < text.Length)
             {
                 nextletter = text[p++];
@@ -498,7 +521,7 @@ namespace iTextSharp.text.pdf
                 join = ligature(nextletter, curchar);
                 if (join == 0)
                 {                       /* shape curchar */
-                    int nc = shapecount(nextletter);
+                    var nc = shapecount(nextletter);
                     //(*len)++;
                     if (nc == 1)
                     {
@@ -521,9 +544,11 @@ namespace iTextSharp.text.pdf
                     oldchar = curchar;    /* new values in oldchar */
 
                     /* init new curchar */
-                    curchar = new Charstruct();
-                    curchar.Basechar = nextletter;
-                    curchar.Numshapes = nc;
+                    curchar = new Charstruct
+                    {
+                        Basechar = nextletter,
+                        Numshapes = nc
+                    };
                     curchar.Lignum++;
                     //          (*len) += unligature (&curchar, level);
                 }
@@ -539,9 +564,14 @@ namespace iTextSharp.text.pdf
 
             /* Handle last char */
             if (Connects_to_left(oldchar))
+            {
                 which = 1;
+            }
             else
+            {
                 which = 0;
+            }
+
             which = which % (curchar.Numshapes);
             curchar.Basechar = charshape(curchar.Basechar, which);
 
@@ -554,32 +584,35 @@ namespace iTextSharp.text.pdf
         {
             digitBase -= '0'; // move common adjustment out of loop
 
-            int limit = start + length;
-            for (int i = start; i < limit; ++i)
+            var limit = start + length;
+            for (var i = start; i < limit; ++i)
             {
-                char ch = dest[i];
+                var ch = dest[i];
                 switch (BidiOrder.GetDirection(ch))
                 {
                     case BidiOrder.L:
                     case BidiOrder.R:
                         lastStrongWasAl = false;
                         break;
+
                     case BidiOrder.AL:
                         lastStrongWasAl = true;
                         break;
+
                     case BidiOrder.EN:
                         if (lastStrongWasAl && ch <= '\u0039')
                         {
                             dest[i] = (char)(ch + digitBase);
                         }
                         break;
+
                     default:
                         break;
                 }
             }
         }
 
-        static char charshape(char s, int which)
+        private static char charshape(char s, int which)
         /* which 0=isolated 1=final 2=initial 3=medial */
         {
             int l, r, m;
@@ -605,20 +638,25 @@ namespace iTextSharp.text.pdf
                 }
             }
             else if (s >= '\ufef5' && s <= '\ufefb')
+            {
                 return (char)(s + which);
+            }
+
             return s;
         }
 
-        static bool Connects_to_left(Charstruct a)
+        private static bool Connects_to_left(Charstruct a)
         {
             return a.Numshapes > 2;
         }
 
-        static void copycstostring(StringBuilder str, Charstruct s, int level)
+        private static void copycstostring(StringBuilder str, Charstruct s, int level)
         {
             /* s is a shaped charstruct; i is the index into the string */
             if (s.Basechar == 0)
+            {
                 return;
+            }
 
             str.Append(s.Basechar);
             s.Lignum--;
@@ -648,17 +686,21 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        static bool isVowel(char s)
+        private static bool isVowel(char s)
         {
             return ((s >= '\u064B') && (s <= '\u0655')) || (s == '\u0670');
         }
-        static int ligature(char newchar, Charstruct oldchar)
+
+        private static int ligature(char newchar, Charstruct oldchar)
         {
             /* 0 == no ligature possible; 1 == vowel; 2 == two chars; 3 == Lam+Alef */
-            int retval = 0;
+            var retval = 0;
 
             if (oldchar.Basechar == 0)
+            {
                 return 0;
+            }
+
             if (isVowel(newchar))
             {
                 retval = 1;
@@ -678,6 +720,7 @@ namespace iTextSharp.text.pdf
                             return 0;         /* no ligature possible */
                         }
                         break;
+
                     case Hamzabelow:
                         switch (oldchar.Basechar)
                         {
@@ -685,15 +728,18 @@ namespace iTextSharp.text.pdf
                                 oldchar.Basechar = Alefhamzabelow;
                                 retval = 2;
                                 break;
+
                             case LamAlef:
                                 oldchar.Basechar = LamAlefhamzabelow;
                                 retval = 2;
                                 break;
+
                             default:
                                 oldchar.Mark1 = Hamzabelow;
                                 break;
                         }
                         break;
+
                     case Hamzaabove:
                         switch (oldchar.Basechar)
                         {
@@ -701,25 +747,30 @@ namespace iTextSharp.text.pdf
                                 oldchar.Basechar = Alefhamza;
                                 retval = 2;
                                 break;
+
                             case LamAlef:
                                 oldchar.Basechar = LamAlefhamza;
                                 retval = 2;
                                 break;
+
                             case Waw:
                                 oldchar.Basechar = Wawhamza;
                                 retval = 2;
                                 break;
+
                             case Yeh:
                             case Alefmaksura:
                             case Farsiyeh:
                                 oldchar.Basechar = Yehhamza;
                                 retval = 2;
                                 break;
+
                             default:           /* whatever sense this may make .. */
                                 oldchar.Mark1 = Hamzaabove;
                                 break;
                         }
                         break;
+
                     case Madda:
                         switch (oldchar.Basechar)
                         {
@@ -729,6 +780,7 @@ namespace iTextSharp.text.pdf
                                 break;
                         }
                         break;
+
                     default:
                         oldchar.Vowel = newchar;
                         break;
@@ -754,16 +806,19 @@ namespace iTextSharp.text.pdf
                             oldchar.Numshapes = 2;
                             retval = 3;
                             break;
+
                         case Alefhamza:
                             oldchar.Basechar = LamAlefhamza;
                             oldchar.Numshapes = 2;
                             retval = 3;
                             break;
+
                         case Alefhamzabelow:
                             oldchar.Basechar = LamAlefhamzabelow;
                             oldchar.Numshapes = 2;
                             retval = 3;
                             break;
+
                         case Alefmadda:
                             oldchar.Basechar = LamAlefmadda;
                             oldchar.Numshapes = 2;
@@ -771,6 +826,7 @@ namespace iTextSharp.text.pdf
                             break;
                     }
                     break;
+
                 case (char)0:
                     oldchar.Basechar = newchar;
                     oldchar.Numshapes = shapecount(newchar);
@@ -780,7 +836,7 @@ namespace iTextSharp.text.pdf
             return retval;
         }
 
-        static int shapecount(char s)
+        private static int shapecount(char s)
         {
             int l, r, m;
             if ((s >= '\u0621') && (s <= '\u06D3') && !isVowel(s))
@@ -810,7 +866,8 @@ namespace iTextSharp.text.pdf
             }
             return 1;
         }
- // '\u3f00'?
+
+        // '\u3f00'?
 
         private class Charstruct
         {
@@ -821,7 +878,5 @@ namespace iTextSharp.text.pdf
             internal char Vowel;
             /* is a ligature with lignum aditional characters */
         };
-
-
     }
 }

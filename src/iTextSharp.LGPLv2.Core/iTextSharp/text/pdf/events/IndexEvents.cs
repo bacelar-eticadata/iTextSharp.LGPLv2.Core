@@ -4,7 +4,6 @@ using System.util;
 
 namespace iTextSharp.text.pdf.events
 {
-
     /// <summary>
     /// Class for an index.
     /// @author Michael Niedermair
@@ -45,12 +44,11 @@ namespace iTextSharp.text.pdf.events
         public Chunk Create(string text, string in1, string in2,
                 string in3)
         {
-
-            Chunk chunk = new Chunk(text);
-            string tag = $"idx_{(_indexcounter++)}";
+            var chunk = new Chunk(text);
+            var tag = $"idx_{(_indexcounter++)}";
             chunk.SetGenericTag(tag);
             chunk.SetLocalDestination(tag);
-            Entry entry = new Entry(in1, in2, in3, tag, this);
+            var entry = new Entry(in1, in2, in3, tag, this);
             _indexentry.Add(entry);
             return chunk;
         }
@@ -88,11 +86,10 @@ namespace iTextSharp.text.pdf.events
         public void Create(Chunk text, string in1, string in2,
                 string in3)
         {
-
-            string tag = $"idx_{(_indexcounter++)}";
+            var tag = $"idx_{(_indexcounter++)}";
             text.SetGenericTag(tag);
             text.SetLocalDestination(tag);
-            Entry entry = new Entry(in1, in2, in3, tag, this);
+            var entry = new Entry(in1, in2, in3, tag, this);
             _indexentry.Add(entry);
         }
 
@@ -123,15 +120,14 @@ namespace iTextSharp.text.pdf.events
         /// <returns>Returns the sorted list with the entries and teh collected page numbers.</returns>
         public ArrayList GetSortedEntries()
         {
+            var grouped = new Hashtable();
 
-            Hashtable grouped = new Hashtable();
-
-            for (int i = 0; i < _indexentry.Count; i++)
+            for (var i = 0; i < _indexentry.Count; i++)
             {
-                Entry e = (Entry)_indexentry[i];
-                string key = e.GetKey();
+                var e = (Entry)_indexentry[i];
+                var key = e.GetKey();
 
-                Entry master = (Entry)grouped[key];
+                var master = (Entry)grouped[key];
                 if (master != null)
                 {
                     master.AddPageNumberAndTag(e.GetPageNumber(), e.GetTag());
@@ -144,7 +140,7 @@ namespace iTextSharp.text.pdf.events
             }
 
             // copy to a list and sort it
-            ArrayList sorted = new ArrayList(grouped.Values);
+            var sorted = new ArrayList(grouped.Values);
             sorted.Sort(0, sorted.Count, _comparator);
             return sorted;
         }
@@ -160,6 +156,7 @@ namespace iTextSharp.text.pdf.events
         {
             _indextag[text] = writer.PageNumber;
         }
+
         /// <summary>
         /// Set the comparator.
         /// </summary>
@@ -181,7 +178,6 @@ namespace iTextSharp.text.pdf.events
         /// </summary>
         public class Entry
         {
-
             /// <summary>
             /// first level
             /// </summary>
@@ -208,6 +204,7 @@ namespace iTextSharp.text.pdf.events
             /// the tag
             /// </summary>
             private readonly string _tag;
+
             /// <summary>
             /// the lsit of all tags.
             /// </summary>
@@ -284,8 +281,8 @@ namespace iTextSharp.text.pdf.events
             /// <returns>Returns the pagenumer for this entry.</returns>
             public int GetPageNumber()
             {
-                int rt = -1;
-                object i = _parent._indextag[_tag];
+                var rt = -1;
+                var i = _parent._indextag[_tag];
                 if (i != null)
                 {
                     rt = (int)i;
@@ -310,6 +307,7 @@ namespace iTextSharp.text.pdf.events
             {
                 return _tag;
             }
+
             /// <summary>
             /// Returns the tags.
             /// </summary>
@@ -325,11 +323,11 @@ namespace iTextSharp.text.pdf.events
             /// <returns>the toString implementation of the entry</returns>
             public override string ToString()
             {
-                StringBuilder buf = new StringBuilder();
+                var buf = new StringBuilder();
                 buf.Append(_in1).Append(' ');
                 buf.Append(_in2).Append(' ');
                 buf.Append(_in3).Append(' ');
-                for (int i = 0; i < _pagenumbers.Count; i++)
+                for (var i = 0; i < _pagenumbers.Count; i++)
                 {
                     buf.Append(_pagenumbers[i]).Append(' ');
                 }
@@ -339,13 +337,12 @@ namespace iTextSharp.text.pdf.events
 
         private class SortIndex : IComparer
         {
-
             public int Compare(object arg0, object arg1)
             {
-                Entry en1 = (Entry)arg0;
-                Entry en2 = (Entry)arg1;
+                var en1 = (Entry)arg0;
+                var en2 = (Entry)arg1;
 
-                int rt = 0;
+                var rt = 0;
                 if (en1.GetIn1() != null && en2.GetIn1() != null)
                 {
                     if ((rt = Util.CompareToIgnoreCase(en1.GetIn1(), en2.GetIn1())) == 0)

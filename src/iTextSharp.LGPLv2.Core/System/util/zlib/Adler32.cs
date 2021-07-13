@@ -17,8 +17,8 @@ namespace System.util.zlib
         {
             if (buf == null) { return 1L; }
 
-            long s1 = adler & 0xffff;
-            long s2 = (adler >> 16) & 0xffff;
+            var s1 = adler & 0xffff;
+            var s2 = (adler >> 16) & 0xffff;
             int k;
 
             while (len > 0)

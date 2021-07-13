@@ -8,12 +8,12 @@ namespace iTextSharp.text.pdf.hyphenation
     /// </summary>
     public class Hyphenation
     {
-        readonly string _word;
+        private readonly string _word;
 
         /// <summary>
         /// number of hyphenation points in word
         /// </summary>
-        readonly int _len;
+        private readonly int _len;
 
         /// <summary>
         /// rawWord as made of alternating strings and {@link Hyphen Hyphen}
@@ -29,13 +29,7 @@ namespace iTextSharp.text.pdf.hyphenation
         /// <summary>
         /// </summary>
         /// <returns>the number of hyphenation points in the word</returns>
-        public int Length
-        {
-            get
-            {
-                return _len;
-            }
-        }
+        public int Length => _len;
 
         /// <summary>
         /// </summary>
@@ -60,9 +54,9 @@ namespace iTextSharp.text.pdf.hyphenation
 
         public override string ToString()
         {
-            StringBuilder str = new StringBuilder();
-            int start = 0;
-            for (int i = 0; i < _len; i++)
+            var str = new StringBuilder();
+            var start = 0;
+            for (var i = 0; i < _len; i++)
             {
                 str.Append(_word.Substring(start, HyphenationPoints[i]) + "-");
                 start = HyphenationPoints[i];

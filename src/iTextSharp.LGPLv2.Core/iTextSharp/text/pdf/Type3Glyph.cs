@@ -26,28 +26,27 @@ namespace iTextSharp.text.pdf
         {
         }
 
-        internal override PageResources PageResources
-        {
-            get
-            {
-                return _pageResources;
-            }
-        }
+        internal override PageResources PageResources => _pageResources;
 
         public override void AddImage(Image image, float a, float b, float c, float d, float e, float f, bool inlineImage)
         {
             if (!_colorized && (!image.IsMask() || !(image.Bpc == 1 || image.Bpc > 0xff)))
+            {
                 throw new DocumentException("Not colorized Typed3 fonts only accept mask images.");
+            }
+
             base.AddImage(image, a, b, c, d, e, f, inlineImage);
         }
 
         public PdfContentByte GetDuplicate()
         {
-            Type3Glyph dup = new Type3Glyph();
-            dup.Writer = Writer;
-            dup.Pdf = Pdf;
-            dup._pageResources = _pageResources;
-            dup._colorized = _colorized;
+            var dup = new Type3Glyph
+            {
+                Writer = Writer,
+                Pdf = Pdf,
+                _pageResources = _pageResources,
+                _colorized = _colorized
+            };
             return dup;
         }
     }

@@ -7,7 +7,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class DocumentFont : BaseFont
     {
-
         private static readonly string[] _cjkEncs = {"UniJIS-UCS2-H", "UniJIS-UCS2-H", "UniGB-UCS2-H", "UniCNS-UCS2-H",
             "UniCNS-UCS2-H", "UniKS-UCS2-H", "UniKS-UCS2-H", "UniCNS-UCS2-H", "UniGB-UCS2-H",
             "UniKS-UCS2-H", "UniJIS-UCS2-H"};
@@ -51,6 +50,7 @@ namespace iTextSharp.text.pdf
         /// code, [glyph, width]
         /// </summary>
         private readonly Hashtable _metrics = new Hashtable();
+
         private readonly PrIndirectReference _refFont;
         private float _ascender = 800;
         private float _capHeight = 700;
@@ -61,6 +61,7 @@ namespace iTextSharp.text.pdf
         private float _lly = -200;
         private float _urx = 100;
         private float _ury = 900;
+
         /// <summary>
         /// Creates a new instance of DocumentFont
         /// </summary>
@@ -72,12 +73,14 @@ namespace iTextSharp.text.pdf
             fontType = FONT_TYPE_DOCUMENT;
             _font = (PdfDictionary)PdfReader.GetPdfObject(refFont);
             _fontName = PdfName.DecodeName(_font.GetAsName(PdfName.Basefont).ToString());
-            PdfName subType = _font.GetAsName(PdfName.Subtype);
+            var subType = _font.GetAsName(PdfName.Subtype);
             if (PdfName.Type1.Equals(subType) || PdfName.Truetype.Equals(subType))
+            {
                 doType1Tt();
+            }
             else
             {
-                for (int k = 0; k < _cjkNames.Length; ++k)
+                for (var k = 0; k < _cjkNames.Length; ++k)
                 {
                     if (_fontName.StartsWith(_cjkNames[k]))
                     {
@@ -86,13 +89,16 @@ namespace iTextSharp.text.pdf
                         return;
                     }
                 }
-                string enc = PdfName.DecodeName(_font.GetAsName(PdfName.Encoding).ToString());
-                for (int k = 0; k < _cjkEncs2.Length; ++k)
+                var enc = PdfName.DecodeName(_font.GetAsName(PdfName.Encoding).ToString());
+                for (var k = 0; k < _cjkEncs2.Length; ++k)
                 {
                     if (enc.StartsWith(_cjkEncs2[k]))
                     {
                         if (k > 3)
+                        {
                             k -= 4;
+                        }
+
                         _cjkMirror = CreateFont(_cjkNames2[k], _cjkEncs2[k], false);
                         return;
                     }
@@ -114,13 +120,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the full name of the font</returns>
-        public override string[][] AllNameEntries
-        {
-            get
-            {
-                return new[] { new[] { "4", "", "", "", _fontName } };
-            }
-        }
+        public override string[][] AllNameEntries => new[] { new[] { "4", "", "", "", _fontName } };
 
         /// <summary>
         /// Gets the family name of the font. If it is a True Type font
@@ -131,13 +131,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the family name of the font</returns>
-        public override string[][] FamilyFontName
-        {
-            get
-            {
-                return FullFontName;
-            }
-        }
+        public override string[][] FamilyFontName => FullFontName;
 
         /// <summary>
         /// Gets the full name of the font. If it is a True Type font
@@ -148,13 +142,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the full name of the font</returns>
-        public override string[][] FullFontName
-        {
-            get
-            {
-                return new[] { new[] { "", "", "", _fontName } };
-            }
-        }
+        public override string[][] FullFontName => new[] { new[] { "", "", "", _fontName } };
 
         /// <summary>
         /// Gets the postscript font name.
@@ -162,22 +150,13 @@ namespace iTextSharp.text.pdf
         /// <returns>the postscript font name</returns>
         public override string PostscriptFontName
         {
-            get
-            {
-                return _fontName;
-            }
+            get => _fontName;
             set
             {
             }
         }
 
-        internal PdfIndirectReference IndirectReference
-        {
-            get
-            {
-                return _refFont;
-            }
-        }
+        internal PdfIndirectReference IndirectReference => _refFont;
 
         /// <summary>
         /// Exposes the unicode - > CID map that is constructed from the font's encoding
@@ -189,13 +168,17 @@ namespace iTextSharp.text.pdf
         public override bool CharExists(int c)
         {
             if (_cjkMirror != null)
+            {
                 return _cjkMirror.CharExists(c);
+            }
             else if (_isType0)
             {
                 return _metrics.ContainsKey(c);
             }
             else
+            {
                 return base.CharExists(c);
+            }
         }
 
         public override int[] GetCharBBox(int c)
@@ -215,29 +198,41 @@ namespace iTextSharp.text.pdf
         public override float GetFontDescriptor(int key, float fontSize)
         {
             if (_cjkMirror != null)
+            {
                 return _cjkMirror.GetFontDescriptor(key, fontSize);
+            }
+
             switch (key)
             {
                 case AWT_ASCENT:
                 case ASCENT:
                     return _ascender * fontSize / 1000;
+
                 case CAPHEIGHT:
                     return _capHeight * fontSize / 1000;
+
                 case AWT_DESCENT:
                 case DESCENT:
                     return _descender * fontSize / 1000;
+
                 case ITALICANGLE:
                     return _italicAngle;
+
                 case BBOXLLX:
                     return _llx * fontSize / 1000;
+
                 case BBOXLLY:
                     return _lly * fontSize / 1000;
+
                 case BBOXURX:
                     return _urx * fontSize / 1000;
+
                 case BBOXURY:
                     return _ury * fontSize / 1000;
+
                 case AWT_LEADING:
                     return 0;
+
                 case AWT_MAXADVANCE:
                     return (_urx - _llx) * fontSize / 1000;
             }
@@ -273,38 +268,52 @@ namespace iTextSharp.text.pdf
         public override int GetWidth(int char1)
         {
             if (_cjkMirror != null)
+            {
                 return _cjkMirror.GetWidth(char1);
+            }
             else if (_isType0)
             {
-                int[] ws = (int[])_metrics[char1];
+                var ws = (int[])_metrics[char1];
                 if (ws != null)
+                {
                     return ws[1];
+                }
                 else
+                {
                     return 0;
+                }
             }
             else
+            {
                 return base.GetWidth(char1);
+            }
         }
 
         public override int GetWidth(string text)
         {
             if (_cjkMirror != null)
+            {
                 return _cjkMirror.GetWidth(text);
+            }
             else if (_isType0)
             {
-                char[] chars = text.ToCharArray();
-                int len = chars.Length;
-                int total = 0;
-                for (int k = 0; k < len; ++k)
+                var chars = text.ToCharArray();
+                var len = chars.Length;
+                var total = 0;
+                for (var k = 0; k < len; ++k)
                 {
-                    int[] ws = (int[])_metrics[(int)chars[k]];
+                    var ws = (int[])_metrics[(int)chars[k]];
                     if (ws != null)
+                    {
                         total += ws[1];
+                    }
                 }
                 return total;
             }
             else
+            {
                 return base.GetWidth(text);
+            }
         }
 
         /// <summary>
@@ -324,47 +333,55 @@ namespace iTextSharp.text.pdf
         internal override byte[] ConvertToBytes(string text)
         {
             if (_cjkMirror != null)
+            {
                 return PdfEncodings.ConvertToBytes(text, CjkFont.CJK_ENCODING);
+            }
             else if (_isType0)
             {
-                char[] chars = text.ToCharArray();
-                int len = chars.Length;
-                byte[] b = new byte[len * 2];
-                int bptr = 0;
-                for (int k = 0; k < len; ++k)
+                var chars = text.ToCharArray();
+                var len = chars.Length;
+                var b = new byte[len * 2];
+                var bptr = 0;
+                for (var k = 0; k < len; ++k)
                 {
-                    int[] ws = (int[])_metrics[(int)chars[k]];
+                    var ws = (int[])_metrics[(int)chars[k]];
                     if (ws != null)
                     {
-                        int g = ws[0];
+                        var g = ws[0];
                         b[bptr++] = (byte)(g / 256);
                         b[bptr++] = (byte)(g);
                     }
                 }
                 if (bptr == b.Length)
+                {
                     return b;
+                }
                 else
                 {
-                    byte[] nb = new byte[bptr];
+                    var nb = new byte[bptr];
                     System.Array.Copy(b, 0, nb, 0, bptr);
                     return nb;
                 }
             }
             else
             {
-                char[] cc = text.ToCharArray();
-                byte[] b = new byte[cc.Length];
-                int ptr = 0;
-                for (int k = 0; k < cc.Length; ++k)
+                var cc = text.ToCharArray();
+                var b = new byte[cc.Length];
+                var ptr = 0;
+                for (var k = 0; k < cc.Length; ++k)
                 {
                     if (Uni2Byte.ContainsKey(cc[k]))
+                    {
                         b[ptr++] = (byte)Uni2Byte[cc[k]];
+                    }
                 }
                 if (ptr == b.Length)
+                {
                     return b;
+                }
                 else
                 {
-                    byte[] b2 = new byte[ptr];
+                    var b2 = new byte[ptr];
                     System.Array.Copy(b, 0, b2, 0, ptr);
                     return b2;
                 }
@@ -374,24 +391,32 @@ namespace iTextSharp.text.pdf
         internal override byte[] ConvertToBytes(int char1)
         {
             if (_cjkMirror != null)
+            {
                 return PdfEncodings.ConvertToBytes((char)char1, CjkFont.CJK_ENCODING);
+            }
             else if (_isType0)
             {
-                int[] ws = (int[])_metrics[char1];
+                var ws = (int[])_metrics[char1];
                 if (ws != null)
                 {
-                    int g = ws[0];
+                    var g = ws[0];
                     return new[] { (byte)(g / 256), (byte)(g) };
                 }
                 else
+                {
                     return new byte[0];
+                }
             }
             else
             {
                 if (Uni2Byte.ContainsKey(char1))
+                {
                     return new[] { (byte)Uni2Byte[char1] };
+                }
                 else
+                {
                     return new byte[0];
+                }
             }
         }
 
@@ -427,41 +452,56 @@ namespace iTextSharp.text.pdf
         private string decodeString(PdfString ps)
         {
             if (ps.IsHexWriting())
+            {
                 return PdfEncodings.ConvertToString(ps.GetBytes(), "UnicodeBigUnmarked");
+            }
             else
+            {
                 return ps.ToUnicodeString();
+            }
         }
 
         private void doType1Tt()
         {
-            PdfObject enc = PdfReader.GetPdfObject(_font.Get(PdfName.Encoding));
+            var enc = PdfReader.GetPdfObject(_font.Get(PdfName.Encoding));
             if (enc == null)
+            {
                 fillEncoding(null);
+            }
             else
             {
                 if (enc.IsName())
+                {
                     fillEncoding((PdfName)enc);
+                }
                 else
                 {
-                    PdfDictionary encDic = (PdfDictionary)enc;
+                    var encDic = (PdfDictionary)enc;
                     enc = PdfReader.GetPdfObject(encDic.Get(PdfName.Baseencoding));
                     if (enc == null)
+                    {
                         fillEncoding(null);
+                    }
                     else
+                    {
                         fillEncoding((PdfName)enc);
-                    PdfArray diffs = encDic.GetAsArray(PdfName.Differences);
+                    }
+
+                    var diffs = encDic.GetAsArray(PdfName.Differences);
                     if (diffs != null)
                     {
                         _diffmap = new IntHashtable();
-                        int currentNumber = 0;
-                        for (int k = 0; k < diffs.Size; ++k)
+                        var currentNumber = 0;
+                        for (var k = 0; k < diffs.Size; ++k)
                         {
-                            PdfObject obj = diffs[k];
+                            var obj = diffs[k];
                             if (obj.IsNumber())
+                            {
                                 currentNumber = ((PdfNumber)obj).IntValue;
+                            }
                             else
                             {
-                                int[] c = GlyphList.NameToUnicode(PdfName.DecodeName(((PdfName)obj).ToString()));
+                                var c = GlyphList.NameToUnicode(PdfName.DecodeName(((PdfName)obj).ToString()));
                                 if (c != null && c.Length > 0)
                                 {
                                     Uni2Byte[c[0]] = currentNumber;
@@ -473,25 +513,25 @@ namespace iTextSharp.text.pdf
                     }
                 }
             }
-            PdfArray newWidths = _font.GetAsArray(PdfName.Widths);
-            PdfNumber first = _font.GetAsNumber(PdfName.Firstchar);
-            PdfNumber last = _font.GetAsNumber(PdfName.Lastchar);
+            var newWidths = _font.GetAsArray(PdfName.Widths);
+            var first = _font.GetAsNumber(PdfName.Firstchar);
+            var last = _font.GetAsNumber(PdfName.Lastchar);
             if (BuiltinFonts14.ContainsKey(_fontName))
             {
                 BaseFont bf;
                 bf = CreateFont(_fontName, WINANSI, false);
-                int[] e = Uni2Byte.ToOrderedKeys();
-                for (int k = 0; k < e.Length; ++k)
+                var e = Uni2Byte.ToOrderedKeys();
+                for (var k = 0; k < e.Length; ++k)
                 {
-                    int n = Uni2Byte[e[k]];
+                    var n = Uni2Byte[e[k]];
                     widths[n] = bf.GetRawWidth(n, GlyphList.UnicodeToName(e[k]));
                 }
                 if (_diffmap != null)
                 { //widths for differences must override existing ones
                     e = _diffmap.ToOrderedKeys();
-                    for (int k = 0; k < e.Length; ++k)
+                    for (var k = 0; k < e.Length; ++k)
                     {
-                        int n = _diffmap[e[k]];
+                        var n = _diffmap[e[k]];
                         widths[n] = bf.GetRawWidth(n, GlyphList.UnicodeToName(e[k]));
                     }
                     _diffmap = null;
@@ -507,8 +547,8 @@ namespace iTextSharp.text.pdf
             }
             if (first != null && last != null && newWidths != null)
             {
-                int f = first.IntValue;
-                for (int k = 0; k < newWidths.Size; ++k)
+                var f = first.IntValue;
+                for (var k = 0; k < newWidths.Size; ++k)
                 {
                     widths[f + k] = newWidths.GetAsNumber(k).IntValue;
                 }
@@ -520,22 +560,28 @@ namespace iTextSharp.text.pdf
         {
             if (PdfName.MacRomanEncoding.Equals(encoding) || PdfName.WinAnsiEncoding.Equals(encoding))
             {
-                byte[] b = new byte[256];
-                for (int k = 0; k < 256; ++k)
+                var b = new byte[256];
+                for (var k = 0; k < 256; ++k)
+                {
                     b[k] = (byte)k;
-                string enc = WINANSI;
+                }
+
+                var enc = WINANSI;
                 if (PdfName.MacRomanEncoding.Equals(encoding))
+                {
                     enc = MACROMAN;
-                string cv = PdfEncodings.ConvertToString(b, enc);
-                char[] arr = cv.ToCharArray();
-                for (int k = 0; k < 256; ++k)
+                }
+
+                var cv = PdfEncodings.ConvertToString(b, enc);
+                var arr = cv.ToCharArray();
+                for (var k = 0; k < 256; ++k)
                 {
                     Uni2Byte[arr[k]] = k;
                 }
             }
             else
             {
-                for (int k = 0; k < 256; ++k)
+                for (var k = 0; k < 256; ++k)
                 {
                     Uni2Byte[_stdEnc[k]] = k;
                 }
@@ -545,20 +591,35 @@ namespace iTextSharp.text.pdf
         private void fillFontDesc(PdfDictionary fontDesc)
         {
             if (fontDesc == null)
+            {
                 return;
-            PdfNumber v = fontDesc.GetAsNumber(PdfName.Ascent);
+            }
+
+            var v = fontDesc.GetAsNumber(PdfName.Ascent);
             if (v != null)
+            {
                 _ascender = v.FloatValue;
+            }
+
             v = fontDesc.GetAsNumber(PdfName.Capheight);
             if (v != null)
+            {
                 _capHeight = v.FloatValue;
+            }
+
             v = fontDesc.GetAsNumber(PdfName.Descent);
             if (v != null)
+            {
                 _descender = v.FloatValue;
+            }
+
             v = fontDesc.GetAsNumber(PdfName.Italicangle);
             if (v != null)
+            {
                 _italicAngle = v.FloatValue;
-            PdfArray bbox = fontDesc.GetAsArray(PdfName.Fontbbox);
+            }
+
+            var bbox = fontDesc.GetAsArray(PdfName.Fontbbox);
             if (bbox != null)
             {
                 _llx = bbox.GetAsNumber(0).FloatValue;
@@ -567,13 +628,13 @@ namespace iTextSharp.text.pdf
                 _ury = bbox.GetAsNumber(3).FloatValue;
                 if (_llx > _urx)
                 {
-                    float t = _llx;
+                    var t = _llx;
                     _llx = _urx;
                     _urx = t;
                 }
                 if (_lly > _ury)
                 {
-                    float t = _lly;
+                    var t = _lly;
                     _lly = _ury;
                     _ury = t;
                 }
@@ -582,7 +643,7 @@ namespace iTextSharp.text.pdf
 
         private void fillMetrics(byte[] touni, IntHashtable widths, int dw)
         {
-            PdfContentParser ps = new PdfContentParser(new PrTokeniser(touni));
+            var ps = new PdfContentParser(new PrTokeniser(touni));
             PdfObject ob = null;
             PdfObject last = null;
             while ((ob = ps.ReadPrObject()) != null)
@@ -591,59 +652,68 @@ namespace iTextSharp.text.pdf
                 {
                     if (ob.ToString().Equals("beginbfchar"))
                     {
-                        int n = ((PdfNumber)last).IntValue;
-                        for (int k = 0; k < n; ++k)
+                        var n = ((PdfNumber)last).IntValue;
+                        for (var k = 0; k < n; ++k)
                         {
-                            string cid = decodeString((PdfString)ps.ReadPrObject());
-                            string uni = decodeString((PdfString)ps.ReadPrObject());
+                            var cid = decodeString((PdfString)ps.ReadPrObject());
+                            var uni = decodeString((PdfString)ps.ReadPrObject());
                             if (uni.Length == 1)
                             {
                                 int cidc = cid[0];
                                 int unic = uni[uni.Length - 1];
-                                int w = dw;
+                                var w = dw;
                                 if (widths.ContainsKey(cidc))
+                                {
                                     w = widths[cidc];
+                                }
+
                                 _metrics[unic] = new[] { cidc, w };
                             }
                         }
                     }
                     else if (ob.ToString().Equals("beginbfrange"))
                     {
-                        int n = ((PdfNumber)last).IntValue;
-                        for (int k = 0; k < n; ++k)
+                        var n = ((PdfNumber)last).IntValue;
+                        for (var k = 0; k < n; ++k)
                         {
-                            string cid1 = decodeString((PdfString)ps.ReadPrObject());
-                            string cid2 = decodeString((PdfString)ps.ReadPrObject());
+                            var cid1 = decodeString((PdfString)ps.ReadPrObject());
+                            var cid2 = decodeString((PdfString)ps.ReadPrObject());
                             int cid1C = cid1[0];
                             int cid2C = cid2[0];
-                            PdfObject ob2 = ps.ReadPrObject();
+                            var ob2 = ps.ReadPrObject();
                             if (ob2.IsString())
                             {
-                                string uni = decodeString((PdfString)ob2);
+                                var uni = decodeString((PdfString)ob2);
                                 if (uni.Length == 1)
                                 {
                                     int unic = uni[uni.Length - 1];
                                     for (; cid1C <= cid2C; cid1C++, unic++)
                                     {
-                                        int w = dw;
+                                        var w = dw;
                                         if (widths.ContainsKey(cid1C))
+                                        {
                                             w = widths[cid1C];
+                                        }
+
                                         _metrics[unic] = new[] { cid1C, w };
                                     }
                                 }
                             }
                             else
                             {
-                                PdfArray a = (PdfArray)ob2;
-                                for (int j = 0; j < a.Size; ++j, ++cid1C)
+                                var a = (PdfArray)ob2;
+                                for (var j = 0; j < a.Size; ++j, ++cid1C)
                                 {
-                                    string uni = decodeString(a.GetAsString(j));
+                                    var uni = decodeString(a.GetAsString(j));
                                     if (uni.Length == 1)
                                     {
                                         int unic = uni[uni.Length - 1];
-                                        int w = dw;
+                                        var w = dw;
                                         if (widths.ContainsKey(cid1C))
+                                        {
                                             w = widths[cid1C];
+                                        }
+
                                         _metrics[unic] = new[] { cid1C, w };
                                     }
                                 }
@@ -652,21 +722,26 @@ namespace iTextSharp.text.pdf
                     }
                 }
                 else
+                {
                     last = ob;
+                }
             }
         }
 
         private void processType0(PdfDictionary font)
         {
-            PdfObject toUniObject = PdfReader.GetPdfObjectRelease(font.Get(PdfName.Tounicode));
-            PdfArray df = (PdfArray)PdfReader.GetPdfObjectRelease(font.Get(PdfName.Descendantfonts));
-            PdfDictionary cidft = (PdfDictionary)PdfReader.GetPdfObjectRelease(df[0]);
-            PdfNumber dwo = (PdfNumber)PdfReader.GetPdfObjectRelease(cidft.Get(PdfName.Dw));
-            int dw = 1000;
+            var toUniObject = PdfReader.GetPdfObjectRelease(font.Get(PdfName.Tounicode));
+            var df = (PdfArray)PdfReader.GetPdfObjectRelease(font.Get(PdfName.Descendantfonts));
+            var cidft = (PdfDictionary)PdfReader.GetPdfObjectRelease(df[0]);
+            var dwo = (PdfNumber)PdfReader.GetPdfObjectRelease(cidft.Get(PdfName.Dw));
+            var dw = 1000;
             if (dwo != null)
+            {
                 dw = dwo.IntValue;
-            IntHashtable localWidths = readWidths((PdfArray)PdfReader.GetPdfObjectRelease(cidft.Get(PdfName.W)));
-            PdfDictionary fontDesc = (PdfDictionary)PdfReader.GetPdfObjectRelease(cidft.Get(PdfName.Fontdescriptor));
+            }
+
+            var localWidths = readWidths((PdfArray)PdfReader.GetPdfObjectRelease(cidft.Get(PdfName.W)));
+            var fontDesc = (PdfDictionary)PdfReader.GetPdfObjectRelease(cidft.Get(PdfName.Fontdescriptor));
             fillFontDesc(fontDesc);
             if (toUniObject != null)
             {
@@ -676,28 +751,33 @@ namespace iTextSharp.text.pdf
 
         private IntHashtable readWidths(PdfArray ws)
         {
-            IntHashtable hh = new IntHashtable();
+            var hh = new IntHashtable();
             if (ws == null)
-                return hh;
-            for (int k = 0; k < ws.Size; ++k)
             {
-                int c1 = ((PdfNumber)PdfReader.GetPdfObjectRelease(ws[k])).IntValue;
-                PdfObject obj = PdfReader.GetPdfObjectRelease(ws[++k]);
+                return hh;
+            }
+
+            for (var k = 0; k < ws.Size; ++k)
+            {
+                var c1 = ((PdfNumber)PdfReader.GetPdfObjectRelease(ws[k])).IntValue;
+                var obj = PdfReader.GetPdfObjectRelease(ws[++k]);
                 if (obj.IsArray())
                 {
-                    PdfArray a2 = (PdfArray)obj;
-                    for (int j = 0; j < a2.Size; ++j)
+                    var a2 = (PdfArray)obj;
+                    for (var j = 0; j < a2.Size; ++j)
                     {
-                        int c2 = ((PdfNumber)PdfReader.GetPdfObjectRelease(a2[j])).IntValue;
+                        var c2 = ((PdfNumber)PdfReader.GetPdfObjectRelease(a2[j])).IntValue;
                         hh[c1++] = c2;
                     }
                 }
                 else
                 {
-                    int c2 = ((PdfNumber)obj).IntValue;
-                    int w = ((PdfNumber)PdfReader.GetPdfObjectRelease(ws[++k])).IntValue;
+                    var c2 = ((PdfNumber)obj).IntValue;
+                    var w = ((PdfNumber)PdfReader.GetPdfObjectRelease(ws[++k])).IntValue;
                     for (; c1 <= c2; ++c1)
+                    {
                         hh[c1] = w;
+                    }
                 }
             }
             return hh;

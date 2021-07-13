@@ -3,7 +3,6 @@ using System.util;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfTextArray  defines an array with displacements and  PdfString -objects.
     ///
@@ -34,6 +33,7 @@ namespace iTextSharp.text.pdf
         /// --Mark Storer, May 12, 2008
         /// </summary>
         private string _lastStr;
+
         /// <summary>
         /// constructors
         /// </summary>

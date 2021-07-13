@@ -1,13 +1,11 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfColor  defines a Color (it's a  PdfArray  containing 3 values).
     /// @see        PdfDictionary
     /// </summary>
     public class PdfDestination : PdfArray
     {
-
         /// <summary>
         /// public static member-variables
         /// </summary>
@@ -51,6 +49,7 @@ namespace iTextSharp.text.pdf
         /// This is a possible destination type
         /// </summary>
         public const int XYZ = 0;
+
         /// <summary>
         /// member variables
         /// </summary>
@@ -106,12 +105,15 @@ namespace iTextSharp.text.pdf
                 default:
                     AddFirst(PdfName.Fith);
                     break;
+
                 case FITV:
                     AddFirst(PdfName.Fitv);
                     break;
+
                 case FITBH:
                     AddFirst(PdfName.Fitbh);
                     break;
+
                 case FITBV:
                     AddFirst(PdfName.Fitbv);
                     break;
@@ -134,13 +136,23 @@ namespace iTextSharp.text.pdf
         public PdfDestination(int type, float left, float top, float zoom) : base(PdfName.Xyz)
         {
             if (left < 0)
+            {
                 Add(PdfNull.Pdfnull);
+            }
             else
+            {
                 Add(new PdfNumber(left));
+            }
+
             if (top < 0)
+            {
                 Add(PdfNull.Pdfnull);
+            }
             else
+            {
                 Add(new PdfNumber(top));
+            }
+
             Add(new PdfNumber(zoom));
         }
 

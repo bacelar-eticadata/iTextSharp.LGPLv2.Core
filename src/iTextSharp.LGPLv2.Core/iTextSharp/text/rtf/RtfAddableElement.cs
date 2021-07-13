@@ -1,5 +1,5 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
+using System.IO;
 
 namespace iTextSharp.text.rtf
 {

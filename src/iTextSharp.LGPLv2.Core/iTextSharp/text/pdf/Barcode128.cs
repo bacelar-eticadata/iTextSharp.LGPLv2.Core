@@ -26,7 +26,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class Barcode128 : Barcode
     {
-
         public const char CODE_A = '\u00c8';
 
         /// <summary>
@@ -203,6 +202,7 @@ namespace iTextSharp.text.pdf
         /// The stop bars.
         /// </summary>
         private static readonly byte[] _barsStop = { 2, 3, 3, 1, 1, 1, 2 };
+
         static Barcode128()
         {
             _ais[0] = 20;
@@ -224,17 +224,26 @@ namespace iTextSharp.text.pdf
             _ais[251] = -1;
             _ais[252] = -1;
             _ais[30] = -1;
-            for (int k = 3100; k < 3700; ++k)
+            for (var k = 3100; k < 3700; ++k)
+            {
                 _ais[k] = 10;
+            }
+
             _ais[37] = -1;
-            for (int k = 3900; k < 3940; ++k)
+            for (var k = 3900; k < 3940; ++k)
+            {
                 _ais[k] = -1;
+            }
+
             _ais[400] = -1;
             _ais[401] = -1;
             _ais[402] = 20;
             _ais[403] = -1;
-            for (int k = 410; k < 416; ++k)
+            for (var k = 410; k < 416; ++k)
+            {
                 _ais[k] = 16;
+            }
+
             _ais[420] = -1;
             _ais[421] = -1;
             _ais[422] = 6;
@@ -244,8 +253,11 @@ namespace iTextSharp.text.pdf
             _ais[426] = 6;
             _ais[7001] = 17;
             _ais[7002] = -1;
-            for (int k = 7030; k < 7040; ++k)
+            for (var k = 7030; k < 7040; ++k)
+            {
                 _ais[k] = -1;
+            }
+
             _ais[8001] = 18;
             _ais[8002] = -1;
             _ais[8003] = -1;
@@ -259,8 +271,10 @@ namespace iTextSharp.text.pdf
             _ais[8100] = 10;
             _ais[8101] = 14;
             _ais[8102] = 6;
-            for (int k = 90; k < 100; ++k)
+            for (var k = 90; k < 100; ++k)
+            {
                 _ais[k] = -1;
+            }
         }
 
         /// <summary>
@@ -292,39 +306,57 @@ namespace iTextSharp.text.pdf
                 if (font != null)
                 {
                     if (baseline > 0)
+                    {
                         fontY = baseline - font.GetFontDescriptor(BaseFont.DESCENT, size);
+                    }
                     else
+                    {
                         fontY = -baseline + size;
+                    }
+
                     if (codeType == CODE128_RAW)
                     {
-                        int idx = code.IndexOf("\uffff", StringComparison.Ordinal);
+                        var idx = code.IndexOf("\uffff", StringComparison.Ordinal);
                         if (idx < 0)
+                        {
                             fullCode = "";
+                        }
                         else
+                        {
                             fullCode = code.Substring(idx + 1);
+                        }
                     }
                     else if (codeType == CODE128_UCC)
+                    {
                         fullCode = GetHumanReadableUccean(code);
+                    }
                     else
+                    {
                         fullCode = RemoveFnc1(code);
+                    }
+
                     fontX = font.GetWidthPoint(altText != null ? altText : fullCode, size);
                 }
                 if (codeType == CODE128_RAW)
                 {
-                    int idx = code.IndexOf("\uffff", StringComparison.Ordinal);
+                    var idx = code.IndexOf("\uffff", StringComparison.Ordinal);
                     if (idx >= 0)
+                    {
                         fullCode = code.Substring(0, idx);
+                    }
                     else
+                    {
                         fullCode = code;
+                    }
                 }
                 else
                 {
                     fullCode = GetRawText(code, codeType == CODE128_UCC);
                 }
-                int len = fullCode.Length;
-                float fullWidth = (len + 2) * 11 * x + 2 * x;
+                var len = fullCode.Length;
+                var fullWidth = (len + 2) * 11 * x + 2 * x;
                 fullWidth = Math.Max(fullWidth, fontX);
-                float fullHeight = barHeight + fontY;
+                var fullHeight = barHeight + fontY;
                 return new Rectangle(fullWidth, fullHeight);
             }
         }
@@ -339,41 +371,59 @@ namespace iTextSharp.text.pdf
         {
             set
             {
-                string localCode = value;
+                var localCode = value;
                 if (CodeType == CODE128_UCC && localCode.StartsWith("("))
                 {
-                    int idx = 0;
-                    string ret = "";
+                    var idx = 0;
+                    var ret = "";
                     while (idx >= 0)
                     {
-                        int end = localCode.IndexOf(")", idx, StringComparison.Ordinal);
+                        var end = localCode.IndexOf(")", idx, StringComparison.Ordinal);
                         if (end < 0)
+                        {
                             throw new ArgumentException("Badly formed UCC string: " + localCode);
-                        string sai = localCode.Substring(idx + 1, end - (idx + 1));
+                        }
+
+                        var sai = localCode.Substring(idx + 1, end - (idx + 1));
                         if (sai.Length < 2)
+                        {
                             throw new ArgumentException("AI too short: (" + sai + ")");
-                        int ai = int.Parse(sai);
-                        int len = _ais[ai];
+                        }
+
+                        var ai = int.Parse(sai);
+                        var len = _ais[ai];
                         if (len == 0)
+                        {
                             throw new ArgumentException("AI not found: (" + sai + ")");
+                        }
+
                         sai = ai.ToString();
                         if (sai.Length == 1)
+                        {
                             sai = "0" + sai;
+                        }
+
                         idx = localCode.IndexOf("(", end, StringComparison.Ordinal);
-                        int next = (idx < 0 ? localCode.Length : idx);
+                        var next = (idx < 0 ? localCode.Length : idx);
                         ret += sai + localCode.Substring(end + 1, next - (end + 1));
                         if (len < 0)
                         {
                             if (idx >= 0)
+                            {
                                 ret += FNC1;
+                            }
                         }
                         else if (next - end - 1 + sai.Length != len)
+                        {
                             throw new ArgumentException("Invalid AI length: (" + sai + ")");
+                        }
                     }
                     base.Code = ret;
                 }
                 else
+                {
                     base.Code = localCode;
+                }
             }
         }
 
@@ -386,17 +436,26 @@ namespace iTextSharp.text.pdf
         public static byte[] GetBarsCode128Raw(string text)
         {
             int k;
-            int idx = text.IndexOf("\uffff", StringComparison.Ordinal);
+            var idx = text.IndexOf("\uffff", StringComparison.Ordinal);
             if (idx >= 0)
+            {
                 text = text.Substring(0, idx);
+            }
+
             int chk = text[0];
             for (k = 1; k < text.Length; ++k)
+            {
                 chk += k * text[k];
+            }
+
             chk = chk % 103;
             text += (char)chk;
-            byte[] bars = new byte[(text.Length + 1) * 6 + 7];
+            var bars = new byte[(text.Length + 1) * 6 + 7];
             for (k = 0; k < text.Length; ++k)
+            {
                 Array.Copy(_bars[text[k]], 0, bars, k * 6, 6);
+            }
+
             Array.Copy(_barsStop, 0, bars, k * 6, 7);
             return bars;
         }
@@ -408,8 +467,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the human readable text</returns>
         public static string GetHumanReadableUccean(string code)
         {
-            StringBuilder buf = new StringBuilder();
-            string fnc1 = FNC1.ToString();
+            var buf = new StringBuilder();
+            var fnc1 = FNC1.ToString();
             try
             {
                 while (true)
@@ -419,12 +478,15 @@ namespace iTextSharp.text.pdf
                         code = code.Substring(1);
                         continue;
                     }
-                    int n = 0;
-                    int idlen = 0;
-                    for (int k = 2; k < 5; ++k)
+                    var n = 0;
+                    var idlen = 0;
+                    for (var k = 2; k < 5; ++k)
                     {
                         if (code.Length < k)
+                        {
                             break;
+                        }
+
                         if ((n = _ais[int.Parse(code.Substring(0, k))]) != 0)
                         {
                             idlen = k;
@@ -432,22 +494,31 @@ namespace iTextSharp.text.pdf
                         }
                     }
                     if (idlen == 0)
+                    {
                         break;
+                    }
+
                     buf.Append('(').Append(code.Substring(0, idlen)).Append(')');
                     code = code.Substring(idlen);
                     if (n > 0)
                     {
                         n -= idlen;
                         if (code.Length <= n)
+                        {
                             break;
+                        }
+
                         buf.Append(RemoveFnc1(code.Substring(0, n)));
                         code = code.Substring(n);
                     }
                     else
                     {
-                        int idx = code.IndexOf(FNC1.ToString(), StringComparison.Ordinal);
+                        var idx = code.IndexOf(FNC1.ToString(), StringComparison.Ordinal);
                         if (idx < 0)
+                        {
                             break;
+                        }
+
                         buf.Append(code.Substring(0, idx));
                         code = code.Substring(idx + 1);
                     }
@@ -471,32 +542,40 @@ namespace iTextSharp.text.pdf
         /// <returns>the code ready to be fed to GetBarsCode128Raw()</returns>
         public static string GetRawText(string text, bool ucc)
         {
-            string outs = "";
-            int tLen = text.Length;
+            var outs = "";
+            var tLen = text.Length;
             if (tLen == 0)
             {
                 outs += START_B;
                 if (ucc)
+                {
                     outs += FNC1_INDEX;
+                }
+
                 return outs;
             }
-            int c = 0;
-            for (int k = 0; k < tLen; ++k)
+            var c = 0;
+            for (var k = 0; k < tLen; ++k)
             {
                 c = text[k];
                 if (c > 127 && c != FNC1)
+                {
                     throw new ArgumentException("There are illegal characters for barcode 128 in '" + text + "'.");
+                }
             }
             c = text[0];
-            char currentCode = START_B;
-            int index = 0;
+            var currentCode = START_B;
+            var index = 0;
             if (IsNextDigits(text, index, 2))
             {
                 currentCode = START_C;
                 outs += currentCode;
                 if (ucc)
+                {
                     outs += FNC1_INDEX;
-                string out2 = GetPackedRawDigits(text, index, 2);
+                }
+
+                var out2 = GetPackedRawDigits(text, index, 2);
                 index += out2[0];
                 outs += out2.Substring(1);
             }
@@ -505,7 +584,10 @@ namespace iTextSharp.text.pdf
                 currentCode = START_A;
                 outs += currentCode;
                 if (ucc)
+                {
                     outs += FNC1_INDEX;
+                }
+
                 outs += (char)(c + 64);
                 ++index;
             }
@@ -513,11 +595,19 @@ namespace iTextSharp.text.pdf
             {
                 outs += currentCode;
                 if (ucc)
+                {
                     outs += FNC1_INDEX;
+                }
+
                 if (c == FNC1)
+                {
                     outs += FNC1_INDEX;
+                }
                 else
+                {
                     outs += (char)(c - ' ');
+                }
+
                 ++index;
             }
             while (index < tLen)
@@ -530,7 +620,7 @@ namespace iTextSharp.text.pdf
                             {
                                 currentCode = START_C;
                                 outs += CODE_AB_TO_C;
-                                string out2 = GetPackedRawDigits(text, index, 4);
+                                var out2 = GetPackedRawDigits(text, index, 4);
                                 index += out2[0];
                                 outs += out2.Substring(1);
                             }
@@ -538,7 +628,9 @@ namespace iTextSharp.text.pdf
                             {
                                 c = text[index++];
                                 if (c == FNC1)
+                                {
                                     outs += FNC1_INDEX;
+                                }
                                 else if (c > '_')
                                 {
                                     currentCode = START_B;
@@ -546,19 +638,24 @@ namespace iTextSharp.text.pdf
                                     outs += (char)(c - ' ');
                                 }
                                 else if (c < ' ')
+                                {
                                     outs += (char)(c + 64);
+                                }
                                 else
+                                {
                                     outs += (char)(c - ' ');
+                                }
                             }
                         }
                         break;
+
                     case START_B:
                         {
                             if (IsNextDigits(text, index, 4))
                             {
                                 currentCode = START_C;
                                 outs += CODE_AB_TO_C;
-                                string out2 = GetPackedRawDigits(text, index, 4);
+                                var out2 = GetPackedRawDigits(text, index, 4);
                                 index += out2[0];
                                 outs += out2.Substring(1);
                             }
@@ -566,7 +663,9 @@ namespace iTextSharp.text.pdf
                             {
                                 c = text[index++];
                                 if (c == FNC1)
+                                {
                                     outs += FNC1_INDEX;
+                                }
                                 else if (c < ' ')
                                 {
                                     currentCode = START_A;
@@ -580,11 +679,12 @@ namespace iTextSharp.text.pdf
                             }
                         }
                         break;
+
                     case START_C:
                         {
                             if (IsNextDigits(text, index, 2))
                             {
-                                string out2 = GetPackedRawDigits(text, index, 2);
+                                var out2 = GetPackedRawDigits(text, index, 2);
                                 index += out2[0];
                                 outs += out2.Substring(1);
                             }
@@ -592,7 +692,9 @@ namespace iTextSharp.text.pdf
                             {
                                 c = text[index++];
                                 if (c == FNC1)
+                                {
                                     outs += FNC1_INDEX;
+                                }
                                 else if (c < ' ')
                                 {
                                     currentCode = START_A;
@@ -620,49 +722,61 @@ namespace iTextSharp.text.pdf
         /// <returns>the cleaned text</returns>
         public static string RemoveFnc1(string code)
         {
-            int len = code.Length;
-            StringBuilder buf = new StringBuilder(len);
-            for (int k = 0; k < len; ++k)
+            var len = code.Length;
+            var buf = new StringBuilder(len);
+            for (var k = 0; k < len; ++k)
             {
-                char c = code[k];
+                var c = code[k];
                 if (c >= 32 && c <= 126)
+                {
                     buf.Append(c);
+                }
             }
             return buf.ToString();
         }
+
         public override System.Drawing.Image CreateDrawingImage(System.Drawing.Color foreground, System.Drawing.Color background)
         {
             string bCode;
             if (codeType == CODE128_RAW)
             {
-                int idx = code.IndexOf("\uffff", StringComparison.Ordinal);
+                var idx = code.IndexOf("\uffff", StringComparison.Ordinal);
                 if (idx >= 0)
+                {
                     bCode = code.Substring(0, idx);
+                }
                 else
+                {
                     bCode = code;
+                }
             }
             else
             {
                 bCode = GetRawText(code, codeType == CODE128_UCC);
             }
-            int len = bCode.Length;
-            int fullWidth = (len + 2) * 11 + 2;
-            byte[] bars = GetBarsCode128Raw(bCode);
-            int height = (int)barHeight;
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(fullWidth, height);
-            for (int h = 0; h < height; ++h)
+            var len = bCode.Length;
+            var fullWidth = (len + 2) * 11 + 2;
+            var bars = GetBarsCode128Raw(bCode);
+            var height = (int)barHeight;
+            var bmp = new System.Drawing.Bitmap(fullWidth, height);
+            for (var h = 0; h < height; ++h)
             {
-                bool print = true;
-                int ptr = 0;
-                for (int k = 0; k < bars.Length; ++k)
+                var print = true;
+                var ptr = 0;
+                for (var k = 0; k < bars.Length; ++k)
                 {
                     int w = bars[k];
-                    System.Drawing.Color c = background;
+                    var c = background;
                     if (print)
+                    {
                         c = foreground;
+                    }
+
                     print = !print;
-                    for (int j = 0; j < w; ++j)
+                    for (var j = 0; j < w; ++j)
+                    {
                         bmp.SetPixel(ptr++, h, c);
+                    }
                 }
             }
             return bmp;
@@ -710,16 +824,25 @@ namespace iTextSharp.text.pdf
             string fullCode;
             if (codeType == CODE128_RAW)
             {
-                int idx = code.IndexOf("\uffff", StringComparison.Ordinal);
+                var idx = code.IndexOf("\uffff", StringComparison.Ordinal);
                 if (idx < 0)
+                {
                     fullCode = "";
+                }
                 else
+                {
                     fullCode = code.Substring(idx + 1);
+                }
             }
             else if (codeType == CODE128_UCC)
+            {
                 fullCode = GetHumanReadableUccean(code);
+            }
             else
+            {
                 fullCode = RemoveFnc1(code);
+            }
+
             float fontX = 0;
             if (font != null)
             {
@@ -728,35 +851,51 @@ namespace iTextSharp.text.pdf
             string bCode;
             if (codeType == CODE128_RAW)
             {
-                int idx = code.IndexOf("\uffff", StringComparison.Ordinal);
+                var idx = code.IndexOf("\uffff", StringComparison.Ordinal);
                 if (idx >= 0)
+                {
                     bCode = code.Substring(0, idx);
+                }
                 else
+                {
                     bCode = code;
+                }
             }
             else
             {
                 bCode = GetRawText(code, codeType == CODE128_UCC);
             }
-            int len = bCode.Length;
-            float fullWidth = (len + 2) * 11 * x + 2 * x;
+            var len = bCode.Length;
+            var fullWidth = (len + 2) * 11 * x + 2 * x;
             float barStartX = 0;
             float textStartX = 0;
             switch (textAlignment)
             {
                 case Element.ALIGN_LEFT:
                     break;
+
                 case Element.ALIGN_RIGHT:
                     if (fontX > fullWidth)
+                    {
                         barStartX = fontX - fullWidth;
+                    }
                     else
+                    {
                         textStartX = fullWidth - fontX;
+                    }
+
                     break;
+
                 default:
                     if (fontX > fullWidth)
+                    {
                         barStartX = (fontX - fullWidth) / 2;
+                    }
                     else
+                    {
                         textStartX = (fullWidth - fontX) / 2;
+                    }
+
                     break;
             }
             float barStartY = 0;
@@ -764,22 +903,30 @@ namespace iTextSharp.text.pdf
             if (font != null)
             {
                 if (baseline <= 0)
+                {
                     textStartY = barHeight - baseline;
+                }
                 else
                 {
                     textStartY = -font.GetFontDescriptor(BaseFont.DESCENT, size);
                     barStartY = textStartY + baseline;
                 }
             }
-            byte[] bars = GetBarsCode128Raw(bCode);
-            bool print = true;
+            var bars = GetBarsCode128Raw(bCode);
+            var print = true;
             if (barColor != null)
-                cb.SetColorFill(barColor);
-            for (int k = 0; k < bars.Length; ++k)
             {
-                float w = bars[k] * x;
+                cb.SetColorFill(barColor);
+            }
+
+            for (var k = 0; k < bars.Length; ++k)
+            {
+                var w = bars[k] * x;
                 if (print)
+                {
                     cb.Rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
+                }
+
                 print = !print;
                 barStartX += w;
             }
@@ -787,7 +934,10 @@ namespace iTextSharp.text.pdf
             if (font != null)
             {
                 if (textColor != null)
+                {
                     cb.SetColorFill(textColor);
+                }
+
                 cb.BeginText();
                 cb.SetFontAndSize(font, size);
                 cb.SetTextMatrix(textStartX, textStartY);
@@ -807,8 +957,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the packed digits, two digits per character</returns>
         internal static string GetPackedRawDigits(string text, int textIndex, int numDigits)
         {
-            string outs = "";
-            int start = textIndex;
+            var outs = "";
+            var start = textIndex;
             while (numDigits > 0)
             {
                 if (text[textIndex] == FNC1)
@@ -818,8 +968,8 @@ namespace iTextSharp.text.pdf
                     continue;
                 }
                 numDigits -= 2;
-                int c1 = text[textIndex++] - '0';
-                int c2 = text[textIndex++] - '0';
+                var c1 = text[textIndex++] - '0';
+                var c2 = text[textIndex++] - '0';
                 outs += (char)(c1 * 10 + c2);
             }
             return (char)(textIndex - start) + outs;
@@ -835,7 +985,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the check result</returns>
         internal static bool IsNextDigits(string text, int textIndex, int numDigits)
         {
-            int len = text.Length;
+            var len = text.Length;
             while (textIndex < len && numDigits > 0)
             {
                 if (text[textIndex] == FNC1)
@@ -843,14 +993,20 @@ namespace iTextSharp.text.pdf
                     ++textIndex;
                     continue;
                 }
-                int n = Math.Min(2, numDigits);
+                var n = Math.Min(2, numDigits);
                 if (textIndex + n > len)
+                {
                     return false;
+                }
+
                 while (n-- > 0)
                 {
-                    char c = text[textIndex++];
+                    var c = text[textIndex++];
                     if (c < '0' || c > '9')
+                    {
                         return false;
+                    }
+
                     --numDigits;
                 }
             }

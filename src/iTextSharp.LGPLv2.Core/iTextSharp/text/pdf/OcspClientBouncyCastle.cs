@@ -1,17 +1,15 @@
-using System.IO;
-using System.Collections;
-using System.Net;
-using Org.BouncyCastle.X509;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Ocsp;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Ocsp;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Asn1.Ocsp;
+using Org.BouncyCastle.X509;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// OcspClient implementation using BouncyCastle.
     /// @author psoares
@@ -28,6 +26,7 @@ namespace iTextSharp.text.pdf
         /// root certificate
         /// </summary>
         private readonly X509Certificate _rootCert;
+
         /// <summary>
         /// OCSP URL
         /// </summary>
@@ -52,30 +51,33 @@ namespace iTextSharp.text.pdf
         /// <returns>	a byte array</returns>
         public byte[] GetEncoded()
         {
-            OcspReq request = generateOcspRequest(_rootCert, _checkCert.SerialNumber);
-            byte[] array = request.GetEncoded();
-            HttpWebRequest con = (HttpWebRequest)WebRequest.Create(_url);
+            var request = generateOcspRequest(_rootCert, _checkCert.SerialNumber);
+            var array = request.GetEncoded();
+            var con = (HttpWebRequest)WebRequest.Create(_url);
             con.ContentType = "application/ocsp-request";
             con.Accept = "application/ocsp-response";
             con.Method = "POST";
 #if NET40
-            Stream outp = con.GetRequestStream();
+            var outp = con.GetRequestStream();
 #else
-            Stream outp = con.GetRequestStreamAsync().Result;
+            var outp = con.GetRequestStreamAsync().Result;
 #endif
             outp.Write(array, 0, array.Length);
             outp.Dispose();
 
 #if NET40
-            HttpWebResponse response = (HttpWebResponse)con.GetResponse();
+            var response = (HttpWebResponse)con.GetResponse();
 #else
-            HttpWebResponse response = (HttpWebResponse)con.GetResponseAsync().GetAwaiter().GetResult();
+            var response = (HttpWebResponse)con.GetResponseAsync().GetAwaiter().GetResult();
 #endif
 
             if (response.StatusCode != HttpStatusCode.OK)
+            {
                 throw new IOException($"Invalid HTTP response: {(int)response.StatusCode}");
-            Stream inp = response.GetResponseStream();
-            OcspResp ocspResponse = new OcspResp(inp);
+            }
+
+            var inp = response.GetResponseStream();
+            var ocspResponse = new OcspResp(inp);
             inp.Dispose();
 #if NET40
             response.Close();
@@ -84,15 +86,18 @@ namespace iTextSharp.text.pdf
 #endif
 
             if (ocspResponse.Status != 0)
+            {
                 throw new IOException("Invalid status: " + ocspResponse.Status);
-            BasicOcspResp basicResponse = (BasicOcspResp)ocspResponse.GetResponseObject();
+            }
+
+            var basicResponse = (BasicOcspResp)ocspResponse.GetResponseObject();
             if (basicResponse != null)
             {
-                SingleResp[] responses = basicResponse.Responses;
+                var responses = basicResponse.Responses;
                 if (responses.Length == 1)
                 {
-                    SingleResp resp = responses[0];
-                    object status = resp.GetCertStatus();
+                    var resp = responses[0];
+                    var status = resp.GetCertStatus();
                     if (status == CertificateStatus.Good)
                     {
                         return basicResponse.GetEncoded();
@@ -121,10 +126,10 @@ namespace iTextSharp.text.pdf
         private static OcspReq generateOcspRequest(X509Certificate issuerCert, BigInteger serialNumber)
         {
             // Generate the id for the certificate we are looking for
-            CertificateID id = new CertificateID(CertificateID.HashSha1, issuerCert, serialNumber);
+            var id = new CertificateID(CertificateID.HashSha1, issuerCert, serialNumber);
 
             // basic request generation with nonce
-            OcspReqGenerator gen = new OcspReqGenerator();
+            var gen = new OcspReqGenerator();
 
             gen.AddRequest(id);
 

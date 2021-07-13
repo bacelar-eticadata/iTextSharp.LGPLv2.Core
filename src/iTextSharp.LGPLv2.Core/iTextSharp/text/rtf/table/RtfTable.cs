@@ -1,9 +1,9 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.pdf;
 using iTextSharp.text.rtf.document;
-using iTextSharp.text.rtf.text;
 using iTextSharp.text.rtf.style;
+using iTextSharp.text.rtf.text;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.table
 {
@@ -110,9 +110,9 @@ namespace iTextSharp.text.rtf.table
                 result.Write(RtfParagraph.Paragraph, 0, RtfParagraph.Paragraph.Length);
             }
 
-            for (int i = 0; i < _rows.Count; i++)
+            for (var i = 0; i < _rows.Count; i++)
             {
-                RtfElement re = (RtfElement)_rows[i];
+                var re = (RtfElement)_rows[i];
                 re.WriteContent(result);
             }
 
@@ -224,7 +224,7 @@ namespace iTextSharp.text.rtf.table
             _borders = new RtfBorderGroup(Document, RtfBorder.ROW_BORDER, table.Border, table.BorderWidth, table.BorderColor);
             _alignment = table.Alignment;
 
-            int i = 0;
+            var i = 0;
             foreach (Row row in table)
             {
                 _rows.Add(new RtfRow(Document, this, row, i));
@@ -259,7 +259,7 @@ namespace iTextSharp.text.rtf.table
             _cellSpacing = (float)(table.SpacingAfter * TWIPS_FACTOR);
             _alignment = table.HorizontalAlignment;
 
-            int i = 0;
+            var i = 0;
             foreach (PdfPRow row in table.Rows)
             {
                 _rows.Add(new RtfRow(Document, this, row, i));

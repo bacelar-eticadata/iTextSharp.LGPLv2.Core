@@ -1,4 +1,3 @@
-using System;
 /*
  * Copyright 2008 ZXing authors
  *
@@ -15,23 +14,28 @@ using System;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
+namespace iTextSharp.text.pdf.qrcode
+{
 
-    public sealed class BlockPair {
+    public sealed class BlockPair
+    {
 
-        private ByteArray dataBytes;
-        private ByteArray errorCorrectionBytes;
+        private readonly ByteArray dataBytes;
+        private readonly ByteArray errorCorrectionBytes;
 
-        internal BlockPair(ByteArray data, ByteArray errorCorrection) {
+        internal BlockPair(ByteArray data, ByteArray errorCorrection)
+        {
             dataBytes = data;
             errorCorrectionBytes = errorCorrection;
         }
 
-        public ByteArray GetDataBytes() {
+        public ByteArray GetDataBytes()
+        {
             return dataBytes;
         }
 
-        public ByteArray GetErrorCorrectionBytes() {
+        public ByteArray GetErrorCorrectionBytes()
+        {
             return errorCorrectionBytes;
         }
 

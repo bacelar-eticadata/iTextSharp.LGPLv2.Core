@@ -1,6 +1,5 @@
 using System.IO;
 
-
 namespace iTextSharp.text.rtf.document
 {
     /// <summary>
@@ -22,7 +21,6 @@ namespace iTextSharp.text.rtf.document
         public RtfGenerator(RtfDocument doc) : base(doc)
         {
         }
-
 
         /// <summary>
         /// Writes the RTF generator group.

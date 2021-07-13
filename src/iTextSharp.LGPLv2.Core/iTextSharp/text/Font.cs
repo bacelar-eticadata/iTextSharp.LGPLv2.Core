@@ -1,7 +1,7 @@
+using iTextSharp.text.html;
+using iTextSharp.text.pdf;
 using System;
 using System.util;
-using iTextSharp.text.pdf;
-using iTextSharp.text.html;
 
 namespace iTextSharp.text
 {
@@ -182,13 +182,7 @@ namespace iTextSharp.text
         /// Gets the BaseFont inside this object.
         /// </summary>
         /// <value>the BaseFont</value>
-        public BaseFont BaseFont
-        {
-            get
-            {
-                return _baseFont;
-            }
-        }
+        public BaseFont BaseFont => _baseFont;
 
         /// <summary>
         /// Gets the size that can be used with the calculated  BaseFont .
@@ -198,7 +192,7 @@ namespace iTextSharp.text
         {
             get
             {
-                float s = _size;
+                var s = _size;
                 if (s.ApproxEquals(UNDEFINED))
                 {
                     s = DEFAULTSIZE;
@@ -215,17 +209,24 @@ namespace iTextSharp.text
         {
             get
             {
-                int style = _style;
+                var style = _style;
                 if (style == UNDEFINED)
                 {
                     style = NORMAL;
                 }
                 if (_baseFont != null)
+                {
                     return style;
+                }
+
                 if (_family == SYMBOL || _family == ZAPFDINGBATS)
+                {
                     return style;
+                }
                 else
+                {
                     return style & (~BOLDITALIC);
+                }
             }
         }
 
@@ -235,27 +236,15 @@ namespace iTextSharp.text
         /// <value>the color of this font</value>
         public virtual BaseColor Color
         {
-            get
-            {
-                return _color;
-            }
-            set
-            {
-                _color = value;
-            }
+            get => _color;
+            set => _color = value;
         }
 
         /// <summary>
         /// Gets the family of this font.
         /// </summary>
         /// <value>the value of the family</value>
-        public int Family
-        {
-            get
-            {
-                return _family;
-            }
-        }
+        public int Family => _family;
 
         /// <summary>
         /// FAMILY
@@ -268,7 +257,7 @@ namespace iTextSharp.text
         {
             get
             {
-                string tmp = "unknown";
+                var tmp = "unknown";
                 switch (Family)
                 {
                     case COURIER:
@@ -284,8 +273,8 @@ namespace iTextSharp.text
                     default:
                         if (_baseFont != null)
                         {
-                            string[][] names = _baseFont.FamilyFontName;
-                            for (int i = 0; i < names.Length; i++)
+                            var names = _baseFont.FamilyFontName;
+                            for (var i = 0; i < names.Length; i++)
                             {
                                 if ("0".Equals(names[i][2]))
                                 {
@@ -313,27 +302,15 @@ namespace iTextSharp.text
         /// <value>the size of this font</value>
         public virtual float Size
         {
-            get
-            {
-                return _size;
-            }
-            set
-            {
-                _size = value;
-            }
+            get => _size;
+            set => _size = value;
         }
 
         /// <summary>
         /// Gets the style of this font.
         /// </summary>
         /// <value>the style of this font</value>
-        public int Style
-        {
-            get
-            {
-                return _style;
-            }
-        }
+        public int Style => _style;
 
         /// <summary>
         /// Translates a string-value of a certain family
@@ -374,7 +351,7 @@ namespace iTextSharp.text
         /// <returns>the corresponding value</returns>
         public static int GetStyleValue(string style)
         {
-            int s = 0;
+            var s = 0;
             if (style.IndexOf(Markup.CSS_VALUE_NORMAL, StringComparison.OrdinalIgnoreCase) != -1)
             {
                 s |= NORMAL;
@@ -464,21 +441,32 @@ namespace iTextSharp.text
         /// <returns>a Font</returns>
         public virtual Font Difference(Font font)
         {
-            if (font == null) return this;
+            if (font == null)
+            {
+                return this;
+            }
             // size
-            float dSize = font._size;
+            var dSize = font._size;
             if (dSize.ApproxEquals(UNDEFINED))
             {
                 dSize = _size;
             }
             // style
-            int dStyle = UNDEFINED;
-            int style1 = Style;
-            int style2 = font.Style;
+            var dStyle = UNDEFINED;
+            var style1 = Style;
+            var style2 = font.Style;
             if (style1 != UNDEFINED || style2 != UNDEFINED)
             {
-                if (style1 == UNDEFINED) style1 = 0;
-                if (style2 == UNDEFINED) style2 = 0;
+                if (style1 == UNDEFINED)
+                {
+                    style1 = 0;
+                }
+
+                if (style2 == UNDEFINED)
+                {
+                    style2 = 0;
+                }
+
                 dStyle = style1 | style2;
             }
             // color
@@ -523,14 +511,17 @@ namespace iTextSharp.text
         public BaseFont GetCalculatedBaseFont(bool specialEncoding)
         {
             if (_baseFont != null)
+            {
                 return _baseFont;
-            int style = _style;
+            }
+
+            var style = _style;
             if (style == UNDEFINED)
             {
                 style = NORMAL;
             }
-            string fontName = BaseFont.HELVETICA;
-            string encoding = BaseFont.WINANSI;
+            var fontName = BaseFont.HELVETICA;
+            var encoding = BaseFont.WINANSI;
             BaseFont cfont = null;
             switch (_family)
             {
@@ -573,12 +564,18 @@ namespace iTextSharp.text
                 case SYMBOL:
                     fontName = BaseFont.SYMBOL;
                     if (specialEncoding)
+                    {
                         encoding = BaseFont.SYMBOL;
+                    }
+
                     break;
                 case ZAPFDINGBATS:
                     fontName = BaseFont.ZAPFDINGBATS;
                     if (specialEncoding)
+                    {
                         encoding = BaseFont.ZAPFDINGBATS;
+                    }
+
                     break;
                 default:
                     //case Font.HELVETICA:
@@ -718,7 +715,11 @@ namespace iTextSharp.text
         /// <param name="style">A String representing a certain style.</param>
         public virtual void SetStyle(string style)
         {
-            if (_style == UNDEFINED) _style = NORMAL;
+            if (_style == UNDEFINED)
+            {
+                _style = NORMAL;
+            }
+
             _style |= GetStyleValue(style);
         }
 

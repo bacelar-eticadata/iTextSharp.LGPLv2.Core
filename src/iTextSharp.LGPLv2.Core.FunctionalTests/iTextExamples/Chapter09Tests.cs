@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections;
+using System.IO;
 using System.Text;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
@@ -57,7 +57,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static string createHtmlSnippet()
         {
-            StringBuilder buf = new StringBuilder("<table width='500'>\n<tr>\n");
+            var buf = new StringBuilder("<table width='500'>\n<tr>\n");
             buf.Append("\t<td><img src='");
             buf.Append("0092005");
             buf.Append(".jpg' /></td>\t<td>\n");

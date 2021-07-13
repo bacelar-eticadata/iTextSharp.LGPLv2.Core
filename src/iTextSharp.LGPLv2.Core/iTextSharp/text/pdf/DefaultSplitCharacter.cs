@@ -10,7 +10,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class DefaultSplitCharacter : ISplitCharacter
     {
-
         /// <summary>
         /// An instance of the default SplitCharacter.
         /// </summary>
@@ -30,13 +29,16 @@ namespace iTextSharp.text.pdf
         /// <returns>if the character can be used to split a string,  false  otherwise</returns>
         public bool IsSplitCharacter(int start, int current, int end, char[] cc, PdfChunk[] ck)
         {
-            char c = GetCurrentCharacter(current, cc, ck);
+            var c = GetCurrentCharacter(current, cc, ck);
             if (c <= ' ' || c == '-' || c == '\u2010')
             {
                 return true;
             }
             if (c < 0x2002)
+            {
                 return false;
+            }
+
             return ((c >= 0x2002 && c <= 0x200b)
                 || (c >= 0x2e80 && c < 0xd7a0)
                 || (c >= 0xf900 && c < 0xfb00)

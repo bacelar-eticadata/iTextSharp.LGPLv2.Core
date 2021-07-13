@@ -1,8 +1,7 @@
-using System;
-using System.IO;
-using System.Collections;
 using iTextSharp.LGPLv2.Core.System.Encodings;
 using iTextSharp.LGPLv2.Core.System.NetUtils;
+using System;
+using System.IO;
 
 namespace iTextSharp.text.pdf.codec.wmf
 {
@@ -11,7 +10,6 @@ namespace iTextSharp.text.pdf.codec.wmf
     /// </summary>
     public class MetaDo
     {
-
         public const int META_ANIMATEPALETTE = 0x0436;
         public const int META_ARC = 0x0817;
         public const int META_BITBLT = 0x0922;
@@ -82,12 +80,12 @@ namespace iTextSharp.text.pdf.codec.wmf
         public const int META_TEXTOUT = 0x0521;
         public PdfContentByte Cb;
         public InputMeta Meta;
-        readonly MetaState _state = new MetaState();
-        int _bottom;
-        int _inch;
-        int _left;
-        int _right;
-        int _top;
+        private readonly MetaState _state = new MetaState();
+        private int _bottom;
+        private int _inch;
+        private int _left;
+        private int _right;
+        private int _top;
 
         public MetaDo(Stream meta, PdfContentByte cb)
         {
@@ -98,23 +96,32 @@ namespace iTextSharp.text.pdf.codec.wmf
         public static byte[] WrapBmp(Image image)
         {
             if (image.OriginalType != Image.ORIGINAL_BMP)
+            {
                 throw new IOException("Only BMP can be wrapped in WMF.");
+            }
+
             Stream imgIn;
             byte[] data = null;
             if (image.OriginalData == null)
             {
                 imgIn = image.Url.GetResponseStream();
-                MemoryStream outp = new MemoryStream();
-                int b = 0;
+                var outp = new MemoryStream();
+                var b = 0;
                 while ((b = imgIn.ReadByte()) != -1)
+                {
                     outp.WriteByte((byte)b);
+                }
+
                 imgIn.Dispose();
                 data = outp.ToArray();
             }
             else
+            {
                 data = image.OriginalData;
-            int sizeBmpWords = (data.Length - 14 + 1) >> 1;
-            MemoryStream os = new MemoryStream();
+            }
+
+            var sizeBmpWords = (data.Length - 14 + 1) >> 1;
+            var os = new MemoryStream();
             // write metafile header
             WriteWord(os, 1);
             WriteWord(os, 9);
@@ -151,7 +158,9 @@ namespace iTextSharp.text.pdf.codec.wmf
             WriteWord(os, 0);
             os.Write(data, 14, data.Length - 14);
             if ((data.Length & 1) == 1)
+            {
                 os.WriteByte(0);
+            }
             //        WriteDWord(os, 14 + sizeBmpWords);
             //        WriteWord(os, META_STRETCHDIB);
             //        WriteDWord(os, 0x00cc0020);
@@ -187,50 +196,66 @@ namespace iTextSharp.text.pdf.codec.wmf
 
         public bool IsNullStrokeFill(bool isRectangle)
         {
-            MetaPen pen = _state.CurrentPen;
-            MetaBrush brush = _state.CurrentBrush;
-            bool noPen = (pen.Style == MetaPen.PS_NULL);
-            int style = brush.Style;
-            bool isBrush = (style == MetaBrush.BS_SOLID || (style == MetaBrush.BS_HATCHED && _state.BackgroundMode == MetaState.Opaque));
-            bool result = noPen && !isBrush;
+            var pen = _state.CurrentPen;
+            var brush = _state.CurrentBrush;
+            var noPen = (pen.Style == MetaPen.PS_NULL);
+            var style = brush.Style;
+            var isBrush = (style == MetaBrush.BS_SOLID || (style == MetaBrush.BS_HATCHED && _state.BackgroundMode == MetaState.Opaque));
+            var result = noPen && !isBrush;
             if (!noPen)
             {
                 if (isRectangle)
+                {
                     _state.LineJoinRectangle = Cb;
+                }
                 else
+                {
                     _state.LineJoinPolygon = Cb;
+                }
             }
             return result;
         }
 
         public void OutputText(int x, int y, int flag, int x1, int y1, int x2, int y2, string text)
         {
-            MetaFont font = _state.CurrentFont;
-            float refX = _state.TransformX(x);
-            float refY = _state.TransformY(y);
-            float angle = _state.TransformAngle(font.Angle);
-            float sin = (float)Math.Sin(angle);
-            float cos = (float)Math.Cos(angle);
-            float fontSize = font.GetFontSize(_state);
-            BaseFont bf = font.Font;
-            int align = _state.TextAlign;
-            float textWidth = bf.GetWidthPoint(text, fontSize);
+            var font = _state.CurrentFont;
+            var refX = _state.TransformX(x);
+            var refY = _state.TransformY(y);
+            var angle = _state.TransformAngle(font.Angle);
+            var sin = (float)Math.Sin(angle);
+            var cos = (float)Math.Cos(angle);
+            var fontSize = font.GetFontSize(_state);
+            var bf = font.Font;
+            var align = _state.TextAlign;
+            var textWidth = bf.GetWidthPoint(text, fontSize);
             float tx = 0;
             float ty = 0;
-            float descender = bf.GetFontDescriptor(BaseFont.DESCENT, fontSize);
-            float ury = bf.GetFontDescriptor(BaseFont.BBOXURY, fontSize);
+            var descender = bf.GetFontDescriptor(BaseFont.DESCENT, fontSize);
+            var ury = bf.GetFontDescriptor(BaseFont.BBOXURY, fontSize);
             Cb.SaveState();
             Cb.ConcatCtm(cos, sin, -sin, cos, refX, refY);
             if ((align & MetaState.TaCenter) == MetaState.TaCenter)
+            {
                 tx = -textWidth / 2;
+            }
             else if ((align & MetaState.TaRight) == MetaState.TaRight)
+            {
                 tx = -textWidth;
+            }
+
             if ((align & MetaState.TaBaseline) == MetaState.TaBaseline)
+            {
                 ty = 0;
+            }
             else if ((align & MetaState.TaBottom) == MetaState.TaBottom)
+            {
                 ty = -descender;
+            }
             else
+            {
                 ty = -ury;
+            }
+
             BaseColor textColor;
             if (_state.BackgroundMode == MetaState.Opaque)
             {
@@ -285,61 +310,67 @@ namespace iTextSharp.text.pdf.codec.wmf
             int function;
             Cb.SetLineCap(1);
             Cb.SetLineJoin(1);
-            for (;;)
+            for (; ; )
             {
-                int lenMarker = Meta.Length;
+                var lenMarker = Meta.Length;
                 tsize = Meta.ReadInt();
                 if (tsize < 3)
+                {
                     break;
+                }
+
                 function = Meta.ReadWord();
                 switch (function)
                 {
                     case 0:
                         break;
+
                     case META_CREATEPALETTE:
                     case META_CREATEREGION:
                     case META_DIBCREATEPATTERNBRUSH:
                         _state.AddMetaObject(new MetaObject());
                         break;
+
                     case META_CREATEPENINDIRECT:
                         {
-                            MetaPen pen = new MetaPen();
+                            var pen = new MetaPen();
                             pen.Init(Meta);
                             _state.AddMetaObject(pen);
                             break;
                         }
                     case META_CREATEBRUSHINDIRECT:
                         {
-                            MetaBrush brush = new MetaBrush();
+                            var brush = new MetaBrush();
                             brush.Init(Meta);
                             _state.AddMetaObject(brush);
                             break;
                         }
                     case META_CREATEFONTINDIRECT:
                         {
-                            MetaFont font = new MetaFont();
+                            var font = new MetaFont();
                             font.Init(Meta);
                             _state.AddMetaObject(font);
                             break;
                         }
                     case META_SELECTOBJECT:
                         {
-                            int idx = Meta.ReadWord();
+                            var idx = Meta.ReadWord();
                             _state.SelectMetaObject(idx, Cb);
                             break;
                         }
                     case META_DELETEOBJECT:
                         {
-                            int idx = Meta.ReadWord();
+                            var idx = Meta.ReadWord();
                             _state.DeleteMetaObject(idx);
                             break;
                         }
                     case META_SAVEDC:
                         _state.SaveState(Cb);
                         break;
+
                     case META_RESTOREDC:
                         {
-                            int idx = Meta.ReadShort();
+                            var idx = Meta.ReadShort();
                             _state.RestoreState(idx, Cb);
                             break;
                         }
@@ -347,22 +378,24 @@ namespace iTextSharp.text.pdf.codec.wmf
                         _state.OffsetWy = Meta.ReadShort();
                         _state.OffsetWx = Meta.ReadShort();
                         break;
+
                     case META_SETWINDOWEXT:
                         _state.ExtentWy = Meta.ReadShort();
                         _state.ExtentWx = Meta.ReadShort();
                         break;
+
                     case META_MOVETO:
                         {
-                            int y = Meta.ReadShort();
-                            System.Drawing.Point p = new System.Drawing.Point(Meta.ReadShort(), y);
+                            var y = Meta.ReadShort();
+                            var p = new System.Drawing.Point(Meta.ReadShort(), y);
                             _state.CurrentPoint = p;
                             break;
                         }
                     case META_LINETO:
                         {
-                            int y = Meta.ReadShort();
-                            int x = Meta.ReadShort();
-                            System.Drawing.Point p = _state.CurrentPoint;
+                            var y = Meta.ReadShort();
+                            var x = Meta.ReadShort();
+                            var p = _state.CurrentPoint;
                             Cb.MoveTo(_state.TransformX(p.X), _state.TransformY(p.Y));
                             Cb.LineTo(_state.TransformX(x), _state.TransformY(y));
                             Cb.Stroke();
@@ -372,11 +405,11 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_POLYLINE:
                         {
                             _state.LineJoinPolygon = Cb;
-                            int len = Meta.ReadWord();
-                            int x = Meta.ReadShort();
-                            int y = Meta.ReadShort();
+                            var len = Meta.ReadWord();
+                            var x = Meta.ReadShort();
+                            var y = Meta.ReadShort();
                             Cb.MoveTo(_state.TransformX(x), _state.TransformY(y));
-                            for (int k = 1; k < len; ++k)
+                            for (var k = 1; k < len; ++k)
                             {
                                 x = Meta.ReadShort();
                                 y = Meta.ReadShort();
@@ -388,15 +421,18 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_POLYGON:
                         {
                             if (IsNullStrokeFill(false))
-                                break;
-                            int len = Meta.ReadWord();
-                            int sx = Meta.ReadShort();
-                            int sy = Meta.ReadShort();
-                            Cb.MoveTo(_state.TransformX(sx), _state.TransformY(sy));
-                            for (int k = 1; k < len; ++k)
                             {
-                                int x = Meta.ReadShort();
-                                int y = Meta.ReadShort();
+                                break;
+                            }
+
+                            var len = Meta.ReadWord();
+                            var sx = Meta.ReadShort();
+                            var sy = Meta.ReadShort();
+                            Cb.MoveTo(_state.TransformX(sx), _state.TransformY(sy));
+                            for (var k = 1; k < len; ++k)
+                            {
+                                var x = Meta.ReadShort();
+                                var y = Meta.ReadShort();
                                 Cb.LineTo(_state.TransformX(x), _state.TransformY(y));
                             }
                             Cb.LineTo(_state.TransformX(sx), _state.TransformY(sy));
@@ -406,21 +442,27 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_POLYPOLYGON:
                         {
                             if (IsNullStrokeFill(false))
-                                break;
-                            int numPoly = Meta.ReadWord();
-                            int[] lens = new int[numPoly];
-                            for (int k = 0; k < lens.Length; ++k)
-                                lens[k] = Meta.ReadWord();
-                            for (int j = 0; j < lens.Length; ++j)
                             {
-                                int len = lens[j];
-                                int sx = Meta.ReadShort();
-                                int sy = Meta.ReadShort();
+                                break;
+                            }
+
+                            var numPoly = Meta.ReadWord();
+                            var lens = new int[numPoly];
+                            for (var k = 0; k < lens.Length; ++k)
+                            {
+                                lens[k] = Meta.ReadWord();
+                            }
+
+                            for (var j = 0; j < lens.Length; ++j)
+                            {
+                                var len = lens[j];
+                                var sx = Meta.ReadShort();
+                                var sy = Meta.ReadShort();
                                 Cb.MoveTo(_state.TransformX(sx), _state.TransformY(sy));
-                                for (int k = 1; k < len; ++k)
+                                for (var k = 1; k < len; ++k)
                                 {
-                                    int x = Meta.ReadShort();
-                                    int y = Meta.ReadShort();
+                                    var x = Meta.ReadShort();
+                                    var y = Meta.ReadShort();
                                     Cb.LineTo(_state.TransformX(x), _state.TransformY(y));
                                 }
                                 Cb.LineTo(_state.TransformX(sx), _state.TransformY(sy));
@@ -431,11 +473,14 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_ELLIPSE:
                         {
                             if (IsNullStrokeFill(_state.LineNeutral))
+                            {
                                 break;
-                            int b = Meta.ReadShort();
-                            int r = Meta.ReadShort();
-                            int t = Meta.ReadShort();
-                            int l = Meta.ReadShort();
+                            }
+
+                            var b = Meta.ReadShort();
+                            var r = Meta.ReadShort();
+                            var t = Meta.ReadShort();
+                            var l = Meta.ReadShort();
                             Cb.Arc(_state.TransformX(l), _state.TransformY(b), _state.TransformX(r), _state.TransformY(t), 0, 360);
                             StrokeAndFill();
                             break;
@@ -443,22 +488,28 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_ARC:
                         {
                             if (IsNullStrokeFill(_state.LineNeutral))
+                            {
                                 break;
-                            float yend = _state.TransformY(Meta.ReadShort());
-                            float xend = _state.TransformX(Meta.ReadShort());
-                            float ystart = _state.TransformY(Meta.ReadShort());
-                            float xstart = _state.TransformX(Meta.ReadShort());
-                            float b = _state.TransformY(Meta.ReadShort());
-                            float r = _state.TransformX(Meta.ReadShort());
-                            float t = _state.TransformY(Meta.ReadShort());
-                            float l = _state.TransformX(Meta.ReadShort());
-                            float cx = (r + l) / 2;
-                            float cy = (t + b) / 2;
-                            float arc1 = GetArc(cx, cy, xstart, ystart);
-                            float arc2 = GetArc(cx, cy, xend, yend);
+                            }
+
+                            var yend = _state.TransformY(Meta.ReadShort());
+                            var xend = _state.TransformX(Meta.ReadShort());
+                            var ystart = _state.TransformY(Meta.ReadShort());
+                            var xstart = _state.TransformX(Meta.ReadShort());
+                            var b = _state.TransformY(Meta.ReadShort());
+                            var r = _state.TransformX(Meta.ReadShort());
+                            var t = _state.TransformY(Meta.ReadShort());
+                            var l = _state.TransformX(Meta.ReadShort());
+                            var cx = (r + l) / 2;
+                            var cy = (t + b) / 2;
+                            var arc1 = GetArc(cx, cy, xstart, ystart);
+                            var arc2 = GetArc(cx, cy, xend, yend);
                             arc2 -= arc1;
                             if (arc2 <= 0)
+                            {
                                 arc2 += 360;
+                            }
+
                             Cb.Arc(l, b, r, t, arc1, arc2);
                             Cb.Stroke();
                             break;
@@ -466,29 +517,38 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_PIE:
                         {
                             if (IsNullStrokeFill(_state.LineNeutral))
+                            {
                                 break;
-                            float yend = _state.TransformY(Meta.ReadShort());
-                            float xend = _state.TransformX(Meta.ReadShort());
-                            float ystart = _state.TransformY(Meta.ReadShort());
-                            float xstart = _state.TransformX(Meta.ReadShort());
-                            float b = _state.TransformY(Meta.ReadShort());
-                            float r = _state.TransformX(Meta.ReadShort());
-                            float t = _state.TransformY(Meta.ReadShort());
-                            float l = _state.TransformX(Meta.ReadShort());
-                            float cx = (r + l) / 2;
-                            float cy = (t + b) / 2;
-                            float arc1 = GetArc(cx, cy, xstart, ystart);
-                            float arc2 = GetArc(cx, cy, xend, yend);
+                            }
+
+                            var yend = _state.TransformY(Meta.ReadShort());
+                            var xend = _state.TransformX(Meta.ReadShort());
+                            var ystart = _state.TransformY(Meta.ReadShort());
+                            var xstart = _state.TransformX(Meta.ReadShort());
+                            var b = _state.TransformY(Meta.ReadShort());
+                            var r = _state.TransformX(Meta.ReadShort());
+                            var t = _state.TransformY(Meta.ReadShort());
+                            var l = _state.TransformX(Meta.ReadShort());
+                            var cx = (r + l) / 2;
+                            var cy = (t + b) / 2;
+                            var arc1 = GetArc(cx, cy, xstart, ystart);
+                            var arc2 = GetArc(cx, cy, xend, yend);
                             arc2 -= arc1;
                             if (arc2 <= 0)
+                            {
                                 arc2 += 360;
-                            ArrayList ar = PdfContentByte.BezierArc(l, b, r, t, arc1, arc2);
+                            }
+
+                            var ar = PdfContentByte.BezierArc(l, b, r, t, arc1, arc2);
                             if (ar.Count == 0)
+                            {
                                 break;
-                            float[] pt = (float[])ar[0];
+                            }
+
+                            var pt = (float[])ar[0];
                             Cb.MoveTo(cx, cy);
                             Cb.LineTo(pt[0], pt[1]);
-                            for (int k = 0; k < ar.Count; ++k)
+                            for (var k = 0; k < ar.Count; ++k)
                             {
                                 pt = (float[])ar[k];
                                 Cb.CurveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
@@ -500,30 +560,39 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_CHORD:
                         {
                             if (IsNullStrokeFill(_state.LineNeutral))
+                            {
                                 break;
-                            float yend = _state.TransformY(Meta.ReadShort());
-                            float xend = _state.TransformX(Meta.ReadShort());
-                            float ystart = _state.TransformY(Meta.ReadShort());
-                            float xstart = _state.TransformX(Meta.ReadShort());
-                            float b = _state.TransformY(Meta.ReadShort());
-                            float r = _state.TransformX(Meta.ReadShort());
-                            float t = _state.TransformY(Meta.ReadShort());
-                            float l = _state.TransformX(Meta.ReadShort());
-                            float cx = (r + l) / 2;
-                            float cy = (t + b) / 2;
-                            float arc1 = GetArc(cx, cy, xstart, ystart);
-                            float arc2 = GetArc(cx, cy, xend, yend);
+                            }
+
+                            var yend = _state.TransformY(Meta.ReadShort());
+                            var xend = _state.TransformX(Meta.ReadShort());
+                            var ystart = _state.TransformY(Meta.ReadShort());
+                            var xstart = _state.TransformX(Meta.ReadShort());
+                            var b = _state.TransformY(Meta.ReadShort());
+                            var r = _state.TransformX(Meta.ReadShort());
+                            var t = _state.TransformY(Meta.ReadShort());
+                            var l = _state.TransformX(Meta.ReadShort());
+                            var cx = (r + l) / 2;
+                            var cy = (t + b) / 2;
+                            var arc1 = GetArc(cx, cy, xstart, ystart);
+                            var arc2 = GetArc(cx, cy, xend, yend);
                             arc2 -= arc1;
                             if (arc2 <= 0)
+                            {
                                 arc2 += 360;
-                            ArrayList ar = PdfContentByte.BezierArc(l, b, r, t, arc1, arc2);
+                            }
+
+                            var ar = PdfContentByte.BezierArc(l, b, r, t, arc1, arc2);
                             if (ar.Count == 0)
+                            {
                                 break;
-                            float[] pt = (float[])ar[0];
+                            }
+
+                            var pt = (float[])ar[0];
                             cx = pt[0];
                             cy = pt[1];
                             Cb.MoveTo(cx, cy);
-                            for (int k = 0; k < ar.Count; ++k)
+                            for (var k = 0; k < ar.Count; ++k)
                             {
                                 pt = (float[])ar[k];
                                 Cb.CurveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
@@ -535,11 +604,14 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_RECTANGLE:
                         {
                             if (IsNullStrokeFill(true))
+                            {
                                 break;
-                            float b = _state.TransformY(Meta.ReadShort());
-                            float r = _state.TransformX(Meta.ReadShort());
-                            float t = _state.TransformY(Meta.ReadShort());
-                            float l = _state.TransformX(Meta.ReadShort());
+                            }
+
+                            var b = _state.TransformY(Meta.ReadShort());
+                            var r = _state.TransformX(Meta.ReadShort());
+                            var t = _state.TransformY(Meta.ReadShort());
+                            var l = _state.TransformX(Meta.ReadShort());
                             Cb.Rectangle(l, b, r - l, t - b);
                             StrokeAndFill();
                             break;
@@ -547,23 +619,26 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_ROUNDRECT:
                         {
                             if (IsNullStrokeFill(true))
+                            {
                                 break;
-                            float h = _state.TransformY(0) - _state.TransformY(Meta.ReadShort());
-                            float w = _state.TransformX(Meta.ReadShort()) - _state.TransformX(0);
-                            float b = _state.TransformY(Meta.ReadShort());
-                            float r = _state.TransformX(Meta.ReadShort());
-                            float t = _state.TransformY(Meta.ReadShort());
-                            float l = _state.TransformX(Meta.ReadShort());
+                            }
+
+                            var h = _state.TransformY(0) - _state.TransformY(Meta.ReadShort());
+                            var w = _state.TransformX(Meta.ReadShort()) - _state.TransformX(0);
+                            var b = _state.TransformY(Meta.ReadShort());
+                            var r = _state.TransformX(Meta.ReadShort());
+                            var t = _state.TransformY(Meta.ReadShort());
+                            var l = _state.TransformX(Meta.ReadShort());
                             Cb.RoundRectangle(l, b, r - l, t - b, (h + w) / 4);
                             StrokeAndFill();
                             break;
                         }
                     case META_INTERSECTCLIPRECT:
                         {
-                            float b = _state.TransformY(Meta.ReadShort());
-                            float r = _state.TransformX(Meta.ReadShort());
-                            float t = _state.TransformY(Meta.ReadShort());
-                            float l = _state.TransformX(Meta.ReadShort());
+                            var b = _state.TransformY(Meta.ReadShort());
+                            var r = _state.TransformX(Meta.ReadShort());
+                            var t = _state.TransformY(Meta.ReadShort());
+                            var l = _state.TransformX(Meta.ReadShort());
                             Cb.Rectangle(l, b, r - l, t - b);
                             Cb.EoClip();
                             Cb.NewPath();
@@ -571,14 +646,14 @@ namespace iTextSharp.text.pdf.codec.wmf
                         }
                     case META_EXTTEXTOUT:
                         {
-                            int y = Meta.ReadShort();
-                            int x = Meta.ReadShort();
-                            int count = Meta.ReadWord();
-                            int flag = Meta.ReadWord();
-                            int x1 = 0;
-                            int y1 = 0;
-                            int x2 = 0;
-                            int y2 = 0;
+                            var y = Meta.ReadShort();
+                            var x = Meta.ReadShort();
+                            var count = Meta.ReadWord();
+                            var flag = Meta.ReadWord();
+                            var x1 = 0;
+                            var y1 = 0;
+                            var x2 = 0;
+                            var y2 = 0;
                             if ((flag & (MetaFont.ETO_CLIPPED | MetaFont.ETO_OPAQUE)) != 0)
                             {
                                 x1 = Meta.ReadShort();
@@ -586,13 +661,16 @@ namespace iTextSharp.text.pdf.codec.wmf
                                 x2 = Meta.ReadShort();
                                 y2 = Meta.ReadShort();
                             }
-                            byte[] text = new byte[count];
+                            var text = new byte[count];
                             int k;
                             for (k = 0; k < count; ++k)
                             {
-                                byte c = (byte)Meta.ReadByte();
+                                var c = (byte)Meta.ReadByte();
                                 if (c == 0)
+                                {
                                     break;
+                                }
+
                                 text[k] = c;
                             }
                             string s;
@@ -609,14 +687,17 @@ namespace iTextSharp.text.pdf.codec.wmf
                         }
                     case META_TEXTOUT:
                         {
-                            int count = Meta.ReadWord();
-                            byte[] text = new byte[count];
+                            var count = Meta.ReadWord();
+                            var text = new byte[count];
                             int k;
                             for (k = 0; k < count; ++k)
                             {
-                                byte c = (byte)Meta.ReadByte();
+                                var c = (byte)Meta.ReadByte();
                                 if (c == 0)
+                                {
                                     break;
+                                }
+
                                 text[k] = c;
                             }
                             string s;
@@ -630,31 +711,36 @@ namespace iTextSharp.text.pdf.codec.wmf
                             }
                             count = (count + 1) & 0xfffe;
                             Meta.Skip(count - k);
-                            int y = Meta.ReadShort();
-                            int x = Meta.ReadShort();
+                            var y = Meta.ReadShort();
+                            var x = Meta.ReadShort();
                             OutputText(x, y, 0, 0, 0, 0, 0, s);
                             break;
                         }
                     case META_SETBKCOLOR:
                         _state.CurrentBackgroundColor = Meta.ReadColor();
                         break;
+
                     case META_SETTEXTCOLOR:
                         _state.CurrentTextColor = Meta.ReadColor();
                         break;
+
                     case META_SETTEXTALIGN:
                         _state.TextAlign = Meta.ReadWord();
                         break;
+
                     case META_SETBKMODE:
                         _state.BackgroundMode = Meta.ReadWord();
                         break;
+
                     case META_SETPOLYFILLMODE:
                         _state.PolyFillMode = Meta.ReadWord();
                         break;
+
                     case META_SETPIXEL:
                         {
-                            BaseColor color = Meta.ReadColor();
-                            int y = Meta.ReadShort();
-                            int x = Meta.ReadShort();
+                            var color = Meta.ReadColor();
+                            var y = Meta.ReadShort();
+                            var x = Meta.ReadShort();
                             Cb.SaveState();
                             Cb.SetColorFill(color);
                             Cb.Rectangle(_state.TransformX(x), _state.TransformY(y), .2f, .2f);
@@ -665,27 +751,30 @@ namespace iTextSharp.text.pdf.codec.wmf
                     case META_DIBSTRETCHBLT:
                     case META_STRETCHDIB:
                         {
-                            int rop = Meta.ReadInt();
+                            var rop = Meta.ReadInt();
                             if (function == META_STRETCHDIB)
                             {
                                 /*int usage = */
                                 Meta.ReadWord();
                             }
-                            int srcHeight = Meta.ReadShort();
-                            int srcWidth = Meta.ReadShort();
-                            int ySrc = Meta.ReadShort();
-                            int xSrc = Meta.ReadShort();
-                            float destHeight = _state.TransformY(Meta.ReadShort()) - _state.TransformY(0);
-                            float destWidth = _state.TransformX(Meta.ReadShort()) - _state.TransformX(0);
-                            float yDest = _state.TransformY(Meta.ReadShort());
-                            float xDest = _state.TransformX(Meta.ReadShort());
-                            byte[] b = new byte[(tsize * 2) - (Meta.Length - lenMarker)];
-                            for (int k = 0; k < b.Length; ++k)
+                            var srcHeight = Meta.ReadShort();
+                            var srcWidth = Meta.ReadShort();
+                            var ySrc = Meta.ReadShort();
+                            var xSrc = Meta.ReadShort();
+                            var destHeight = _state.TransformY(Meta.ReadShort()) - _state.TransformY(0);
+                            var destWidth = _state.TransformX(Meta.ReadShort()) - _state.TransformX(0);
+                            var yDest = _state.TransformY(Meta.ReadShort());
+                            var xDest = _state.TransformX(Meta.ReadShort());
+                            var b = new byte[(tsize * 2) - (Meta.Length - lenMarker)];
+                            for (var k = 0; k < b.Length; ++k)
+                            {
                                 b[k] = (byte)Meta.ReadByte();
+                            }
+
                             try
                             {
-                                MemoryStream inb = new MemoryStream(b);
-                                Image bmp = BmpImage.GetImage(inb, true, b.Length);
+                                var inb = new MemoryStream(b);
+                                var bmp = BmpImage.GetImage(inb, true, b.Length);
                                 Cb.SaveState();
                                 Cb.Rectangle(xDest, yDest, destWidth, destHeight);
                                 Cb.Clip();
@@ -706,12 +795,13 @@ namespace iTextSharp.text.pdf.codec.wmf
             }
             _state.Cleanup(Cb);
         }
+
         public void StrokeAndFill()
         {
-            MetaPen pen = _state.CurrentPen;
-            MetaBrush brush = _state.CurrentBrush;
-            int penStyle = pen.Style;
-            int brushStyle = brush.Style;
+            var pen = _state.CurrentPen;
+            var brush = _state.CurrentBrush;
+            var penStyle = pen.Style;
+            var brushStyle = brush.Style;
             if (penStyle == MetaPen.PS_NULL)
             {
                 Cb.ClosePath();
@@ -726,13 +816,17 @@ namespace iTextSharp.text.pdf.codec.wmf
             }
             else
             {
-                bool isBrush = (brushStyle == MetaBrush.BS_SOLID || (brushStyle == MetaBrush.BS_HATCHED && _state.BackgroundMode == MetaState.Opaque));
+                var isBrush = (brushStyle == MetaBrush.BS_SOLID || (brushStyle == MetaBrush.BS_HATCHED && _state.BackgroundMode == MetaState.Opaque));
                 if (isBrush)
                 {
                     if (_state.PolyFillMode == MetaState.Alternate)
+                    {
                         Cb.ClosePathEoFillStroke();
+                    }
                     else
+                    {
                         Cb.ClosePathFillStroke();
+                    }
                 }
                 else
                 {
@@ -743,9 +837,12 @@ namespace iTextSharp.text.pdf.codec.wmf
 
         internal static float GetArc(float xCenter, float yCenter, float xDot, float yDot)
         {
-            double s = Math.Atan2(yDot - yCenter, xDot - xCenter);
+            var s = Math.Atan2(yDot - yCenter, xDot - xCenter);
             if (s < 0)
+            {
                 s += Math.PI * 2;
+            }
+
             return (float)(s / Math.PI * 180);
         }
     }

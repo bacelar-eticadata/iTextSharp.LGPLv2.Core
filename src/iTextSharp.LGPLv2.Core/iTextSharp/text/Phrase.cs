@@ -1,7 +1,7 @@
-using System;
-using System.Text;
-using System.Collections;
 using iTextSharp.text.pdf;
+using System;
+using System.Collections;
+using System.Text;
 
 namespace iTextSharp.text
 {
@@ -155,7 +155,7 @@ namespace iTextSharp.text
         {
             get
             {
-                ArrayList tmp = new ArrayList();
+                var tmp = new ArrayList();
                 foreach (IElement ele in this)
                 {
                     tmp.AddRange(ele.Chunks);
@@ -172,9 +172,12 @@ namespace iTextSharp.text
         {
             get
             {
-                StringBuilder buf = new StringBuilder();
-                foreach (object obj in Chunks)
+                var buf = new StringBuilder();
+                foreach (var obj in Chunks)
+                {
                     buf.Append(obj);
+                }
+
                 return buf.ToString();
             }
         }
@@ -185,14 +188,8 @@ namespace iTextSharp.text
         /// <value>a Font</value>
         public Font Font
         {
-            get
-            {
-                return font;
-            }
-            set
-            {
-                font = value;
-            }
+            get => font;
+            set => font = value;
         }
 
         /// <summary>
@@ -201,14 +198,8 @@ namespace iTextSharp.text
         /// </summary>
         public IHyphenationEvent Hyphenation
         {
-            set
-            {
-                hyphenation = value;
-            }
-            get
-            {
-                return hyphenation;
-            }
+            set => hyphenation = value;
+            get => hyphenation;
         }
 
         /// <summary>
@@ -226,23 +217,14 @@ namespace iTextSharp.text
                 return leading;
             }
 
-            set
-            {
-                leading = value;
-            }
+            set => leading = value;
         }
 
         /// <summary>
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public virtual int Type
-        {
-            get
-            {
-                return Element.PHRASE;
-            }
-        }
+        public virtual int Type => Element.PHRASE;
 
         /// <summary>
         /// Gets a special kind of Phrase that changes some characters into corresponding symbols.
@@ -274,9 +256,11 @@ namespace iTextSharp.text
         /// <returns>a newly constructed Phrase</returns>
         public static Phrase GetInstance(int leading, string str, Font font)
         {
-            Phrase p = new Phrase(true);
-            p.Leading = leading;
-            p.font = font;
+            var p = new Phrase(true)
+            {
+                Leading = leading,
+                font = font
+            };
             if (font.Family != Font.SYMBOL && font.Family != Font.ZAPFDINGBATS && font.BaseFont == null)
             {
                 int index;
@@ -284,12 +268,12 @@ namespace iTextSharp.text
                 {
                     if (index > 0)
                     {
-                        string firstPart = str.Substring(0, index);
+                        var firstPart = str.Substring(0, index);
                         ((ArrayList)p).Add(new Chunk(firstPart, font));
                         str = str.Substring(index);
                     }
-                    Font symbol = new Font(Font.SYMBOL, font.Size, font.Style, font.Color);
-                    StringBuilder buf = new StringBuilder();
+                    var symbol = new Font(Font.SYMBOL, font.Size, font.Style, font.Color);
+                    var buf = new StringBuilder();
                     buf.Append(SpecialSymbol.GetCorrespondingSymbol(str[0]));
                     str = str.Substring(1);
                     while (SpecialSymbol.Index(str) == 0)
@@ -325,13 +309,17 @@ namespace iTextSharp.text
         /// <param name="o">an object of type Chunk, Anchor, or Phrase</param>
         public virtual void Add(int index, object o)
         {
-            if (o == null) return;
+            if (o == null)
+            {
+                return;
+            }
+
             try
             {
-                IElement element = (IElement)o;
+                var element = (IElement)o;
                 if (element.Type == Element.CHUNK)
                 {
-                    Chunk chunk = (Chunk)element;
+                    var chunk = (Chunk)element;
                     if (!font.IsStandardFont())
                     {
                         chunk.Font = font.Difference(chunk.Font);
@@ -373,7 +361,11 @@ namespace iTextSharp.text
         /// <returns>a bool</returns>
         public new virtual bool Add(object o)
         {
-            if (o == null) return false;
+            if (o == null)
+            {
+                return false;
+            }
+
             if (o is string)
             {
                 base.Add(new Chunk((string)o, font));
@@ -386,15 +378,15 @@ namespace iTextSharp.text
             }
             try
             {
-                IElement element = (IElement)o;
+                var element = (IElement)o;
                 switch (element.Type)
                 {
                     case Element.CHUNK:
                         return AddChunk((Chunk)o);
                     case Element.PHRASE:
                     case Element.PARAGRAPH:
-                        Phrase phrase = (Phrase)o;
-                        bool success = true;
+                        var phrase = (Phrase)o;
+                        var success = true;
                         foreach (IElement e in phrase)
                         {
                             if (e is Chunk)
@@ -435,7 +427,7 @@ namespace iTextSharp.text
         /// <returns>true if the action succeeded, false if not.</returns>
         public bool AddAll(ICollection collection)
         {
-            foreach (object itm in collection)
+            foreach (var itm in collection)
             {
                 Add(itm);
             }
@@ -483,7 +475,7 @@ namespace iTextSharp.text
                 case 0:
                     return true;
                 case 1:
-                    IElement element = (IElement)this[0];
+                    var element = (IElement)this[0];
                     if (element.Type == Element.CHUNK && ((Chunk)element).IsEmpty())
                     {
                         return true;
@@ -536,8 +528,8 @@ namespace iTextSharp.text
         /// <returns>a bool</returns>
         protected bool AddChunk(Chunk chunk)
         {
-            Font f = chunk.Font;
-            string c = chunk.Content;
+            var f = chunk.Font;
+            var c = chunk.Content;
             if (font != null && !font.IsStandardFont())
             {
                 f = font.Difference(chunk.Font);
@@ -546,7 +538,7 @@ namespace iTextSharp.text
             {
                 try
                 {
-                    Chunk previous = (Chunk)this[Count - 1];
+                    var previous = (Chunk)this[Count - 1];
                     if (!previous.HasAttributes()
                             && (f == null
                             || f.CompareTo(previous.Font) == 0)
@@ -562,8 +554,10 @@ namespace iTextSharp.text
                 {
                 }
             }
-            Chunk newChunk = new Chunk(c, f);
-            newChunk.Attributes = chunk.Attributes;
+            var newChunk = new Chunk(c, f)
+            {
+                Attributes = chunk.Attributes
+            };
             if (hyphenation != null && newChunk.GetHyphenation() == null && !newChunk.IsEmpty())
             {
                 newChunk.SetHyphenation(hyphenation);

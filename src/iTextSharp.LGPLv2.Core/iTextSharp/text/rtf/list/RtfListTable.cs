@@ -1,10 +1,9 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.list
 {
-
     /// <summary>
     /// The RtfListTable manages all RtfLists in one RtfDocument. It also generates
     /// the list and list override tables in the document header.
@@ -32,6 +31,7 @@ namespace iTextSharp.text.rtf.list
         /// Constant for the list table
         /// </summary>
         private static readonly byte[] _listTable = DocWriter.GetIsoBytes("\\*\\listtable");
+
         /// <summary>
         /// The RtfLists managed by this RtfListTable
         /// </summary>
@@ -58,7 +58,7 @@ namespace iTextSharp.text.rtf.list
         /// <param name="list">The RtfList to remove.</param>
         public void FreeListNumber(RtfList list)
         {
-            int i = _lists.IndexOf(list);
+            var i = _lists.IndexOf(list);
             if (i >= 0)
             {
                 _lists.RemoveAt(i);
@@ -101,17 +101,17 @@ namespace iTextSharp.text.rtf.list
             result.Write(_listTable, 0, _listTable.Length);
             Document.OutputDebugLinebreak(result);
 
-            for (int i = 0; i < _picturelists.Count; i++)
+            for (var i = 0; i < _picturelists.Count; i++)
             {
-                RtfPictureList l = (RtfPictureList)_picturelists[i];
+                var l = (RtfPictureList)_picturelists[i];
                 //          l.SetID(document.GetRandomInt());
                 l.WriteDefinition(result);
                 Document.OutputDebugLinebreak(result);
             }
 
-            for (int i = 0; i < _lists.Count; i++)
+            for (var i = 0; i < _lists.Count; i++)
             {
-                RtfList l = (RtfList)_lists[i];
+                var l = (RtfList)_lists[i];
                 l.SetId(Document.GetRandomInt());
                 l.WriteDefinition(result);
                 Document.OutputDebugLinebreak(result);
@@ -126,7 +126,7 @@ namespace iTextSharp.text.rtf.list
             // list override index values are 1-based, not 0.
             // valid list override index values \ls are 1 to 2000.
             // if there are more then 2000 lists, the result is undefined.
-            for (int i = 0; i < _lists.Count; i++)
+            for (var i = 0; i < _lists.Count; i++)
             {
                 result.Write(OpenGroup, 0, OpenGroup.Length);
                 result.Write(_listOverride, 0, _listOverride.Length);

@@ -31,12 +31,12 @@ namespace iTextSharp.text.xml
         {
             if (MyTags.ContainsKey(name))
             {
-                XmlPeer peer = (XmlPeer)MyTags[name];
+                var peer = (XmlPeer)MyTags[name];
                 HandleStartingTags(peer.Tag, peer.GetAttributes(attrs));
             }
             else
             {
-                Properties attributes = new Properties();
+                var attributes = new Properties();
                 if (attrs != null)
                 {
                     foreach (string key in attrs.Keys)
@@ -58,7 +58,7 @@ namespace iTextSharp.text.xml
         {
             if (MyTags.ContainsKey(name))
             {
-                XmlPeer peer = (XmlPeer)MyTags[name];
+                var peer = (XmlPeer)MyTags[name];
                 HandleEndingTags(peer.Tag);
             }
             else

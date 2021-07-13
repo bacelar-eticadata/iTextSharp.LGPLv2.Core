@@ -1,9 +1,9 @@
+using iTextSharp.text.xml.simpleparser;
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.util;
-using iTextSharp.text.xml.simpleparser;
 
 namespace iTextSharp.text.pdf
 {
@@ -49,7 +49,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public sealed class SimpleBookmark : ISimpleXmlDocHandler
     {
-
         private readonly Stack _attr = new Stack();
         private ArrayList _topList;
 
@@ -70,26 +69,33 @@ namespace iTextSharp.text.pdf
         public static void EliminatePages(ArrayList list, int[] pageRange)
         {
             if (list == null)
-                return;
-
-            for (ListIterator it = new ListIterator(list); it.HasNext();)
             {
-                Hashtable map = (Hashtable)it.Next();
-                bool hit = false;
+                return;
+            }
+
+            for (var it = new ListIterator(list); it.HasNext();)
+            {
+                var map = (Hashtable)it.Next();
+                var hit = false;
                 if ("GoTo".Equals(map["Action"]))
                 {
-                    string page = (string)map["Page"];
+                    var page = (string)map["Page"];
                     if (page != null)
                     {
                         page = page.Trim();
-                        int idx = page.IndexOf(" ", StringComparison.Ordinal);
+                        var idx = page.IndexOf(" ", StringComparison.Ordinal);
                         int pageNum;
                         if (idx < 0)
+                        {
                             pageNum = int.Parse(page);
+                        }
                         else
+                        {
                             pageNum = int.Parse(page.Substring(0, idx));
-                        int len = pageRange.Length & 0x7ffffffe;
-                        for (int k = 0; k < len; k += 2)
+                        }
+
+                        var len = pageRange.Length & 0x7ffffffe;
+                        for (var k = 0; k < len; k += 2)
                         {
                             if (pageNum >= pageRange[k] && pageNum <= pageRange[k + 1])
                             {
@@ -99,7 +105,7 @@ namespace iTextSharp.text.pdf
                         }
                     }
                 }
-                ArrayList kids = (ArrayList)map["Kids"];
+                var kids = (ArrayList)map["Kids"];
                 if (kids != null)
                 {
                     EliminatePages(kids, pageRange);
@@ -112,7 +118,9 @@ namespace iTextSharp.text.pdf
                 if (hit)
                 {
                     if (kids == null)
+                    {
                         it.Remove();
+                    }
                     else
                     {
                         map.Remove("Action");
@@ -125,29 +133,33 @@ namespace iTextSharp.text.pdf
 
         public static string EscapeBinaryString(string s)
         {
-            StringBuilder buf = new StringBuilder();
-            char[] cc = s.ToCharArray();
-            int len = cc.Length;
-            for (int k = 0; k < len; ++k)
+            var buf = new StringBuilder();
+            var cc = s.ToCharArray();
+            var len = cc.Length;
+            for (var k = 0; k < len; ++k)
             {
-                char c = cc[k];
+                var c = cc[k];
                 if (c < ' ')
                 {
                     buf.Append('\\');
                     int v = c;
-                    string octal = "";
+                    var octal = "";
                     do
                     {
-                        int x = v % 8;
+                        var x = v % 8;
                         octal = x + octal;
                         v /= 8;
                     } while (v > 0);
                     buf.Append(octal.PadLeft(3, '0'));
                 }
                 else if (c == '\\')
+                {
                     buf.Append("\\\\");
+                }
                 else
+                {
                     buf.Append(c);
+                }
             }
             return buf.ToString();
         }
@@ -181,7 +193,7 @@ namespace iTextSharp.text.pdf
         /// <param name="onlyAscii">codes above 127 will always be escaped with &amp;#nn; if  true ,</param>
         public static void ExportToXml(ArrayList list, Stream outp, string encoding, bool onlyAscii)
         {
-            StreamWriter wrt = new StreamWriter(outp, IanaEncodings.GetEncodingEncoding(encoding));
+            var wrt = new StreamWriter(outp, IanaEncodings.GetEncodingEncoding(encoding));
             ExportToXml(list, wrt, encoding, onlyAscii);
         }
 
@@ -216,9 +228,12 @@ namespace iTextSharp.text.pdf
         /// <param name="onlyAscii">codes above 127 will always be escaped with &amp;#nn; if  true ,</param>
         public static void ExportToXmlNode(ArrayList list, TextWriter outp, int indent, bool onlyAscii)
         {
-            string dep = "";
-            for (int k = 0; k < indent; ++k)
+            var dep = "";
+            for (var k = 0; k < indent; ++k)
+            {
                 dep += "  ";
+            }
+
             foreach (Hashtable map in list)
             {
                 string title = null;
@@ -227,7 +242,7 @@ namespace iTextSharp.text.pdf
                 ArrayList kids = null;
                 foreach (DictionaryEntry entry in map)
                 {
-                    string key = (string)entry.Key;
+                    var key = (string)entry.Key;
                     if (key.Equals("Title"))
                     {
                         title = (string)entry.Value;
@@ -242,16 +257,22 @@ namespace iTextSharp.text.pdf
                     {
                         outp.Write(key);
                         outp.Write("=\"");
-                        string value = (string)entry.Value;
+                        var value = (string)entry.Value;
                         if (key.Equals("Named") || key.Equals("NamedN"))
+                        {
                             value = EscapeBinaryString(value);
+                        }
+
                         outp.Write(SimpleXmlParser.EscapeXml(value, onlyAscii));
                         outp.Write("\" ");
                     }
                 }
                 outp.Write(">");
                 if (title == null)
+                {
                     title = "";
+                }
+
                 outp.Write(SimpleXmlParser.EscapeXml(title, onlyAscii));
                 if (kids != null)
                 {
@@ -272,14 +293,17 @@ namespace iTextSharp.text.pdf
         /// <returns>a  List  with the bookmarks or  null  if the</returns>
         public static ArrayList GetBookmark(PdfReader reader)
         {
-            PdfDictionary catalog = reader.Catalog;
-            PdfObject obj = PdfReader.GetPdfObjectRelease(catalog.Get(PdfName.Outlines));
+            var catalog = reader.Catalog;
+            var obj = PdfReader.GetPdfObjectRelease(catalog.Get(PdfName.Outlines));
             if (obj == null || !obj.IsDictionary())
+            {
                 return null;
-            PdfDictionary outlines = (PdfDictionary)obj;
-            IntHashtable pages = new IntHashtable();
-            int numPages = reader.NumberOfPages;
-            for (int k = 1; k <= numPages; ++k)
+            }
+
+            var outlines = (PdfDictionary)obj;
+            var pages = new IntHashtable();
+            var numPages = reader.NumberOfPages;
+            for (var k = 1; k <= numPages; ++k)
             {
                 pages[reader.GetPageOrigRef(k).Number] = k;
                 reader.ReleasePage(k);
@@ -295,7 +319,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the bookmarks</returns>
         public static ArrayList ImportFromXml(Stream inp)
         {
-            SimpleBookmark book = new SimpleBookmark();
+            var book = new SimpleBookmark();
             SimpleXmlParser.Parse(book, inp);
             return book._topList;
         }
@@ -308,31 +332,37 @@ namespace iTextSharp.text.pdf
         /// <returns>the bookmarks</returns>
         public static ArrayList ImportFromXml(TextReader inp)
         {
-            SimpleBookmark book = new SimpleBookmark();
+            var book = new SimpleBookmark();
             SimpleXmlParser.Parse(book, inp);
             return book._topList;
         }
 
         public static object[] IterateOutlines(PdfWriter writer, PdfIndirectReference parent, ArrayList kids, bool namedAsNames)
         {
-            PdfIndirectReference[] refs = new PdfIndirectReference[kids.Count];
-            for (int k = 0; k < refs.Length; ++k)
+            var refs = new PdfIndirectReference[kids.Count];
+            for (var k = 0; k < refs.Length; ++k)
+            {
                 refs[k] = writer.PdfIndirectReference;
-            int ptr = 0;
-            int count = 0;
+            }
+
+            var ptr = 0;
+            var count = 0;
             foreach (Hashtable map in kids)
             {
                 object[] lower = null;
-                ArrayList subKid = (ArrayList)map["Kids"];
+                var subKid = (ArrayList)map["Kids"];
                 if (subKid != null && subKid.Count > 0)
+                {
                     lower = IterateOutlines(writer, refs[ptr], subKid, namedAsNames);
-                PdfDictionary outline = new PdfDictionary();
+                }
+
+                var outline = new PdfDictionary();
                 ++count;
                 if (lower != null)
                 {
                     outline.Put(PdfName.First, (PdfIndirectReference)lower[0]);
                     outline.Put(PdfName.Last, (PdfIndirectReference)lower[1]);
-                    int n = (int)lower[2];
+                    var n = (int)lower[2];
                     if ("false".Equals(map["Open"]))
                     {
                         outline.Put(PdfName.Count, new PdfNumber(-n));
@@ -345,38 +375,60 @@ namespace iTextSharp.text.pdf
                 }
                 outline.Put(PdfName.Parent, parent);
                 if (ptr > 0)
+                {
                     outline.Put(PdfName.Prev, refs[ptr - 1]);
+                }
+
                 if (ptr < refs.Length - 1)
+                {
                     outline.Put(PdfName.Next, refs[ptr + 1]);
+                }
+
                 outline.Put(PdfName.Title, new PdfString((string)map["Title"], PdfObject.TEXT_UNICODE));
-                string color = (string)map["Color"];
+                var color = (string)map["Color"];
                 if (color != null)
                 {
                     try
                     {
-                        PdfArray arr = new PdfArray();
-                        StringTokenizer tk = new StringTokenizer(color);
-                        for (int k = 0; k < 3; ++k)
+                        var arr = new PdfArray();
+                        var tk = new StringTokenizer(color);
+                        for (var k = 0; k < 3; ++k)
                         {
-                            float f = float.Parse(tk.NextToken(), System.Globalization.NumberFormatInfo.InvariantInfo);
-                            if (f < 0) f = 0;
-                            if (f > 1) f = 1;
+                            var f = float.Parse(tk.NextToken(), System.Globalization.NumberFormatInfo.InvariantInfo);
+                            if (f < 0)
+                            {
+                                f = 0;
+                            }
+
+                            if (f > 1)
+                            {
+                                f = 1;
+                            }
+
                             arr.Add(new PdfNumber(f));
                         }
                         outline.Put(PdfName.C, arr);
                     }
                     catch { } //in case it's malformed
                 }
-                string style = (string)map["Style"];
+                var style = (string)map["Style"];
                 if (style != null)
                 {
-                    int bits = 0;
+                    var bits = 0;
                     if (style.IndexOf("italic", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
                         bits |= 1;
+                    }
+
                     if (style.IndexOf("bold", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
                         bits |= 2;
+                    }
+
                     if (bits != 0)
+                    {
                         outline.Put(PdfName.F, new PdfNumber(bits));
+                    }
                 }
                 CreateOutlineAction(outline, map, writer, namedAsNames);
                 writer.AddToBody(outline, refs[ptr]);
@@ -398,28 +450,38 @@ namespace iTextSharp.text.pdf
         public static void ShiftPageNumbers(ArrayList list, int pageShift, int[] pageRange)
         {
             if (list == null)
+            {
                 return;
+            }
+
             foreach (Hashtable map in list)
             {
                 if ("GoTo".Equals(map["Action"]))
                 {
-                    string page = (string)map["Page"];
+                    var page = (string)map["Page"];
                     if (page != null)
                     {
                         page = page.Trim();
-                        int idx = page.IndexOf(" ", StringComparison.Ordinal);
+                        var idx = page.IndexOf(" ", StringComparison.Ordinal);
                         int pageNum;
                         if (idx < 0)
+                        {
                             pageNum = int.Parse(page);
-                        else
-                            pageNum = int.Parse(page.Substring(0, idx));
-                        bool hit = false;
-                        if (pageRange == null)
-                            hit = true;
+                        }
                         else
                         {
-                            int len = pageRange.Length & 0x7ffffffe;
-                            for (int k = 0; k < len; k += 2)
+                            pageNum = int.Parse(page.Substring(0, idx));
+                        }
+
+                        var hit = false;
+                        if (pageRange == null)
+                        {
+                            hit = true;
+                        }
+                        else
+                        {
+                            var len = pageRange.Length & 0x7ffffffe;
+                            for (var k = 0; k < len; k += 2)
                             {
                                 if (pageNum >= pageRange[k] && pageNum <= pageRange[k + 1])
                                 {
@@ -431,27 +493,33 @@ namespace iTextSharp.text.pdf
                         if (hit)
                         {
                             if (idx < 0)
+                            {
                                 page = (pageNum + pageShift) + "";
+                            }
                             else
+                            {
                                 page = (pageNum + pageShift) + page.Substring(idx);
+                            }
                         }
                         map["Page"] = page;
                     }
                 }
-                ArrayList kids = (ArrayList)map["Kids"];
+                var kids = (ArrayList)map["Kids"];
                 if (kids != null)
+                {
                     ShiftPageNumbers(kids, pageShift, pageRange);
+                }
             }
         }
 
         public static string UnEscapeBinaryString(string s)
         {
-            StringBuilder buf = new StringBuilder();
-            char[] cc = s.ToCharArray();
-            int len = cc.Length;
-            for (int k = 0; k < len; ++k)
+            var buf = new StringBuilder();
+            var cc = s.ToCharArray();
+            var len = cc.Length;
+            for (var k = 0; k < len; ++k)
             {
-                char c = cc[k];
+                var c = cc[k];
                 if (c == '\\')
                 {
                     if (++k >= len)
@@ -462,9 +530,9 @@ namespace iTextSharp.text.pdf
                     c = cc[k];
                     if (c >= '0' && c <= '7')
                     {
-                        int n = c - '0';
+                        var n = c - '0';
                         ++k;
-                        for (int j = 0; j < 2 && k < len; ++j)
+                        for (var j = 0; j < 2 && k < len; ++j)
                         {
                             c = cc[k];
                             if (c >= '0' && c <= '7')
@@ -481,10 +549,14 @@ namespace iTextSharp.text.pdf
                         buf.Append((char)n);
                     }
                     else
+                    {
                         buf.Append(c);
+                    }
                 }
                 else
+                {
                     buf.Append(c);
+                }
             }
             return buf.ToString();
         }
@@ -498,27 +570,42 @@ namespace iTextSharp.text.pdf
             if (tag.Equals("Bookmark"))
             {
                 if (_attr.Count == 0)
+                {
                     return;
+                }
                 else
+                {
                     throw new Exception("Bookmark end tag out of place.");
+                }
             }
             if (!tag.Equals("Title"))
+            {
                 throw new Exception("Invalid end tag - " + tag);
-            Hashtable attributes = (Hashtable)_attr.Pop();
-            string title = (string)attributes["Title"];
+            }
+
+            var attributes = (Hashtable)_attr.Pop();
+            var title = (string)attributes["Title"];
             attributes["Title"] = title.Trim();
-            string named = (string)attributes["Named"];
+            var named = (string)attributes["Named"];
             if (named != null)
+            {
                 attributes["Named"] = UnEscapeBinaryString(named);
+            }
+
             named = (string)attributes["NamedN"];
             if (named != null)
+            {
                 attributes["NamedN"] = UnEscapeBinaryString(named);
+            }
+
             if (_attr.Count == 0)
+            {
                 _topList.Add(attributes);
+            }
             else
             {
-                Hashtable parent = (Hashtable)_attr.Peek();
-                ArrayList kids = (ArrayList)parent["Kids"];
+                var parent = (Hashtable)_attr.Peek();
+                var kids = (ArrayList)parent["Kids"];
                 if (kids == null)
                 {
                     kids = new ArrayList();
@@ -542,12 +629,19 @@ namespace iTextSharp.text.pdf
                     return;
                 }
                 else
+                {
                     throw new Exception("Root element is not Bookmark: " + tag);
+                }
             }
             if (!tag.Equals("Title"))
+            {
                 throw new Exception("Tag " + tag + " not allowed.");
-            Hashtable attributes = new Hashtable(h);
-            attributes["Title"] = "";
+            }
+
+            var attributes = new Hashtable(h)
+            {
+                ["Title"] = ""
+            };
             attributes.Remove("Kids");
             _attr.Push(attributes);
         }
@@ -555,9 +649,12 @@ namespace iTextSharp.text.pdf
         public void Text(string str)
         {
             if (_attr.Count == 0)
+            {
                 return;
-            Hashtable attributes = (Hashtable)_attr.Peek();
-            string title = (string)attributes["Title"];
+            }
+
+            var attributes = (Hashtable)_attr.Peek();
+            var title = (string)attributes["Title"];
             title += str;
             attributes["Title"] = title;
         }
@@ -566,22 +663,26 @@ namespace iTextSharp.text.pdf
         {
             try
             {
-                string action = (string)map["Action"];
+                var action = (string)map["Action"];
                 if ("GoTo".Equals(action))
                 {
                     string p;
                     if ((p = (string)map["Named"]) != null)
                     {
                         if (namedAsNames)
+                        {
                             outline.Put(PdfName.Dest, new PdfName(p));
+                        }
                         else
+                        {
                             outline.Put(PdfName.Dest, new PdfString(p, null));
+                        }
                     }
                     else if ((p = (string)map["Page"]) != null)
                     {
-                        PdfArray ar = new PdfArray();
-                        StringTokenizer tk = new StringTokenizer(p);
-                        int n = int.Parse(tk.NextToken());
+                        var ar = new PdfArray();
+                        var tk = new StringTokenizer(p);
+                        var n = int.Parse(tk.NextToken());
                         ar.Add(writer.GetPageReference(n));
                         if (!tk.HasMoreTokens())
                         {
@@ -590,17 +691,24 @@ namespace iTextSharp.text.pdf
                         }
                         else
                         {
-                            string fn = tk.NextToken();
+                            var fn = tk.NextToken();
                             if (fn.StartsWith("/"))
+                            {
                                 fn = fn.Substring(1);
+                            }
+
                             ar.Add(new PdfName(fn));
-                            for (int k = 0; k < 4 && tk.HasMoreTokens(); ++k)
+                            for (var k = 0; k < 4 && tk.HasMoreTokens(); ++k)
                             {
                                 fn = tk.NextToken();
                                 if (fn.Equals("null"))
+                                {
                                     ar.Add(PdfNull.Pdfnull);
+                                }
                                 else
+                                {
                                     ar.Add(new PdfNumber(fn));
+                                }
                             }
                         }
                         outline.Put(PdfName.Dest, ar);
@@ -609,15 +717,19 @@ namespace iTextSharp.text.pdf
                 else if ("GoToR".Equals(action))
                 {
                     string p;
-                    PdfDictionary dic = new PdfDictionary();
+                    var dic = new PdfDictionary();
                     if ((p = (string)map["Named"]) != null)
+                    {
                         dic.Put(PdfName.D, new PdfString(p, null));
+                    }
                     else if ((p = (string)map["NamedN"]) != null)
+                    {
                         dic.Put(PdfName.D, new PdfName(p));
+                    }
                     else if ((p = (string)map["Page"]) != null)
                     {
-                        PdfArray ar = new PdfArray();
-                        StringTokenizer tk = new StringTokenizer(p);
+                        var ar = new PdfArray();
+                        var tk = new StringTokenizer(p);
                         ar.Add(new PdfNumber(tk.NextToken()));
                         if (!tk.HasMoreTokens())
                         {
@@ -626,43 +738,54 @@ namespace iTextSharp.text.pdf
                         }
                         else
                         {
-                            string fn = tk.NextToken();
+                            var fn = tk.NextToken();
                             if (fn.StartsWith("/"))
+                            {
                                 fn = fn.Substring(1);
+                            }
+
                             ar.Add(new PdfName(fn));
-                            for (int k = 0; k < 4 && tk.HasMoreTokens(); ++k)
+                            for (var k = 0; k < 4 && tk.HasMoreTokens(); ++k)
                             {
                                 fn = tk.NextToken();
                                 if (fn.Equals("null"))
+                                {
                                     ar.Add(PdfNull.Pdfnull);
+                                }
                                 else
+                                {
                                     ar.Add(new PdfNumber(fn));
+                                }
                             }
                         }
                         dic.Put(PdfName.D, ar);
                     }
-                    string file = (string)map["File"];
+                    var file = (string)map["File"];
                     if (dic.Size > 0 && file != null)
                     {
                         dic.Put(PdfName.S, PdfName.Gotor);
                         dic.Put(PdfName.F, new PdfString(file));
-                        string nw = (string)map["NewWindow"];
+                        var nw = (string)map["NewWindow"];
                         if (nw != null)
                         {
                             if (nw.Equals("true"))
+                            {
                                 dic.Put(PdfName.Newwindow, PdfBoolean.Pdftrue);
+                            }
                             else if (nw.Equals("false"))
+                            {
                                 dic.Put(PdfName.Newwindow, PdfBoolean.Pdffalse);
+                            }
                         }
                         outline.Put(PdfName.A, dic);
                     }
                 }
                 else if ("URI".Equals(action))
                 {
-                    string uri = (string)map["URI"];
+                    var uri = (string)map["URI"];
                     if (uri != null)
                     {
-                        PdfDictionary dic = new PdfDictionary();
+                        var dic = new PdfDictionary();
                         dic.Put(PdfName.S, PdfName.Uri);
                         dic.Put(PdfName.Uri, new PdfString(uri));
                         outline.Put(PdfName.A, dic);
@@ -670,10 +793,10 @@ namespace iTextSharp.text.pdf
                 }
                 else if ("Launch".Equals(action))
                 {
-                    string file = (string)map["File"];
+                    var file = (string)map["File"];
                     if (file != null)
                     {
-                        PdfDictionary dic = new PdfDictionary();
+                        var dic = new PdfDictionary();
                         dic.Put(PdfName.S, PdfName.Launch);
                         dic.Put(PdfName.F, new PdfString(file));
                         outline.Put(PdfName.A, dic);
@@ -688,47 +811,58 @@ namespace iTextSharp.text.pdf
 
         private static ArrayList bookmarkDepth(PdfReader reader, PdfDictionary outline, IntHashtable pages)
         {
-            ArrayList list = new ArrayList();
+            var list = new ArrayList();
             while (outline != null)
             {
-                Hashtable map = new Hashtable();
-                PdfString title = (PdfString)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.Title));
+                var map = new Hashtable();
+                var title = (PdfString)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.Title));
                 map["Title"] = title.ToUnicodeString();
-                PdfArray color = (PdfArray)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.C));
+                var color = (PdfArray)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.C));
                 if (color != null && color.Size == 3)
                 {
-                    ByteBuffer outp = new ByteBuffer();
+                    var outp = new ByteBuffer();
                     outp.Append(color.GetAsNumber(0).FloatValue).Append(' ');
                     outp.Append(color.GetAsNumber(1).FloatValue).Append(' ');
                     outp.Append(color.GetAsNumber(2).FloatValue);
                     map["Color"] = PdfEncodings.ConvertToString(outp.ToByteArray(), null);
                 }
-                PdfNumber style = (PdfNumber)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.F));
+                var style = (PdfNumber)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.F));
                 if (style != null)
                 {
-                    int f = style.IntValue;
-                    string s = "";
+                    var f = style.IntValue;
+                    var s = "";
                     if ((f & 1) != 0)
+                    {
                         s += "italic ";
+                    }
+
                     if ((f & 2) != 0)
+                    {
                         s += "bold ";
+                    }
+
                     s = s.Trim();
                     if (s.Length != 0)
+                    {
                         map["Style"] = s;
+                    }
                 }
-                PdfNumber count = (PdfNumber)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.Count));
+                var count = (PdfNumber)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.Count));
                 if (count != null && count.IntValue < 0)
+                {
                     map["Open"] = "false";
+                }
+
                 try
                 {
-                    PdfObject dest = PdfReader.GetPdfObjectRelease(outline.Get(PdfName.Dest));
+                    var dest = PdfReader.GetPdfObjectRelease(outline.Get(PdfName.Dest));
                     if (dest != null)
                     {
                         mapGotoBookmark(map, dest, pages); //changed by ujihara 2004-06-13
                     }
                     else
                     {
-                        PdfDictionary action = (PdfDictionary)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.A));
+                        var action = (PdfDictionary)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.A));
                         if (action != null)
                         {
                             if (PdfName.Goto.Equals(PdfReader.GetPdfObjectRelease(action.Get(PdfName.S))))
@@ -750,52 +884,72 @@ namespace iTextSharp.text.pdf
                                 if (dest != null)
                                 {
                                     if (dest.IsString())
+                                    {
                                         map["Named"] = dest.ToString();
+                                    }
                                     else if (dest.IsName())
+                                    {
                                         map["NamedN"] = PdfName.DecodeName(dest.ToString());
+                                    }
                                     else if (dest.IsArray())
                                     {
-                                        PdfArray arr = (PdfArray)dest;
-                                        StringBuilder s = new StringBuilder();
+                                        var arr = (PdfArray)dest;
+                                        var s = new StringBuilder();
                                         s.Append(arr[0]);
                                         s.Append(' ').Append(arr[1]);
-                                        for (int k = 2; k < arr.Size; ++k)
+                                        for (var k = 2; k < arr.Size; ++k)
+                                        {
                                             s.Append(' ').Append(arr[k]);
+                                        }
+
                                         map["Page"] = s.ToString();
                                     }
                                 }
                                 map["Action"] = "GoToR";
-                                PdfObject file = PdfReader.GetPdfObjectRelease(action.Get(PdfName.F));
+                                var file = PdfReader.GetPdfObjectRelease(action.Get(PdfName.F));
                                 if (file != null)
                                 {
                                     if (file.IsString())
+                                    {
                                         map["File"] = ((PdfString)file).ToUnicodeString();
+                                    }
                                     else if (file.IsDictionary())
                                     {
                                         file = PdfReader.GetPdfObject(((PdfDictionary)file).Get(PdfName.F));
                                         if (file.IsString())
+                                        {
                                             map["File"] = ((PdfString)file).ToUnicodeString();
+                                        }
                                     }
                                 }
-                                PdfObject newWindow = PdfReader.GetPdfObjectRelease(action.Get(PdfName.Newwindow));
+                                var newWindow = PdfReader.GetPdfObjectRelease(action.Get(PdfName.Newwindow));
                                 if (newWindow != null)
+                                {
                                     map["NewWindow"] = newWindow.ToString();
+                                }
                             }
                             else if (PdfName.Launch.Equals(PdfReader.GetPdfObjectRelease(action.Get(PdfName.S))))
                             {
                                 map["Action"] = "Launch";
-                                PdfObject file = PdfReader.GetPdfObjectRelease(action.Get(PdfName.F));
+                                var file = PdfReader.GetPdfObjectRelease(action.Get(PdfName.F));
                                 if (file == null)
+                                {
                                     file = PdfReader.GetPdfObjectRelease(action.Get(PdfName.Win));
+                                }
+
                                 if (file != null)
                                 {
                                     if (file.IsString())
+                                    {
                                         map["File"] = ((PdfString)file).ToUnicodeString();
+                                    }
                                     else if (file.IsDictionary())
                                     {
                                         file = PdfReader.GetPdfObjectRelease(((PdfDictionary)file).Get(PdfName.F));
                                         if (file.IsString())
+                                        {
                                             map["File"] = ((PdfString)file).ToUnicodeString();
+                                        }
                                     }
                                 }
                             }
@@ -806,7 +960,7 @@ namespace iTextSharp.text.pdf
                 {
                     //empty on purpose
                 }
-                PdfDictionary first = (PdfDictionary)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.First));
+                var first = (PdfDictionary)PdfReader.GetPdfObjectRelease(outline.Get(PdfName.First));
                 if (first != null)
                 {
                     map["Kids"] = bookmarkDepth(reader, first, pages);
@@ -825,10 +979,10 @@ namespace iTextSharp.text.pdf
         /// <param name="indirect"></param>
         private static int getNumber(PdfIndirectReference indirect)
         {
-            PdfDictionary pdfObj = (PdfDictionary)PdfReader.GetPdfObjectRelease(indirect);
+            var pdfObj = (PdfDictionary)PdfReader.GetPdfObjectRelease(indirect);
             if (pdfObj.Contains(PdfName.TYPE) && pdfObj.Get(PdfName.TYPE).Equals(PdfName.Pages) && pdfObj.Contains(PdfName.Kids))
             {
-                PdfArray kids = (PdfArray)pdfObj.Get(PdfName.Kids);
+                var kids = (PdfArray)pdfObj.Get(PdfName.Kids);
                 indirect = (PdfIndirectReference)kids[0];
             }
             return indirect.Number;
@@ -836,26 +990,41 @@ namespace iTextSharp.text.pdf
 
         private static string makeBookmarkParam(PdfArray dest, IntHashtable pages)
         {
-            StringBuilder s = new StringBuilder();
-            PdfObject obj = dest[0];
+            var s = new StringBuilder();
+            var obj = dest[0];
             if (obj.IsNumber())
+            {
                 s.Append(((PdfNumber)obj).IntValue + 1);
+            }
             else
+            {
                 s.Append(pages[getNumber((PdfIndirectReference)obj)]); //changed by ujihara 2004-06-13
+            }
+
             s.Append(' ').Append(dest[1].ToString().Substring(1));
-            for (int k = 2; k < dest.Size; ++k)
+            for (var k = 2; k < dest.Size; ++k)
+            {
                 s.Append(' ').Append(dest[k]);
+            }
+
             return s.ToString();
         }
 
         private static void mapGotoBookmark(Hashtable map, PdfObject dest, IntHashtable pages)
         {
             if (dest.IsString())
+            {
                 map["Named"] = dest.ToString();
+            }
             else if (dest.IsName())
+            {
                 map["Named"] = PdfName.DecodeName(dest.ToString());
+            }
             else if (dest.IsArray())
+            {
                 map["Page"] = makeBookmarkParam((PdfArray)dest, pages); //changed by ujihara 2004-06-13
+            }
+
             map["Action"] = "GoTo";
         }
     }

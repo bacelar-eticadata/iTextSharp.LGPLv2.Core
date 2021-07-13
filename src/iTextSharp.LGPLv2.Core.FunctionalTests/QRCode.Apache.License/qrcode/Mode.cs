@@ -15,7 +15,8 @@ using System;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
+namespace iTextSharp.text.pdf.qrcode
+{
 
     /**
      * <p>See ISO 18004:2006, 6.4.1, Tables 2 and 3. This enum encapsulates the various modes in which
@@ -23,7 +24,8 @@ namespace iTextSharp.text.pdf.qrcode {
      *
      * @author Sean Owen
      */
-    public sealed class Mode {
+    public sealed class Mode
+    {
 
         // No, we can't use an enum here. J2ME doesn't support it.
 
@@ -37,11 +39,12 @@ namespace iTextSharp.text.pdf.qrcode {
         public static readonly Mode FNC1_FIRST_POSITION = new Mode(null, 0x05, "FNC1_FIRST_POSITION");
         public static readonly Mode FNC1_SECOND_POSITION = new Mode(null, 0x09, "FNC1_SECOND_POSITION");
 
-        private int[] characterCountBitsForVersions;
-        private int bits;
-        private String name;
+        private readonly int[] characterCountBitsForVersions;
+        private readonly int bits;
+        private readonly string name;
 
-        private Mode(int[] characterCountBitsForVersions, int bits, String name) {
+        private Mode(int[] characterCountBitsForVersions, int bits, string name)
+        {
             this.characterCountBitsForVersions = characterCountBitsForVersions;
             this.bits = bits;
             this.name = name;
@@ -52,8 +55,10 @@ namespace iTextSharp.text.pdf.qrcode {
          * @return {@link Mode} encoded by these bits
          * @throws IllegalArgumentException if bits do not correspond to a known mode
          */
-        public static Mode ForBits(int bits) {
-            switch (bits) {
+        public static Mode ForBits(int bits)
+        {
+            switch (bits)
+            {
                 case 0x0:
                     return TERMINATOR;
                 case 0x1:
@@ -82,33 +87,41 @@ namespace iTextSharp.text.pdf.qrcode {
          * @return number of bits used, in this QR Code symbol {@link Version}, to encode the
          *         count of characters that will follow encoded in this {@link Mode}
          */
-        public int GetCharacterCountBits(Version version) {
-            if (characterCountBitsForVersions == null) {
+        public int GetCharacterCountBits(Version version)
+        {
+            if (characterCountBitsForVersions == null)
+            {
                 throw new ArgumentException("Character count doesn't apply to this mode");
             }
-            int number = version.GetVersionNumber();
+            var number = version.GetVersionNumber();
             int offset;
-            if (number <= 9) {
+            if (number <= 9)
+            {
                 offset = 0;
             }
-            else if (number <= 26) {
+            else if (number <= 26)
+            {
                 offset = 1;
             }
-            else {
+            else
+            {
                 offset = 2;
             }
             return characterCountBitsForVersions[offset];
         }
 
-        public int GetBits() {
+        public int GetBits()
+        {
             return bits;
         }
 
-        public String GetName() {
+        public string GetName()
+        {
             return name;
         }
 
-        public override String ToString() {
+        public override string ToString()
+        {
             return name;
         }
     }

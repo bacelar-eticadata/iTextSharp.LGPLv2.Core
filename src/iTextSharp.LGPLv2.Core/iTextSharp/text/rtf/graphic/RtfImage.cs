@@ -1,11 +1,11 @@
-using System.IO;
-using System.util;
 using iTextSharp.LGPLv2.Core.System.NetUtils;
+using iTextSharp.text.pdf.codec.wmf;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.document.output;
-using iTextSharp.text.rtf.text;
 using iTextSharp.text.rtf.style;
-using iTextSharp.text.pdf.codec.wmf;
+using iTextSharp.text.rtf.text;
+using System.IO;
+using System.util;
 
 namespace iTextSharp.text.rtf.graphic
 {
@@ -17,7 +17,6 @@ namespace iTextSharp.text.rtf.graphic
     /// </summary>
     public class RtfImage : RtfElement
     {
-
         /// <summary>
         /// lookup table used for converting bytes to hex chars.
         /// </summary>
@@ -42,6 +41,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Constant for the shape/picture group
         /// </summary>
         private static readonly byte[] _pictureGroup = DocWriter.GetIsoBytes("\\*\\shppict");
+
         /// <summary>
         /// Constant for the picture height
         /// </summary>
@@ -51,10 +51,12 @@ namespace iTextSharp.text.rtf.graphic
         /// Constant for a jpeg image
         /// </summary>
         private static readonly byte[] _pictureJpeg = DocWriter.GetIsoBytes("\\jpegblip");
+
         /// <summary>
         /// Constant for a png image
         /// </summary>
         private static readonly byte[] _picturePng = DocWriter.GetIsoBytes("\\pngblip");
+
         /// <summary>
         /// Constant for the picture height scale
         /// </summary>
@@ -84,6 +86,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Constant for a wmf image
         /// </summary>
         private static readonly byte[] _pictureWmf = DocWriter.GetIsoBytes("\\wmetafile8");
+
         /// <summary>
         /// The height of this picutre
         /// </summary>
@@ -98,6 +101,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The type of image this is.
         /// </summary>
         private readonly int _imageType;
+
         /// <summary>
         /// The intended display height of this picture
         /// </summary>
@@ -117,6 +121,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The alignment of this picture
         /// </summary>
         private int _alignment = Element.ALIGN_LEFT;
+
         /// <summary>
         /// Whether this RtfImage is a top level element and should
         /// be an extra paragraph.
@@ -126,14 +131,17 @@ namespace iTextSharp.text.rtf.graphic
         //'0001020304050607 ... fafbfcfdfeff'
         static RtfImage()
         {
-            char c = '0';
-            for (int k = 0; k < 16; k++)
+            var c = '0';
+            for (var k = 0; k < 16; k++)
             {
-                for (int x = 0; x < 16; x++)
+                for (var x = 0; x < 16; x++)
                 {
                     Byte2CharLut[((k * 16) + x) * 2] = Byte2CharLut[(((x * 16) + k) * 2) + 1] = (byte)c;
                 }
-                if (++c == ':') c = 'a';
+                if (++c == ':')
+                {
+                    c = 'a';
+                }
             }
         }
 
@@ -192,12 +200,15 @@ namespace iTextSharp.text.rtf.graphic
                     case Element.ALIGN_LEFT:
                         result.Write(RtfParagraphStyle.AlignLeft, 0, RtfParagraphStyle.AlignLeft.Length);
                         break;
+
                     case Element.ALIGN_RIGHT:
                         result.Write(RtfParagraphStyle.AlignRight, 0, RtfParagraphStyle.AlignRight.Length);
                         break;
+
                     case Element.ALIGN_CENTER:
                         result.Write(RtfParagraphStyle.AlignCenter, 0, RtfParagraphStyle.AlignCenter.Length);
                         break;
+
                     case Element.ALIGN_JUSTIFIED:
                         result.Write(RtfParagraphStyle.AlignJustify, 0, RtfParagraphStyle.AlignJustify.Length);
                         break;
@@ -212,10 +223,12 @@ namespace iTextSharp.text.rtf.graphic
                 case Image.ORIGINAL_JPEG:
                     result.Write(_pictureJpeg, 0, _pictureJpeg.Length);
                     break;
+
                 case Image.ORIGINAL_PNG:
                 case Image.ORIGINAL_GIF:
                     result.Write(_picturePng, 0, _picturePng.Length);
                     break;
+
                 case Image.ORIGINAL_WMF:
                 case Image.ORIGINAL_BMP:
                     result.Write(_pictureWmf, 0, _pictureWmf.Length);
@@ -266,7 +279,7 @@ namespace iTextSharp.text.rtf.graphic
                 }
                 else
                 {
-                    for (int k = 0; k < _imageData.Length; k++)
+                    for (var k = 0; k < _imageData.Length; k++)
                     {
                         result.Write(_imageData[k], 0, _imageData[k].Length);
                     }
@@ -296,8 +309,8 @@ namespace iTextSharp.text.rtf.graphic
         /// <returns>The raw image data, not formated</returns>
         private byte[][] getImageData(Image image)
         {
-            int wmfPlaceableHeaderSize = 22;
-            RtfByteArrayBuffer bab = new RtfByteArrayBuffer();
+            var wmfPlaceableHeaderSize = 22;
+            var bab = new RtfByteArrayBuffer();
 
             try
             {
@@ -307,24 +320,25 @@ namespace iTextSharp.text.rtf.graphic
                 }
                 else
                 {
-                    byte[] iod = image.OriginalData;
+                    var iod = image.OriginalData;
                     if (iod == null)
                     {
-                        Stream imageIn = image.Url.GetResponseStream();
+                        var imageIn = image.Url.GetResponseStream();
                         if (_imageType == Image.ORIGINAL_WMF)
                         { //remove the placeable header first
-                            for (int k = 0; k < wmfPlaceableHeaderSize; k++)
+                            for (var k = 0; k < wmfPlaceableHeaderSize; k++)
                             {
-                                if (imageIn.ReadByte() < 0) throw (new IOException("while removing wmf placeable header"));
+                                if (imageIn.ReadByte() < 0)
+                                {
+                                    throw (new IOException("while removing wmf placeable header"));
+                                }
                             }
                         }
                         bab.Write(imageIn);
                         imageIn.Dispose();
-
                     }
                     else
                     {
-
                         if (_imageType == Image.ORIGINAL_WMF)
                         {
                             //remove the placeable header
@@ -334,7 +348,6 @@ namespace iTextSharp.text.rtf.graphic
                         {
                             bab.Append(iod);
                         }
-
                     }
                 }
                 return bab.ToArrayArray();
@@ -344,14 +357,15 @@ namespace iTextSharp.text.rtf.graphic
                 throw new DocumentException(ioe.Message);
             }
         }
+
         /// <summary>
         /// Returns the image raw data size in bytes.
         /// </summary>
         /// <returns></returns>
         private int imageDataSize()
         {
-            int size = 0;
-            for (int k = 0; k < _imageData.Length; k++)
+            var size = 0;
+            for (var k = 0; k < _imageData.Length; k++)
             {
                 size += _imageData[k].Length;
             }
@@ -364,11 +378,11 @@ namespace iTextSharp.text.rtf.graphic
         /// </summary>
         private void writeImageDataHexEncoded(Stream bab)
         {
-            int cnt = 0;
-            for (int k = 0; k < _imageData.Length; k++)
+            var cnt = 0;
+            for (var k = 0; k < _imageData.Length; k++)
             {
-                byte[] chunk = _imageData[k];
-                for (int x = 0; x < chunk.Length; x++)
+                var chunk = _imageData[k];
+                for (var x = 0; x < chunk.Length; x++)
                 {
                     bab.Write(Byte2CharLut, (chunk[x] & 0xff) * 2, 2);
                     if (++cnt == 64)
@@ -378,7 +392,10 @@ namespace iTextSharp.text.rtf.graphic
                     }
                 }
             }
-            if (cnt > 0) bab.WriteByte((byte)'\n');
+            if (cnt > 0)
+            {
+                bab.WriteByte((byte)'\n');
+            }
         }
     }
 }

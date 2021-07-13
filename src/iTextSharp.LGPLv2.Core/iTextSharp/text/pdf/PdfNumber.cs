@@ -2,7 +2,6 @@ using System;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfNumber  provides two types of numbers, int and real.
     ///
@@ -15,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfNumber : PdfObject
     {
-
         /// <summary>
         /// actual value of this  PdfNumber , represented as a  double
         /// </summary>
@@ -70,7 +68,9 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <param name="value">value of the new  PdfNumber -object</param>
 
-        public PdfNumber(float value) : this((double)value) { }
+        public PdfNumber(float value) : this((double)value)
+        {
+        }
 
         /// <summary>
         /// methods returning the value of this object
@@ -81,33 +81,16 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a value</returns>
 
-        public double DoubleValue
-        {
-            get
-            {
-                return _value;
-            }
-        }
+        public double DoubleValue => _value;
 
         /// <summary>
         /// Returns the primitive  double  value of this object.
         /// </summary>
         /// <returns>a value</returns>
-        public float FloatValue
-        {
-            get
-            {
-                return (float)_value;
-            }
-        }
+        public float FloatValue => (float)_value;
 
-        public int IntValue
-        {
-            get
-            {
-                return (int)_value;
-            }
-        }
+        public int IntValue => (int)_value;
+
         /// <summary>
         /// other methods
         /// </summary>

@@ -55,10 +55,7 @@ namespace iTextSharp.text
         /// <value>a Color</value>
         public override BaseColor BackgroundColor
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -67,10 +64,7 @@ namespace iTextSharp.text
         /// <value>a int</value>
         public override int Border
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -83,42 +77,27 @@ namespace iTextSharp.text
         /// <value>a Color</value>
         public override BaseColor BorderColor
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override BaseColor BorderColorBottom
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override BaseColor BorderColorLeft
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override BaseColor BorderColorRight
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override BaseColor BorderColorTop
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -127,42 +106,27 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public override float BorderWidth
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override float BorderWidthBottom
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override float BorderWidthLeft
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override float BorderWidthRight
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         public override float BorderWidthTop
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -171,10 +135,7 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public override float Bottom
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -183,10 +144,7 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public override float GrayFill
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -195,10 +153,7 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public override float Left
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -210,10 +165,7 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public override float Right
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -222,10 +174,7 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public override float Top
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -234,10 +183,7 @@ namespace iTextSharp.text
         /// </summary>
         public override bool UseVariableBorders
         {
-            set
-            {
-                throwReadOnlyError();
-            }
+            set => throwReadOnlyError();
         }
 
         /// <summary>
@@ -296,7 +242,7 @@ namespace iTextSharp.text
         /// </summary>
         public override string ToString()
         {
-            StringBuilder buf = new StringBuilder("RectangleReadOnly: ");
+            var buf = new StringBuilder("RectangleReadOnly: ");
             buf.Append(Width);
             buf.Append('x');
             buf.Append(Height);

@@ -24,7 +24,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfStream : PdfDictionary
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -46,11 +45,13 @@ namespace iTextSharp.text.pdf
         /// @since   2.1.3
         /// </summary>
         public const int DEFAULT_COMPRESSION = -1;
+
         /// <summary>
         /// A possible compression level.
         /// @since   2.1.3
         /// </summary>
         public const int NO_COMPRESSION = 0;
+
         internal static readonly byte[] Endstream = DocWriter.GetIsoBytes("\nendstream");
 
         internal static readonly int Sizestream;
@@ -133,13 +134,7 @@ namespace iTextSharp.text.pdf
         /// methods overriding some methods of PdfObject
         /// </summary>
 
-        public int RawLength
-        {
-            get
-            {
-                return rawLength;
-            }
-        }
+        public int RawLength => rawLength;
 
         /// <summary>
         /// Compresses the stream.
@@ -160,7 +155,9 @@ namespace iTextSharp.text.pdf
         public void FlateCompress(int compressionLevel)
         {
             if (!Document.Compress)
+            {
                 return;
+            }
             // check if the flateCompress-method has allready been
             if (Compressed)
             {
@@ -173,18 +170,22 @@ namespace iTextSharp.text.pdf
                 return;
             }
             // check if a filter allready exists
-            PdfObject filter = PdfReader.GetPdfObject(Get(PdfName.Filter));
+            var filter = PdfReader.GetPdfObject(Get(PdfName.Filter));
             if (filter != null)
             {
                 if (filter.IsName())
                 {
                     if (PdfName.Flatedecode.Equals(filter))
+                    {
                         return;
+                    }
                 }
                 else if (filter.IsArray())
                 {
                     if (((PdfArray)filter).Contains(PdfName.Flatedecode))
+                    {
                         return;
+                    }
                 }
                 else
                 {
@@ -192,12 +193,16 @@ namespace iTextSharp.text.pdf
                 }
             }
             // compress
-            MemoryStream stream = new MemoryStream();
-            ZDeflaterOutputStream zip = new ZDeflaterOutputStream(stream, compressionLevel);
+            var stream = new MemoryStream();
+            var zip = new ZDeflaterOutputStream(stream, compressionLevel);
             if (StreamBytes != null)
+            {
                 StreamBytes.WriteTo(zip);
+            }
             else
+            {
                 zip.Write(Bytes, 0, Bytes.Length);
+            }
             //zip.Close();
             zip.Finish();
             // update the object
@@ -210,7 +215,7 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                PdfArray filters = new PdfArray(filter);
+                var filters = new PdfArray(filter);
                 filters.Add(PdfName.Flatedecode);
                 Put(PdfName.Filter, filters);
             }
@@ -220,61 +225,88 @@ namespace iTextSharp.text.pdf
         public override void ToPdf(PdfWriter writer, Stream os)
         {
             if (InputStream != null && Compressed)
+            {
                 Put(PdfName.Filter, PdfName.Flatedecode);
+            }
+
             PdfEncryption crypto = null;
             if (writer != null)
+            {
                 crypto = writer.Encryption;
+            }
+
             if (crypto != null)
             {
-                PdfObject filter = Get(PdfName.Filter);
+                var filter = Get(PdfName.Filter);
                 if (filter != null)
                 {
                     if (PdfName.Crypt.Equals(filter))
+                    {
                         crypto = null;
+                    }
                     else if (filter.IsArray())
                     {
-                        PdfArray a = ((PdfArray)filter);
+                        var a = ((PdfArray)filter);
                         if (a.Size > 0 && PdfName.Crypt.Equals(a[0]))
+                        {
                             crypto = null;
+                        }
                     }
                 }
             }
-            PdfObject nn = Get(PdfName.LENGTH);
+            var nn = Get(PdfName.LENGTH);
             if (crypto != null && nn != null && nn.IsNumber())
             {
-                int sz = ((PdfNumber)nn).IntValue;
+                var sz = ((PdfNumber)nn).IntValue;
                 Put(PdfName.LENGTH, new PdfNumber(crypto.CalculateStreamSize(sz)));
                 SuperToPdf(writer, os);
                 Put(PdfName.LENGTH, nn);
             }
             else
+            {
                 SuperToPdf(writer, os);
+            }
+
             os.Write(Startstream, 0, Startstream.Length);
             if (InputStream != null)
             {
                 rawLength = 0;
                 ZDeflaterOutputStream def = null;
-                OutputStreamCounter osc = new OutputStreamCounter(os);
+                var osc = new OutputStreamCounter(os);
                 OutputStreamEncryption ose = null;
                 Stream fout = osc;
                 if (crypto != null && !crypto.IsEmbeddedFilesOnly())
+                {
                     fout = ose = crypto.GetEncryptionStream(fout);
-                if (Compressed)
-                    fout = def = new ZDeflaterOutputStream(fout, CompressionLevel);
+                }
 
-                byte[] buf = new byte[4192];
+                if (Compressed)
+                {
+                    fout = def = new ZDeflaterOutputStream(fout, CompressionLevel);
+                }
+
+                var buf = new byte[4192];
                 while (true)
                 {
-                    int n = InputStream.Read(buf, 0, buf.Length);
+                    var n = InputStream.Read(buf, 0, buf.Length);
                     if (n <= 0)
+                    {
                         break;
+                    }
+
                     fout.Write(buf, 0, n);
                     rawLength += n;
                 }
                 if (def != null)
+                {
                     def.Finish();
+                }
+
                 if (ose != null)
+                {
                     ose.Finish();
+                }
+
                 InputStreamLength = osc.Counter;
             }
             else
@@ -295,9 +327,13 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     if (StreamBytes != null)
+                    {
                         StreamBytes.WriteTo(os);
+                    }
                     else
+                    {
                         os.Write(Bytes, 0, Bytes.Length);
+                    }
                 }
             }
             os.Write(Endstream, 0, Endstream.Length);
@@ -308,7 +344,11 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public override string ToString()
         {
-            if (Get(PdfName.TYPE) == null) return "Stream";
+            if (Get(PdfName.TYPE) == null)
+            {
+                return "Stream";
+            }
+
             return "Stream of type: " + Get(PdfName.TYPE);
         }
 
@@ -320,9 +360,13 @@ namespace iTextSharp.text.pdf
         public void WriteContent(Stream os)
         {
             if (StreamBytes != null)
+            {
                 StreamBytes.WriteTo(os);
+            }
             else if (Bytes != null)
+            {
                 os.Write(Bytes, 0, Bytes.Length);
+            }
         }
 
         /// <summary>
@@ -336,11 +380,18 @@ namespace iTextSharp.text.pdf
         public void WriteLength()
         {
             if (InputStream == null)
+            {
                 throw new PdfException("WriteLength() can only be called in a contructed PdfStream(InputStream,PdfWriter).");
+            }
+
             if (InputStreamLength == -1)
+            {
                 throw new PdfException("WriteLength() can only be called after output of the stream body.");
+            }
+
             Writer.AddToBody(new PdfNumber(InputStreamLength), Iref, false);
         }
+
         protected virtual void SuperToPdf(PdfWriter writer, Stream os)
         {
             base.ToPdf(writer, os);

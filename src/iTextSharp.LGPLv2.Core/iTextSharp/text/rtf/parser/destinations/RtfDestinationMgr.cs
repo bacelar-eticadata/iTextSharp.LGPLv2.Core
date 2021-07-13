@@ -57,7 +57,7 @@ namespace iTextSharp.text.rtf.parser.destinations
                 return true;
             }
 
-            string thisClass = $"iTextSharp.text.rtf.parser.destinations.{(string) args[0]}";
+            var thisClass = $"iTextSharp.text.rtf.parser.destinations.{(string)args[0]}";
 
             if (thisClass.IndexOf("RtfDestinationNull", StringComparison.Ordinal) >= 0)
             {
@@ -76,7 +76,9 @@ namespace iTextSharp.text.rtf.parser.destinations
                 return false;
             }
             if (value == null)
+            {
                 return false;
+            }
 
             RtfDestination c = null;
 
@@ -122,7 +124,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// <param name="listener"></param>
         public static bool AddListener(string destination, IRtfDestinationListener listener)
         {
-            RtfDestination dest = GetDestination(destination);
+            var dest = GetDestination(destination);
             if (dest != null)
             {
                 return dest.AddListener(listener);
@@ -194,7 +196,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// <param name="listener"></param>
         public static bool RemoveListener(string destination, IRtfDestinationListener listener)
         {
-            RtfDestination dest = GetDestination(destination);
+            var dest = GetDestination(destination);
             if (dest != null)
             {
                 return dest.RemoveListener(listener);

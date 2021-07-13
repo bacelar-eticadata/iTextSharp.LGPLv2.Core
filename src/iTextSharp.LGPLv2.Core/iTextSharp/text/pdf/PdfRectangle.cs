@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfRectangle  is the PDF Rectangle object.
     ///
@@ -15,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfRectangle : PdfArray
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -74,7 +72,9 @@ namespace iTextSharp.text.pdf
             base.Add(new PdfNumber(_ury));
         }
 
-        public PdfRectangle(float llx, float lly, float urx, float ury) : this(llx, lly, urx, ury, 0) { }
+        public PdfRectangle(float llx, float lly, float urx, float ury) : this(llx, lly, urx, ury, 0)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfRectangle -object starting from the origin (0, 0).
@@ -84,7 +84,9 @@ namespace iTextSharp.text.pdf
         /// <param name="rotation"></param>
         public PdfRectangle(float urx, float ury, int rotation) : this(0, 0, urx, ury, rotation) { }
 
-        public PdfRectangle(float urx, float ury) : this(0, 0, urx, ury, 0) { }
+        public PdfRectangle(float urx, float ury) : this(0, 0, urx, ury, 0)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfRectangle -object with a  Rectangle -object.
@@ -93,79 +95,33 @@ namespace iTextSharp.text.pdf
         /// <param name="rotation"></param>
         public PdfRectangle(Rectangle rectangle, int rotation) : this(rectangle.Left, rectangle.Bottom, rectangle.Right, rectangle.Top, rotation) { }
 
-        public PdfRectangle(Rectangle rectangle) : this(rectangle.Left, rectangle.Bottom, rectangle.Right, rectangle.Top, 0) { }
+        public PdfRectangle(Rectangle rectangle) : this(rectangle.Left, rectangle.Bottom, rectangle.Right, rectangle.Top, 0)
+        {
+        }
 
         /// <summary>
         /// methods
         /// </summary>
 
-        public float Bottom
-        {
-            get
-            {
-                return _lly;
-            }
-        }
+        public float Bottom => _lly;
 
-        public float Height
-        {
-            get
-            {
-                return _ury - _lly;
-            }
-        }
+        public float Height => _ury - _lly;
 
-        public float Left
-        {
-            get
-            {
-                return _llx;
-            }
-        }
+        public float Left => _llx;
 
         /// <summary>
         /// Returns the high level version of this PdfRectangle
         /// </summary>
         /// <returns>this PdfRectangle translated to class Rectangle</returns>
-        public Rectangle Rectangle
-        {
-            get
-            {
-                return new Rectangle(Left, Bottom, Right, Top);
-            }
-        }
+        public Rectangle Rectangle => new Rectangle(Left, Bottom, Right, Top);
 
-        public float Right
-        {
-            get
-            {
-                return _urx;
-            }
-        }
+        public float Right => _urx;
 
-        public PdfRectangle Rotate
-        {
-            get
-            {
-                return new PdfRectangle(_lly, _llx, _ury, _urx, 0);
-            }
-        }
+        public PdfRectangle Rotate => new PdfRectangle(_lly, _llx, _ury, _urx, 0);
 
-        public float Top
-        {
-            get
-            {
-                return _ury;
-            }
-        }
+        public float Top => _ury;
 
-        public float Width
-        {
-            get
-            {
-                return _urx - _llx;
-            }
-        }
+        public float Width => _urx - _llx;
 
         public override bool Add(PdfObject obj)
         {

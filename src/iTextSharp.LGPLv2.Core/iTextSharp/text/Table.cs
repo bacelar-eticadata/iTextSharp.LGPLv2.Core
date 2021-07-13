@@ -1,7 +1,7 @@
+using iTextSharp.text.pdf;
 using System;
 using System.Collections;
 using System.util;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text
 {
@@ -90,7 +90,7 @@ namespace iTextSharp.text
         private float _cellpadding;
 
         ///<summary> If true cells may not be split over two pages. </summary>
-        bool _cellsFitPage;
+        private bool _cellsFitPage;
 
         ///<summary> This is cellspacing. </summary>
         private float _cellspacing;
@@ -121,12 +121,13 @@ namespace iTextSharp.text
         private bool _mTableInserted;
 
         ///<summary> This is the offset of the table. </summary>
-        float _offset = float.NaN;
+        private float _offset = float.NaN;
 
         ///<summary> This is the list of Rows. </summary>
         private ArrayList _rows = new ArrayList();
+
         ///<summary> If true this table may not be split over two pages. </summary>
-        bool _tableFitsPage;
+        private bool _tableFitsPage;
 
         ///<summary> This is the width of the table (in percent of the available space). </summary>
         private float _width = 80;
@@ -168,7 +169,7 @@ namespace iTextSharp.text
             _columns = columns;
 
             // a certain number of rows are created
-            for (int i = 0; i < rows; i++)
+            for (var i = 0; i < rows; i++)
             {
                 _rows.Add(new Row(columns));
             }
@@ -176,8 +177,8 @@ namespace iTextSharp.text
 
             // the DEFAULT widths are calculated
             _widths = new float[columns];
-            float width = 100f / columns;
-            for (int i = 0; i < columns; i++)
+            var width = 100f / columns;
+            for (var i = 0; i < columns; i++)
             {
                 _widths[i] = width;
             }
@@ -193,15 +194,9 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public int Alignment
         {
-            get
-            {
-                return _alignment;
-            }
+            get => _alignment;
 
-            set
-            {
-                _alignment = value;
-            }
+            set => _alignment = value;
         }
 
         /// <summary>
@@ -215,10 +210,7 @@ namespace iTextSharp.text
         /// <value>enable/disable autofill</value>
         public bool AutoFillEmptyCells
         {
-            set
-            {
-                autoFillEmptyCells = value;
-            }
+            set => autoFillEmptyCells = value;
         }
 
         public override float Bottom
@@ -228,10 +220,7 @@ namespace iTextSharp.text
                 errorDimensions();
                 return 0;
             }
-            set
-            {
-                errorDimensions();
-            }
+            set => errorDimensions();
         }
 
         /// <summary>
@@ -240,15 +229,9 @@ namespace iTextSharp.text
         /// <value>the cellpadding</value>
         public float Cellpadding
         {
-            get
-            {
-                return _cellpadding;
-            }
+            get => _cellpadding;
 
-            set
-            {
-                _cellpadding = value;
-            }
+            set => _cellpadding = value;
         }
 
         /// <summary>
@@ -261,14 +244,8 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public bool CellsFitPage
         {
-            set
-            {
-                _cellsFitPage = value;
-            }
-            get
-            {
-                return _cellsFitPage;
-            }
+            set => _cellsFitPage = value;
+            get => _cellsFitPage;
         }
 
         /// <summary>
@@ -277,28 +254,16 @@ namespace iTextSharp.text
         /// <value>the cellspacing</value>
         public float Cellspacing
         {
-            get
-            {
-                return _cellspacing;
-            }
+            get => _cellspacing;
 
-            set
-            {
-                _cellspacing = value;
-            }
+            set => _cellspacing = value;
         }
 
         /// <summary>
         /// Gets the number of columns.
         /// </summary>
         /// <value>a value</value>
-        public int Columns
-        {
-            get
-            {
-                return _columns;
-            }
-        }
+        public int Columns => _columns;
 
         /// <summary>
         /// If set to true, iText will try to convert the Table to a PdfPTable.
@@ -312,14 +277,8 @@ namespace iTextSharp.text
         /// <param name="value">a cell with all the defaults</param>
         public Cell DefaultCell
         {
-            set
-            {
-                _defaultCell = value;
-            }
-            get
-            {
-                return _defaultCell;
-            }
+            set => _defaultCell = value;
+            get => _defaultCell;
         }
 
         /// <summary>
@@ -329,10 +288,7 @@ namespace iTextSharp.text
         /// <value>the new color</value>
         public BaseColor DefaultCellBackgroundColor
         {
-            set
-            {
-                _defaultCell.BackgroundColor = value;
-            }
+            set => _defaultCell.BackgroundColor = value;
         }
 
         /// <summary>
@@ -342,10 +298,7 @@ namespace iTextSharp.text
         /// <value>the new border value</value>
         public int DefaultCellBorder
         {
-            set
-            {
-                _defaultCell.Border = value;
-            }
+            set => _defaultCell.Border = value;
         }
 
         /// <summary>
@@ -354,10 +307,7 @@ namespace iTextSharp.text
         /// </summary>
         public BaseColor DefaultCellBorderColor
         {
-            set
-            {
-                _defaultCell.BorderColor = value;
-            }
+            set => _defaultCell.BorderColor = value;
         }
 
         /// <summary>
@@ -367,10 +317,7 @@ namespace iTextSharp.text
         /// <value>the new width</value>
         public float DefaultCellBorderWidth
         {
-            set
-            {
-                _defaultCell.BorderWidth = value;
-            }
+            set => _defaultCell.BorderWidth = value;
         }
 
         /// <summary>
@@ -396,10 +343,7 @@ namespace iTextSharp.text
         /// <value>the new colspan value</value>
         public int DefaultColspan
         {
-            set
-            {
-                _defaultCell.Colspan = value;
-            }
+            set => _defaultCell.Colspan = value;
         }
 
         /// <summary>
@@ -409,10 +353,7 @@ namespace iTextSharp.text
         /// <value>the new alignment value</value>
         public int DefaultHorizontalAlignment
         {
-            set
-            {
-                _defaultCell.HorizontalAlignment = value;
-            }
+            set => _defaultCell.HorizontalAlignment = value;
         }
 
         /// <summary>
@@ -422,14 +363,8 @@ namespace iTextSharp.text
         /// <param name="value">a cell with all the defaults</param>
         public Cell DefaultLayout
         {
-            set
-            {
-                _defaultCell = value;
-            }
-            get
-            {
-                return _defaultCell;
-            }
+            set => _defaultCell = value;
+            get => _defaultCell;
         }
 
         /// <summary>
@@ -439,10 +374,7 @@ namespace iTextSharp.text
         /// <value>the new rowspan value</value>
         public int DefaultRowspan
         {
-            set
-            {
-                _defaultCell.Rowspan = value;
-            }
+            set => _defaultCell.Rowspan = value;
         }
 
         /// <summary>
@@ -452,23 +384,14 @@ namespace iTextSharp.text
         /// <value>the new alignment value</value>
         public int DefaultVerticalAlignment
         {
-            set
-            {
-                _defaultCell.VerticalAlignment = value;
-            }
+            set => _defaultCell.VerticalAlignment = value;
         }
 
         /// <summary>
         /// Gets the dimension of this table
         /// </summary>
         /// <value>the dimension</value>
-        public System.Drawing.Dimension Dimension
-        {
-            get
-            {
-                return new System.Drawing.Dimension(_columns, _rows.Count);
-            }
-        }
+        public System.Drawing.Dimension Dimension => new System.Drawing.Dimension(_columns, _rows.Count);
 
         /// <summary>
         /// @since   iText 2.0.8
@@ -476,14 +399,8 @@ namespace iTextSharp.text
         /// </summary>
         public bool ElementComplete
         {
-            get
-            {
-                return complete;
-            }
-            set
-            {
-                complete = value;
-            }
+            get => complete;
+            set => complete = value;
         }
 
         /// <summary>
@@ -492,14 +409,8 @@ namespace iTextSharp.text
         /// <value>the new value</value>
         public int LastHeaderRow
         {
-            set
-            {
-                _lastHeaderRow = value;
-            }
-            get
-            {
-                return _lastHeaderRow;
-            }
+            set => _lastHeaderRow = value;
+            get => _lastHeaderRow;
         }
 
         public override float Left
@@ -509,22 +420,13 @@ namespace iTextSharp.text
                 errorDimensions();
                 return 0;
             }
-            set
-            {
-                errorDimensions();
-            }
+            set => errorDimensions();
         }
 
         public bool Locked
         {
-            get
-            {
-                return _locked;
-            }
-            set
-            {
-                _locked = value;
-            }
+            get => _locked;
+            set => _locked = value;
         }
 
         /// <summary>
@@ -532,26 +434,14 @@ namespace iTextSharp.text
         /// (contributed by dperezcar@fcc.es)
         /// </summary>
         /// <returns>y coordinate for the next row</returns>
-        public int NextColumn
-        {
-            get
-            {
-                return _curPosition.Y;
-            }
-        }
+        public int NextColumn => _curPosition.Y;
 
         /// <summary>
         /// Returns the next row 0-based index where a new cell would be added.
         /// (contributed by dperezcar@fcc.es)
         /// </summary>
         /// <returns>x coordinate for the next row</returns>
-        public int NextRow
-        {
-            get
-            {
-                return _curPosition.X;
-            }
-        }
+        public int NextRow => _curPosition.X;
 
         /// <summary>
         /// Indicates if this is the first time the section is added.
@@ -560,14 +450,8 @@ namespace iTextSharp.text
         /// <returns>true if the section wasn't added yet</returns>
         public bool NotAddedYet
         {
-            get
-            {
-                return notAddedYet;
-            }
-            set
-            {
-                notAddedYet = value;
-            }
+            get => notAddedYet;
+            set => notAddedYet = value;
         }
 
         /// <summary>
@@ -576,15 +460,9 @@ namespace iTextSharp.text
         /// <value>the space between this table and the previous element.</value>
         public float Offset
         {
-            get
-            {
-                return _offset;
-            }
+            get => _offset;
 
-            set
-            {
-                _offset = value;
-            }
+            set => _offset = value;
         }
 
         /// <summary>
@@ -593,23 +471,14 @@ namespace iTextSharp.text
         /// <value>the new value</value>
         public float Padding
         {
-            set
-            {
-                _cellpadding = value;
-            }
+            set => _cellpadding = value;
         }
 
         /// <summary>
         /// Gets the proportional widths of the columns in this Table.
         /// </summary>
         /// <value>the proportional widths of the columns in this Table</value>
-        public float[] ProportionalWidths
-        {
-            get
-            {
-                return _widths;
-            }
-        }
+        public float[] ProportionalWidths => _widths;
 
         public override float Right
         {
@@ -618,10 +487,7 @@ namespace iTextSharp.text
                 errorDimensions();
                 return 0;
             }
-            set
-            {
-                errorDimensions();
-            }
+            set => errorDimensions();
         }
 
         /// <summary>
@@ -631,13 +497,7 @@ namespace iTextSharp.text
         /// Gets the number of rows in this Table.
         /// </summary>
         /// <value>the number of rows in this Table</value>
-        public int Size
-        {
-            get
-            {
-                return _rows.Count;
-            }
-        }
+        public int Size => _rows.Count;
 
         /// <summary>
         /// Sets the cellspacing.
@@ -645,10 +505,7 @@ namespace iTextSharp.text
         /// <value>the new value</value>
         public float Spacing
         {
-            set
-            {
-                _cellspacing = value;
-            }
+            set => _cellspacing = value;
         }
 
         /// <summary>
@@ -664,12 +521,12 @@ namespace iTextSharp.text
             set
             {
                 _tableFitsPage = value;
-                if (value) CellsFitPage = true;
+                if (value)
+                {
+                    CellsFitPage = true;
+                }
             }
-            get
-            {
-                return _tableFitsPage;
-            }
+            get => _tableFitsPage;
         }
 
         public override float Top
@@ -679,23 +536,14 @@ namespace iTextSharp.text
                 errorDimensions();
                 return 0;
             }
-            set
-            {
-                errorDimensions();
-            }
+            set => errorDimensions();
         }
 
         /// <summary>
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public override int Type
-        {
-            get
-            {
-                return TABLE;
-            }
-        }
+        public override int Type => TABLE;
 
         /// <summary>
         /// Get/set the table width (a percentage).
@@ -703,14 +551,8 @@ namespace iTextSharp.text
         /// <value>the table width (a percentage)</value>
         public override float Width
         {
-            get
-            {
-                return _width;
-            }
-            set
-            {
-                _width = value;
-            }
+            get => _width;
+            set => _width = value;
         }
 
         /// <summary>
@@ -742,7 +584,7 @@ namespace iTextSharp.text
 
                 // The sum of all values is 100%
                 float hundredPercent = 0;
-                for (int i = 0; i < _columns; i++)
+                for (var i = 0; i < _columns; i++)
                 {
                     hundredPercent += value[i];
                 }
@@ -750,7 +592,7 @@ namespace iTextSharp.text
                 // The different percentages are calculated
                 float width;
                 _widths[_columns - 1] = 100;
-                for (int i = 0; i < _columns - 1; i++)
+                for (var i = 0; i < _columns - 1; i++)
                 {
                     width = (100.0f * value[i]) / hundredPercent;
                     _widths[i] = width;
@@ -812,22 +654,46 @@ namespace iTextSharp.text
         public void AddCell(Cell aCell, object aLocation)
         {
             System.Drawing.Point p;
-            if (aCell == null) throw new Exception("addCell - cell has null-value");
+            if (aCell == null)
+            {
+                throw new Exception("addCell - cell has null-value");
+            }
+
             if (aLocation == null)
+            {
                 throw new Exception("addCell - point has null-value");
+            }
             else
+            {
                 p = (System.Drawing.Point)aLocation;
+            }
 
             if (aCell.IsTable())
             {
-                IEnumerator i = aCell.Elements.GetEnumerator();
+                var i = aCell.Elements.GetEnumerator();
                 i.MoveNext();
                 InsertTable((Table)i.Current, p);
             }
-            if (p.X < 0) throw new BadElementException("row coordinate of location must be >= 0");
-            if ((p.Y <= 0) && (p.Y > _columns)) throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
-            if (!isValidLocation(aCell, p)) throw new BadElementException("Adding a cell at the location (" + p.X + "," + p.Y + ") with a colspan of " + aCell.Colspan + " and a rowspan of " + aCell.Rowspan + " is illegal (beyond boundaries/overlapping).");
-            if (aCell.Border == UNDEFINED) aCell.Border = _defaultCell.Border;
+            if (p.X < 0)
+            {
+                throw new BadElementException("row coordinate of location must be >= 0");
+            }
+
+            if ((p.Y <= 0) && (p.Y > _columns))
+            {
+                throw new BadElementException("column coordinate of location must be >= 0 and < nr of columns");
+            }
+
+            if (!isValidLocation(aCell, p))
+            {
+                throw new BadElementException("Adding a cell at the location (" + p.X + "," + p.Y + ") with a colspan of " + aCell.Colspan + " and a rowspan of " + aCell.Rowspan + " is illegal (beyond boundaries/overlapping).");
+            }
+
+            if (aCell.Border == UNDEFINED)
+            {
+                aCell.Border = _defaultCell.Border;
+            }
+
             aCell.Fill();
             placeCell(_rows, aCell, p);
             CurrentLocationToNextValidPosition = p;
@@ -869,15 +735,17 @@ namespace iTextSharp.text
         /// <param name="location">a System.Drawing.Point</param>
         public void AddCell(Phrase content, System.Drawing.Point location)
         {
-            Cell cell = new Cell(content);
-            cell.Border = _defaultCell.Border;
-            cell.BorderWidth = _defaultCell.BorderWidth;
-            cell.BorderColor = _defaultCell.BorderColor;
-            cell.BackgroundColor = _defaultCell.BackgroundColor;
-            cell.HorizontalAlignment = _defaultCell.HorizontalAlignment;
-            cell.VerticalAlignment = _defaultCell.VerticalAlignment;
-            cell.Colspan = _defaultCell.Colspan;
-            cell.Rowspan = _defaultCell.Rowspan;
+            var cell = new Cell(content)
+            {
+                Border = _defaultCell.Border,
+                BorderWidth = _defaultCell.BorderWidth,
+                BorderColor = _defaultCell.BorderColor,
+                BackgroundColor = _defaultCell.BackgroundColor,
+                HorizontalAlignment = _defaultCell.HorizontalAlignment,
+                VerticalAlignment = _defaultCell.VerticalAlignment,
+                Colspan = _defaultCell.Colspan,
+                Rowspan = _defaultCell.Rowspan
+            };
             AddCell(cell, location);
         }
 
@@ -914,18 +782,18 @@ namespace iTextSharp.text
         /// <param name="aColumns">the number of columns to add</param>
         public void AddColumns(int aColumns)
         {
-            ArrayList newRows = new ArrayList(_rows.Count);
+            var newRows = new ArrayList(_rows.Count);
 
-            int newColumns = _columns + aColumns;
+            var newColumns = _columns + aColumns;
             Row row;
-            for (int i = 0; i < _rows.Count; i++)
+            for (var i = 0; i < _rows.Count; i++)
             {
                 row = new Row(newColumns);
-                for (int j = 0; j < _columns; j++)
+                for (var j = 0; j < _columns; j++)
                 {
                     row.SetElement(((Row)_rows[i]).GetCell(j), j);
                 }
-                for (int j = _columns; j < newColumns && i < _curPosition.X; j++)
+                for (var j = _columns; j < newColumns && i < _curPosition.X; j++)
                 {
                     row.SetElement(null, j);
                 }
@@ -933,9 +801,9 @@ namespace iTextSharp.text
             }
 
             // applied 1 column-fix; last column needs to have a width of 0
-            float[] newWidths = new float[newColumns];
+            var newWidths = new float[newColumns];
             Array.Copy(_widths, 0, newWidths, 0, _columns);
-            for (int j = _columns; j < newColumns; j++)
+            for (var j = _columns; j < newColumns; j++)
             {
                 newWidths[j] = 0;
             }
@@ -973,11 +841,16 @@ namespace iTextSharp.text
             }
             AutoFillEmptyCells = true;
             Complete();
-            PdfPTable pdfptable = new PdfPTable(_widths);
-            pdfptable.ElementComplete = complete;
+            var pdfptable = new PdfPTable(_widths)
+            {
+                ElementComplete = complete
+            };
             if (NotAddedYet)
+            {
                 pdfptable.SkipFirstHeader = true;
-            SimpleTable tEvt = new SimpleTable();
+            }
+
+            var tEvt = new SimpleTable();
             tEvt.CloneNonPositionParameters(this);
             tEvt.Cellspacing = _cellspacing;
             pdfptable.TableEvent = tEvt;
@@ -1002,7 +875,7 @@ namespace iTextSharp.text
             {
                 IElement cell;
                 PdfPCell pcell;
-                for (int i = 0; i < row.Columns; i++)
+                for (var i = 0; i < row.Columns; i++)
                 {
                     if ((cell = (IElement)row.GetCell(i)) != null)
                     {
@@ -1014,7 +887,7 @@ namespace iTextSharp.text
                         {
                             pcell = ((Cell)cell).CreatePdfPCell();
                             pcell.Padding = _cellpadding + _cellspacing / 2f;
-                            SimpleCell cEvt = new SimpleCell(SimpleCell.CELL);
+                            var cEvt = new SimpleCell(SimpleCell.CELL);
                             cEvt.CloneNonPositionParameters((Cell)cell);
                             cEvt.Spacing = _cellspacing * 2f;
                             pcell.CellEvent = cEvt;
@@ -1045,15 +918,15 @@ namespace iTextSharp.text
         /// <param name="column">the number of the column that has to be deleted</param>
         public void DeleteColumn(int column)
         {
-            float[] newWidths = new float[--_columns];
+            var newWidths = new float[--_columns];
             Array.Copy(_widths, 0, newWidths, 0, column);
             Array.Copy(_widths, column + 1, newWidths, column, _columns - column);
             Widths = newWidths;
             Array.Copy(_widths, 0, newWidths, 0, _columns);
             _widths = newWidths;
             Row row;
-            int size = _rows.Count;
-            for (int i = 0; i < size; i++)
+            var size = _rows.Count;
+            for (var i = 0; i < size; i++)
             {
                 row = (Row)_rows[i];
                 row.DeleteColumn(column);
@@ -1113,8 +986,8 @@ namespace iTextSharp.text
         public void FlushContent()
         {
             NotAddedYet = false;
-            ArrayList headerrows = new ArrayList();
-            for (int i = 0; i < LastHeaderRow + 1; i++)
+            var headerrows = new ArrayList();
+            for (var i = 0; i < LastHeaderRow + 1; i++)
             {
                 headerrows.Add(_rows[i]);
             }
@@ -1182,7 +1055,7 @@ namespace iTextSharp.text
         public float[] GetWidths(float left, float totalWidth)
         {
             // for x columns, there are x+1 borders
-            float[] w = new float[_columns + 1];
+            var w = new float[_columns + 1];
             float wPercentage;
             if (_locked)
             {
@@ -1209,7 +1082,7 @@ namespace iTextSharp.text
             // the total available width is changed
             totalWidth = (totalWidth * wPercentage) / 100;
             // the inner borders are calculated
-            for (int i = 1; i < _columns; i++)
+            for (var i = 1; i < _columns; i++)
             {
                 w[i] = w[i - 1] + (_widths[i - 1] * totalWidth / 100);
             }
@@ -1225,7 +1098,11 @@ namespace iTextSharp.text
         /// <param name="aTable">the table you want to insert</param>
         public void InsertTable(Table aTable)
         {
-            if (aTable == null) throw new Exception("insertTable - table has null-value");
+            if (aTable == null)
+            {
+                throw new Exception("insertTable - table has null-value");
+            }
+
             InsertTable(aTable, _curPosition);
         }
 
@@ -1238,7 +1115,11 @@ namespace iTextSharp.text
         /// <param name="column">The column where the Cell will be added</param>
         public void InsertTable(Table aTable, int row, int column)
         {
-            if (aTable == null) throw new Exception("insertTable - table has null-value");
+            if (aTable == null)
+            {
+                throw new Exception("insertTable - table has null-value");
+            }
+
             InsertTable(aTable, new System.Drawing.Point(row, column));
         }
 
@@ -1250,14 +1131,20 @@ namespace iTextSharp.text
         /// <param name="p">a System.Drawing.Point</param>
         public void InsertTable(Table aTable, System.Drawing.Point p)
         {
-            if (aTable == null) throw new Exception("insertTable - table has null-value");
+            if (aTable == null)
+            {
+                throw new Exception("insertTable - table has null-value");
+            }
 
             _mTableInserted = true;
             aTable.Complete();
             if (p.Y > _columns)
+            {
                 throw new ArgumentException("insertTable -- wrong columnposition(" + p.Y + ") of location; max =" + _columns);
-            int rowCount = p.X + 1 - _rows.Count;
-            int i = 0;
+            }
+
+            var rowCount = p.X + 1 - _rows.Count;
+            var i = 0;
             if (rowCount > 0)
             {   //create new rows ?
                 for (; i < rowCount; i++)
@@ -1354,9 +1241,12 @@ namespace iTextSharp.text
         /// <param name="widths">an array with values</param>
         public void SetWidths(int[] widths)
         {
-            float[] tb = new float[widths.Length];
-            for (int k = 0; k < widths.Length; ++k)
+            var tb = new float[widths.Length];
+            for (var k = 0; k < widths.Length; ++k)
+            {
                 tb[k] = widths[k];
+            }
+
             Widths = tb;
         }
 
@@ -1402,9 +1292,9 @@ namespace iTextSharp.text
         /// </summary>
         private void fillEmptyMatrixCells()
         {
-            for (int i = 0; i < _rows.Count; i++)
+            for (var i = 0; i < _rows.Count; i++)
             {
-                for (int j = 0; j < _columns; j++)
+                for (var j = 0; j < _columns; j++)
                 {
                     if (((Row)_rows[i]).IsReserved(j) == false)
                     {
@@ -1434,12 +1324,12 @@ namespace iTextSharp.text
                     return false;
                 }
 
-                int difx = ((_rows.Count - aLocation.X) > aCell.Rowspan) ? aCell.Rowspan : _rows.Count - aLocation.X;
-                int dify = ((_columns - aLocation.Y) > aCell.Colspan) ? aCell.Colspan : _columns - aLocation.Y;
+                var difx = ((_rows.Count - aLocation.X) > aCell.Rowspan) ? aCell.Rowspan : _rows.Count - aLocation.X;
+                var dify = ((_columns - aLocation.Y) > aCell.Colspan) ? aCell.Colspan : _columns - aLocation.Y;
                 // no other content at cells targetted by rowspan/colspan
-                for (int i = aLocation.X; i < (aLocation.X + difx); i++)
+                for (var i = aLocation.X; i < (aLocation.X + difx); i++)
                 {
-                    for (int j = aLocation.Y; j < (aLocation.Y + dify); j++)
+                    for (var j = aLocation.Y; j < (aLocation.Y + dify); j++)
                     {
                         if (((Row)_rows[i]).IsReserved(j))
                         {
@@ -1466,11 +1356,11 @@ namespace iTextSharp.text
         {
             int i = 0, j = 0;
             float[] lNewWidths = null;
-            int[] lDummyWidths = new int[_columns];     // to keep track in how many new cols this one will be split
-            float[][] lDummyColumnWidths = new float[_columns][]; // bugfix Tony Copping
-            int[] lDummyHeights = new int[_rows.Count]; // to keep track in how many new rows this one will be split
+            var lDummyWidths = new int[_columns];     // to keep track in how many new cols this one will be split
+            var lDummyColumnWidths = new float[_columns][]; // bugfix Tony Copping
+            var lDummyHeights = new int[_rows.Count]; // to keep track in how many new rows this one will be split
             ArrayList newRows = null;
-            bool isTable = false;
+            var isTable = false;
             int lTotalRows = 0, lTotalColumns = 0;
             int lNewMaxRows = 0, lNewMaxColumns = 0;
 
@@ -1496,8 +1386,8 @@ namespace iTextSharp.text
                         }
                         else
                         {
-                            int cols = lDummyTable.Dimension.width;
-                            float[] tmpWidthsN = new float[cols * tmpWidths.Length];
+                            var cols = lDummyTable.Dimension.width;
+                            var tmpWidthsN = new float[cols * tmpWidths.Length];
                             float tpW = 0, btW = 0, totW = 0;
                             int tpI = 0, btI = 0, totI = 0;
                             tpW += tmpWidths[0];
@@ -1571,13 +1461,13 @@ namespace iTextSharp.text
                 // divide width over new nr of columns
                 // Take new max columns of internal table and work out widths for each col
                 lNewWidths = new float[lTotalColumns];
-                int lDummy = 0;
-                for (int tel = 0; tel < _widths.Length; tel++)
+                var lDummy = 0;
+                for (var tel = 0; tel < _widths.Length; tel++)
                 {
                     if (lDummyWidths[tel] != 1)
                     {
                         // divide
-                        for (int tel2 = 0; tel2 < lDummyWidths[tel]; tel2++)
+                        for (var tel2 = 0; tel2 < lDummyWidths[tel]; tel2++)
                         {
                             lNewWidths[lDummy] = _widths[tel] * lDummyColumnWidths[tel][tel2] / 100f; // bugfix Tony Copping
                             lDummy++;
@@ -1612,7 +1502,7 @@ namespace iTextSharp.text
                             lDummyTable = (Table)((Row)_rows[i]).GetCell(j);
 
                             // Work out where columns in table table correspond to columns in current table
-                            int[] colMap = new int[lDummyTable._widths.Length + 1];
+                            var colMap = new int[lDummyTable._widths.Length + 1];
                             int cb = 0, ct = 0;
 
                             for (; cb < lDummyTable._widths.Length; cb++)
@@ -1626,27 +1516,30 @@ namespace iTextSharp.text
                                 while (ct < lDummyWidths[j])
                                 {
                                     wt += lDummyColumnWidths[j][ct++];
-                                    if (Math.Abs(wb - wt) < 0.0001) break;
+                                    if (Math.Abs(wb - wt) < 0.0001)
+                                    {
+                                        break;
+                                    }
                                 }
                             }
                             colMap[cb] = lDummyColumn + ct;
 
                             // need to change this to work out how many cols to span
-                            for (int k = 0; k < lDummyTable.Dimension.height; k++)
+                            for (var k = 0; k < lDummyTable.Dimension.height; k++)
                             {
-                                for (int l = 0; l < lDummyTable.Dimension.width; l++)
+                                for (var l = 0; l < lDummyTable.Dimension.width; l++)
                                 {
                                     lDummyElement = lDummyTable.GetElement(k, l);
                                     if (lDummyElement != null)
                                     {
-                                        int col = lDummyColumn + l;
+                                        var col = lDummyColumn + l;
 
                                         if (lDummyElement is Cell)
                                         {
-                                            Cell lDummyC = (Cell)lDummyElement;
+                                            var lDummyC = (Cell)lDummyElement;
                                             // Find col to add cell in and set col span
                                             col = colMap[l];
-                                            int ot = colMap[l + lDummyC.Colspan];
+                                            var ot = colMap[l + lDummyC.Colspan];
 
                                             lDummyC.Colspan = ot - col;
                                         }
@@ -1658,7 +1551,7 @@ namespace iTextSharp.text
                         }
                         else        // copy others values
                         {
-                            object aElement = GetElement(i, j);
+                            var aElement = GetElement(i, j);
 
                             if (aElement is Cell)
                             {
@@ -1692,7 +1585,7 @@ namespace iTextSharp.text
         {
             int i;
             Row row = null;
-            int rowCount = aPosition.X + aCell.Rowspan - someRows.Count;
+            var rowCount = aPosition.X + aCell.Rowspan - someRows.Count;
             assumeTableDefaults(aCell);
             if ((aPosition.X + aCell.Rowspan) > someRows.Count)
             {        //create new rows ?

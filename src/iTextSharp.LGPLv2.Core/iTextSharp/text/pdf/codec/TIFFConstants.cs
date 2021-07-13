@@ -5,11 +5,11 @@ namespace iTextSharp.text.pdf.codec
     /// </summary>
     public class TiffConstants
     {
-
         /// <summary>
         /// TIFF Tag Definitions (from tifflib).
         /// </summary>
         public const int TIFFTAG_SUBFILETYPE = 254;	/* subfile data descriptor */
+
         public const int FILETYPE_REDUCEDIMAGE = 0x1;	/* reduced resolution version */
         public const int FILETYPE_PAGE = 0x2;	/* one page of many */
         public const int FILETYPE_MASK = 0x4;	/* transparency mask */
@@ -32,24 +32,30 @@ namespace iTextSharp.text.pdf.codec
         public const int COMPRESSION_CCITTRLEW = 32771; /* #1 w/ word alignment */
         public const int COMPRESSION_PACKBITS = 32773; /* Macintosh RLE */
         public const int COMPRESSION_THUNDERSCAN = 32809; /* ThunderScan RLE */
-                                                          /// <summary>
-                                                          /// codes 32895-32898 are reserved for ANSI IT8 TIFF/IT
-                                                          /// </summary>
+
+        /// <summary>
+        /// codes 32895-32898 are reserved for ANSI IT8 TIFF/IT
+        /// </summary>
         public const int COMPRESSION_IT8CTPAD = 32895;   /* IT8 CT w/padding */
+
         public const int COMPRESSION_IT8LW = 32896;   /* IT8 Linework RLE */
         public const int COMPRESSION_IT8MP = 32897;   /* IT8 Monochrome picture */
         public const int COMPRESSION_IT8BL = 32898;   /* IT8 Binary line art */
-                                                      /// <summary>
-                                                      /// compression codes 32908-32911 are reserved for Pixar
-                                                      /// </summary>
+
+        /// <summary>
+        /// compression codes 32908-32911 are reserved for Pixar
+        /// </summary>
         public const int COMPRESSION_PIXARFILM = 32908;   /* Pixar companded 10bit LZW */
+
         public const int COMPRESSION_PIXARLOG = 32909;   /* Pixar companded 11bit ZIP */
         public const int COMPRESSION_DEFLATE = 32946; /* Deflate compression */
         public const int COMPRESSION_ADOBE_DEFLATE = 8;       /* Deflate compression, as recognized by Adobe */
-                                                              /// <summary>
-                                                              /// compression code 32947 is reserved for Oceana Matrix
-                                                              /// </summary>
+
+        /// <summary>
+        /// compression code 32947 is reserved for Oceana Matrix
+        /// </summary>
         public const int COMPRESSION_DCS = 32947;   /* Kodak DCS encoding */
+
         public const int COMPRESSION_JBIG = 34661; /* ISO JBIG */
         public const int COMPRESSION_SGILOG = 34676; /* SGI Log Luminance RLE */
         public const int COMPRESSION_SGILOG24 = 34677;	/* SGI Log 24-bit packed */
@@ -167,11 +173,13 @@ namespace iTextSharp.text.pdf.codec
         public const int TIFFTAG_SMINSAMPLEVALUE = 340;	/* !variable MinSampleValue */
         public const int TIFFTAG_SMAXSAMPLEVALUE = 341;	/* !variable MaxSampleValue */
         public const int TIFFTAG_JPEGTABLES = 347;  /* %JPEG table stream */
-                                                    /// <summary>
-                                                    /// Tags 512-521 are obsoleted by Technical Note #2
-                                                    /// which specifies a revised JPEG-in-TIFF scheme.
-                                                    /// </summary>
+
+        /// <summary>
+        /// Tags 512-521 are obsoleted by Technical Note #2
+        /// which specifies a revised JPEG-in-TIFF scheme.
+        /// </summary>
         public const int TIFFTAG_JPEGPROC = 512;	/* !JPEG processing algorithm */
+
         public const int JPEGPROC_BASELINE = 1;	/* !baseline sequential */
         public const int JPEGPROC_LOSSLESS = 14;	/* !Huffman coded lossless */
         public const int TIFFTAG_JPEGIFOFFSET = 513;	/* !pointer to SOI marker */
@@ -188,57 +196,70 @@ namespace iTextSharp.text.pdf.codec
         public const int YCBCRPOSITION_CENTERED = 1;	/* !as in PostScript Level 2 */
         public const int YCBCRPOSITION_COSITED = 2;	/* !as in CCIR 601-1 */
         public const int TIFFTAG_REFERENCEBLACKWHITE = 532; /* !colorimetry info */
-                                                            /// <summary>
-                                                            /// tags 32952-32956 are private tags registered to Island Graphics
-                                                            /// </summary>
+
+        /// <summary>
+        /// tags 32952-32956 are private tags registered to Island Graphics
+        /// </summary>
         public const int TIFFTAG_REFPTS = 32953;	/* image reference points */
+
         public const int TIFFTAG_REGIONTACKPOINT = 32954;	/* region-xform tack point */
         public const int TIFFTAG_REGIONWARPCORNERS = 32955;	/* warp quadrilateral */
         public const int TIFFTAG_REGIONAFFINE = 32956;  /* affine transformation mat */
-                                                        /// <summary>
-                                                        /// tags 32995-32999 are private tags registered to SGI
-                                                        /// </summary>
+
+        /// <summary>
+        /// tags 32995-32999 are private tags registered to SGI
+        /// </summary>
         public const int TIFFTAG_MATTEING = 32995;	/* $use ExtraSamples */
+
         public const int TIFFTAG_DATATYPE = 32996;	/* $use SampleFormat */
         public const int TIFFTAG_IMAGEDEPTH = 32997;	/* z depth of image */
         public const int TIFFTAG_TILEDEPTH = 32998; /* z depth/data tile */
-                                                    /// <summary>
-                                                    /// tags 33300-33309 are private tags registered to Pixar
-                                                    /// </summary>
-                                                    /// <summary>
-                                                    /// TIFFTAG_PIXAR_IMAGEFULLWIDTH and TIFFTAG_PIXAR_IMAGEFULLLENGTH
-                                                    /// are set when an image has been cropped out of a larger image.
-                                                    /// They reflect the size of the original uncropped image.
-                                                    /// The TIFFTAG_XPOSITION and TIFFTAG_YPOSITION can be used
-                                                    /// to determine the position of the smaller image in the larger one.
-                                                    /// </summary>
+
+        /// <summary>
+        /// tags 33300-33309 are private tags registered to Pixar
+        /// </summary>
+        /// <summary>
+        /// TIFFTAG_PIXAR_IMAGEFULLWIDTH and TIFFTAG_PIXAR_IMAGEFULLLENGTH
+        /// are set when an image has been cropped out of a larger image.
+        /// They reflect the size of the original uncropped image.
+        /// The TIFFTAG_XPOSITION and TIFFTAG_YPOSITION can be used
+        /// to determine the position of the smaller image in the larger one.
+        /// </summary>
         public const int TIFFTAG_PIXAR_IMAGEFULLWIDTH = 33300;   /* full image size in x */
+
         public const int TIFFTAG_PIXAR_IMAGEFULLLENGTH = 33301;   /* full image size in y */
-                                                                  /// <summary>
-                                                                  /// Tags 33302-33306 are used to identify special image modes and data
-                                                                  /// used by Pixar's texture formats.
-                                                                  /// </summary>
+
+        /// <summary>
+        /// Tags 33302-33306 are used to identify special image modes and data
+        /// used by Pixar's texture formats.
+        /// </summary>
         public const int TIFFTAG_PIXAR_TEXTUREFORMAT = 33302;	/* texture map format */
+
         public const int TIFFTAG_PIXAR_WRAPMODES = 33303;	/* s & t wrap modes */
         public const int TIFFTAG_PIXAR_FOVCOT = 33304;	/* cotan(fov) for env. maps */
         public const int TIFFTAG_PIXAR_MATRIX_WORLDTOSCREEN = 33305;
         public const int TIFFTAG_PIXAR_MATRIX_WORLDTOCAMERA = 33306;
+
         /// <summary>
         /// tag 33405 is a private tag registered to Eastman Kodak
         /// </summary>
         public const int TIFFTAG_WRITERSERIALNUMBER = 33405;   /* device serial number */
-                                                               /// <summary>
-                                                               /// tag 33432 is listed in the 6.0 spec w/ unknown ownership
-                                                               /// </summary>
+
+        /// <summary>
+        /// tag 33432 is listed in the 6.0 spec w/ unknown ownership
+        /// </summary>
         public const int TIFFTAG_COPYRIGHT = 33432; /* copyright string */
-                                                    /// <summary>
-                                                    /// IPTC TAG from RichTIFF specifications
-                                                    /// </summary>
+
+        /// <summary>
+        /// IPTC TAG from RichTIFF specifications
+        /// </summary>
         public const int TIFFTAG_RICHTIFFIPTC = 33723;
+
         /// <summary>
         /// 34016-34029 are reserved for ANSI IT8 TIFF/IT
         /// </summary>
         public const int TIFFTAG_IT8SITE = 34016;	/* site name */
+
         public const int TIFFTAG_IT8COLORSEQUENCE = 34017;	/* color seq. [RGB,CMYK,etc] */
         public const int TIFFTAG_IT8HEADER = 34018;	/* DDES Header */
         public const int TIFFTAG_IT8RASTERPADDING = 34019;	/* raster scanline padding */
@@ -252,40 +273,48 @@ namespace iTextSharp.text.pdf.codec
         public const int TIFFTAG_IT8PIXELINTENSITYRANGE = 34027;	/* MP pixel intensity value */
         public const int TIFFTAG_IT8TRANSPARENCYINDICATOR = 34028;	/* HC transparency switch */
         public const int TIFFTAG_IT8COLORCHARACTERIZATION = 34029;  /* color character. table */
-                                                                    /// <summary>
-                                                                    /// tags 34232-34236 are private tags registered to Texas Instruments
-                                                                    /// </summary>
+
+        /// <summary>
+        /// tags 34232-34236 are private tags registered to Texas Instruments
+        /// </summary>
         public const int TIFFTAG_FRAMECOUNT = 34232;   /* Sequence Frame Count */
-                                                       /// <summary>
-                                                       /// tag 34750 is a private tag registered to Adobe?
-                                                       /// </summary>
+
+        /// <summary>
+        /// tag 34750 is a private tag registered to Adobe?
+        /// </summary>
         public const int TIFFTAG_ICCPROFILE = 34675;    /* ICC profile data */
-                                                        /// <summary>
-                                                        /// tag 34377 is private tag registered to Adobe for PhotoShop
-                                                        /// </summary>
+
+        /// <summary>
+        /// tag 34377 is private tag registered to Adobe for PhotoShop
+        /// </summary>
         public const int TIFFTAG_PHOTOSHOP = 34377;
+
         /// <summary>
         /// tag 34750 is a private tag registered to Pixel Magic
         /// </summary>
         public const int TIFFTAG_JBIGOPTIONS = 34750;   /* JBIG options */
-                                                        /// <summary>
-                                                        /// tags 34908-34914 are private tags registered to SGI
-                                                        /// </summary>
+
+        /// <summary>
+        /// tags 34908-34914 are private tags registered to SGI
+        /// </summary>
         public const int TIFFTAG_FAXRECVPARAMS = 34908;	/* encoded Class 2 ses. parms */
+
         public const int TIFFTAG_FAXSUBADDRESS = 34909;	/* received SubAddr string */
         public const int TIFFTAG_FAXRECVTIME = 34910;   /* receive time (secs) */
-                                                        /// <summary>
-                                                        /// tags 37439-37443 are registered to SGI
-                                                        /// </summary>
-        public const int TIFFTAG_STONITS = 37439;   /* Sample value to Nits */
-                                                    /// <summary>
-                                                    /// tag 34929 is a private tag registered to FedEx
-                                                    /// </summary>
-        public const int TIFFTAG_FEDEX_EDR = 34929; /* unknown use */
-                                                    /// <summary>
-                                                    /// tag 65535 is an undefined tag used by Eastman Kodak
-                                                    /// </summary>
-        public const int TIFFTAG_DCSHUESHIFTVALUES = 65535;   /* hue shift correction data */
 
+        /// <summary>
+        /// tags 37439-37443 are registered to SGI
+        /// </summary>
+        public const int TIFFTAG_STONITS = 37439;   /* Sample value to Nits */
+
+        /// <summary>
+        /// tag 34929 is a private tag registered to FedEx
+        /// </summary>
+        public const int TIFFTAG_FEDEX_EDR = 34929; /* unknown use */
+
+        /// <summary>
+        /// tag 65535 is an undefined tag used by Eastman Kodak
+        /// </summary>
+        public const int TIFFTAG_DCSHUESHIFTVALUES = 65535;   /* hue shift correction data */
     }
 }

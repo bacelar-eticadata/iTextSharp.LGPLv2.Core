@@ -1,7 +1,7 @@
+using iTextSharp.text;
 using System;
 using System.IO;
 using System.Net;
-using iTextSharp.text;
 
 namespace iTextSharp.LGPLv2.Core.System.NetUtils
 {

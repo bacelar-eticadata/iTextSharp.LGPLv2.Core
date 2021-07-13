@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfNull  is the Null object represented by the keyword <VAR>null</VAR>.
     ///
@@ -10,7 +9,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfNull : PdfObject
     {
-
         /// <summary>
         /// static membervariables
         /// </summary>
@@ -30,7 +28,9 @@ namespace iTextSharp.text.pdf
         /// You never need to do this yourself, you can always use the static object <VAR>PDFNULL</VAR>.
         /// </summary>
 
-        public PdfNull() : base(NULL, "null") { }
+        public PdfNull() : base(NULL, "null")
+        {
+        }
 
         /// <summary>
         ///

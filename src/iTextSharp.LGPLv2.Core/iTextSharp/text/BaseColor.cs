@@ -21,9 +21,8 @@ namespace iTextSharp.text
         public static readonly BaseColor Red = new BaseColor(255, 0, 0);
         public static readonly BaseColor White = new BaseColor(255, 255, 255);
         public static readonly BaseColor Yellow = new BaseColor(255, 255, 0);
-
-        const double Factor = 0.7;
-        readonly System.Drawing.Color _color;
+        private const double Factor = 0.7;
+        private readonly System.Drawing.Color _color;
 
         /// <summary>
         /// Constructor for Color object.
@@ -112,14 +111,25 @@ namespace iTextSharp.text
             int g = _color.G;
             int b = _color.B;
 
-            int i = (int)(1.0 / (1.0 - Factor));
+            var i = (int)(1.0 / (1.0 - Factor));
             if (r == 0 && g == 0 && b == 0)
             {
                 return new BaseColor(i, i, i);
             }
-            if (r > 0 && r < i) r = i;
-            if (g > 0 && g < i) g = i;
-            if (b > 0 && b < i) b = i;
+            if (r > 0 && r < i)
+            {
+                r = i;
+            }
+
+            if (g > 0 && g < i)
+            {
+                g = i;
+            }
+
+            if (b > 0 && b < i)
+            {
+                b = i;
+            }
 
             return new BaseColor(Math.Min((int)(r / Factor), 255),
                     Math.Min((int)(g / Factor), 255),
@@ -136,7 +146,10 @@ namespace iTextSharp.text
         public override bool Equals(object obj)
         {
             if (!(obj is BaseColor))
+            {
                 return false;
+            }
+
             return _color.Equals(((BaseColor)obj)._color);
         }
 

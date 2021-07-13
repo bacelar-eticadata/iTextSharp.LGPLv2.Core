@@ -2,14 +2,12 @@ using System;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Represents an imported page.
     /// @author Paulo Soares (psoares@consiste.pt)
     /// </summary>
     public class PdfImportedPage : PdfTemplate
     {
-
         internal int pageNumber;
         internal PdfReaderInstance ReaderInstance;
 
@@ -40,45 +38,18 @@ namespace iTextSharp.text.pdf
         /// Reads the content from this  PdfImportedPage -object from a reader.
         /// </summary>
         /// <returns>self</returns>
-        public PdfImportedPage FromReader
-        {
-            get
-            {
-                return this;
-            }
-        }
+        public PdfImportedPage FromReader => this;
 
         public override PdfTransparencyGroup Group
         {
-            set
-            {
-                ThrowError();
-            }
+            set => ThrowError();
         }
 
-        public int PageNumber
-        {
-            get
-            {
-                return pageNumber;
-            }
-        }
+        public int PageNumber => pageNumber;
 
-        internal PdfReaderInstance PdfReaderInstance
-        {
-            get
-            {
-                return ReaderInstance;
-            }
-        }
+        internal PdfReaderInstance PdfReaderInstance => ReaderInstance;
 
-        internal override PdfObject Resources
-        {
-            get
-            {
-                return ReaderInstance.GetResources(pageNumber);
-            }
-        }
+        internal override PdfObject Resources => ReaderInstance.GetResources(pageNumber);
 
         /// <summary>
         /// Always throws an error. This operation is not allowed.

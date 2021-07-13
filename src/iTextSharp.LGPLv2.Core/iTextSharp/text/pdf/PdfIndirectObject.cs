@@ -59,6 +59,7 @@ namespace iTextSharp.text.pdf
         internal PdfIndirectObject(PdfIndirectReference refi, PdfObject objecti, PdfWriter writer) : this(refi.Number, refi.Generation, objecti, writer)
         {
         }
+
         /// <summary>
         /// Constructs a  PdfIndirectObject .
         /// </summary>
@@ -70,7 +71,10 @@ namespace iTextSharp.text.pdf
             Objecti = objecti;
             PdfEncryption crypto = null;
             if (writer != null)
+            {
                 crypto = writer.Encryption;
+            }
+
             if (crypto != null)
             {
                 crypto.SetHashKey(number, generation);
@@ -86,13 +90,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a  PdfIndirectReference </returns>
 
-        public PdfIndirectReference IndirectReference
-        {
-            get
-            {
-                return new PdfIndirectReference(Objecti.Type, Number, Generation);
-            }
-        }
+        public PdfIndirectReference IndirectReference => new PdfIndirectReference(Objecti.Type, Number, Generation);
 
         /// <summary>
         /// Writes eficiently to a stream
@@ -101,7 +99,7 @@ namespace iTextSharp.text.pdf
         /// <param name="os">the stream to write to</param>
         internal void WriteTo(Stream os)
         {
-            byte[] tmp = DocWriter.GetIsoBytes(Number.ToString());
+            var tmp = DocWriter.GetIsoBytes(Number.ToString());
             os.Write(tmp, 0, tmp.Length);
             os.WriteByte((byte)' ');
             tmp = DocWriter.GetIsoBytes(Generation.ToString());

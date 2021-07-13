@@ -1,5 +1,5 @@
-using System;
 using iTextSharp.text.pdf.codec;
+using System;
 using System.Collections;
 using System.Text;
 
@@ -106,6 +106,7 @@ namespace iTextSharp.text.pdf
 
         private const string MixedSet = "0123456789&\r\t,:#-.$/+%*=^";
         private const string PunctuationSet = ";<>@[\\]_`~!\r\t,:\n-.$/\"|*()?{}'";
+
         private static readonly int[][] _clusters = {new[]{
             0x1d5c0, 0x1eaf0, 0x1f57c, 0x1d4e0, 0x1ea78, 0x1f53e, 0x1a8c0, 0x1d470,
             0x1a860, 0x15040, 0x1a830, 0x15020, 0x1adc0, 0x1d6f0, 0x1eb7c, 0x1ace0,
@@ -573,6 +574,7 @@ namespace iTextSharp.text.pdf
         private int _macroIndex;
         private int _macroSegmentCount;
         private int _macroSegmentId = -1;
+
         /// <summary>
         /// Holds value of property options.
         /// </summary>
@@ -607,27 +609,15 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float AspectRatio
         {
-            set
-            {
-                _aspectRatio = value;
-            }
-            get
-            {
-                return _aspectRatio;
-            }
+            set => _aspectRatio = value;
+            get => _aspectRatio;
         }
 
         /// <summary>
         /// Gets the number of X pixels of  outBits .
         /// </summary>
         /// <returns>the number of X pixels of  outBits </returns>
-        public int BitColumns
-        {
-            get
-            {
-                return _bitColumns;
-            }
-        }
+        public int BitColumns => _bitColumns;
 
         /// <summary>
         /// Sets the number of barcode data columns.
@@ -635,14 +625,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int CodeColumns
         {
-            set
-            {
-                _codeColumns = value;
-            }
-            get
-            {
-                return _codeColumns;
-            }
+            set => _codeColumns = value;
+            get => _codeColumns;
         }
 
         /// <summary>
@@ -656,14 +640,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int CodeRows
         {
-            set
-            {
-                _codeRows = value;
-            }
-            get
-            {
-                return _codeRows;
-            }
+            set => _codeRows = value;
+            get => _codeRows;
         }
 
         /// <summary>
@@ -672,13 +650,7 @@ namespace iTextSharp.text.pdf
         /// is set.
         /// </summary>
         /// <returns>the codeword array</returns>
-        public int[] Codewords
-        {
-            get
-            {
-                return _codewords;
-            }
-        }
+        public int[] Codewords => _codewords;
 
         /// <summary>
         /// Gets the error level correction used for the barcode. It may different
@@ -695,14 +667,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int LenCodewords
         {
-            set
-            {
-                _lenCodewords = value;
-            }
-            get
-            {
-                return _lenCodewords;
-            }
+            set => _lenCodewords = value;
+            get => _lenCodewords;
         }
 
         /// <summary>
@@ -710,10 +676,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string MacroFileId
         {
-            set
-            {
-                _macroFileId = value;
-            }
+            set => _macroFileId = value;
         }
 
         /// <summary>
@@ -722,10 +685,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int MacroSegmentCount
         {
-            set
-            {
-                _macroSegmentCount = value;
-            }
+            set => _macroSegmentCount = value;
         }
 
         /// <summary>
@@ -734,10 +694,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int MacroSegmentId
         {
-            set
-            {
-                _macroSegmentId = value;
-            }
+            set => _macroSegmentId = value;
         }
 
         /// <summary>
@@ -746,14 +703,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int Options
         {
-            set
-            {
-                _options = value;
-            }
-            get
-            {
-                return _options;
-            }
+            set => _options = value;
+            get => _options;
         }
 
         /// <summary>
@@ -761,13 +712,7 @@ namespace iTextSharp.text.pdf
         /// be scaled in the Y direction by  yHeight .
         /// </summary>
         /// <returns>The raw barcode image</returns>
-        public byte[] OutBits
-        {
-            get
-            {
-                return _outBits;
-            }
-        }
+        public byte[] OutBits => _outBits;
 
         /// <summary>
         /// Sets the bytes that form the barcode. This bytes should
@@ -775,14 +720,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public byte[] Text
         {
-            set
-            {
-                _text = value;
-            }
-            get
-            {
-                return _text;
-            }
+            set => _text = value;
+            get => _text;
         }
 
         /// <summary>
@@ -790,31 +729,25 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float YHeight
         {
-            set
-            {
-                _yHeight = value;
-            }
-            get
-            {
-                return _yHeight;
-            }
+            set => _yHeight = value;
+            get => _yHeight;
         }
 
         public virtual System.Drawing.Image CreateDrawingImage(System.Drawing.Color foreground, System.Drawing.Color background)
         {
             PaintCode();
-            int h = (int)_yHeight;
-            int stride = (_bitColumns + 7) / 8;
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(_bitColumns, _codeRows * h);
-            int y = 0;
-            for (int k = 0; k < _codeRows; ++k)
+            var h = (int)_yHeight;
+            var stride = (_bitColumns + 7) / 8;
+            var bmp = new System.Drawing.Bitmap(_bitColumns, _codeRows * h);
+            var y = 0;
+            for (var k = 0; k < _codeRows; ++k)
             {
-                for (int hh = 0; hh < h; ++hh)
+                for (var hh = 0; hh < h; ++hh)
                 {
-                    int p = k * stride;
-                    for (int j = 0; j < _bitColumns; ++j)
+                    var p = k * stride;
+                    for (var j = 0; j < _bitColumns; ++j)
                     {
-                        int b = _outBits[p + (j / 8)] & 0xff;
+                        var b = _outBits[p + (j / 8)] & 0xff;
                         b <<= j % 8;
                         bmp.SetPixel(j, y, (b & 0x80) == 0 ? background : foreground);
                     }
@@ -834,7 +767,7 @@ namespace iTextSharp.text.pdf
         public Image GetImage()
         {
             PaintCode();
-            byte[] g4 = Ccittg4Encoder.Compress(_outBits, _bitColumns, _codeRows);
+            var g4 = Ccittg4Encoder.Compress(_outBits, _bitColumns, _codeRows);
             return Image.GetInstance(_bitColumns, _codeRows, false, Element.CCITTG4, (_options & PDF417_INVERT_BITMAP) == 0 ? 0 : Element.CCITT_BLACKIS1, g4, null);
         }
 
@@ -854,7 +787,10 @@ namespace iTextSharp.text.pdf
             else
             {
                 if (_text == null)
+                {
                     throw new ArgumentNullException("Text cannot be null.");
+                }
+
                 if (_text.Length > ABSOLUTE_MAX_TEXT_SIZE)
                 {
                     throw new ArgumentOutOfRangeException("The text is too big.");
@@ -870,29 +806,52 @@ namespace iTextSharp.text.pdf
             if ((_options & PDF417_USE_ERROR_LEVEL) == 0)
             {
                 if (_lenCodewords < 41)
+                {
                     ErrorLevel = 2;
+                }
                 else if (_lenCodewords < 161)
+                {
                     ErrorLevel = 3;
+                }
                 else if (_lenCodewords < 321)
+                {
                     ErrorLevel = 4;
+                }
                 else
+                {
                     ErrorLevel = 5;
+                }
             }
             if (ErrorLevel < 0)
+            {
                 ErrorLevel = 0;
+            }
             else if (ErrorLevel > maxErr)
+            {
                 ErrorLevel = maxErr;
+            }
+
             if (_codeColumns < 1)
+            {
                 _codeColumns = 1;
+            }
             else if (_codeColumns > 30)
+            {
                 _codeColumns = 30;
+            }
+
             if (_codeRows < 3)
+            {
                 _codeRows = 3;
+            }
             else if (_codeRows > 90)
+            {
                 _codeRows = 90;
+            }
+
             lenErr = 2 << ErrorLevel;
-            bool fixedColumn = (_options & PDF417_FIXED_ROWS) == 0;
-            bool skipRowColAdjust = false;
+            var fixedColumn = (_options & PDF417_FIXED_ROWS) == 0;
+            var skipRowColAdjust = false;
             tot = _lenCodewords + lenErr;
             if ((_options & PDF417_FIXED_RECTANGLE) != 0)
             {
@@ -902,25 +861,38 @@ namespace iTextSharp.text.pdf
                     tot = GetMaxSquare();
                 }
                 if (tot < _lenCodewords + lenErr)
+                {
                     tot = _lenCodewords + lenErr;
+                }
                 else
+                {
                     skipRowColAdjust = true;
+                }
             }
             else if ((_options & (PDF417_FIXED_COLUMNS | PDF417_FIXED_ROWS)) == 0)
             {
                 double c, b;
                 fixedColumn = true;
                 if (_aspectRatio < 0.001)
+                {
                     _aspectRatio = 0.001f;
+                }
                 else if (_aspectRatio > 1000)
+                {
                     _aspectRatio = 1000;
+                }
+
                 b = 73 * _aspectRatio - 4;
                 c = (-b + Math.Sqrt(b * b + 4 * 17 * _aspectRatio * (_lenCodewords + lenErr) * _yHeight)) / (2 * 17 * _aspectRatio);
                 _codeColumns = (int)(c + 0.5);
                 if (_codeColumns < 1)
+                {
                     _codeColumns = 1;
+                }
                 else if (_codeColumns > 30)
+                {
                     _codeColumns = 30;
+                }
             }
             if (!skipRowColAdjust)
             {
@@ -928,7 +900,9 @@ namespace iTextSharp.text.pdf
                 {
                     _codeRows = (tot - 1) / _codeColumns + 1;
                     if (_codeRows < 3)
+                    {
                         _codeRows = 3;
+                    }
                     else if (_codeRows > 90)
                     {
                         _codeRows = 90;
@@ -959,13 +933,17 @@ namespace iTextSharp.text.pdf
                 Array.Copy(_codewords, _macroIndex, _codewords, _macroIndex + pad, pad);
                 CwPtr = _lenCodewords + pad;
                 while (pad-- != 0)
+                {
                     _codewords[_macroIndex++] = TEXT_MODE;
+                }
             }
             else
             {
                 CwPtr = _lenCodewords;
                 while (pad-- != 0)
+                {
                     _codewords[CwPtr++] = TEXT_MODE;
+                }
             }
             _codewords[0] = _lenCodewords = CwPtr;
             CalculateErrorCorrection(_lenCodewords);
@@ -999,11 +977,11 @@ namespace iTextSharp.text.pdf
 
         internal void BreakString()
         {
-            int textLength = _text.Length;
-            int lastP = 0;
-            int startN = 0;
-            int nd = 0;
-            char c = (char)0;
+            var textLength = _text.Length;
+            var lastP = 0;
+            var startN = 0;
+            var nd = 0;
+            var c = (char)0;
             int k, j;
             bool lastTxt, txt;
             Segment v;
@@ -1021,7 +999,10 @@ namespace iTextSharp.text.pdf
                 if (c >= '0' && c <= '9')
                 {
                     if (nd == 0)
+                    {
                         startN = k;
+                    }
+
                     ++nd;
                     continue;
                 }
@@ -1050,7 +1031,10 @@ namespace iTextSharp.text.pdf
                 nd = 0;
             }
             if (nd < 13)
+            {
                 startN = textLength;
+            }
+
             if (lastP != startN)
             {
                 c = (char)(_text[lastP] & 0xff);
@@ -1069,7 +1053,9 @@ namespace iTextSharp.text.pdf
                 SegmentArrayList.Add(lastTxt ? 'T' : 'B', lastP, startN);
             }
             if (nd >= 13)
+            {
                 SegmentArrayList.Add('N', startN, textLength);
+            }
             //optimize
             //merge short binary
             for (k = 0; k < SegmentArrayList.Size; ++k)
@@ -1098,7 +1084,7 @@ namespace iTextSharp.text.pdf
                 vn = SegmentArrayList.Get(k + 1);
                 if (CheckSegmentType(v, 'T') && GetSegmentLength(v) >= 5)
                 {
-                    bool redo = false;
+                    var redo = false;
                     if ((CheckSegmentType(vp, 'B') && GetSegmentLength(vp) == 1) || CheckSegmentType(vp, 'T'))
                     {
                         redo = true;
@@ -1127,7 +1113,7 @@ namespace iTextSharp.text.pdf
                 vn = SegmentArrayList.Get(k + 1);
                 if (CheckSegmentType(v, 'B'))
                 {
-                    bool redo = false;
+                    var redo = false;
                     if ((CheckSegmentType(vp, 'T') && GetSegmentLength(vp) < 5) || CheckSegmentType(vp, 'B'))
                     {
                         redo = true;
@@ -1155,17 +1141,21 @@ namespace iTextSharp.text.pdf
                 {
                     c = (char)(_text[k] & 0xff);
                     if (c < '0' || c > '9')
+                    {
                         break;
+                    }
                 }
                 if (k == v.End)
+                {
                     v.Type = 'N';
+                }
             }
         }
 
         internal void ByteCompaction(int start, int length)
         {
             int k, j;
-            int size = (length / 6) * 5 + (length % 6);
+            var size = (length / 6) * 5 + (length % 6);
             if (size + CwPtr > MAX_DATA_CODEWORDS)
             {
                 throw new ArgumentOutOfRangeException("The text is too big.");
@@ -1177,7 +1167,9 @@ namespace iTextSharp.text.pdf
                 if (size < 6)
                 {
                     for (j = 0; j < size; ++j)
+                    {
                         _codewords[CwPtr++] = _text[k + j] & 0xff;
+                    }
                 }
                 else
                 {
@@ -1188,12 +1180,15 @@ namespace iTextSharp.text.pdf
 
         protected static int MaxPossibleErrorLevel(int remain)
         {
-            int level = 8;
-            int size = 512;
+            var level = 8;
+            var size = 512;
             while (level > 0)
             {
                 if (remain >= size)
+                {
                     return level;
+                }
+
                 --level;
                 size >>= 1;
             }
@@ -1204,22 +1199,30 @@ namespace iTextSharp.text.pdf
         {
             int k;
             if (SegmentArrayList.Size == 0)
+            {
                 return;
+            }
+
             CwPtr = 1;
             for (k = 0; k < SegmentArrayList.Size; ++k)
             {
-                Segment v = SegmentArrayList.Get(k);
+                var v = SegmentArrayList.Get(k);
                 switch (v.Type)
                 {
                     case 'T':
                         if (k != 0)
+                        {
                             _codewords[CwPtr++] = TEXT_MODE;
+                        }
+
                         TextCompaction(v.Start, GetSegmentLength(v));
                         break;
+
                     case 'N':
                         _codewords[CwPtr++] = NUMERIC_MODE;
                         NumberCompaction(v.Start, GetSegmentLength(v));
                         break;
+
                     case 'B':
                         _codewords[CwPtr++] = (GetSegmentLength(v) % 6) != 0 ? BYTE_MODE : BYTE_MODE_6;
                         ByteCompaction(v.Start, GetSegmentLength(v));
@@ -1230,7 +1233,6 @@ namespace iTextSharp.text.pdf
             {
                 macroCodes();
             }
-
         }
 
         protected void BasicNumberCompaction(int start, int length)
@@ -1240,19 +1242,24 @@ namespace iTextSharp.text.pdf
 
         protected void ByteCompaction6(int start)
         {
-            int length = 6;
-            int ret = CwPtr;
-            int retLast = 4;
+            var length = 6;
+            var ret = CwPtr;
+            var retLast = 4;
             int ni, k;
             CwPtr += retLast + 1;
             for (k = 0; k <= retLast; ++k)
+            {
                 _codewords[ret + k] = 0;
+            }
+
             length += start;
             for (ni = start; ni < length; ++ni)
             {
                 // multiply by 256
                 for (k = retLast; k >= 0; --k)
+                {
                     _codewords[ret + k] *= 256;
+                }
                 // add the digit
                 _codewords[ret + retLast] += _text[ni] & 0xff;
                 // propagate carry
@@ -1267,47 +1274,63 @@ namespace iTextSharp.text.pdf
         protected void CalculateErrorCorrection(int dest)
         {
             if (ErrorLevel < 0 || ErrorLevel > 8)
-                ErrorLevel = 0;
-            int[] a = _errorLevel[ErrorLevel];
-            int alength = 2 << ErrorLevel;
-            for (int k = 0; k < alength; ++k)
-                _codewords[dest + k] = 0;
-            int lastE = alength - 1;
-            for (int k = 0; k < _lenCodewords; ++k)
             {
-                int t1 = _codewords[k] + _codewords[dest];
-                for (int e = 0; e <= lastE; ++e)
+                ErrorLevel = 0;
+            }
+
+            var a = _errorLevel[ErrorLevel];
+            var alength = 2 << ErrorLevel;
+            for (var k = 0; k < alength; ++k)
+            {
+                _codewords[dest + k] = 0;
+            }
+
+            var lastE = alength - 1;
+            for (var k = 0; k < _lenCodewords; ++k)
+            {
+                var t1 = _codewords[k] + _codewords[dest];
+                for (var e = 0; e <= lastE; ++e)
                 {
-                    int t2 = (t1 * a[lastE - e]) % MOD;
-                    int t3 = MOD - t2;
+                    var t2 = (t1 * a[lastE - e]) % MOD;
+                    var t3 = MOD - t2;
                     _codewords[dest + e] = ((e == lastE ? 0 : _codewords[dest + e + 1]) + t3) % MOD;
                 }
             }
-            for (int k = 0; k < alength; ++k)
+            for (var k = 0; k < alength; ++k)
+            {
                 _codewords[dest + k] = (MOD - _codewords[dest + k]) % MOD;
+            }
         }
 
         protected bool CheckSegmentType(Segment segment, char type)
         {
             if (segment == null)
+            {
                 return false;
+            }
+
             return segment.Type == type;
         }
 
         protected void DumpList()
         {
             if (SegmentArrayList.Size == 0)
-                return;
-            for (int k = 0; k < SegmentArrayList.Size; ++k)
             {
-                Segment v = SegmentArrayList.Get(k);
-                int len = GetSegmentLength(v);
-                char[] c = new char[len];
-                for (int j = 0; j < len; ++j)
+                return;
+            }
+
+            for (var k = 0; k < SegmentArrayList.Size; ++k)
+            {
+                var v = SegmentArrayList.Get(k);
+                var len = GetSegmentLength(v);
+                var c = new char[len];
+                for (var j = 0; j < len; ++j)
                 {
                     c[j] = (char)(_text[v.Start + j] & 0xff);
                     if (c[j] == '\r')
+                    {
                         c[j] = '\n';
+                    }
                 }
                 Console.WriteLine("" + v.Type + new string(c));
             }
@@ -1331,9 +1354,13 @@ namespace iTextSharp.text.pdf
         protected int GetSegmentLength(Segment segment)
         {
             if (segment == null)
+            {
                 return 0;
+            }
+
             return segment.End - segment.Start;
         }
+
         protected int GetTextTypeAndValue(int maxLength, int idx)
         {
             return getTextTypeAndValue(_text, maxLength, idx);
@@ -1351,8 +1378,8 @@ namespace iTextSharp.text.pdf
 
         protected void OutCodeword17(int codeword)
         {
-            int bytePtr = BitPtr / 8;
-            int bit = BitPtr - bytePtr * 8;
+            var bytePtr = BitPtr / 8;
+            var bit = BitPtr - bytePtr * 8;
             _outBits[bytePtr++] |= (byte)(codeword >> (9 + bit));
             _outBits[bytePtr++] |= (byte)(codeword >> (1 + bit));
             codeword <<= 8;
@@ -1362,44 +1389,50 @@ namespace iTextSharp.text.pdf
 
         protected void OutCodeword18(int codeword)
         {
-            int bytePtr = BitPtr / 8;
-            int bit = BitPtr - bytePtr * 8;
+            var bytePtr = BitPtr / 8;
+            var bit = BitPtr - bytePtr * 8;
             _outBits[bytePtr++] |= (byte)(codeword >> (10 + bit));
             _outBits[bytePtr++] |= (byte)(codeword >> (2 + bit));
             codeword <<= 8;
             _outBits[bytePtr] |= (byte)(codeword >> (2 + bit));
             if (bit == 7)
+            {
                 _outBits[++bytePtr] |= 0x80;
+            }
+
             BitPtr += 18;
         }
+
         protected void OutPaintCode()
         {
-            int codePtr = 0;
+            var codePtr = 0;
             _bitColumns = START_CODE_SIZE * (_codeColumns + 3) + STOP_SIZE;
-            int lenBits = ((_bitColumns - 1) / 8 + 1) * _codeRows;
+            var lenBits = ((_bitColumns - 1) / 8 + 1) * _codeRows;
             _outBits = new byte[lenBits];
-            for (int row = 0; row < _codeRows; ++row)
+            for (var row = 0; row < _codeRows; ++row)
             {
                 BitPtr = ((_bitColumns - 1) / 8 + 1) * 8 * row;
-                int rowMod = row % 3;
-                int[] cluster = _clusters[rowMod];
+                var rowMod = row % 3;
+                var cluster = _clusters[rowMod];
                 OutStartPattern();
-                int edge = 0;
+                var edge = 0;
                 switch (rowMod)
                 {
                     case 0:
                         edge = 30 * (row / 3) + ((_codeRows - 1) / 3);
                         break;
+
                     case 1:
                         edge = 30 * (row / 3) + ErrorLevel * 3 + ((_codeRows - 1) % 3);
                         break;
+
                     default:
                         edge = 30 * (row / 3) + _codeColumns - 1;
                         break;
                 }
                 OutCodeword(cluster[edge]);
 
-                for (int column = 0; column < _codeColumns; ++column)
+                for (var column = 0; column < _codeColumns; ++column)
                 {
                     OutCodeword(cluster[_codewords[codePtr++]]);
                 }
@@ -1409,9 +1442,11 @@ namespace iTextSharp.text.pdf
                     case 0:
                         edge = 30 * (row / 3) + _codeColumns - 1;
                         break;
+
                     case 1:
                         edge = 30 * (row / 3) + ((_codeRows - 1) / 3);
                         break;
+
                     default:
                         edge = 30 * (row / 3) + ErrorLevel * 3 + ((_codeRows - 1) % 3);
                         break;
@@ -1421,8 +1456,10 @@ namespace iTextSharp.text.pdf
             }
             if ((_options & PDF417_INVERT_BITMAP) != 0)
             {
-                for (int k = 0; k < _outBits.Length; ++k)
+                for (var k = 0; k < _outBits.Length; ++k)
+                {
                     _outBits[k] ^= 0xff;
+                }
             }
         }
 
@@ -1435,6 +1472,7 @@ namespace iTextSharp.text.pdf
         {
             OutCodeword18(STOP_PATTERN);
         }
+
         protected void TextCompaction(int start, int length)
         {
             textCompaction(_text, start, length);
@@ -1443,58 +1481,85 @@ namespace iTextSharp.text.pdf
         private static int getTextTypeAndValue(byte[] input, int maxLength, int idx)
         {
             if (idx >= maxLength)
+            {
                 return 0;
-            char c = (char)(input[idx] & 0xff);
+            }
+
+            var c = (char)(input[idx] & 0xff);
             if (c >= 'A' && c <= 'Z')
+            {
                 return (ALPHA + c - 'A');
+            }
+
             if (c >= 'a' && c <= 'z')
+            {
                 return (LOWER + c - 'a');
+            }
+
             if (c == ' ')
+            {
                 return (ALPHA + LOWER + MIXED + SPACE);
-            int ms = MixedSet.IndexOf(c.ToString(), StringComparison.Ordinal);
-            int ps = PunctuationSet.IndexOf(c.ToString(), StringComparison.Ordinal);
+            }
+
+            var ms = MixedSet.IndexOf(c.ToString(), StringComparison.Ordinal);
+            var ps = PunctuationSet.IndexOf(c.ToString(), StringComparison.Ordinal);
             if (ms < 0 && ps < 0)
+            {
                 return (ISBYTE + c);
+            }
+
             if (ms == ps)
+            {
                 return (MIXED + PUNCTUATION + ms);
+            }
+
             if (ms >= 0)
+            {
                 return (MIXED + ms);
+            }
+
             return (PUNCTUATION + ps);
         }
+
         private void append(int inp, int len)
         {
-            StringBuilder sb = new StringBuilder(len + 1);
+            var sb = new StringBuilder(len + 1);
             sb.Append(inp);
-            for (int i = sb.Length; i < len; i++)
+            for (var i = sb.Length; i < len; i++)
             {
                 sb.Insert(0, "0");
             }
 
-            byte[] bytes = PdfEncodings.ConvertToBytes(sb.ToString(), "cp437");
+            var bytes = PdfEncodings.ConvertToBytes(sb.ToString(), "cp437");
             numberCompaction(bytes, 0, bytes.Length);
         }
 
         private void append(string s)
         {
-            byte[] bytes = PdfEncodings.ConvertToBytes(s, "cp437");
+            var bytes = PdfEncodings.ConvertToBytes(s, "cp437");
             textCompaction(bytes, 0, bytes.Length);
         }
 
         private void basicNumberCompaction(byte[] input, int start, int length)
         {
-            int ret = CwPtr;
-            int retLast = length / 3;
+            var ret = CwPtr;
+            var retLast = length / 3;
             int ni, k;
             CwPtr += retLast + 1;
             for (k = 0; k <= retLast; ++k)
+            {
                 _codewords[ret + k] = 0;
+            }
+
             _codewords[ret + retLast] = 1;
             length += start;
             for (ni = start; ni < length; ++ni)
             {
                 // multiply by 10
                 for (k = retLast; k >= 0; --k)
+                {
                     _codewords[ret + k] *= 10;
+                }
                 // add the digit
                 _codewords[ret + retLast] += input[ni] - '0';
                 // propagate carry
@@ -1534,18 +1599,22 @@ namespace iTextSharp.text.pdf
             {
                 _codewords[CwPtr++] = MACRO_LAST_SEGMENT;
             }
-
         }
 
         private void numberCompaction(byte[] input, int start, int length)
         {
-            int full = (length / 44) * 15;
-            int size = length % 44;
+            var full = (length / 44) * 15;
+            var size = length % 44;
             int k;
             if (size == 0)
+            {
                 size = full;
+            }
             else
+            {
                 size = full + size / 3 + 1;
+            }
+
             if (size + CwPtr > MAX_DATA_CODEWORDS)
             {
                 throw new ArgumentOutOfRangeException("The text is too big.");
@@ -1560,11 +1629,11 @@ namespace iTextSharp.text.pdf
 
         private void textCompaction(byte[] input, int start, int length)
         {
-            int[] dest = new int[ABSOLUTE_MAX_TEXT_SIZE * 2];
-            int mode = ALPHA;
-            int ptr = 0;
-            int fullBytes = 0;
-            int v = 0;
+            var dest = new int[ABSOLUTE_MAX_TEXT_SIZE * 2];
+            var mode = ALPHA;
+            var ptr = 0;
+            var fullBytes = 0;
+            var v = 0;
             int k;
             int size;
             length += start;
@@ -1617,6 +1686,7 @@ namespace iTextSharp.text.pdf
                             dest[ptr++] = v & 0xff;
                         }
                         break;
+
                     case LOWER:
                         if ((v & ALPHA) != 0)
                         {
@@ -1651,6 +1721,7 @@ namespace iTextSharp.text.pdf
                             dest[ptr++] = v & 0xff;
                         }
                         break;
+
                     case MIXED:
                         if ((v & LOWER) != 0)
                         {
@@ -1676,6 +1747,7 @@ namespace iTextSharp.text.pdf
                             dest[ptr++] = v & 0xff;
                         }
                         break;
+
                     case PUNCTUATION:
                         dest[ptr++] = PAL;
                         mode = ALPHA;
@@ -1684,7 +1756,10 @@ namespace iTextSharp.text.pdf
                 }
             }
             if ((ptr & 1) != 0)
+            {
                 dest[ptr++] = PS;
+            }
+
             size = (ptr + fullBytes) / 2;
             if (size + CwPtr > MAX_DATA_CODEWORDS)
             {
@@ -1701,14 +1776,18 @@ namespace iTextSharp.text.pdf
                     _codewords[CwPtr++] = dest[ptr++];
                 }
                 else
+                {
                     _codewords[CwPtr++] = v * 30 + dest[ptr++];
+                }
             }
         }
+
         protected class Segment
         {
             public int End;
             public int Start;
             public char Type;
+
             public Segment(char type, int start, int end)
             {
                 Type = type;
@@ -1721,13 +1800,7 @@ namespace iTextSharp.text.pdf
         {
             protected ArrayList List = new ArrayList();
 
-            public int Size
-            {
-                get
-                {
-                    return List.Count;
-                }
-            }
+            public int Size => List.Count;
 
             public void Add(char type, int start, int end)
             {
@@ -1737,14 +1810,20 @@ namespace iTextSharp.text.pdf
             public Segment Get(int idx)
             {
                 if (idx < 0 || idx >= List.Count)
+                {
                     return null;
+                }
+
                 return (Segment)List[idx];
             }
 
             public void Remove(int idx)
             {
                 if (idx < 0 || idx >= List.Count)
+                {
                     return;
+                }
+
                 List.RemoveAt(idx);
             }
         }

@@ -45,7 +45,7 @@ namespace iTextSharp.text.pdf.codec
         /// <summary>
         /// Additional make up codes for both White and Black runs
         /// </summary>
-        static readonly short[] _additionalMakeup = {
+        private static readonly short[] _additionalMakeup = {
             28679,  28679,  31752,  unchecked((short)32777),
             unchecked((short)33801),  unchecked((short)34825),  unchecked((short)35849),  unchecked((short)36873),
             29703,  29703,  30727,  30727,
@@ -55,7 +55,7 @@ namespace iTextSharp.text.pdf.codec
         /// <summary>
         /// Main black run table, using the last 9 bits of possible 13 bit code
         /// </summary>
-        static readonly short[] _black = {
+        private static readonly short[] _black = {
             // 0 - 7
             62,     62,     30,     30,     0,      0,      0,      0,
             // 8 - 15
@@ -189,14 +189,14 @@ namespace iTextSharp.text.pdf.codec
         /// <summary>
         /// Initial black run look up table, uses the first 4 bits of a code
         /// </summary>
-        static readonly short[] _initBlack = {
+        private static readonly short[] _initBlack = {
             // 0 - 7
             3226,  6412,    200,    168,    38,     38,    134,    134,
             // 8 - 15
             100,    100,    100,    100,    68,     68,     68,     68
         };
 
-        static readonly int[] _table1 = {
+        private static readonly int[] _table1 = {
             0x00, // 0 bits are left in first byte - SHOULD NOT HAPPEN
             0x01, // 1 bits are left in first byte
             0x03, // 2 bits are left in first byte
@@ -208,7 +208,7 @@ namespace iTextSharp.text.pdf.codec
             0xff  // 8 bits are left in first byte
         };
 
-        static readonly int[] _table2 = {
+        private static readonly int[] _table2 = {
             0x00, // 0
             0x80, // 1
             0xc0, // 2
@@ -223,10 +223,10 @@ namespace iTextSharp.text.pdf.codec
         /// <summary>
         ///
         /// </summary>
-        static readonly short[] _twoBitBlack = { 292, 260, 226, 226 };
+        private static readonly short[] _twoBitBlack = { 292, 260, 226, 226 };
 
         // 0 - 3
-        static readonly byte[] _twoDCodes = {
+        private static readonly byte[] _twoDCodes = {
             // 0 - 7
             80,     88,     23,     71,     30,     30,     62,     62,
             // 8 - 15
@@ -264,7 +264,7 @@ namespace iTextSharp.text.pdf.codec
         /// <summary>
         /// The main 10 bit white runs lookup table
         /// </summary>
-        static readonly short[] _white = {
+        private static readonly short[] _white = {
             // 0 - 7
             6430,   6400,   6400,   6400,   3225,   3225,   3225,   3225,
             // 8 - 15
@@ -526,6 +526,7 @@ namespace iTextSharp.text.pdf.codec
         private readonly int _fillOrder;
         private readonly int _w;
         private int _bitPointer, _bytePointer;
+
         /// <summary>
         /// Data structures needed to store changing elements for the previous
         /// </summary>
@@ -538,7 +539,8 @@ namespace iTextSharp.text.pdf.codec
         private int[] _currChangingElems;
         private byte[] _data;
         private int _fillBits;
-        private int _h;
+        private readonly int _h;
+
         /// <summary>
         /// Element at which to start search in getNextChangingElement
         /// </summary>
@@ -546,10 +548,12 @@ namespace iTextSharp.text.pdf.codec
 
         private int _oneD;
         private int[] _prevChangingElems;
+
         /// <summary>
         /// Variables set by T4Options
         /// </summary>
         private int _uncompressedMode;
+
         /// <summary>
         /// </summary>
         /// <param name="fillOrder">The fill order of the compressed data bytes.</param>
@@ -569,10 +573,11 @@ namespace iTextSharp.text.pdf.codec
 
         public static void ReverseBits(byte[] b)
         {
-            for (int k = 0; k < b.Length; ++k)
+            for (var k = 0; k < b.Length; ++k)
+            {
                 b[k] = FlipTable[b[k] & 0xff];
+            }
         }
-
 
         /// <summary>
         /// One-dimensional decoding methods
@@ -583,13 +588,13 @@ namespace iTextSharp.text.pdf.codec
         {
             _data = compData;
 
-            int lineOffset = 0;
-            int scanlineStride = (_w + 7) / 8;
+            var lineOffset = 0;
+            var scanlineStride = (_w + 7) / 8;
 
             _bitPointer = 0;
             _bytePointer = 0;
 
-            for (int i = 0; i < height; i++)
+            for (var i = 0; i < height; i++)
             {
                 DecodeNextScanline(buffer, lineOffset, startX);
                 lineOffset += scanlineStride;
@@ -608,20 +613,19 @@ namespace iTextSharp.text.pdf.codec
             _bitPointer = 0;
             _bytePointer = 0;
 
-            int scanlineStride = (_w + 7) / 8;
+            var scanlineStride = (_w + 7) / 8;
 
             int a0, a1, b1, b2;
-            int[] b = new int[2];
+            var b = new int[2];
             int entry, code, bits;
             bool isWhite;
-            int currIndex = 0;
+            var currIndex = 0;
             int[] temp;
 
             // fillBits - dealt with this in readEOL
             // 1D/2D encoding - dealt with this in readEOL
 
             // uncompressedMode - haven't dealt with this yet.
-
 
             _oneD = (int)(tiffT4Options & 0x01);
             _uncompressedMode = (int)((tiffT4Options & 0x02) >> 1);
@@ -633,7 +637,7 @@ namespace iTextSharp.text.pdf.codec
                 throw new InvalidOperationException("First scanline must be 1D encoded.");
             }
 
-            int lineOffset = 0;
+            var lineOffset = 0;
             int bitOffset;
 
             // Then the 1D encoded scanline data will occur, changing elements
@@ -641,9 +645,8 @@ namespace iTextSharp.text.pdf.codec
             DecodeNextScanline(buffer, lineOffset, startX);
             lineOffset += scanlineStride;
 
-            for (int lines = 1; lines < height; lines++)
+            for (var lines = 1; lines < height; lines++)
             {
-
                 // Every line must begin with an EOL followed by a bit which
                 // indicates whether the following scanline is 1D or 2D encoded.
                 if (readEol(false) == 0)
@@ -771,7 +774,7 @@ namespace iTextSharp.text.pdf.codec
         {
             int bits = 0, code = 0, isT = 0;
             int current, entry, twoBits;
-            bool isWhite = true;
+            var isWhite = true;
 
             // Initialize starting of the changing elements array
             _changingElemSize = 0;
@@ -945,7 +948,7 @@ namespace iTextSharp.text.pdf.codec
             _bitPointer = 0;
             _bytePointer = 0;
 
-            int scanlineStride = (_w + 7) / 8;
+            var scanlineStride = (_w + 7) / 8;
 
             int a0, a1, b1, b2;
             int entry, code, bits;
@@ -954,7 +957,7 @@ namespace iTextSharp.text.pdf.codec
             int[] temp;
 
             // Return values from getNextChangingElement
-            int[] b = new int[2];
+            var b = new int[2];
 
             // uncompressedMode - have written some code for this, but this
             // has not been tested due to lack of test images using this optional
@@ -962,7 +965,7 @@ namespace iTextSharp.text.pdf.codec
             _uncompressedMode = (int)((tiffT6Options & 0x02) >> 1);
 
             // Local cached reference
-            int[] cce = _currChangingElems;
+            var cce = _currChangingElems;
 
             // Assume invisible preceding row of all white pixels and insert
             // both black and white changing elements beyond the end of this
@@ -971,10 +974,10 @@ namespace iTextSharp.text.pdf.codec
             cce[_changingElemSize++] = _w;
             cce[_changingElemSize++] = _w;
 
-            int lineOffset = 0;
+            var lineOffset = 0;
             int bitOffset;
 
-            for (int lines = 0; lines < height; lines++)
+            for (var lines = 0; lines < height; lines++)
             {
                 // a0 has to be set just before the start of the scanline.
                 a0 = -1;
@@ -1082,8 +1085,8 @@ namespace iTextSharp.text.pdf.codec
                             throw new InvalidOperationException("Invalid code encountered while decoding 2D group 4 compressed data.");
                         }
 
-                        int zeros = 0;
-                        bool exit = false;
+                        var zeros = 0;
+                        var exit = false;
 
                         while (!exit)
                         {
@@ -1156,7 +1159,6 @@ namespace iTextSharp.text.pdf.codec
                                 // Last thing written was black
                                 isWhite = false;
                             }
-
                         }
                     }
                     else
@@ -1174,7 +1176,9 @@ namespace iTextSharp.text.pdf.codec
                 // other color too
                 //make sure that the index does not exceed the bounds of the array
                 if (currIndex < cce.Length)
+                {
                     cce[currIndex++] = bitOffset;
+                }
 
                 // Number of changing elements in this scanline.
                 _changingElemSize = currIndex;
@@ -1203,8 +1207,8 @@ namespace iTextSharp.text.pdf.codec
         private int decodeBlackCodeWord()
         {
             int current, entry, bits, isT, code = -1;
-            int runLength = 0;
-            bool isWhite = false;
+            var runLength = 0;
+            var isWhite = false;
 
             while (!isWhite)
             {
@@ -1282,8 +1286,8 @@ namespace iTextSharp.text.pdf.codec
         private int decodeWhiteCodeWord()
         {
             int current, entry, bits, isT, twoBits, code = -1;
-            int runLength = 0;
-            bool isWhite = true;
+            var runLength = 0;
+            var isWhite = true;
 
             while (isWhite)
             {
@@ -1333,13 +1337,13 @@ namespace iTextSharp.text.pdf.codec
         private void getNextChangingElement(int a0, bool isWhite, int[] ret)
         {
             // Local copies of instance variables
-            int[] pce = _prevChangingElems;
-            int ces = _changingElemSize;
+            var pce = _prevChangingElems;
+            var ces = _changingElemSize;
 
             // If the previous match was at an odd element, we still
             // have to search the preceeding element.
             // int start = lastChangingElement & ~0x1;
-            int start = _lastChangingElement > 0 ? _lastChangingElement - 1 : 0;
+            var start = _lastChangingElement > 0 ? _lastChangingElement - 1 : 0;
             if (isWhite)
             {
                 start &= ~0x1; // Search even numbered elements
@@ -1349,10 +1353,10 @@ namespace iTextSharp.text.pdf.codec
                 start |= 0x1; // Search odd numbered elements
             }
 
-            int i = start;
+            var i = start;
             for (; i < ces; i += 2)
             {
-                int temp = pce[i];
+                var temp = pce[i];
                 if (temp > a0)
                 {
                     _lastChangingElement = i;
@@ -1370,8 +1374,8 @@ namespace iTextSharp.text.pdf.codec
         private int nextLesserThan8Bits(int bitsToGet)
         {
             byte b, next;
-            int l = _data.Length - 1;
-            int bp = _bytePointer;
+            var l = _data.Length - 1;
+            var bp = _bytePointer;
 
             if (_fillOrder == 1)
             {
@@ -1402,10 +1406,10 @@ namespace iTextSharp.text.pdf.codec
                 throw new InvalidOperationException("TIFF_FILL_ORDER tag must be either 1 or 2.");
             }
 
-            int bitsLeft = 8 - _bitPointer;
-            int bitsFromNextByte = bitsToGet - bitsLeft;
+            var bitsLeft = 8 - _bitPointer;
+            var bitsFromNextByte = bitsToGet - bitsLeft;
 
-            int shift = bitsLeft - bitsToGet;
+            var shift = bitsLeft - bitsToGet;
             int i1, i2;
             if (shift >= 0)
             {
@@ -1433,8 +1437,8 @@ namespace iTextSharp.text.pdf.codec
         private int nextNBits(int bitsToGet)
         {
             byte b, next, next2Next;
-            int l = _data.Length - 1;
-            int bp = _bytePointer;
+            var l = _data.Length - 1;
+            var bp = _bytePointer;
 
             if (_fillOrder == 1)
             {
@@ -1481,9 +1485,9 @@ namespace iTextSharp.text.pdf.codec
                 throw new InvalidOperationException("TIFF_FILL_ORDER tag must be either 1 or 2.");
             }
 
-            int bitsLeft = 8 - _bitPointer;
-            int bitsFromNextByte = bitsToGet - bitsLeft;
-            int bitsFromNext2NextByte = 0;
+            var bitsLeft = 8 - _bitPointer;
+            var bitsFromNextByte = bitsToGet - bitsLeft;
+            var bitsFromNext2NextByte = 0;
             if (bitsFromNextByte > 8)
             {
                 bitsFromNext2NextByte = bitsFromNextByte - 8;
@@ -1492,10 +1496,10 @@ namespace iTextSharp.text.pdf.codec
 
             _bytePointer++;
 
-            int i1 = (b & _table1[bitsLeft]) << (bitsToGet - bitsLeft);
-            int i2 = (next & _table2[bitsFromNextByte]) >> (8 - bitsFromNextByte);
+            var i1 = (b & _table1[bitsLeft]) << (bitsToGet - bitsLeft);
+            var i2 = (next & _table2[bitsFromNextByte]) >> (8 - bitsFromNextByte);
 
-            int i3 = 0;
+            var i3 = 0;
             if (bitsFromNext2NextByte != 0)
             {
                 i2 <<= bitsFromNext2NextByte;
@@ -1518,7 +1522,7 @@ namespace iTextSharp.text.pdf.codec
                 }
             }
 
-            int i = i1 | i2;
+            var i = i1 | i2;
             return i;
         }
 
@@ -1526,10 +1530,9 @@ namespace iTextSharp.text.pdf.codec
         {
             if (_fillBits == 0)
             {
-                int next12Bits = nextNBits(12);
+                var next12Bits = nextNBits(12);
                 if (isFirstEol && next12Bits == 0)
                 {
-
                     // Might have the case of EOL padding being used even
                     // though it was not flagged in the T4Options field.
                     // This was observed to be the case in TIFFs produced
@@ -1537,7 +1540,6 @@ namespace iTextSharp.text.pdf.codec
 
                     if (nextNBits(4) == 1)
                     {
-
                         // EOL must be padded: reset the fillBits flag.
 
                         _fillBits = 1;
@@ -1551,12 +1553,11 @@ namespace iTextSharp.text.pdf.codec
             }
             else if (_fillBits == 1)
             {
-
                 // First EOL code word xxxx 0000 0000 0001 will occur
                 // As many fill bits will be present as required to make
                 // the EOL code of 12 bits end on a byte boundary.
 
-                int bitsLeft = 8 - _bitPointer;
+                var bitsLeft = 8 - _bitPointer;
 
                 if (nextNBits(bitsLeft) != 0)
                 {
@@ -1581,7 +1582,6 @@ namespace iTextSharp.text.pdf.codec
                 int n;
                 while ((n = nextNBits(8)) != 1)
                 {
-
                     // If not all zeros
                     if (n != 0)
                     {
@@ -1607,17 +1607,17 @@ namespace iTextSharp.text.pdf.codec
                                                                 int lineOffset, int bitOffset,
         int numBits)
         {
-            int bitNum = 8 * lineOffset + bitOffset;
-            int lastBit = bitNum + numBits;
+            var bitNum = 8 * lineOffset + bitOffset;
+            var lastBit = bitNum + numBits;
 
-            int byteNum = bitNum >> 3;
+            var byteNum = bitNum >> 3;
 
             // Handle bits in first byte
-            int shift = bitNum & 0x7;
+            var shift = bitNum & 0x7;
             if (shift > 0)
             {
-                int maskVal = 1 << (7 - shift);
-                byte val = buffer[byteNum];
+                var maskVal = 1 << (7 - shift);
+                var val = buffer[byteNum];
                 while (maskVal > 0 && bitNum < lastBit)
                 {
                     val |= (byte)maskVal;
@@ -1643,12 +1643,13 @@ namespace iTextSharp.text.pdf.codec
                 ++bitNum;
             }
         }
+
         /// <summary>
         /// Move pointer backwards by given amount of bits
         /// </summary>
         private void updatePointer(int bitsToMoveBack)
         {
-            int i = _bitPointer - bitsToMoveBack;
+            var i = _bitPointer - bitsToMoveBack;
 
             if (i < 0)
             {

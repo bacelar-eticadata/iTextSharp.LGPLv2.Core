@@ -22,21 +22,9 @@ namespace iTextSharp.text.pdf
         /// the members are copied by reference but the buffer stays different.
         /// </summary>
         /// <returns>a copy of this  PdfContentByte </returns>
-        public override PdfContentByte Duplicate
-        {
-            get
-            {
-                return new StampContent((PdfStamperImp)Writer, Ps);
-            }
-        }
+        public override PdfContentByte Duplicate => new StampContent((PdfStamperImp)Writer, Ps);
 
-        internal override PageResources PageResources
-        {
-            get
-            {
-                return pageResources;
-            }
-        }
+        internal override PageResources PageResources => pageResources;
 
         public override void SetAction(PdfAction action, float llx, float lly, float urx, float ury)
         {

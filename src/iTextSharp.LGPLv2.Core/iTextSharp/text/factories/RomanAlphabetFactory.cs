@@ -2,7 +2,6 @@ using System;
 
 namespace iTextSharp.text.factories
 {
-
     /// <summary>
     /// This class can produce String combinations representing a number.
     /// "a" to "z" represent 1 to 26, "AA" represents 27, "AB" represents 28,
@@ -10,7 +9,6 @@ namespace iTextSharp.text.factories
     /// </summary>
     public static class RomanAlphabetFactory
     {
-
         /// <summary>
         /// Translates a positive integer (not equal to zero)
         /// into a String using the letters 'a' to 'z';
@@ -28,12 +26,15 @@ namespace iTextSharp.text.factories
         /// </summary>
         public static string GetString(int index)
         {
-            if (index < 1) throw new FormatException("You can't translate a negative number into an alphabetical value.");
+            if (index < 1)
+            {
+                throw new FormatException("You can't translate a negative number into an alphabetical value.");
+            }
 
             index--;
-            int bytes = 1;
-            int start = 0;
-            int symbols = 26;
+            var bytes = 1;
+            var start = 0;
+            var symbols = 26;
             while (index >= symbols + start)
             {
                 bytes++;
@@ -41,8 +42,8 @@ namespace iTextSharp.text.factories
                 symbols *= 26;
             }
 
-            int c = index - start;
-            char[] value = new char[bytes];
+            var c = index - start;
+            var value = new char[bytes];
             while (bytes > 0)
             {
                 value[--bytes] = (char)('a' + (c % 26));
@@ -51,6 +52,7 @@ namespace iTextSharp.text.factories
 
             return new string(value);
         }
+
         /// <summary>
         /// Translates a positive integer (not equal to zero)
         /// into a String using the letters 'a' to 'z'

@@ -39,53 +39,34 @@ namespace System.util.collections
             _lastNodeFound = SentinelNode;
         }
 
-        public int Count
-        {
-            get
-            {
-                return _intCount;
-            }
-        }
+        public int Count => _intCount;
 
         ///<summary>
         /// Keys
         /// if(ascending is true, the keys will be returned in ascending order, else
         /// the keys will be returned in descending order.
         ///</summary>
-        public OrderedTreeEnumerator Keys
-        {
-            get
-            {
-                return KeyElements(true);
-            }
-        }
+        public OrderedTreeEnumerator Keys => KeyElements(true);
 
         ///<summary>
         /// Values
         /// Provided for .NET compatibility.
         ///</summary>
-        public OrderedTreeEnumerator Values
-        {
-            get
-            {
-                return Elements(true);
-            }
-        }
+        public OrderedTreeEnumerator Values => Elements(true);
 
         public object this[IComparable key]
         {
-            get
-            {
-                return GetData(key);
-            }
+            get => GetData(key);
             set
             {
                 if (key == null)
+                {
                     throw new ArgumentNullException("Key is null");
+                }
 
-                int result = 0;
-                OrderedTreeNode node = new OrderedTreeNode();
-                OrderedTreeNode temp = _rbTree;
+                var result = 0;
+                var node = new OrderedTreeNode();
+                var temp = _rbTree;
 
                 while (temp != SentinelNode)
                 {
@@ -98,9 +79,13 @@ namespace System.util.collections
                         return;
                     }
                     if (result > 0)
+                    {
                         temp = temp.Right;
+                    }
                     else
+                    {
                         temp = temp.Left;
+                    }
                 }
 
                 node.Key = key;
@@ -112,12 +97,18 @@ namespace System.util.collections
                 {
                     result = node.Key.CompareTo(node.Parent.Key);
                     if (result > 0)
+                    {
                         node.Parent.Right = node;
+                    }
                     else
+                    {
                         node.Parent.Left = node;
+                    }
                 }
                 else
+                {
                     _rbTree = node;
+                }
 
                 restoreAfterInsert(node);
 
@@ -136,13 +127,15 @@ namespace System.util.collections
         public void Add(IComparable key, object data)
         {
             if (key == null)
+            {
                 throw (new ArgumentNullException("Key is null"));
+            }
 
             // traverse tree - find where node belongs
-            int result = 0;
+            var result = 0;
             // create new node
-            OrderedTreeNode node = new OrderedTreeNode();
-            OrderedTreeNode temp = _rbTree; // grab the rbTree node of the tree
+            var node = new OrderedTreeNode();
+            var temp = _rbTree; // grab the rbTree node of the tree
 
             while (temp != SentinelNode)
             {
@@ -150,11 +143,18 @@ namespace System.util.collections
                 node.Parent = temp;
                 result = key.CompareTo(temp.Key);
                 if (result == 0)
+                {
                     throw new ArgumentException("Key duplicated");
+                }
+
                 if (result > 0)
+                {
                     temp = temp.Right;
+                }
                 else
+                {
                     temp = temp.Left;
+                }
             }
 
             // setup node
@@ -168,12 +168,18 @@ namespace System.util.collections
             {
                 result = node.Key.CompareTo(node.Parent.Key);
                 if (result > 0)
+                {
                     node.Parent.Right = node;
+                }
                 else
+                {
                     node.Parent.Left = node;
+                }
             }
             else
+            {
                 _rbTree = node; // first node added
+            }
 
             restoreAfterInsert(node); // restore red-black properities
 
@@ -193,8 +199,8 @@ namespace System.util.collections
 
         public bool ContainsKey(IComparable key)
         {
-            OrderedTreeNode treeNode = _rbTree; // begin at root
-            int result = 0;
+            var treeNode = _rbTree; // begin at root
+            var result = 0;
             // traverse tree until node is found
             while (treeNode != SentinelNode)
             {
@@ -205,9 +211,13 @@ namespace System.util.collections
                     return true;
                 }
                 if (result < 0)
+                {
                     treeNode = treeNode.Left;
+                }
                 else
+                {
                     treeNode = treeNode.Right;
+                }
             }
             return false;
         }
@@ -235,10 +245,13 @@ namespace System.util.collections
         public object GetData(IComparable key)
         {
             if (key == null)
+            {
                 throw new ArgumentNullException("Key is null");
+            }
+
             int result;
 
-            OrderedTreeNode treeNode = _rbTree; // begin at root
+            var treeNode = _rbTree; // begin at root
 
             // traverse tree until node is found
             while (treeNode != SentinelNode)
@@ -250,9 +263,13 @@ namespace System.util.collections
                     return treeNode.Data;
                 }
                 if (result < 0)
+                {
                     treeNode = treeNode.Left;
+                }
                 else
+                {
                     treeNode = treeNode.Right;
+                }
             }
             return null;
         }
@@ -274,14 +291,18 @@ namespace System.util.collections
         ///</summary>
         public IComparable GetMaxKey()
         {
-            OrderedTreeNode treeNode = _rbTree;
+            var treeNode = _rbTree;
 
             if (treeNode == null || treeNode == SentinelNode)
+            {
                 throw (new InvalidOperationException("Tree is empty"));
+            }
 
             // traverse to the extreme right to find the largest key
             while (treeNode.Right != SentinelNode)
+            {
                 treeNode = treeNode.Right;
+            }
 
             _lastNodeFound = treeNode;
 
@@ -304,14 +325,18 @@ namespace System.util.collections
         ///</summary>
         public IComparable GetMinKey()
         {
-            OrderedTreeNode treeNode = _rbTree;
+            var treeNode = _rbTree;
 
             if (treeNode == null || treeNode == SentinelNode)
+            {
                 throw (new InvalidOperationException("Tree is empty"));
+            }
 
             // traverse to the extreme left to find the smallest key
             while (treeNode.Left != SentinelNode)
+            {
                 treeNode = treeNode.Left;
+            }
 
             _lastNodeFound = treeNode;
 
@@ -349,7 +374,9 @@ namespace System.util.collections
         public void Remove(IComparable key)
         {
             if (key == null)
+            {
                 throw new ArgumentNullException("Key is null");
+            }
 
             // find node
             int result;
@@ -358,7 +385,9 @@ namespace System.util.collections
             // see if node to be deleted was the last one found
             result = key.CompareTo(_lastNodeFound.Key);
             if (result == 0)
+            {
                 node = _lastNodeFound;
+            }
             else
             {
                 // not found, must search
@@ -367,15 +396,24 @@ namespace System.util.collections
                 {
                     result = key.CompareTo(node.Key);
                     if (result == 0)
+                    {
                         break;
+                    }
+
                     if (result < 0)
+                    {
                         node = node.Left;
+                    }
                     else
+                    {
                         node = node.Right;
+                    }
                 }
 
                 if (node == SentinelNode)
+                {
                     return; // key not found
+                }
             }
 
             delete(node);
@@ -390,7 +428,10 @@ namespace System.util.collections
         public void RemoveMax()
         {
             if (_rbTree == null || _rbTree == SentinelNode)
+            {
                 return;
+            }
+
             Remove(GetMaxKey());
         }
 
@@ -401,7 +442,10 @@ namespace System.util.collections
         public void RemoveMin()
         {
             if (_rbTree == null || _rbTree == SentinelNode)
+            {
                 return;
+            }
+
             Remove(GetMinKey());
         }
 
@@ -415,33 +459,45 @@ namespace System.util.collections
             // replaces x (since y > x), and y's Left child becomes x's Right child
             // (since it's < y but > x).
 
-            OrderedTreeNode y = x.Right; // get x's Right node, this becomes y
+            var y = x.Right; // get x's Right node, this becomes y
 
             // set x's Right link
             x.Right = y.Left; // y's Left child's becomes x's Right child
 
             // modify parents
             if (y.Left != SentinelNode)
+            {
                 y.Left.Parent = x; // sets y's Left Parent to x
+            }
 
             if (y != SentinelNode)
+            {
                 y.Parent = x.Parent; // set y's Parent to x's Parent
+            }
 
             if (x.Parent != null)
             {
                 // determine which side of it's Parent x was on
                 if (x == x.Parent.Left)
+                {
                     x.Parent.Left = y; // set Left Parent to y
+                }
                 else
+                {
                     x.Parent.Right = y; // set Right Parent to y
+                }
             }
             else
+            {
                 _rbTree = y; // at rbTree, set it to y
+            }
 
             // link x and y
             y.Left = x; // put x on y's Left
             if (x != SentinelNode) // set y as x's Parent
+            {
                 x.Parent = y;
+            }
         }
 
         ///<summary>
@@ -454,33 +510,45 @@ namespace System.util.collections
             // replaces x (since x < y), and y's Right child becomes x's Left child
             // (since it's < x but > y).
 
-            OrderedTreeNode y = x.Left; // get x's Left node, this becomes y
+            var y = x.Left; // get x's Left node, this becomes y
 
             // set x's Right link
             x.Left = y.Right; // y's Right child becomes x's Left child
 
             // modify parents
             if (y.Right != SentinelNode)
+            {
                 y.Right.Parent = x; // sets y's Right Parent to x
+            }
 
             if (y != SentinelNode)
+            {
                 y.Parent = x.Parent; // set y's Parent to x's Parent
+            }
 
             if (x.Parent != null)
             { // null=rbTree, could also have used rbTree
                 // determine which side of it's Parent x was on
                 if (x == x.Parent.Right)
+                {
                     x.Parent.Right = y; // set Right Parent to y
+                }
                 else
+                {
                     x.Parent.Left = y; // set Left Parent to y
+                }
             }
             else
+            {
                 _rbTree = y; // at rbTree, set it to y
+            }
 
             // link x and y
             y.Right = x; // put x on y's Right
             if (x != SentinelNode) // set y as x's Parent
+            {
                 x.Parent = y;
+            }
         }
 
         ///<summary>
@@ -496,20 +564,24 @@ namespace System.util.collections
             // If the deleted node is red, the red black properties still hold.
             // If the deleted node is black, the tree needs rebalancing
 
-            OrderedTreeNode x = new OrderedTreeNode(); // work node to contain the replacement node
+            var x = new OrderedTreeNode(); // work node to contain the replacement node
             OrderedTreeNode y; // work node
 
             // find the replacement node (the successor to x) - the node one with
             // at *most* one child.
             if (z.Left == SentinelNode || z.Right == SentinelNode)
+            {
                 y = z; // node has sentinel as a child
+            }
             else
             {
                 // z has two children, find replacement node which will
                 // be the leftmost node greater than z
                 y = z.Right; // traverse right subtree
                 while (y.Left != SentinelNode) // to find next node in sequence
+                {
                     y = y.Left;
+                }
             }
 
             // at this point, y contains the replacement node. it's content will be copied
@@ -517,21 +589,33 @@ namespace System.util.collections
 
             // x (y's only child) is the node that will be linked to y's old parent.
             if (y.Left != SentinelNode)
+            {
                 x = y.Left;
+            }
             else
+            {
                 x = y.Right;
+            }
 
             // replace x's parent with y's parent and
             // link x to proper subtree in parent
             // this removes y from the chain
             x.Parent = y.Parent;
             if (y.Parent != null)
+            {
                 if (y == y.Parent.Left)
+                {
                     y.Parent.Left = x;
+                }
                 else
+                {
                     y.Parent.Right = x;
+                }
+            }
             else
+            {
                 _rbTree = x; // make x the root node
+            }
 
             // copy the values from y (the replacement node) to the node being deleted.
             // note: this effectively deletes the node.
@@ -542,7 +626,9 @@ namespace System.util.collections
             }
 
             if (y.Color == OrderedTreeNode.BLACK)
+            {
                 restoreAfterDelete(x);
+            }
 
             _lastNodeFound = SentinelNode;
         }
@@ -733,8 +819,7 @@ namespace System.util.collections
         /// key
         /// </summary>
         private IComparable _ordKey;
-
-        bool _pre = true;
+        private bool _pre = true;
         private OrderedTreeNode _tnode;
         ///<summary>
         /// Determine order, walk the tree and push the nodes onto the stack
@@ -758,7 +843,10 @@ namespace System.util.collections
             get
             {
                 if (_pre)
+                {
                     throw new InvalidOperationException("Current");
+                }
+
                 return _keys ? Key : Value;
             }
         }
@@ -768,30 +856,18 @@ namespace System.util.collections
         ///</summary>
         public IComparable Key
         {
-            get
-            {
-                return _ordKey;
-            }
+            get => _ordKey;
 
-            set
-            {
-                _ordKey = value;
-            }
+            set => _ordKey = value;
         }
         ///<summary>
         ///Data
         ///</summary>
         public object Value
         {
-            get
-            {
-                return _objValue;
-            }
+            get => _objValue;
 
-            set
-            {
-                _objValue = value;
-            }
+            set => _objValue = value;
         }
         public OrderedTreeEnumerator GetEnumerator()
         {
@@ -828,31 +904,34 @@ namespace System.util.collections
         public object NextElement()
         {
             if (_stack.Count == 0)
-
+            {
                 throw new InvalidOperationException("Element not found");
+            }
 
             // the top of stack will always have the next item
             // get top of stack but don't remove it as the next nodes in sequence
             // may be pushed onto the top
             // the stack will be popped after all the nodes have been returned
-            OrderedTreeNode node = (OrderedTreeNode)_stack.Peek(); //next node in sequence
+            var node = (OrderedTreeNode)_stack.Peek(); //next node in sequence
 
             if (_ascending)
             {
                 if (node.Right == OrderedTree.SentinelNode)
                 {
                     // yes, top node is lowest node in subtree - pop node off stack
-                    OrderedTreeNode tn = (OrderedTreeNode)_stack.Pop();
+                    var tn = (OrderedTreeNode)_stack.Pop();
                     // peek at right node's parent
                     // get rid of it if it has already been used
                     while (HasMoreElements() && ((OrderedTreeNode)_stack.Peek()).Right == tn)
+                    {
                         tn = (OrderedTreeNode)_stack.Pop();
+                    }
                 }
                 else
                 {
                     // find the next items in the sequence
                     // traverse to left; find lowest and push onto stack
-                    OrderedTreeNode tn = node.Right;
+                    var tn = node.Right;
                     while (tn != OrderedTree.SentinelNode)
                     {
                         _stack.Push(tn);
@@ -865,15 +944,17 @@ namespace System.util.collections
                 if (node.Left == OrderedTree.SentinelNode)
                 {
                     // walk the tree
-                    OrderedTreeNode tn = (OrderedTreeNode)_stack.Pop();
+                    var tn = (OrderedTreeNode)_stack.Pop();
                     while (HasMoreElements() && ((OrderedTreeNode)_stack.Peek()).Left == tn)
+                    {
                         tn = (OrderedTreeNode)_stack.Pop();
+                    }
                 }
                 else
                 {
                     // determine next node in sequence
                     // traverse to left subtree and find greatest node - push onto stack
-                    OrderedTreeNode tn = node.Left;
+                    var tn = node.Left;
                     while (tn != OrderedTree.SentinelNode)
                     {
                         _stack.Push(tn);
@@ -962,15 +1043,9 @@ namespace System.util.collections
         ///</summary>
         public bool Color
         {
-            get
-            {
-                return _intColor;
-            }
+            get => _intColor;
 
-            set
-            {
-                _intColor = value;
-            }
+            set => _intColor = value;
         }
 
         ///<summary>
@@ -978,15 +1053,9 @@ namespace System.util.collections
         ///</summary>
         public object Data
         {
-            get
-            {
-                return _objData;
-            }
+            get => _objData;
 
-            set
-            {
-                _objData = value;
-            }
+            set => _objData = value;
         }
 
         ///<summary>
@@ -994,42 +1063,24 @@ namespace System.util.collections
         ///</summary>
         public IComparable Key
         {
-            get
-            {
-                return _ordKey;
-            }
+            get => _ordKey;
 
-            set
-            {
-                _ordKey = value;
-            }
+            set => _ordKey = value;
         }
         ///<summary>
         ///Left
         ///</summary>
         public OrderedTreeNode Left
         {
-            get
-            {
-                return _rbnLeft;
-            }
+            get => _rbnLeft;
 
-            set
-            {
-                _rbnLeft = value;
-            }
+            set => _rbnLeft = value;
         }
         public OrderedTreeNode Parent
         {
-            get
-            {
-                return _rbnParent;
-            }
+            get => _rbnParent;
 
-            set
-            {
-                _rbnParent = value;
-            }
+            set => _rbnParent = value;
         }
 
         ///<summary>
@@ -1037,15 +1088,9 @@ namespace System.util.collections
         ///</summary>
         public OrderedTreeNode Right
         {
-            get
-            {
-                return _rbnRight;
-            }
+            get => _rbnRight;
 
-            set
-            {
-                _rbnRight = value;
-            }
+            set => _rbnRight = value;
         }
     }
 }

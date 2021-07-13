@@ -82,7 +82,7 @@ namespace System.util.zlib
         /// <summary>
         /// Table for deflate from PKZIP's appnote.txt.
         /// </summary>
-        static readonly int[] _border = { // Order of the bit length code lengths
+        private static readonly int[] _border = { // Order of the bit length code lengths
                                   16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15
                               };
 
@@ -95,11 +95,12 @@ namespace System.util.zlib
                                                 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff,
                                                 0x00007fff, 0x0000ffff
                                             };
- // get table lengths
- // processing fixed or dynamic block
-                                     // output remaining window bytes
-                                     // finished last block, done
-                                     // ot a data error--stuck here
+
+        // get table lengths
+        // processing fixed or dynamic block
+        // output remaining window bytes
+        // finished last block, done
+        // ot a data error--stuck here
 
         // current inflate_block mode
 
@@ -109,7 +110,7 @@ namespace System.util.zlib
 
         // if CODES, current state
 
-        int _last;            // true if this block is the last block
+        private int _last;            // true if this block is the last block
 
         // window write pointer
         // check function
@@ -147,8 +148,15 @@ namespace System.util.zlib
 
             // compute number of bytes to copy as far as end of window
             n = (q <= Write ? Write : End) - q;
-            if (n > z.AvailOut) n = z.AvailOut;
-            if (n != 0 && r == ZBufError) r = ZOk;
+            if (n > z.AvailOut)
+            {
+                n = z.AvailOut;
+            }
+
+            if (n != 0 && r == ZBufError)
+            {
+                r = ZOk;
+            }
 
             // update counters
             z.AvailOut -= n;
@@ -156,7 +164,9 @@ namespace System.util.zlib
 
             // update check information
             if (Checkfn != null)
+            {
                 z.Adler = Check = z._adler.adler32(Check, Window, q, n);
+            }
 
             // copy as far as end of window
             Array.Copy(Window, q, z.NextOut, p, n);
@@ -169,12 +179,21 @@ namespace System.util.zlib
                 // wrap pointers
                 q = 0;
                 if (Write == End)
+                {
                     Write = 0;
+                }
 
                 // compute bytes to copy
                 n = Write - q;
-                if (n > z.AvailOut) n = z.AvailOut;
-                if (n != 0 && r == ZBufError) r = ZOk;
+                if (n > z.AvailOut)
+                {
+                    n = z.AvailOut;
+                }
+
+                if (n != 0 && r == ZBufError)
+                {
+                    r = ZOk;
+                }
 
                 // update counters
                 z.AvailOut -= n;
@@ -182,7 +201,9 @@ namespace System.util.zlib
 
                 // update check information
                 if (Checkfn != null)
+                {
                     z.Adler = Check = z._adler.adler32(Check, Window, q, n);
+                }
 
                 // copy
                 Array.Copy(Window, q, z.NextOut, p, n);
@@ -259,10 +280,10 @@ namespace System.util.zlib
                                 break;
                             case 1:
                                 {                         // fixed
-                                    int[] bl = new int[1];
-                                    int[] bd = new int[1];
-                                    int[][] tl = new int[1][];
-                                    int[][] td = new int[1][];
+                                    var bl = new int[1];
+                                    var bd = new int[1];
+                                    var tl = new int[1][];
+                                    var td = new int[1][];
 
                                     InfTree.inflate_trees_fixed(bl, bd, tl, td, z);
                                     codes.Init(bl[0], bd[0], tl[0], 0, td[0], 0, z);
@@ -369,13 +390,24 @@ namespace System.util.zlib
                         r = ZOk;
 
                         t = Left;
-                        if (t > n) t = n;
-                        if (t > m) t = m;
+                        if (t > n)
+                        {
+                            t = n;
+                        }
+
+                        if (t > m)
+                        {
+                            t = m;
+                        }
+
                         Array.Copy(z.NextIn, p, Window, q, t);
                         p += t; n -= t;
                         q += t; m -= t;
                         if ((Left -= t) != 0)
+                        {
                             break;
+                        }
+
                         Mode = _last != 0 ? Dry : Type;
                         break;
                     case Table:
@@ -418,7 +450,7 @@ namespace System.util.zlib
                         }
                         else
                         {
-                            for (int i = 0; i < t; i++) { Blens[i] = 0; }
+                            for (var i = 0; i < t; i++) { Blens[i] = 0; }
                         }
                         {
 
@@ -585,10 +617,10 @@ namespace System.util.zlib
 
                         Tb[0] = -1;
                         {
-                            int[] bl = new int[1];
-                            int[] bd = new int[1];
-                            int[] tl = new int[1];
-                            int[] td = new int[1];
+                            var bl = new int[1];
+                            var bd = new int[1];
+                            var tl = new int[1];
+                            var td = new int[1];
                             bl[0] = 9;         // must be <= 9 for lookahead assumptions
                             bd[0] = 6;         // must be <= 9 for lookahead assumptions
 
@@ -678,7 +710,11 @@ namespace System.util.zlib
 
         internal void Reset(ZStream z, long[] c)
         {
-            if (c != null) c[0] = Check;
+            if (c != null)
+            {
+                c[0] = Check;
+            }
+
             if (Mode == Btree || Mode == Dtree)
             {
             }
@@ -692,7 +728,9 @@ namespace System.util.zlib
             Read = Write = 0;
 
             if (Checkfn != null)
+            {
                 z.Adler = Check = z._adler.adler32(0L, null, 0, 0);
+            }
         }
         internal void set_dictionary(byte[] d, int start, int n)
         {

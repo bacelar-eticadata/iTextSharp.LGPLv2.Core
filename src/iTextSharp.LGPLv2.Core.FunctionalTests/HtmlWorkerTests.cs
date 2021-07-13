@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.IO;
-using iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples;
+﻿using iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples;
 using iTextSharp.text;
 using iTextSharp.text.html;
 using iTextSharp.text.html.simpleparser;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests
 {
@@ -31,7 +31,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
 
             var styles = new StyleSheet();
 
-            PdfPCell pdfCell = new PdfPCell
+            var pdfCell = new PdfPCell
             {
                 Border = 0,
                 RunDirection = PdfWriter.RUN_DIRECTION_LTR

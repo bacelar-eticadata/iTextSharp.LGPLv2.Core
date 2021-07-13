@@ -27,7 +27,7 @@ namespace iTextSharp.text.pdf.codec
                     if (b >= 0 && b <= 127)
                     {
                         // literal run packet
-                        for (int i = 0; i < (b + 1); i++)
+                        for (var i = 0; i < (b + 1); i++)
                         {
                             dst[dstCount++] = data[srcCount++];
                         }
@@ -37,7 +37,7 @@ namespace iTextSharp.text.pdf.codec
                     {
                         // 2 byte encoded run packet
                         repeat = (sbyte)data[srcCount++];
-                        for (int i = 0; i < (-b + 1); i++)
+                        for (var i = 0; i < (-b + 1); i++)
                         {
                             dst[dstCount++] = (byte)repeat;
                         }
@@ -87,12 +87,17 @@ namespace iTextSharp.text.pdf.codec
         public static Image GetTiffImage(RandomAccessFileOrArray s, int page, bool direct)
         {
             if (page < 1)
+            {
                 throw new InvalidOperationException("The page number must be >= 1.");
-            TiffDirectory dir = new TiffDirectory(s, page - 1);
-            if (dir.IsTagPresent(TiffConstants.TIFFTAG_TILEWIDTH))
-                throw new InvalidOperationException("Tiles are not supported.");
+            }
 
-            int compression = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_COMPRESSION);
+            var dir = new TiffDirectory(s, page - 1);
+            if (dir.IsTagPresent(TiffConstants.TIFFTAG_TILEWIDTH))
+            {
+                throw new InvalidOperationException("Tiles are not supported.");
+            }
+
+            var compression = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_COMPRESSION);
             switch (compression)
             {
                 case TiffConstants.COMPRESSION_CCITTRLEW:
@@ -106,60 +111,83 @@ namespace iTextSharp.text.pdf.codec
             float rotation = 0;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_ORIENTATION))
             {
-                int rot = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_ORIENTATION);
+                var rot = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_ORIENTATION);
                 if (rot == TiffConstants.ORIENTATION_BOTRIGHT || rot == TiffConstants.ORIENTATION_BOTLEFT)
+                {
                     rotation = (float)Math.PI;
+                }
                 else if (rot == TiffConstants.ORIENTATION_LEFTTOP || rot == TiffConstants.ORIENTATION_LEFTBOT)
+                {
                     rotation = (float)(Math.PI / 2.0);
+                }
                 else if (rot == TiffConstants.ORIENTATION_RIGHTTOP || rot == TiffConstants.ORIENTATION_RIGHTBOT)
+                {
                     rotation = -(float)(Math.PI / 2.0);
+                }
             }
 
             Image img = null;
             long tiffT4Options = 0;
             long tiffT6Options = 0;
-            int fillOrder = 1;
-            int h = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGELENGTH);
-            int w = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGEWIDTH);
-            int dpiX = 0;
-            int dpiY = 0;
+            var fillOrder = 1;
+            var h = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGELENGTH);
+            var w = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGEWIDTH);
+            var dpiX = 0;
+            var dpiY = 0;
             float xyRatio = 0;
-            int resolutionUnit = TiffConstants.RESUNIT_INCH;
+            var resolutionUnit = TiffConstants.RESUNIT_INCH;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_RESOLUTIONUNIT))
+            {
                 resolutionUnit = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_RESOLUTIONUNIT);
+            }
+
             dpiX = getDpi(dir.GetField(TiffConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
             dpiY = getDpi(dir.GetField(TiffConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
             if (resolutionUnit == TiffConstants.RESUNIT_NONE)
             {
                 if (dpiY != 0)
+                {
                     xyRatio = dpiX / (float)dpiY;
+                }
+
                 dpiX = 0;
                 dpiY = 0;
             }
-            int rowsStrip = h;
+            var rowsStrip = h;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_ROWSPERSTRIP))
+            {
                 rowsStrip = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_ROWSPERSTRIP);
+            }
+
             if (rowsStrip <= 0 || rowsStrip > h)
+            {
                 rowsStrip = h;
-            long[] offset = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPOFFSETS);
-            long[] size = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPBYTECOUNTS);
+            }
+
+            var offset = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPOFFSETS);
+            var size = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPBYTECOUNTS);
             if ((size == null || (size.Length == 1 && (size[0] == 0 || size[0] + offset[0] > s.Length))) && h == rowsStrip)
             { // some TIFF producers are really lousy, so...
                 size = new long[] { s.Length - (int)offset[0] };
             }
-            bool reverse = false;
-            TiffField fillOrderField = dir.GetField(TiffConstants.TIFFTAG_FILLORDER);
+            var reverse = false;
+            var fillOrderField = dir.GetField(TiffConstants.TIFFTAG_FILLORDER);
             if (fillOrderField != null)
+            {
                 fillOrder = fillOrderField.GetAsInt(0);
+            }
+
             reverse = (fillOrder == TiffConstants.FILLORDER_LSB2MSB);
-            int paramsn = 0;
+            var paramsn = 0;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_PHOTOMETRIC))
             {
-                long photo = dir.GetFieldAsLong(TiffConstants.TIFFTAG_PHOTOMETRIC);
+                var photo = dir.GetFieldAsLong(TiffConstants.TIFFTAG_PHOTOMETRIC);
                 if (photo == TiffConstants.PHOTOMETRIC_MINISBLACK)
+                {
                     paramsn |= Element.CCITT_BLACKIS1;
+                }
             }
-            int imagecomp = 0;
+            var imagecomp = 0;
             switch (compression)
             {
                 case TiffConstants.COMPRESSION_CCITTRLEW:
@@ -170,26 +198,34 @@ namespace iTextSharp.text.pdf.codec
                 case TiffConstants.COMPRESSION_CCITTFAX3:
                     imagecomp = Element.CCITTG3_1D;
                     paramsn |= Element.CCITT_ENDOFLINE | Element.CCITT_ENDOFBLOCK;
-                    TiffField t4OptionsField = dir.GetField(TiffConstants.TIFFTAG_GROUP3OPTIONS);
+                    var t4OptionsField = dir.GetField(TiffConstants.TIFFTAG_GROUP3OPTIONS);
                     if (t4OptionsField != null)
                     {
                         tiffT4Options = t4OptionsField.GetAsLong(0);
                         if ((tiffT4Options & TiffConstants.GROUP3OPT_2DENCODING) != 0)
+                        {
                             imagecomp = Element.CCITTG3_2D;
+                        }
+
                         if ((tiffT4Options & TiffConstants.GROUP3OPT_FILLBITS) != 0)
+                        {
                             paramsn |= Element.CCITT_ENCODEDBYTEALIGN;
+                        }
                     }
                     break;
                 case TiffConstants.COMPRESSION_CCITTFAX4:
                     imagecomp = Element.CCITTG4;
-                    TiffField t6OptionsField = dir.GetField(TiffConstants.TIFFTAG_GROUP4OPTIONS);
+                    var t6OptionsField = dir.GetField(TiffConstants.TIFFTAG_GROUP4OPTIONS);
                     if (t6OptionsField != null)
+                    {
                         tiffT6Options = t6OptionsField.GetAsLong(0);
+                    }
+
                     break;
             }
             if (direct && rowsStrip == h)
             { //single strip, direct
-                byte[] im = new byte[(int)size[0]];
+                var im = new byte[(int)size[0]];
                 s.Seek(offset[0]);
                 s.ReadFully(im);
                 img = Image.GetInstance(w, h, false, imagecomp, paramsn, im);
@@ -197,16 +233,16 @@ namespace iTextSharp.text.pdf.codec
             }
             else
             {
-                int rowsLeft = h;
-                Ccittg4Encoder g4 = new Ccittg4Encoder(w);
-                for (int k = 0; k < offset.Length; ++k)
+                var rowsLeft = h;
+                var g4 = new Ccittg4Encoder(w);
+                for (var k = 0; k < offset.Length; ++k)
                 {
-                    byte[] im = new byte[(int)size[k]];
+                    var im = new byte[(int)size[k]];
                     s.Seek(offset[k]);
                     s.ReadFully(im);
-                    int height = Math.Min(rowsStrip, rowsLeft);
-                    TiffFaxDecoder decoder = new TiffFaxDecoder(fillOrder, w, height);
-                    byte[] outBuf = new byte[(w + 7) / 8 * height];
+                    var height = Math.Min(rowsStrip, rowsLeft);
+                    var decoder = new TiffFaxDecoder(fillOrder, w, height);
+                    var outBuf = new byte[(w + 7) / 8 * height];
                     switch (compression)
                     {
                         case TiffConstants.COMPRESSION_CCITTRLEW:
@@ -241,7 +277,7 @@ namespace iTextSharp.text.pdf.codec
                     }
                     rowsLeft -= rowsStrip;
                 }
-                byte[] g4Pic = g4.Close();
+                var g4Pic = g4.Close();
                 img = Image.GetInstance(w, h, false, Element.CCITTG4, paramsn & Element.CCITT_BLACKIS1, g4Pic);
             }
             img.SetDpi(dpiX, dpiY);
@@ -250,10 +286,12 @@ namespace iTextSharp.text.pdf.codec
             {
                 try
                 {
-                    TiffField fd = dir.GetField(TiffConstants.TIFFTAG_ICCPROFILE);
-                    IccProfile iccProf = IccProfile.GetInstance(fd.GetAsBytes());
+                    var fd = dir.GetField(TiffConstants.TIFFTAG_ICCPROFILE);
+                    var iccProf = IccProfile.GetInstance(fd.GetAsBytes());
                     if (iccProf.NumComponents == 1)
+                    {
                         img.TagIcc = iccProf;
+                    }
                 }
                 catch
                 {
@@ -262,21 +300,24 @@ namespace iTextSharp.text.pdf.codec
             }
             img.OriginalType = Image.ORIGINAL_TIFF;
             if (rotation.ApproxNotEqual(0))
+            {
                 img.InitialRotation = rotation;
+            }
+
             return img;
         }
 
         public static void Inflate(byte[] deflated, byte[] inflated)
         {
-            byte[] outp = PdfReader.FlateDecode(deflated);
+            var outp = PdfReader.FlateDecode(deflated);
             Array.Copy(outp, 0, inflated, 0, Math.Min(outp.Length, inflated.Length));
         }
 
         protected static Image GetTiffImageColor(TiffDirectory dir, RandomAccessFileOrArray s)
         {
-            int predictor = 1;
+            var predictor = 1;
             TifflzwDecoder lzwDecoder = null;
-            int compression = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_COMPRESSION);
+            var compression = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_COMPRESSION);
             switch (compression)
             {
                 case TiffConstants.COMPRESSION_NONE:
@@ -290,7 +331,7 @@ namespace iTextSharp.text.pdf.codec
                 default:
                     throw new InvalidOperationException("The compression " + compression + " is not supported.");
             }
-            int photometric = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_PHOTOMETRIC);
+            var photometric = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_PHOTOMETRIC);
             switch (photometric)
             {
                 case TiffConstants.PHOTOMETRIC_MINISWHITE:
@@ -301,32 +342,53 @@ namespace iTextSharp.text.pdf.codec
                     break;
                 default:
                     if (compression != TiffConstants.COMPRESSION_OJPEG && compression != TiffConstants.COMPRESSION_JPEG)
+                    {
                         throw new InvalidOperationException("The photometric " + photometric + " is not supported.");
+                    }
+
                     break;
             }
             float rotation = 0;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_ORIENTATION))
             {
-                int rot = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_ORIENTATION);
+                var rot = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_ORIENTATION);
                 if (rot == TiffConstants.ORIENTATION_BOTRIGHT || rot == TiffConstants.ORIENTATION_BOTLEFT)
+                {
                     rotation = (float)Math.PI;
+                }
                 else if (rot == TiffConstants.ORIENTATION_LEFTTOP || rot == TiffConstants.ORIENTATION_LEFTBOT)
+                {
                     rotation = (float)(Math.PI / 2.0);
+                }
                 else if (rot == TiffConstants.ORIENTATION_RIGHTTOP || rot == TiffConstants.ORIENTATION_RIGHTBOT)
+                {
                     rotation = -(float)(Math.PI / 2.0);
+                }
             }
 
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_PLANARCONFIG)
                 && dir.GetFieldAsLong(TiffConstants.TIFFTAG_PLANARCONFIG) == TiffConstants.PLANARCONFIG_SEPARATE)
+            {
                 throw new InvalidOperationException("Planar images are not supported.");
+            }
+
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_EXTRASAMPLES))
+            {
                 throw new InvalidOperationException("Extra samples are not supported.");
-            int samplePerPixel = 1;
+            }
+
+            var samplePerPixel = 1;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_SAMPLESPERPIXEL)) // 1,3,4
+            {
                 samplePerPixel = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_SAMPLESPERPIXEL);
-            int bitsPerSample = 1;
+            }
+
+            var bitsPerSample = 1;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_BITSPERSAMPLE))
+            {
                 bitsPerSample = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_BITSPERSAMPLE);
+            }
+
             switch (bitsPerSample)
             {
                 case 1:
@@ -339,35 +401,47 @@ namespace iTextSharp.text.pdf.codec
             }
             Image img = null;
 
-            int h = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGELENGTH);
-            int w = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGEWIDTH);
-            int dpiX = 0;
-            int dpiY = 0;
-            int resolutionUnit = TiffConstants.RESUNIT_INCH;
+            var h = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGELENGTH);
+            var w = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_IMAGEWIDTH);
+            var dpiX = 0;
+            var dpiY = 0;
+            var resolutionUnit = TiffConstants.RESUNIT_INCH;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_RESOLUTIONUNIT))
+            {
                 resolutionUnit = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_RESOLUTIONUNIT);
+            }
+
             dpiX = getDpi(dir.GetField(TiffConstants.TIFFTAG_XRESOLUTION), resolutionUnit);
             dpiY = getDpi(dir.GetField(TiffConstants.TIFFTAG_YRESOLUTION), resolutionUnit);
-            int fillOrder = 1;
-            bool reverse = false;
-            TiffField fillOrderField = dir.GetField(TiffConstants.TIFFTAG_FILLORDER);
+            var fillOrder = 1;
+            var reverse = false;
+            var fillOrderField = dir.GetField(TiffConstants.TIFFTAG_FILLORDER);
             if (fillOrderField != null)
+            {
                 fillOrder = fillOrderField.GetAsInt(0);
+            }
+
             reverse = (fillOrder == TiffConstants.FILLORDER_LSB2MSB);
-            int rowsStrip = h;
+            var rowsStrip = h;
             if (dir.IsTagPresent(TiffConstants.TIFFTAG_ROWSPERSTRIP)) //another hack for broken tiffs
+            {
                 rowsStrip = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_ROWSPERSTRIP);
+            }
+
             if (rowsStrip <= 0 || rowsStrip > h)
+            {
                 rowsStrip = h;
-            long[] offset = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPOFFSETS);
-            long[] size = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPBYTECOUNTS);
+            }
+
+            var offset = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPOFFSETS);
+            var size = getArrayLongShort(dir, TiffConstants.TIFFTAG_STRIPBYTECOUNTS);
             if ((size == null || (size.Length == 1 && (size[0] == 0 || size[0] + offset[0] > s.Length))) && h == rowsStrip)
             { // some TIFF producers are really lousy, so...
                 size = new long[] { s.Length - (int)offset[0] };
             }
             if (compression == TiffConstants.COMPRESSION_LZW)
             {
-                TiffField predictorField = dir.GetField(TiffConstants.TIFFTAG_PREDICTOR);
+                var predictorField = dir.GetField(TiffConstants.TIFFTAG_PREDICTOR);
                 if (predictorField != null)
                 {
                     predictor = predictorField.GetAsInt(0);
@@ -383,7 +457,7 @@ namespace iTextSharp.text.pdf.codec
                 lzwDecoder = new TifflzwDecoder(w, predictor,
                                                 samplePerPixel);
             }
-            int rowsLeft = h;
+            var rowsLeft = h;
             MemoryStream stream = null;
             ZDeflaterOutputStream zip = null;
             Ccittg4Encoder g4 = null;
@@ -395,7 +469,9 @@ namespace iTextSharp.text.pdf.codec
             {
                 stream = new MemoryStream();
                 if (compression != TiffConstants.COMPRESSION_OJPEG && compression != TiffConstants.COMPRESSION_JPEG)
+                {
                     zip = new ZDeflaterOutputStream(stream);
+                }
             }
             if (compression == TiffConstants.COMPRESSION_OJPEG)
             {
@@ -407,8 +483,8 @@ namespace iTextSharp.text.pdf.codec
                 {
                     throw new IOException("Missing tag(s) for OJPEG compression.");
                 }
-                int jpegOffset = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_JPEGIFOFFSET);
-                int jpegLength = s.Length - jpegOffset;
+                var jpegOffset = (int)dir.GetFieldAsLong(TiffConstants.TIFFTAG_JPEGIFOFFSET);
+                var jpegLength = s.Length - jpegOffset;
 
                 if (dir.IsTagPresent(TiffConstants.TIFFTAG_JPEGIFBYTECOUNT))
                 {
@@ -416,9 +492,9 @@ namespace iTextSharp.text.pdf.codec
                         (int)size[0];
                 }
 
-                byte[] jpeg = new byte[Math.Min(jpegLength, s.Length - jpegOffset)];
+                var jpeg = new byte[Math.Min(jpegLength, s.Length - jpegOffset)];
 
-                int posFilePointer = s.FilePointer;
+                var posFilePointer = s.FilePointer;
                 posFilePointer += jpegOffset;
                 s.Seek(posFilePointer);
                 s.ReadFully(jpeg);
@@ -427,25 +503,34 @@ namespace iTextSharp.text.pdf.codec
             else if (compression == TiffConstants.COMPRESSION_JPEG)
             {
                 if (size.Length > 1)
+                {
                     throw new IOException("Compression JPEG is only supported with a single strip. This image has " + size.Length + " strips.");
-                byte[] jpeg = new byte[(int)size[0]];
+                }
+
+                var jpeg = new byte[(int)size[0]];
                 s.Seek(offset[0]);
                 s.ReadFully(jpeg);
                 img = new Jpeg(jpeg);
             }
             else
             {
-                for (int k = 0; k < offset.Length; ++k)
+                for (var k = 0; k < offset.Length; ++k)
                 {
-                    byte[] im = new byte[(int)size[k]];
+                    var im = new byte[(int)size[k]];
                     s.Seek(offset[k]);
                     s.ReadFully(im);
-                    int height = Math.Min(rowsStrip, rowsLeft);
+                    var height = Math.Min(rowsStrip, rowsLeft);
                     byte[] outBuf = null;
                     if (compression != TiffConstants.COMPRESSION_NONE)
+                    {
                         outBuf = new byte[(w * bitsPerSample * samplePerPixel + 7) / 8 * height];
+                    }
+
                     if (reverse)
+                    {
                         TiffFaxDecoder.ReverseBits(im);
+                    }
+
                     switch (compression)
                     {
                         case TiffConstants.COMPRESSION_DEFLATE:
@@ -491,10 +576,12 @@ namespace iTextSharp.text.pdf.codec
                 {
                     try
                     {
-                        TiffField fd = dir.GetField(TiffConstants.TIFFTAG_ICCPROFILE);
-                        IccProfile iccProf = IccProfile.GetInstance(fd.GetAsBytes());
+                        var fd = dir.GetField(TiffConstants.TIFFTAG_ICCPROFILE);
+                        var iccProf = IccProfile.GetInstance(fd.GetAsBytes());
                         if (samplePerPixel == iccProf.NumComponents)
+                        {
                             img.TagIcc = iccProf;
+                        }
                     }
                     catch
                     {
@@ -503,60 +590,76 @@ namespace iTextSharp.text.pdf.codec
                 }
                 if (dir.IsTagPresent(TiffConstants.TIFFTAG_COLORMAP))
                 {
-                    TiffField fd = dir.GetField(TiffConstants.TIFFTAG_COLORMAP);
-                    char[] rgb = fd.GetAsChars();
-                    byte[] palette = new byte[rgb.Length];
-                    int gColor = rgb.Length / 3;
-                    int bColor = gColor * 2;
-                    for (int k = 0; k < gColor; ++k)
+                    var fd = dir.GetField(TiffConstants.TIFFTAG_COLORMAP);
+                    var rgb = fd.GetAsChars();
+                    var palette = new byte[rgb.Length];
+                    var gColor = rgb.Length / 3;
+                    var bColor = gColor * 2;
+                    for (var k = 0; k < gColor; ++k)
                     {
                         palette[k * 3] = (byte)(rgb[k] >> 8);
                         palette[k * 3 + 1] = (byte)(rgb[k + gColor] >> 8);
                         palette[k * 3 + 2] = (byte)(rgb[k + bColor] >> 8);
                     }
-                    PdfArray indexed = new PdfArray();
+                    var indexed = new PdfArray();
                     indexed.Add(PdfName.Indexed);
                     indexed.Add(PdfName.Devicergb);
                     indexed.Add(new PdfNumber(gColor - 1));
                     indexed.Add(new PdfString(palette));
-                    PdfDictionary additional = new PdfDictionary();
+                    var additional = new PdfDictionary();
                     additional.Put(PdfName.Colorspace, indexed);
                     img.Additional = additional;
                 }
                 img.OriginalType = Image.ORIGINAL_TIFF;
             }
             if (photometric == TiffConstants.PHOTOMETRIC_MINISWHITE)
+            {
                 img.Inverted = true;
+            }
+
             if (rotation.ApproxNotEqual(0))
+            {
                 img.InitialRotation = rotation;
+            }
+
             return img;
         }
 
-        static long[] getArrayLongShort(TiffDirectory dir, int tag)
+        private static long[] getArrayLongShort(TiffDirectory dir, int tag)
         {
-            TiffField field = dir.GetField(tag);
+            var field = dir.GetField(tag);
             if (field == null)
+            {
                 return null;
+            }
+
             long[] offset;
             if (field.GetType() == TiffField.TIFF_LONG)
+            {
                 offset = field.GetAsLongs();
+            }
             else
             { // must be short
-                char[] temp = field.GetAsChars();
+                var temp = field.GetAsChars();
                 offset = new long[temp.Length];
-                for (int k = 0; k < temp.Length; ++k)
+                for (var k = 0; k < temp.Length; ++k)
+                {
                     offset[k] = temp[k];
+                }
             }
             return offset;
         }
 
-        static int getDpi(TiffField fd, int resolutionUnit)
+        private static int getDpi(TiffField fd, int resolutionUnit)
         {
             if (fd == null)
+            {
                 return 0;
-            long[] res = fd.GetAsRational(0);
-            float frac = res[0] / (float)res[1];
-            int dpi = 0;
+            }
+
+            var res = fd.GetAsRational(0);
+            var frac = res[0] / (float)res[1];
+            var dpi = 0;
             switch (resolutionUnit)
             {
                 case TiffConstants.RESUNIT_INCH:

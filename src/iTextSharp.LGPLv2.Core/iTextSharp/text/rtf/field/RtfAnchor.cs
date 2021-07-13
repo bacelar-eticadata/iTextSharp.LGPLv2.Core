@@ -1,6 +1,6 @@
-using System.IO;
-using iTextSharp.text.rtf.text;
 using iTextSharp.text.rtf.document;
+using iTextSharp.text.rtf.text;
+using System.IO;
 
 namespace iTextSharp.text.rtf.field
 {

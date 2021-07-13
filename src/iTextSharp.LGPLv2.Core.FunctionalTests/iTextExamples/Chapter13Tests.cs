@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -18,14 +18,14 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document();
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             writer.PdfxConformance = PdfWriter.PDFX1A2001;
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            string arialTtf = TestUtils.GetTahomaFontPath();
-            Font font = FontFactory.GetFont(
+            var arialTtf = TestUtils.GetTahomaFontPath();
+            var font = FontFactory.GetFont(
               arialTtf, BaseFont.CP1252, BaseFont.EMBEDDED, Font.UNDEFINED,
               Font.UNDEFINED, new CmykColor(255, 255, 0, 0)
             );
@@ -47,7 +47,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document();
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             writer.PdfVersion = PdfWriter.VERSION_1_5;
             writer.AddViewerPreference(PdfName.Printscaling, PdfName.None);
             writer.AddViewerPreference(PdfName.Numcopies, new PdfNumber(3));

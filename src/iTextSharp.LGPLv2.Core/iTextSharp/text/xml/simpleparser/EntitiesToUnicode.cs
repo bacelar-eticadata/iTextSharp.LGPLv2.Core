@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Text;
 using System.Globalization;
+using System.Text;
 
 namespace iTextSharp.text.xml.simpleparser
 {
@@ -347,11 +347,15 @@ namespace iTextSharp.text.xml.simpleparser
                     return '\0';
                 }
             }
-            object c = Map[name];
+            var c = Map[name];
             if (c == null)
+            {
                 return '\0';
+            }
             else
+            {
                 return (char)c;
+            }
         }
 
         /// <summary>
@@ -360,12 +364,15 @@ namespace iTextSharp.text.xml.simpleparser
         /// </summary>
         public static string DecodeString(string s)
         {
-            int posAmp = s.IndexOf("&", StringComparison.Ordinal);
-            if (posAmp == -1) return s;
+            var posAmp = s.IndexOf("&", StringComparison.Ordinal);
+            if (posAmp == -1)
+            {
+                return s;
+            }
 
             int posSc;
             int posA;
-            StringBuilder buf = new StringBuilder(s.Substring(0, posAmp));
+            var buf = new StringBuilder(s.Substring(0, posAmp));
             char replace;
             while (true)
             {

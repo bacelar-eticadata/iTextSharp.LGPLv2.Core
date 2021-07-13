@@ -1,7 +1,7 @@
+using iTextSharp.text.pdf;
 using System;
 using System.Collections;
 using System.util;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text
 {
@@ -53,14 +53,8 @@ namespace iTextSharp.text
         /// <returns>Returns the alignment.</returns>
         public int Alignment
         {
-            get
-            {
-                return _alignment;
-            }
-            set
-            {
-                _alignment = value;
-            }
+            get => _alignment;
+            set => _alignment = value;
         }
 
         /// <summary>
@@ -68,14 +62,8 @@ namespace iTextSharp.text
         /// <returns>Returns the cellpadding.</returns>
         public float Cellpadding
         {
-            get
-            {
-                return _cellpadding;
-            }
-            set
-            {
-                _cellpadding = value;
-            }
+            get => _cellpadding;
+            set => _cellpadding = value;
         }
 
         /// <summary>
@@ -83,40 +71,22 @@ namespace iTextSharp.text
         /// <returns>Returns the cellspacing.</returns>
         public float Cellspacing
         {
-            get
-            {
-                return _cellspacing;
-            }
-            set
-            {
-                _cellspacing = value;
-            }
+            get => _cellspacing;
+            set => _cellspacing = value;
         }
 
         /// <summary>
         /// @see com.lowagie.text.Element#type()
         /// </summary>
-        public override int Type
-        {
-            get
-            {
-                return TABLE;
-            }
-        }
+        public override int Type => TABLE;
 
         /// <summary>
         /// </summary>
         /// <returns>Returns the width.</returns>
         public override float Width
         {
-            get
-            {
-                return _width;
-            }
-            set
-            {
-                _width = value;
-            }
+            get => _width;
+            set => _width = value;
         }
 
         /// <summary>
@@ -124,14 +94,8 @@ namespace iTextSharp.text
         /// <returns>Returns the widthpercentage.</returns>
         public float Widthpercentage
         {
-            get
-            {
-                return _widthpercentage;
-            }
-            set
-            {
-                _widthpercentage = value;
-            }
+            get => _widthpercentage;
+            set => _widthpercentage = value;
         }
 
         /// <summary>
@@ -171,18 +135,24 @@ namespace iTextSharp.text
         /// <returns>a com.lowagie.text.pdf.PdfPTable object</returns>
         public PdfPTable CreatePdfPTable()
         {
-            if (_content.Count == 0) throw new BadElementException("Trying to create a table without rows.");
-            SimpleCell rowx = (SimpleCell)_content[0];
-            int columns = 0;
+            if (_content.Count == 0)
+            {
+                throw new BadElementException("Trying to create a table without rows.");
+            }
+
+            var rowx = (SimpleCell)_content[0];
+            var columns = 0;
             foreach (SimpleCell cell in rowx.Content)
             {
                 columns += cell.Colspan;
             }
-            float[] widths = new float[columns];
-            float[] widthpercentages = new float[columns];
-            PdfPTable table = new PdfPTable(columns);
-            table.TableEvent = this;
-            table.HorizontalAlignment = _alignment;
+            var widths = new float[columns];
+            var widthpercentages = new float[columns];
+            var table = new PdfPTable(columns)
+            {
+                TableEvent = this,
+                HorizontalAlignment = _alignment
+            };
             int pos;
             foreach (SimpleCell row in _content)
             {
@@ -209,14 +179,21 @@ namespace iTextSharp.text
                     table.AddCell(cell.CreatePdfPCell(row));
                     if (cell.Colspan == 1)
                     {
-                        if (cell.Width > 0) widths[pos] = cell.Width;
-                        if (cell.Widthpercentage > 0) widthpercentages[pos] = cell.Widthpercentage;
+                        if (cell.Width > 0)
+                        {
+                            widths[pos] = cell.Width;
+                        }
+
+                        if (cell.Widthpercentage > 0)
+                        {
+                            widthpercentages[pos] = cell.Widthpercentage;
+                        }
                     }
                     pos += cell.Colspan;
                 }
             }
-            float sumWidths = 0f;
-            for (int i = 0; i < columns; i++)
+            var sumWidths = 0f;
+            for (var i = 0; i < columns; i++)
             {
                 if (widths[i].ApproxEquals(0))
                 {
@@ -232,7 +209,7 @@ namespace iTextSharp.text
             }
             else
             {
-                for (int i = 0; i < columns; i++)
+                for (var i = 0; i < columns; i++)
                 {
                     if (widthpercentages[i].ApproxEquals(0))
                     {
@@ -264,19 +241,25 @@ namespace iTextSharp.text
         /// <returns>a com.lowagie.text.Table object</returns>
         public Table CreateTable()
         {
-            if (_content.Count == 0) throw new BadElementException("Trying to create a table without rows.");
-            SimpleCell rowx = (SimpleCell)_content[0];
-            int columns = 0;
+            if (_content.Count == 0)
+            {
+                throw new BadElementException("Trying to create a table without rows.");
+            }
+
+            var rowx = (SimpleCell)_content[0];
+            var columns = 0;
             foreach (SimpleCell cell in rowx.Content)
             {
                 columns += cell.Colspan;
             }
-            float[] widths = new float[columns];
-            float[] widthpercentages = new float[columns];
-            Table table = new Table(columns);
-            table.Alignment = _alignment;
-            table.Spacing = _cellspacing;
-            table.Padding = _cellpadding;
+            var widths = new float[columns];
+            var widthpercentages = new float[columns];
+            var table = new Table(columns)
+            {
+                Alignment = _alignment,
+                Spacing = _cellspacing,
+                Padding = _cellpadding
+            };
             table.CloneNonPositionParameters(this);
             int pos;
             foreach (SimpleCell row in _content)
@@ -287,14 +270,21 @@ namespace iTextSharp.text
                     table.AddCell(cell.CreateCell(row));
                     if (cell.Colspan == 1)
                     {
-                        if (cell.Width > 0) widths[pos] = cell.Width;
-                        if (cell.Widthpercentage > 0) widthpercentages[pos] = cell.Widthpercentage;
+                        if (cell.Width > 0)
+                        {
+                            widths[pos] = cell.Width;
+                        }
+
+                        if (cell.Widthpercentage > 0)
+                        {
+                            widthpercentages[pos] = cell.Widthpercentage;
+                        }
                     }
                     pos += cell.Colspan;
                 }
             }
-            float sumWidths = 0f;
-            for (int i = 0; i < columns; i++)
+            var sumWidths = 0f;
+            for (var i = 0; i < columns; i++)
             {
                 if (widths[i].ApproxEquals(0))
                 {
@@ -311,7 +301,7 @@ namespace iTextSharp.text
             }
             else
             {
-                for (int i = 0; i < columns; i++)
+                for (var i = 0; i < columns; i++)
                 {
                     if (widthpercentages[i].ApproxEquals(0))
                     {
@@ -350,10 +340,10 @@ namespace iTextSharp.text
         /// </summary>
         public void TableLayout(PdfPTable table, float[][] widths, float[] heights, int headerRows, int rowStart, PdfContentByte[] canvases)
         {
-            float[] width = widths[0];
-            Rectangle rect = new Rectangle(width[0], heights[heights.Length - 1], width[width.Length - 1], heights[0]);
+            var width = widths[0];
+            var rect = new Rectangle(width[0], heights[heights.Length - 1], width[width.Length - 1], heights[0]);
             rect.CloneNonPositionParameters(this);
-            int bd = rect.Border;
+            var bd = rect.Border;
             rect.Border = NO_BORDER;
             canvases[PdfPTable.BACKGROUNDCANVAS].Rectangle(rect);
             rect.Border = bd;

@@ -45,8 +45,8 @@ namespace iTextSharp.text
         {
             if (o is ListItem)
             {
-                ListItem item = (ListItem)o;
-                Chunk chunk = new Chunk(preSymbol, symbol.Font);
+                var item = (ListItem)o;
+                var chunk = new Chunk(preSymbol, symbol.Font);
                 chunk.Append(GreekAlphabetFactory.GetString(first + list.Count, lowercase));
                 chunk.Append(postSymbol);
                 item.ListSymbol = chunk;
@@ -57,7 +57,7 @@ namespace iTextSharp.text
             }
             else if (o is List)
             {
-                List nested = (List)o;
+                var nested = (List)o;
                 nested.IndentationLeft = nested.IndentationLeft + symbolIndent;
                 first--;
                 list.Add(nested);
@@ -75,7 +75,7 @@ namespace iTextSharp.text
         /// </summary>
         protected void SetGreekFont()
         {
-            float fontsize = symbol.Font.Size;
+            var fontsize = symbol.Font.Size;
             symbol.Font = FontFactory.GetFont(FontFactory.SYMBOL, fontsize, Font.NORMAL);
         }
     }

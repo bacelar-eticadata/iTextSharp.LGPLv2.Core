@@ -1,5 +1,5 @@
-using System.IO;
 using System.Drawing;
+using System.IO;
 
 namespace iTextSharp.text.rtf.graphic
 {
@@ -76,6 +76,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Property for defining an image.
         /// </summary>
         public const string PROPERTY_IMAGE = "pib";
+
         /// <summary>
         /// Property for defining that the shape is in a table cell. Requires
         /// a bool value.
@@ -93,6 +94,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Point array as the value.
         /// </summary>
         public const string PROPERTY_VERTICIES = "pVerticies";
+
         /// <summary>
         /// The stored value is either an int or a Point array.
         /// </summary>
@@ -122,6 +124,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The stored value is a long.
         /// </summary>
         private const int PropertyTypeLong = 1;
+
         /// <summary>
         /// The RtfShapeProperty name.
         /// </summary>
@@ -131,6 +134,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The value type.
         /// </summary>
         private readonly int _type;
+
         /// <summary>
         /// The RtfShapeProperty value.
         /// </summary>
@@ -230,6 +234,7 @@ namespace iTextSharp.text.rtf.graphic
             _name = name;
             _value = value;
         }
+
         /// <summary>
         /// Gets the name of this RtfShapeProperty.
         /// </summary>
@@ -261,6 +266,7 @@ namespace iTextSharp.text.rtf.graphic
                 case PropertyTypeDouble:
                     result.Write(t = DocWriter.GetIsoBytes(_value.ToString()), 0, t.Length);
                     break;
+
                 case PropertyTypeBoolean:
                     if ((bool)_value)
                     {
@@ -271,18 +277,20 @@ namespace iTextSharp.text.rtf.graphic
                         result.Write(t = DocWriter.GetIsoBytes("0"), 0, t.Length);
                     }
                     break;
+
                 case PropertyTypeColor:
-                    BaseColor color = (BaseColor)_value;
+                    var color = (BaseColor)_value;
                     result.Write(t = IntToByteArray(color.R | (color.G << 8) | (color.B << 16)), 0, t.Length);
                     break;
+
                 case PropertyTypeArray:
                     if (_value is int[])
                     {
-                        int[] values = (int[])_value;
+                        var values = (int[])_value;
                         result.Write(t = DocWriter.GetIsoBytes("4;"), 0, t.Length);
                         result.Write(t = IntToByteArray(values.Length), 0, t.Length);
                         result.Write(RtfElement.CommaDelimiter, 0, RtfElement.CommaDelimiter.Length);
-                        for (int i = 0; i < values.Length; i++)
+                        for (var i = 0; i < values.Length; i++)
                         {
                             result.Write(t = IntToByteArray(values[i]), 0, t.Length);
                             if (i < values.Length - 1)
@@ -293,11 +301,11 @@ namespace iTextSharp.text.rtf.graphic
                     }
                     else if (_value is Point[])
                     {
-                        Point[] values = (Point[])_value;
+                        var values = (Point[])_value;
                         result.Write(t = DocWriter.GetIsoBytes("8;"), 0, t.Length);
                         result.Write(t = IntToByteArray(values.Length), 0, t.Length);
                         result.Write(RtfElement.CommaDelimiter, 0, RtfElement.CommaDelimiter.Length);
-                        for (int i = 0; i < values.Length; i++)
+                        for (var i = 0; i < values.Length; i++)
                         {
                             result.Write(t = DocWriter.GetIsoBytes("("), 0, t.Length);
                             result.Write(t = IntToByteArray(values[i].X), 0, t.Length);
@@ -311,9 +319,10 @@ namespace iTextSharp.text.rtf.graphic
                         }
                     }
                     break;
+
                 case PropertyTypeImage:
-                    Image image = (Image)_value;
-                    RtfImage img = new RtfImage(Doc, image);
+                    var image = (Image)_value;
+                    var img = new RtfImage(Doc, image);
                     img.SetTopLevelElement(true);
                     result.Write(RtfElement.OpenGroup, 0, RtfElement.OpenGroup.Length);
                     img.WriteContent(result);

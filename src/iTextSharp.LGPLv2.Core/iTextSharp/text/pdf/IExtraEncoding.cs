@@ -7,7 +7,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public interface IExtraEncoding
     {
-
         /// <summary>
         /// Converts a byte array to an Unicode string according to some encoding.
         /// supports more than one encoding.

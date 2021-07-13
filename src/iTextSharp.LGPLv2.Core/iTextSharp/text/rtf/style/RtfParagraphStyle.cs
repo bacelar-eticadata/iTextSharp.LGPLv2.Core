@@ -1,10 +1,9 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.text;
+using System.IO;
 
 namespace iTextSharp.text.rtf.style
 {
-
     /// <summary>
     /// The RtfParagraphStyle stores all style/formatting attributes of a RtfParagraph.
     /// Additionally it also supports the style name system available in RTF. The RtfParagraphStyle
@@ -16,7 +15,6 @@ namespace iTextSharp.text.rtf.style
     /// </summary>
     public class RtfParagraphStyle : RtfFont
     {
-
         /// <summary>
         /// Constant for center alignment
         /// </summary>
@@ -31,34 +29,42 @@ namespace iTextSharp.text.rtf.style
         /// Constant for left alignment
         /// </summary>
         public static readonly byte[] AlignLeft = DocWriter.GetIsoBytes("\\ql");
+
         /// <summary>
         /// Constant for right alignment
         /// </summary>
         public static readonly byte[] AlignRight = DocWriter.GetIsoBytes("\\qr");
+
         /// <summary>
         /// Constant for the first line indentation
         /// </summary>
         public static readonly byte[] FirstLineIndent = DocWriter.GetIsoBytes("\\fi");
+
         /// <summary>
         /// Constant for left indentation
         /// </summary>
         public static readonly byte[] IndentLeft = DocWriter.GetIsoBytes("\\li");
+
         /// <summary>
         /// Constant for right indentation
         /// </summary>
         public static readonly byte[] IndentRight = DocWriter.GetIsoBytes("\\ri");
+
         /// <summary>
         /// Constant for keeping the paragraph together on one page
         /// </summary>
         public static readonly byte[] KeepTogether = DocWriter.GetIsoBytes("\\keep");
+
         /// <summary>
         /// Constant for keeping the paragraph toghether with the next one on one page
         /// </summary>
         public static readonly byte[] KeepTogetherWithNext = DocWriter.GetIsoBytes("\\keepn");
+
         /// <summary>
         /// Constant for the space after the paragraph.
         /// </summary>
         public static readonly byte[] SpacingAfter = DocWriter.GetIsoBytes("\\sa");
+
         /// <summary>
         /// Constant for the space before the paragraph.
         /// </summary>
@@ -83,6 +89,7 @@ namespace iTextSharp.text.rtf.style
         /// The NORMAL/STANDARD style.
         /// </summary>
         public static readonly RtfParagraphStyle StyleNormal = new RtfParagraphStyle("Normal", "Arial", 12, NORMAL, BaseColor.Black);
+
         /// <summary>
         /// The alignment has been modified.
         /// </summary>
@@ -232,6 +239,7 @@ namespace iTextSharp.text.rtf.style
             StyleHeading3.Size = 13;
             StyleHeading3.SetStyle(BOLD);
         }
+
         /// <summary>
         /// Constructs a new RtfParagraphStyle with the given attributes.
         /// </summary>
@@ -307,8 +315,8 @@ namespace iTextSharp.text.rtf.style
             {
                 return false;
             }
-            RtfParagraphStyle paragraphStyle = (RtfParagraphStyle)o;
-            bool result = GetStyleName().Equals(paragraphStyle.GetStyleName());
+            var paragraphStyle = (RtfParagraphStyle)o;
+            var result = GetStyleName().Equals(paragraphStyle.GetStyleName());
             return result;
         }
 
@@ -420,6 +428,7 @@ namespace iTextSharp.text.rtf.style
         {
             return _styleName;
         }
+
         /// <summary>
         /// Handles the inheritance of paragraph style settings. All settings that
         /// have not been modified will be inherited from the base RtfParagraphStyle.
@@ -491,6 +500,7 @@ namespace iTextSharp.text.rtf.style
             _modified = _modified | ModifiedAlignment;
             _alignment = alignment;
         }
+
         /// <summary>
         /// Sets the colour of this RtfParagraphStyle.
         /// </summary>
@@ -510,6 +520,7 @@ namespace iTextSharp.text.rtf.style
         {
             _firstLineIndent = firstLineIndent;
         }
+
         /// <summary>
         /// Sets the font name of this RtfParagraphStyle.
         /// </summary>
@@ -529,6 +540,7 @@ namespace iTextSharp.text.rtf.style
             _modified = _modified | ModifiedIndentLeft;
             _indentLeft = indentLeft;
         }
+
         /// <summary>
         /// Sets the right indentation of this RtfParagraphStyle.
         /// </summary>
@@ -538,6 +550,7 @@ namespace iTextSharp.text.rtf.style
             _modified = _modified | ModifiedIndentRight;
             _indentRight = indentRight;
         }
+
         /// <summary>
         /// Sets whether the lines in the paragraph should be kept together in
         /// this RtfParagraphStyle.
@@ -589,6 +602,7 @@ namespace iTextSharp.text.rtf.style
             _modified = _modified | ModifiedSpacingBefore;
             _spacingBefore = spacingBefore;
         }
+
         /// <summary>
         /// Sets the font style of this RtfParagraphStyle.
         /// </summary>
@@ -598,6 +612,7 @@ namespace iTextSharp.text.rtf.style
             _modified = _modified | ModifiedFontStyle;
             base.SetStyle(fontStyle);
         }
+
         /// <summary>
         /// Writes the start information of this RtfParagraphStyle.
         /// @throws IOException On i/o errors.
@@ -682,12 +697,15 @@ namespace iTextSharp.text.rtf.style
                 case Element.ALIGN_LEFT:
                     result.Write(t = AlignLeft, 0, t.Length);
                     break;
+
                 case Element.ALIGN_RIGHT:
                     result.Write(t = AlignRight, 0, t.Length);
                     break;
+
                 case Element.ALIGN_CENTER:
                     result.Write(t = AlignCenter, 0, t.Length);
                     break;
+
                 case Element.ALIGN_JUSTIFIED:
                 case Element.ALIGN_JUSTIFIED_ALL:
                     result.Write(t = AlignJustify, 0, t.Length);

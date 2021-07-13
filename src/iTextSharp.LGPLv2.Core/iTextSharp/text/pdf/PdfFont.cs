@@ -18,7 +18,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfFont : IComparable
     {
-
         protected float HScale = 1;
 
         /// <summary>
@@ -35,6 +34,7 @@ namespace iTextSharp.text.pdf
         /// the size.
         /// </summary>
         private readonly float _size;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -49,33 +49,21 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, false);
+                var bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, false);
                 return new PdfFont(bf, 12);
             }
         }
 
-        internal BaseFont Font
-        {
-            get
-            {
-                return _font;
-            }
-        }
+        internal BaseFont Font => _font;
 
         internal float HorizontalScaling
         {
-            set
-            {
-                HScale = value;
-            }
+            set => HScale = value;
         }
 
         internal Image Image
         {
-            set
-            {
-                image = value;
-            }
+            set => image = value;
         }
 
         internal float Size
@@ -83,7 +71,9 @@ namespace iTextSharp.text.pdf
             get
             {
                 if (image == null)
+                {
                     return _size;
+                }
                 else
                 {
                     return image.ScaledHeight;
@@ -94,7 +84,10 @@ namespace iTextSharp.text.pdf
         public int CompareTo(object obj)
         {
             if (image != null)
+            {
                 return 0;
+            }
+
             if (obj == null)
             {
                 return -1;
@@ -142,17 +135,25 @@ namespace iTextSharp.text.pdf
         internal float Width(int character)
         {
             if (image == null)
+            {
                 return _font.GetWidthPoint(character, _size) * HScale;
+            }
             else
+            {
                 return image.ScaledWidth;
+            }
         }
 
         internal float Width(string s)
         {
             if (image == null)
+            {
                 return _font.GetWidthPoint(s, _size) * HScale;
+            }
             else
+            {
                 return image.ScaledWidth;
+            }
         }
     }
 }

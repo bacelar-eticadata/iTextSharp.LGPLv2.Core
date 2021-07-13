@@ -1,7 +1,7 @@
-using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
 {
@@ -32,7 +32,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
             var pdfReader = new PdfReader(inPdfFile);
             var outStream = new FileStream(outPdfFile, FileMode.Create);
             var pdfStamper = new PdfStamper(pdfReader, outStream);
-            int total = pdfReader.NumberOfPages + 1;
+            var total = pdfReader.NumberOfPages + 1;
             var pageSize = pdfReader.GetPageSize(1);
             var width = pageSize.Width;
             var height = pageSize.Height;
@@ -41,7 +41,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
             //var font = TestUtils.GetUnicodeFont("FangSong", TestUtils.GetFontPath("simfang.ttf"), 10, Font.BOLD, BaseColor.Black);
             var font = BaseFont.CreateFont(TestUtils.GetFontPath("simfang.ttf"), BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             var gs = new PdfGState();
-            for (int i = 1; i < total; i++)
+            for (var i = 1; i < total; i++)
             {
                 var content = pdfStamper.GetOverContent(i);
                 gs.FillOpacity = 0.3f;

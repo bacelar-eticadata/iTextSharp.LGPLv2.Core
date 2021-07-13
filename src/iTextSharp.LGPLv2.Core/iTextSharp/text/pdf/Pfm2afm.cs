@@ -1,7 +1,7 @@
+using iTextSharp.LGPLv2.Core.System.Encodings;
 using System;
 using System.IO;
 using System.Text;
-using iTextSharp.LGPLv2.Core.System.Encodings;
 
 namespace iTextSharp.text.pdf
 {
@@ -13,6 +13,7 @@ namespace iTextSharp.text.pdf
         private readonly Encoding _encoding;
         private readonly RandomAccessFileOrArray _inp;
         private readonly StreamWriter _outp;
+
         /// <summary>
         /// Translate table from 1004 to psstd.  1004 is an extension of the
         /// Windows translate table used in PM.
@@ -387,7 +388,7 @@ namespace iTextSharp.text.pdf
         /// in the pfm file, all unused characters are given the width of space.
         /// Note that this array isn't used in iText.
         /// </summary>
-        private int[] _winClass = {
+        private readonly int[] _winClass = {
             0, 0, 0, 0, 2, 2, 2, 0, 2, 0, 2, 2, 2, 0, 0, 0,   /* 00 */
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,   /* 10 */
             1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,   /* 20 */
@@ -426,7 +427,7 @@ namespace iTextSharp.text.pdf
         /// <param name="outp">the AFM file</param>
         public static void Convert(RandomAccessFileOrArray inp, Stream outp)
         {
-            Pfm2Afm p = new Pfm2Afm(inp, outp);
+            var p = new Pfm2Afm(inp, outp);
             p.openpfm();
             p.putheader();
             p.putchartab();
@@ -490,7 +491,10 @@ namespace iTextSharp.text.pdf
             _res2 = _inp.ReadIntLe();
             _fontname = _inp.ReadIntLe();
             if (_hLen != _inp.Length || _extlen != 30 || _fontname < 75 || _fontname > 512)
+            {
                 throw new IOException("Not a valid PFM file.");
+            }
+
             _inp.Seek(_psext + 14);
             _capheight = _inp.ReadShortLe();
             _xheight = _inp.ReadShortLe();
@@ -523,18 +527,23 @@ namespace iTextSharp.text.pdf
 
         private void putchartab()
         {
-            int count = _lastchar - _firstchar + 1;
-            int[] ctabs = new int[count];
+            var count = _lastchar - _firstchar + 1;
+            var ctabs = new int[count];
             _inp.Seek(_chartab);
-            for (int k = 0; k < count; ++k)
+            for (var k = 0; k < count; ++k)
+            {
                 ctabs[k] = _inp.ReadUnsignedShortLe();
-            int[] back = new int[256];
+            }
+
+            var back = new int[256];
             if (_charset == 0)
             {
-                for (int i = _firstchar; i <= _lastchar; ++i)
+                for (var i = _firstchar; i <= _lastchar; ++i)
                 {
                     if (_win2PsStd[i] != 0)
+                    {
                         back[_win2PsStd[i]] = i;
+                    }
                 }
             }
             /* Put outp the header */
@@ -549,7 +558,7 @@ namespace iTextSharp.text.pdf
                 * If the charset is not the Windows standard, just put outp
                 * unnamed entries.
                 */
-                for (int i = _firstchar; i <= _lastchar; i++)
+                for (var i = _firstchar; i <= _lastchar; i++)
                 {
                     if (ctabs[i - _firstchar] != 0)
                     {
@@ -559,9 +568,9 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                for (int i = 0; i < 256; i++)
+                for (var i = 0; i < 256; i++)
                 {
-                    int j = back[i];
+                    var j = back[i];
                     if (j != 0)
                     {
                         outchar(i, ctabs[j - _firstchar], _winChars[j]);
@@ -569,7 +578,7 @@ namespace iTextSharp.text.pdf
                     }
                 }
                 /* Put outp all non-encoded chars */
-                for (int i = _firstchar; i <= _lastchar; i++)
+                for (var i = _firstchar; i <= _lastchar; i++)
                 {
                     if (ctabs[i - _firstchar] != 0)
                     {
@@ -579,28 +588,34 @@ namespace iTextSharp.text.pdf
             }
             /* Put outp the trailer */
             _outp.Write("EndCharMetrics\n");
-
         }
 
         private void putheader()
         {
             _outp.Write("StartFontMetrics 2.0\n");
             if (_copyright.Length > 0)
+            {
                 _outp.Write("Comment " + _copyright + '\n');
+            }
+
             _outp.Write("FontName ");
             _inp.Seek(_fontname);
-            string fname = readString();
+            var fname = readString();
             _outp.Write(fname);
             _outp.Write("\nEncodingScheme ");
             if (_charset != 0)
+            {
                 _outp.Write("FontSpecific\n");
+            }
             else
+            {
                 _outp.Write("AdobeStandardEncoding\n");
+            }
             /*
-            * The .pfm is missing full name, so construct from font name by
-            * changing the hyphen to a space.  This actually works inp a lot
-            * of cases.
-            */
+* The .pfm is missing full name, so construct from font name by
+* changing the hyphen to a space.  This actually works inp a lot
+* of cases.
+*/
             _outp.Write("FullName " + fname.Replace('-', ' '));
             if (_face != 0)
             {
@@ -610,21 +625,33 @@ namespace iTextSharp.text.pdf
 
             _outp.Write("\nWeight ");
             if (_weight > 475 || fname.IndexOf("bold", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
                 _outp.Write("Bold");
+            }
             else if ((_weight < 325 && _weight != 0) || fname.IndexOf("light", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
                 _outp.Write("Light");
+            }
             else if (fname.IndexOf("black", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
                 _outp.Write("Black");
+            }
             else
+            {
                 _outp.Write("Medium");
+            }
 
             _outp.Write("\nItalicAngle ");
             if (_italic != 0 || fname.IndexOf("italic", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
                 _outp.Write("-12.00");
+            }
             /* this is a typical value; something else may work better for a
-            specific font */
+specific font */
             else
+            {
                 _outp.Write("0");
+            }
 
             /*
             *  The mono flag inp the pfm actually indicates whether there is a
@@ -650,9 +677,14 @@ namespace iTextSharp.text.pdf
             */
             _outp.Write("\nFontBBox");
             if (_isMono)
+            {
                 outval(-20);      /* Just guess at left bounds */
+            }
             else
+            {
                 outval(-100);
+            }
+
             outval(-(_descender + 5));  /* Descender is given as positive value */
             outval(_maxwidth + 10);
             outval(_ascent + 5);
@@ -674,24 +706,32 @@ namespace iTextSharp.text.pdf
         private void putkerntab()
         {
             if (_kernpairs == 0)
+            {
                 return;
+            }
+
             _inp.Seek(_kernpairs);
-            int count = _inp.ReadUnsignedShortLe();
-            int nzero = 0;
-            int[] kerns = new int[count * 3];
-            for (int k = 0; k < kerns.Length;)
+            var count = _inp.ReadUnsignedShortLe();
+            var nzero = 0;
+            var kerns = new int[count * 3];
+            for (var k = 0; k < kerns.Length;)
             {
                 kerns[k++] = _inp.Read();
                 kerns[k++] = _inp.Read();
                 if ((kerns[k++] = _inp.ReadShortLe()) != 0)
+                {
                     ++nzero;
+                }
             }
             if (nzero == 0)
+            {
                 return;
+            }
+
             _outp.Write("StartKernData\nStartKernPairs");
             outval(nzero);
             _outp.Write('\n');
-            for (int k = 0; k < kerns.Length; k += 3)
+            for (var k = 0; k < kerns.Length; k += 3)
             {
                 if (kerns[k + 2] != 0)
                 {
@@ -714,47 +754,53 @@ namespace iTextSharp.text.pdf
 
         private string readString(int n)
         {
-            byte[] b = new byte[n];
+            var b = new byte[n];
             _inp.ReadFully(b);
             int k;
             for (k = 0; k < b.Length; ++k)
             {
                 if (b[k] == 0)
+                {
                     break;
+                }
             }
             return _encoding.GetString(b, 0, k);
         }
 
         private string readString()
         {
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
             while (true)
             {
-                int c = _inp.Read();
+                var c = _inp.Read();
                 if (c <= 0)
+                {
                     break;
+                }
+
                 buf.Append((char)c);
             }
             return buf.ToString();
         }
-                     /* Total length of .pfm file */
-           /* Copyright string [60]*/
-                 /* 0=windows, otherwise nomap */
-                /* Width for mono fonts */
-                    /* Lower bit off inp mono */
-                /* Mono if avg=max width */
-                /* Use to compute bounding box */
-               /* First char inp table */
-                /* Last char inp table */
-                    /* Face name */
-                   /* PostScript extension */
-                 /* Character width tables */
-               /* Kerning pairs */
-                /* Font name */
 
-       /* Cap height */
-                 /* X height */
-                /* Ascender */
-               /* Descender (positive) */
+        /* Total length of .pfm file */
+        /* Copyright string [60]*/
+        /* 0=windows, otherwise nomap */
+        /* Width for mono fonts */
+        /* Lower bit off inp mono */
+        /* Mono if avg=max width */
+        /* Use to compute bounding box */
+        /* First char inp table */
+        /* Last char inp table */
+        /* Face name */
+        /* PostScript extension */
+        /* Character width tables */
+        /* Kerning pairs */
+        /* Font name */
+
+        /* Cap height */
+        /* X height */
+        /* Ascender */
+        /* Descender (positive) */
     }
 }

@@ -1,7 +1,7 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
-using iTextSharp.text.rtf.text;
 using iTextSharp.text.rtf.parser;
+using iTextSharp.text.rtf.text;
+using System.IO;
 
 namespace iTextSharp.text.rtf
 {
@@ -33,10 +33,7 @@ namespace iTextSharp.text.rtf
         /// </summary>
         public override HeaderFooter Footer
         {
-            set
-            {
-                _rtfDoc.GetDocumentHeader().SetFooter(value);
-            }
+            set => _rtfDoc.GetDocumentHeader().SetFooter(value);
         }
 
         /// <summary>
@@ -44,10 +41,7 @@ namespace iTextSharp.text.rtf
         /// </summary>
         public override HeaderFooter Header
         {
-            set
-            {
-                _rtfDoc.GetDocumentHeader().SetHeader(value);
-            }
+            set => _rtfDoc.GetDocumentHeader().SetHeader(value);
         }
 
         /// <summary>
@@ -80,10 +74,10 @@ namespace iTextSharp.text.rtf
             {
                 return false;
             }
-            IRtfBasicElement[] rtfElements = _rtfDoc.GetMapper().MapElement(element);
+            var rtfElements = _rtfDoc.GetMapper().MapElement(element);
             if (rtfElements.Length != 0)
             {
-                for (int i = 0; i < rtfElements.Length; i++)
+                for (var i = 0; i < rtfElements.Length; i++)
                 {
                     if (rtfElements[i] != null)
                     {
@@ -154,10 +148,10 @@ namespace iTextSharp.text.rtf
             {
                 throw new DocumentException("The document must be open to import RTF documents.");
             }
-            RtfParser rtfImport = new RtfParser(Document);
+            var rtfImport = new RtfParser(Document);
             if (events != null)
             {
-                for (int idx = 0; idx < events.Length; idx++)
+                for (var idx = 0; idx < events.Length; idx++)
                 {
                     rtfImport.AddListener(events[idx]);
                 }
@@ -194,10 +188,10 @@ namespace iTextSharp.text.rtf
         public void ImportRtfDocumentIntoElement(IElement elem, FileStream documentSource, IEventListener[] events)
         {
 
-            RtfParser rtfImport = new RtfParser(Document);
+            var rtfImport = new RtfParser(Document);
             if (events != null)
             {
-                for (int idx = 0; idx < events.Length; idx++)
+                for (var idx = 0; idx < events.Length; idx++)
                 {
                     rtfImport.AddListener(events[idx]);
                 }
@@ -243,10 +237,10 @@ namespace iTextSharp.text.rtf
             {
                 throw new DocumentException("The document must be open to import RTF fragments.");
             }
-            RtfParser rtfImport = new RtfParser(Document);
+            var rtfImport = new RtfParser(Document);
             if (events != null)
             {
-                for (int idx = 0; idx < events.Length; idx++)
+                for (var idx = 0; idx < events.Length; idx++)
                 {
                     rtfImport.AddListener(events[idx]);
                 }

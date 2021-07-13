@@ -1,5 +1,5 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
+using System.IO;
 
 namespace iTextSharp.text.rtf.headerfooter
 {
@@ -10,7 +10,6 @@ namespace iTextSharp.text.rtf.headerfooter
     /// </summary>
     public class RtfHeaderFooterGroup : HeaderFooter, IRtfBasicElement
     {
-
         /// <summary>
         /// This RtfHeaderFooterGroup contains two or three RtfHeaderFooter objects
         /// </summary>
@@ -20,6 +19,7 @@ namespace iTextSharp.text.rtf.headerfooter
         /// This RtfHeaderFooterGroup contains no RtfHeaderFooter objects
         /// </summary>
         private const int ModeNone = 0;
+
         /// <summary>
         /// This RtfHeaderFooterGroup contains one RtfHeaderFooter object
         /// </summary>
@@ -54,10 +54,12 @@ namespace iTextSharp.text.rtf.headerfooter
         /// The current mode of this RtfHeaderFooterGroup. Defaults to MODE_NONE
         /// </summary>
         private int _mode = ModeNone;
+
         /// <summary>
         /// The current type of this RtfHeaderFooterGroup. Defaults to RtfHeaderFooter.TYPE_HEADER
         /// </summary>
         private int _type = RtfHeaderFooter.TYPE_HEADER;
+
         /// <summary>
         /// Constructs a RtfHeaderGroup to which you add headers/footers using
         /// via the setHeaderFooter method.
@@ -221,12 +223,15 @@ namespace iTextSharp.text.rtf.headerfooter
                 case RtfHeaderFooter.DISPLAY_ALL_PAGES:
                     _headerAll = headerFooter;
                     break;
+
                 case RtfHeaderFooter.DISPLAY_FIRST_PAGE:
                     _headerFirst = headerFooter;
                     break;
+
                 case RtfHeaderFooter.DISPLAY_LEFT_PAGES:
                     _headerLeft = headerFooter;
                     break;
+
                 case RtfHeaderFooter.DISPLAY_RIGHT_PAGES:
                     _headerRight = headerFooter;
                     break;
@@ -246,12 +251,15 @@ namespace iTextSharp.text.rtf.headerfooter
                 case RtfHeaderFooter.DISPLAY_ALL_PAGES:
                     _headerAll = new RtfHeaderFooter(_document, headerFooter, _type, displayAt);
                     break;
+
                 case RtfHeaderFooter.DISPLAY_FIRST_PAGE:
                     _headerFirst = new RtfHeaderFooter(_document, headerFooter, _type, displayAt);
                     break;
+
                 case RtfHeaderFooter.DISPLAY_LEFT_PAGES:
                     _headerLeft = new RtfHeaderFooter(_document, headerFooter, _type, displayAt);
                     break;
+
                 case RtfHeaderFooter.DISPLAY_RIGHT_PAGES:
                     _headerRight = new RtfHeaderFooter(_document, headerFooter, _type, displayAt);
                     break;
@@ -355,6 +363,7 @@ namespace iTextSharp.text.rtf.headerfooter
                 }
             }
         }
+
         /// <summary>
         /// Gets the RtfHeaderFooter for all pages
         /// </summary>

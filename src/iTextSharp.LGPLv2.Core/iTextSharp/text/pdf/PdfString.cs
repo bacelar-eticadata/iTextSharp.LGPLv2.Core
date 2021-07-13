@@ -2,7 +2,6 @@ using System.IO;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfString -class is the PDF-equivalent of a JAVA- string -object.
     ///
@@ -20,7 +19,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfString : PdfObject
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -42,6 +40,7 @@ namespace iTextSharp.text.pdf
         /// The value of this object.
         /// </summary>
         protected string Value = NOTHING;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -50,7 +49,9 @@ namespace iTextSharp.text.pdf
         /// Constructs an empty  PdfString -object.
         /// </summary>
 
-        public PdfString() : base(STRING) { }
+        public PdfString() : base(STRING)
+        {
+        }
 
         /// <summary>
         /// Constructs a  PdfString -object.
@@ -94,22 +95,20 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>an array of  byte s</returns>
 
-        public string Encoding
-        {
-            get
-            {
-                return encoding;
-            }
-        }
+        public string Encoding => encoding;
 
         public override byte[] GetBytes()
         {
             if (Bytes == null)
             {
                 if (encoding != null && encoding.Equals(TEXT_UNICODE) && PdfEncodings.IsPdfDocEncoding(Value))
+                {
                     Bytes = PdfEncodings.ConvertToBytes(Value, TEXT_PDFDOCENCODING);
+                }
                 else
+                {
                     Bytes = PdfEncodings.ConvertToBytes(Value, encoding);
+                }
             }
             return Bytes;
         }
@@ -117,7 +116,10 @@ namespace iTextSharp.text.pdf
         public byte[] GetOriginalBytes()
         {
             if (OriginalValue == null)
+            {
                 return GetBytes();
+            }
+
             return PdfEncodings.ConvertToBytes(OriginalValue, null);
         }
 
@@ -134,21 +136,27 @@ namespace iTextSharp.text.pdf
 
         public override void ToPdf(PdfWriter writer, Stream os)
         {
-            byte[] b = GetBytes();
+            var b = GetBytes();
             PdfEncryption crypto = null;
             if (writer != null)
+            {
                 crypto = writer.Encryption;
+            }
+
             if (crypto != null && !crypto.IsEmbeddedFilesOnly())
             {
                 b = crypto.EncryptByteArray(b);
             }
             if (HexWriting)
             {
-                ByteBuffer buf = new ByteBuffer();
+                var buf = new ByteBuffer();
                 buf.Append('<');
-                int len = b.Length;
-                for (int k = 0; k < len; ++k)
+                var len = b.Length;
+                for (var k = 0; k < len; ++k)
+                {
                     buf.AppendHex(b[k]);
+                }
+
                 buf.Append('>');
                 os.Write(buf.ToByteArray(), 0, buf.Size);
             }
@@ -180,17 +188,24 @@ namespace iTextSharp.text.pdf
         public string ToUnicodeString()
         {
             if (!string.IsNullOrEmpty(encoding))
+            {
                 return Value;
+            }
+
             GetBytes();
             if (Bytes.Length >= 2 && Bytes[0] == 254 && Bytes[1] == 255)
+            {
                 return PdfEncodings.ConvertToString(Bytes, TEXT_UNICODE);
+            }
             else
+            {
                 return PdfEncodings.ConvertToString(Bytes, TEXT_PDFDOCENCODING);
+            }
         }
 
         internal void Decrypt(PdfReader reader)
         {
-            PdfEncryption decrypt = reader.Decrypt;
+            var decrypt = reader.Decrypt;
             if (decrypt != null)
             {
                 OriginalValue = Value;

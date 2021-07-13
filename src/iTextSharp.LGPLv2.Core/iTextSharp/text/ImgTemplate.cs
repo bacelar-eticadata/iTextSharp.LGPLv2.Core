@@ -1,6 +1,5 @@
-using System;
-
 using iTextSharp.text.pdf;
+using System;
 
 namespace iTextSharp.text
 {
@@ -25,9 +24,15 @@ namespace iTextSharp.text
         public ImgTemplate(PdfTemplate template) : base((Uri)null)
         {
             if (template == null)
+            {
                 throw new BadElementException("The template can not be null.");
+            }
+
             if (template.Type == PdfTemplate.TYPE_PATTERN)
+            {
                 throw new BadElementException("A pattern can not be used as a template to create an image.");
+            }
+
             type = IMGTEMPLATE;
             scaledHeight = template.Height;
             Top = scaledHeight;

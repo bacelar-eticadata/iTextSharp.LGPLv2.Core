@@ -64,39 +64,40 @@ namespace System.util.zlib
                                                 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff,
                                                 0x00007fff, 0x0000ffff
                                             };
+
         // o: got eob, possibly still output waiting
         // x: got eob and all data flushed
         // x: got error
 
-        byte _dbits;
-        int _dist;
-        int[] _dtree;
+        private byte _dbits;
+        private int _dist;
+        private int[] _dtree;
+
         // distance tree
-        int _dtreeIndex;
+        private int _dtreeIndex;
 
         /// <summary>
         /// if EXT or COPY, where and how much
         /// </summary>
-        int _get;
+        private int _get;
+        private byte _lbits;
 
-        byte _lbits;
         /// <summary>
         /// mode dependent information
         /// </summary>
-        int _len;
+        private int _len;
+        private int _lit;
 
-        int _lit;
         // ltree bits decoded per branch
         // dtree bits decoder per branch
-        int[] _ltree;
+        private int[] _ltree;
 
         // literal/length/eob tree
-        int _ltreeIndex;
-
-        int _mode;      // current inflate_codes mode
-        int _need;
-        int[] _tree; // pointer into tree
-        int _treeIndex;
+        private int _ltreeIndex;
+        private int _mode;      // current inflate_codes mode
+        private int _need;
+        private int[] _tree; // pointer into tree
+        private int _treeIndex;
         // bits needed
         // bits to get for extra
         // distance back to copy from
@@ -359,9 +360,9 @@ namespace System.util.zlib
             int j;              // temporary storage
             int tindex;         // temporary pointer
             int e;              // extra bits or operation
-            int b = 0;            // bit buffer
-            int k = 0;            // bits in bit buffer
-            int p = 0;            // input data pointer
+            var b = 0;            // bit buffer
+            var k = 0;            // bits in bit buffer
+            var p = 0;            // input data pointer
             int n;              // bytes available there
             int q;              // output window write pointer
             int m;              // bytes to end of window or read pointer
@@ -409,7 +410,10 @@ namespace System.util.zlib
 
                         while (k < (j))
                         {
-                            if (n != 0) r = ZOk;
+                            if (n != 0)
+                            {
+                                r = ZOk;
+                            }
                             else
                             {
 
@@ -468,7 +472,10 @@ namespace System.util.zlib
 
                         while (k < (j))
                         {
-                            if (n != 0) r = ZOk;
+                            if (n != 0)
+                            {
+                                r = ZOk;
+                            }
                             else
                             {
 
@@ -496,7 +503,10 @@ namespace System.util.zlib
 
                         while (k < (j))
                         {
-                            if (n != 0) r = ZOk;
+                            if (n != 0)
+                            {
+                                r = ZOk;
+                            }
                             else
                             {
 
@@ -542,7 +552,10 @@ namespace System.util.zlib
 
                         while (k < (j))
                         {
-                            if (n != 0) r = ZOk;
+                            if (n != 0)
+                            {
+                                r = ZOk;
+                            }
                             else
                             {
 
@@ -594,7 +607,10 @@ namespace System.util.zlib
                             s.Window[q++] = s.Window[f++]; m--;
 
                             if (f == s.End)
+                            {
                                 f = 0;
+                            }
+
                             _len--;
                         }
                         _mode = Start;

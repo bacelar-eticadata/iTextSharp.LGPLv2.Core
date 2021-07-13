@@ -33,7 +33,7 @@ namespace iTextSharp.text.pdf.qrcode
         {
         }
 
-        public WriterException(String message)
+        public WriterException(string message)
             : base(message)
         {
         }

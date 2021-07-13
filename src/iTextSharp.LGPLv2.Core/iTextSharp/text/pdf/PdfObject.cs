@@ -22,7 +22,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public abstract class PdfObject
     {
-
         /// <summary>
         /// static membervariables (all the possible types of a PdfObject)
         /// </summary>
@@ -76,6 +75,7 @@ namespace iTextSharp.text.pdf
         /// a possible type of  PdfObject
         /// </summary>
         public const int STRING = 3;
+
         /// <summary>
         /// This is the default encoding to be used for converting strings into bytes and vice versa.
         /// The default encoding is PdfDocEcoding.
@@ -105,6 +105,7 @@ namespace iTextSharp.text.pdf
         /// the type of this  PdfObject
         /// </summary>
         protected int type;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -145,38 +146,17 @@ namespace iTextSharp.text.pdf
 
         public PrIndirectReference IndRef
         {
-            get
-            {
-                return indRef;
-            }
-            set
-            {
-                indRef = value;
-            }
+            get => indRef;
+            set => indRef = value;
         }
 
-        public int Length
-        {
-            get
-            {
-                return ToString().Length;
-            }
-        }
+        public int Length => ToString().Length;
 
-        public int Type
-        {
-            get
-            {
-                return type;
-            }
-        }
+        public int Type => type;
 
         protected string Content
         {
-            set
-            {
-                Bytes = PdfEncodings.ConvertToBytes(value, null);
-            }
+            set => Bytes = PdfEncodings.ConvertToBytes(value, null);
         }
 
         /// <summary>
@@ -195,6 +175,7 @@ namespace iTextSharp.text.pdf
                 case ARRAY:
                 case DICTIONARY:
                     return true;
+
                 case STREAM:
                 case INDIRECT:
                 default:
@@ -263,8 +244,11 @@ namespace iTextSharp.text.pdf
         public virtual void ToPdf(PdfWriter writer, Stream os)
         {
             if (Bytes != null)
+            {
                 os.Write(Bytes, 0, Bytes.Length);
+            }
         }
+
         /// <summary>
         /// Returns the length of the PDF representation of the  PdfObject .
         ///
@@ -295,9 +279,13 @@ namespace iTextSharp.text.pdf
         public override string ToString()
         {
             if (Bytes == null)
+            {
                 return "";
+            }
             else
+            {
                 return PdfEncodings.ConvertToString(Bytes, null);
+            }
         }
     }
 }

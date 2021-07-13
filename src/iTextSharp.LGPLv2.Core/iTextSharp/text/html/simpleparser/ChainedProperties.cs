@@ -2,10 +2,8 @@ using System.Collections;
 
 namespace iTextSharp.text.html.simpleparser
 {
-
     public class ChainedProperties
     {
-
         public static int[] FontSizes = { 8, 10, 12, 14, 18, 24, 36 };
         public ArrayList Chain = new ArrayList();
 
@@ -13,13 +11,15 @@ namespace iTextSharp.text.html.simpleparser
         {
             get
             {
-                for (int k = Chain.Count - 1; k >= 0; --k)
+                for (var k = Chain.Count - 1; k >= 0; --k)
                 {
-                    object[] obj = (object[])Chain[k];
-                    Hashtable prop = (Hashtable)obj[1];
-                    string ret = (string)prop[key];
+                    var obj = (object[])Chain[k];
+                    var prop = (Hashtable)obj[1];
+                    var ret = (string)prop[key];
                     if (ret != null)
+                    {
                         return ret;
+                    }
                 }
                 return null;
             }
@@ -28,7 +28,7 @@ namespace iTextSharp.text.html.simpleparser
         public void AddToChain(string key, Hashtable prop)
         {
             // adjust the font size
-            string value = (string)prop[ElementTags.SIZE];
+            var value = (string)prop[ElementTags.SIZE];
             if (value != null)
             {
                 if (value.EndsWith("pt"))
@@ -37,15 +37,18 @@ namespace iTextSharp.text.html.simpleparser
                 }
                 else
                 {
-                    int s = 0;
+                    var s = 0;
                     if (value.StartsWith("+") || value.StartsWith("-"))
                     {
-                        string old = this["basefontsize"];
+                        var old = this["basefontsize"];
                         if (old == null)
+                        {
                             old = "12";
-                        float f = float.Parse(old, System.Globalization.NumberFormatInfo.InvariantInfo);
-                        int c = (int)f;
-                        for (int k = FontSizes.Length - 1; k >= 0; --k)
+                        }
+
+                        var f = float.Parse(old, System.Globalization.NumberFormatInfo.InvariantInfo);
+                        var c = (int)f;
+                        for (var k = FontSizes.Length - 1; k >= 0; --k)
                         {
                             if (c >= FontSizes[k])
                             {
@@ -53,7 +56,7 @@ namespace iTextSharp.text.html.simpleparser
                                 break;
                             }
                         }
-                        int inc = int.Parse(value.StartsWith("+") ? value.Substring(1) : value);
+                        var inc = int.Parse(value.StartsWith("+") ? value.Substring(1) : value);
                         s += inc;
                     }
                     else
@@ -68,9 +71,14 @@ namespace iTextSharp.text.html.simpleparser
                         }
                     }
                     if (s < 0)
+                    {
                         s = 0;
+                    }
                     else if (s >= FontSizes.Length)
+                    {
                         s = FontSizes.Length - 1;
+                    }
+
                     prop[ElementTags.SIZE] = FontSizes[s].ToString();
                 }
             }
@@ -79,18 +87,21 @@ namespace iTextSharp.text.html.simpleparser
 
         public bool HasProperty(string key)
         {
-            for (int k = Chain.Count - 1; k >= 0; --k)
+            for (var k = Chain.Count - 1; k >= 0; --k)
             {
-                object[] obj = (object[])Chain[k];
-                Hashtable prop = (Hashtable)obj[1];
+                var obj = (object[])Chain[k];
+                var prop = (Hashtable)obj[1];
                 if (prop.ContainsKey(key))
+                {
                     return true;
+                }
             }
             return false;
         }
+
         public void RemoveChain(string key)
         {
-            for (int k = Chain.Count - 1; k >= 0; --k)
+            for (var k = Chain.Count - 1; k >= 0; --k)
             {
                 if (key.Equals(((object[])Chain[k])[0]))
                 {

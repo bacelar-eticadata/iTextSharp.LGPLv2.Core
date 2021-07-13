@@ -1,6 +1,6 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.style
 {
@@ -22,7 +22,7 @@ namespace iTextSharp.text.rtf.style
         /// <summary>
         /// ArrayList containing all colours of this RtfColorList
         /// </summary>
-        readonly ArrayList _colorList = new ArrayList();
+        private readonly ArrayList _colorList = new ArrayList();
 
         /// <summary>
         /// Constructs a new RtfColorList for the RtfDocument. Will add the default
@@ -43,8 +43,8 @@ namespace iTextSharp.text.rtf.style
         /// <returns>The index of the RtfColor</returns>
         public int GetColorNumber(RtfColor color)
         {
-            int colorIndex = -1;
-            for (int i = 0; i < _colorList.Count; i++)
+            var colorIndex = -1;
+            for (var i = 0; i < _colorList.Count; i++)
             {
                 if (_colorList[i].Equals(color))
                 {
@@ -74,9 +74,9 @@ namespace iTextSharp.text.rtf.style
         {
             result.Write(OpenGroup, 0, OpenGroup.Length);
             result.Write(_colorTable, 0, _colorTable.Length);
-            for (int i = 0; i < _colorList.Count; i++)
+            for (var i = 0; i < _colorList.Count; i++)
             {
-                RtfColor color = (RtfColor)_colorList[i];
+                var color = (RtfColor)_colorList[i];
                 color.WriteDefinition(result);
             }
             result.Write(CloseGroup, 0, CloseGroup.Length);

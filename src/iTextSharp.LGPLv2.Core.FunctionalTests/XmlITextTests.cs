@@ -1,9 +1,9 @@
-﻿using System.IO;
-using System.Xml;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.xml;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System.Xml;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests
 {
@@ -52,7 +52,6 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
             converITextXmlToPdfFile(iTextXML, pdfFilePath);
             TestUtils.VerifyPdfFileIsReadable(pdfFilePath);
         }
-
 
         [TestMethod]
         public void Verify_iTextXML_CanBeParsed()
@@ -1982,7 +1981,6 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
             converITextXmlToPdfFile(iTextXML, pdfFilePath);
             TestUtils.VerifyPdfFileIsReadable(pdfFilePath);
         }
-
 
         private static void converITextXmlToPdfFile(string iTextXML, string pdfFilePath)
         {

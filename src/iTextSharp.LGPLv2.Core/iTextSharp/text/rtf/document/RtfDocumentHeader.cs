@@ -1,8 +1,8 @@
-using System.IO;
 using iTextSharp.text.rtf.document.output;
+using iTextSharp.text.rtf.headerfooter;
 using iTextSharp.text.rtf.list;
 using iTextSharp.text.rtf.style;
-using iTextSharp.text.rtf.headerfooter;
+using System.IO;
 
 namespace iTextSharp.text.rtf.document
 {
@@ -23,18 +23,22 @@ namespace iTextSharp.text.rtf.document
         /// Constant for the title page
         /// </summary>
         private static readonly byte[] _titlePage = DocWriter.GetIsoBytes("\\titlepg");
+
         /// <summary>
         /// The code page to use
         /// </summary>
         private RtfCodePage _codePage;
+
         /// <summary>
         /// Stores all the colors used in the document
         /// </summary>
         private RtfColorList _colorList;
+
         /// <summary>
         /// Stores all the fonts used in the document
         /// </summary>
         private RtfFontList _fontList;
+
         /// <summary>
         /// The current RtfHeaderFooterGroup for the footer
         /// </summary>
@@ -59,6 +63,7 @@ namespace iTextSharp.text.rtf.document
         /// Manages List tables
         /// </summary>
         private RtfListTable _listTable;
+
         /// <summary>
         /// The page settings
         /// </summary>
@@ -75,6 +80,7 @@ namespace iTextSharp.text.rtf.document
         /// Stores all paragraph styles used in the document.
         /// </summary>
         private RtfStylesheetList _stylesheetList;
+
         /// <summary>
         /// Constructs a RtfDocumentHeader for a RtfDocument
         /// </summary>
@@ -223,8 +229,8 @@ namespace iTextSharp.text.rtf.document
         {
             try
             {
-                RtfHeaderFooterGroup header = convertHeaderFooter(_header, RtfHeaderFooter.TYPE_HEADER);
-                RtfHeaderFooterGroup footer = convertHeaderFooter(_footer, RtfHeaderFooter.TYPE_FOOTER);
+                var header = convertHeaderFooter(_header, RtfHeaderFooter.TYPE_HEADER);
+                var footer = convertHeaderFooter(_footer, RtfHeaderFooter.TYPE_FOOTER);
                 if (header.HasTitlePage() || footer.HasTitlePage())
                 {
                     result.Write(_titlePage, 0, _titlePage.Length);
@@ -263,6 +269,7 @@ namespace iTextSharp.text.rtf.document
             _footer = new RtfHeaderFooterGroup(Document, RtfHeaderFooter.TYPE_FOOTER);
             _generator = new RtfGenerator(Document);
         }
+
         /// <summary>
         /// Converts a HeaderFooter into a RtfHeaderFooterGroup. Depending on which class
         /// the HeaderFooter is, the correct RtfHeaderFooterGroup is created.

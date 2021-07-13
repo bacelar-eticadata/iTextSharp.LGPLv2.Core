@@ -38,13 +38,7 @@ namespace iTextSharp.text.xml
         /// Gets the alias of the peer.
         /// </summary>
         /// <value>the alias of the peer</value>
-        public string Alias
-        {
-            get
-            {
-                return CustomTagname;
-            }
-        }
+        public string Alias => CustomTagname;
 
         /// <summary>
         /// Sets the default content.
@@ -52,35 +46,20 @@ namespace iTextSharp.text.xml
         /// <value>the default content</value>
         public string Content
         {
-            set
-            {
-                DefaultContent = value;
-            }
+            set => DefaultContent = value;
         }
 
         /// <summary>
         /// Returns the default values.
         /// </summary>
         /// <value>the default values</value>
-        public Properties DefaultValues
-        {
-            get
-            {
-                return AttributeValues;
-            }
-        }
+        public Properties DefaultValues => AttributeValues;
 
         /// <summary>
         /// Gets the tagname of the peer.
         /// </summary>
         /// <value>the tagname of the peer</value>
-        public string Tag
-        {
-            get
-            {
-                return Tagname;
-            }
-        }
+        public string Tag => Tagname;
         /// <summary>
         /// Sets an alias for an attribute.
         /// </summary>
@@ -104,7 +83,7 @@ namespace iTextSharp.text.xml
         /// <summary> Gets the list of attributes of the peer. </summary>
         public virtual Properties GetAttributes(Hashtable attrs)
         {
-            Properties attributes = new Properties();
+            var attributes = new Properties();
             attributes.AddAll(AttributeValues);
             if (DefaultContent != null)
             {

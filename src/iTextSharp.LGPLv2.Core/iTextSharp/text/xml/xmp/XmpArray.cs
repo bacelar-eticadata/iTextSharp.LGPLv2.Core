@@ -44,7 +44,7 @@ namespace iTextSharp.text.xml.xmp
         /// <returns>a String representation</returns>
         public override string ToString()
         {
-            StringBuilder buf = new StringBuilder("<");
+            var buf = new StringBuilder("<");
             buf.Append(Type);
             buf.Append('>');
             foreach (string s in this)

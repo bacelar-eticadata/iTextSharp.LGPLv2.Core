@@ -17,29 +17,11 @@ namespace iTextSharp.text.xml.xmp
             _encoding = encoding;
         }
 
-        public override int CodePage
-        {
-            get
-            {
-                return _encoding.CodePage;
-            }
-        }
+        public override int CodePage => _encoding.CodePage;
 
-        public override string EncodingName
-        {
-            get
-            {
-                return _encoding.EncodingName;
-            }
-        }
+        public override string EncodingName => _encoding.EncodingName;
 
-        public override string WebName
-        {
-            get
-            {
-                return _encoding.WebName;
-            }
-        }
+        public override string WebName => _encoding.WebName;
 
         public override int GetByteCount(char[] chars, int index, int count)
         {

@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -68,20 +68,20 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static PdfPTable createTableWithNamedActions()
         {
-            Font symbol = new Font(Font.SYMBOL, 20);
-            PdfPTable table = new PdfPTable(4);
+            var symbol = new Font(Font.SYMBOL, 20);
+            var table = new PdfPTable(4);
             table.DefaultCell.Border = Rectangle.NO_BORDER;
             table.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
-            Chunk first = new Chunk(((char) 220).ToString(), symbol);
+            var first = new Chunk(((char)220).ToString(), symbol);
             first.SetAction(new PdfAction(PdfAction.FIRSTPAGE));
             table.AddCell(new Phrase(first));
-            Chunk previous = new Chunk(((char) 172).ToString(), symbol);
+            var previous = new Chunk(((char)172).ToString(), symbol);
             previous.SetAction(new PdfAction(PdfAction.PREVPAGE));
             table.AddCell(new Phrase(previous));
-            Chunk next = new Chunk(((char) 174).ToString(), symbol);
+            var next = new Chunk(((char)174).ToString(), symbol);
             next.SetAction(new PdfAction(PdfAction.NEXTPAGE));
             table.AddCell(new Phrase(next));
-            Chunk last = new Chunk(((char) 222).ToString(), symbol);
+            var last = new Chunk(((char)222).ToString(), symbol);
             last.SetAction(new PdfAction(PdfAction.LASTPAGE));
             table.AddCell(new Phrase(last));
             table.TotalWidth = 120;

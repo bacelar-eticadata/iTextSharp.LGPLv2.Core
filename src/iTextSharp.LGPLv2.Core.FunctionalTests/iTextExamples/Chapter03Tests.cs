@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -19,20 +19,20 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document(PageSize.Postcard, 30, 30, 30, 30);
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
             // Create and add a Paragraph
-            Paragraph p = new Paragraph(
+            var p = new Paragraph(
                 "Foobar Film Festival",
                 new Font(BaseFont.CreateFont(), 22)
             )
             { Alignment = Element.ALIGN_CENTER };
             document.Add(p);
             // Create and add an Image
-            Image img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
+            var img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
             img.SetAbsolutePosition(
               (PageSize.Postcard.Width - img.ScaledWidth) / 2,
               (PageSize.Postcard.Height - img.ScaledHeight) / 2
@@ -43,11 +43,11 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.Add(p);
             document.Add(img);
             // Add text on top of the image
-            PdfContentByte over = writer.DirectContent;
+            var over = writer.DirectContent;
             over.SaveState();
-            float sinus = (float)Math.Sin(Math.PI / 60);
-            float cosinus = (float)Math.Cos(Math.PI / 60);
-            BaseFont bf = BaseFont.CreateFont();
+            var sinus = (float)Math.Sin(Math.PI / 60);
+            var cosinus = (float)Math.Cos(Math.PI / 60);
+            var bf = BaseFont.CreateFont();
             over.BeginText();
             over.SetTextRenderingMode(PdfContentByte.TEXT_RENDER_MODE_FILL_STROKE);
             over.SetLineWidth(1.5f);
@@ -59,7 +59,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             over.EndText();
             over.RestoreState();
             // Add a rectangle under the image
-            PdfContentByte under = writer.DirectContentUnder;
+            var under = writer.DirectContentUnder;
             under.SaveState();
             under.SetRgbColorFill(0xFF, 0xD7, 0x00);
             under.Rectangle(5, 5,
@@ -85,12 +85,12 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document(new Rectangle(200, 120));
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfContentByte canvas = writer.DirectContent;
+            var canvas = writer.DirectContent;
             // state 1:
             canvas.SetRgbColorFill(0xFF, 0x45, 0x00);
             // fill a rectangle in state 1
@@ -136,19 +136,19 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document(PageSize.Postcard, 30, 30, 30, 30);
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             writer.CompressionLevel = 0;
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            Image img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
+            var img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
             img.SetAbsolutePosition(
               (PageSize.Postcard.Width - img.ScaledWidth) / 2,
               (PageSize.Postcard.Height - img.ScaledHeight) / 2
             );
             writer.DirectContent.AddImage(img);
-            Paragraph p = new Paragraph(
+            var p = new Paragraph(
                 "Foobar Film Festival",
                 new Font(BaseFont.CreateFont(), 22)
             )
@@ -172,13 +172,13 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document(PageSize.Postcard, 30, 30, 30, 30);
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             writer.CompressionLevel = 0;
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            Image img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
+            var img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
             img.SetAbsolutePosition(
               (PageSize.Postcard.Width - img.ScaledWidth) / 2,
               (PageSize.Postcard.Height - img.ScaledHeight) / 2
@@ -200,13 +200,13 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document(PageSize.Postcard.Rotate());
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             writer.CompressionLevel = 0;
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            Image img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
+            var img = Image.GetInstance(TestUtils.GetImagePath("loa.jpg"));
             // Add the image to the upper layer
             writer.DirectContent.AddImage(
               img,

@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Signals that an unspecified problem while constructing a PDF document.
     /// @see        BadPdfFormatException
@@ -10,6 +9,8 @@ namespace iTextSharp.text.pdf
         public PdfException()
         { }
 
-        public PdfException(string message) : base(message) { }
+        public PdfException(string message) : base(message)
+        {
+        }
     }
 }

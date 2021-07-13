@@ -3,7 +3,6 @@ using System.Collections;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfTable  is an object that contains the graphics and text of a table.
     /// @see     iTextSharp.text.Table
@@ -13,7 +12,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfTable : Rectangle
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -42,6 +40,7 @@ namespace iTextSharp.text.pdf
         /// this is the ArrayList with all the cell of the table header.
         /// </summary>
         private readonly ArrayList _headercells;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -90,72 +89,24 @@ namespace iTextSharp.text.pdf
         /// Gets the offset of this table.
         /// </summary>
         /// <returns>the space between this table and the previous element.</returns>
-        public float Offset
-        {
-            get
-            {
-                return Table.Offset;
-            }
-        }
+        public float Offset => Table.Offset;
 
         /// <summary>
         /// @see com.lowagie.text.Element#type()
         /// </summary>
-        public override int Type
-        {
-            get
-            {
-                return TABLE;
-            }
-        }
+        public override int Type => TABLE;
 
-        internal float Cellpadding
-        {
-            get
-            {
-                return Table.Cellpadding;
-            }
-        }
+        internal float Cellpadding => Table.Cellpadding;
 
-        internal ArrayList Cells
-        {
-            get
-            {
-                return _cells;
-            }
-        }
+        internal ArrayList Cells => _cells;
 
-        internal float Cellspacing
-        {
-            get
-            {
-                return Table.Cellspacing;
-            }
-        }
+        internal float Cellspacing => Table.Cellspacing;
 
-        internal int Columns
-        {
-            get
-            {
-                return _columns;
-            }
-        }
+        internal int Columns => _columns;
 
-        internal ArrayList HeaderCells
-        {
-            get
-            {
-                return _headercells;
-            }
-        }
+        internal ArrayList HeaderCells => _headercells;
 
-        internal int Rows
-        {
-            get
-            {
-                return _cells.Count == 0 ? 0 : ((PdfCell)_cells[_cells.Count - 1]).Rownumber + 1;
-            }
-        }
+        internal int Rows => _cells.Count == 0 ? 0 : ((PdfCell)_cells[_cells.Count - 1]).Rownumber + 1;
 
         public bool HasToFitPageCells()
         {
@@ -186,17 +137,17 @@ namespace iTextSharp.text.pdf
         private void updateRowAdditionsInternal()
         {
             // correct table : fill empty cells/ parse table in table
-            int prevRows = Rows;
-            int rowNumber = 0;
-            int groupNumber = 0;
+            var prevRows = Rows;
+            var rowNumber = 0;
+            var groupNumber = 0;
             bool groupChange;
-            int firstDataRow = Table.LastHeaderRow + 1;
+            var firstDataRow = Table.LastHeaderRow + 1;
             Cell cell;
             PdfCell currentCell;
-            ArrayList newCells = new ArrayList();
-            int rows = Table.Size + 1;
-            float[] offsets = new float[rows];
-            for (int i = 0; i < rows; i++)
+            var newCells = new ArrayList();
+            var rows = Table.Size + 1;
+            var offsets = new float[rows];
+            for (var i = 0; i < rows; i++)
             {
                 offsets[i] = Bottom;
             }
@@ -207,11 +158,14 @@ namespace iTextSharp.text.pdf
                 groupChange = false;
                 if (row.IsEmpty())
                 {
-                    if (rowNumber < rows - 1 && offsets[rowNumber + 1] > offsets[rowNumber]) offsets[rowNumber + 1] = offsets[rowNumber];
+                    if (rowNumber < rows - 1 && offsets[rowNumber + 1] > offsets[rowNumber])
+                    {
+                        offsets[rowNumber + 1] = offsets[rowNumber];
+                    }
                 }
                 else
                 {
-                    for (int i = 0; i < row.Columns; i++)
+                    for (var i = 0; i < row.Columns; i++)
                     {
                         cell = (Cell)row.GetCell(i);
                         if (cell != null)
@@ -222,7 +176,9 @@ namespace iTextSharp.text.pdf
                                 currentCell.SetHeader();
                                 _headercells.Add(currentCell);
                                 if (!Table.NotAddedYet)
+                                {
                                     continue;
+                                }
                             }
                             try
                             {
@@ -245,12 +201,15 @@ namespace iTextSharp.text.pdf
                     }
                 }
                 rowNumber++;
-                if (groupChange) groupNumber++;
+                if (groupChange)
+                {
+                    groupNumber++;
+                }
             }
 
             // loop over all the cells
-            int n = newCells.Count;
-            for (int i = 0; i < n; i++)
+            var n = newCells.Count;
+            for (var i = 0; i < n; i++)
             {
                 currentCell = (PdfCell)newCells[i];
                 try

@@ -1,13 +1,20 @@
-using System;
-using System.Collections;
-using System.util;
-using System.Text;
+using iTextSharp.text.factories;
+using iTextSharp.text.html;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.draw;
 using iTextSharp.text.xml.simpleparser;
+
+/* Unmerged change from project 'iTextSharp.LGPLv2.Core (netstandard2.0)'
+Before:
 using iTextSharp.text.html;
-using iTextSharp.text.factories;
+After:
+using iTextSharp.Collections;
 using System.Reflection;
+*/
+using System;
+using System.Collections;
+using System.Text;
+using System.util;
 
 namespace iTextSharp.text.xml
 {
@@ -36,25 +43,26 @@ namespace iTextSharp.text.xml
 
         /// <summary> This is a  Stack  of objects, waiting to be added to the document. </summary>
         protected Stack Stack;
-        /// <summary>
-        /// current margin of a page.
-        /// </summary>
-        float _bottomMargin = 36;
 
         /// <summary>
         /// current margin of a page.
         /// </summary>
-        float _leftMargin = 36;
+        private float _bottomMargin = 36;
 
         /// <summary>
         /// current margin of a page.
         /// </summary>
-        float _rightMargin = 36;
+        private float _leftMargin = 36;
 
         /// <summary>
         /// current margin of a page.
         /// </summary>
-        float _topMargin = 36;
+        private float _rightMargin = 36;
+
+        /// <summary>
+        /// current margin of a page.
+        /// </summary>
+        private float _topMargin = 36;
         /// <summary>
         /// Constructs a new iTextHandler that will translate all the events
         /// triggered by the parser to actions on the  Document -object.
@@ -110,18 +118,21 @@ namespace iTextSharp.text.xml
         public override void Characters(string content, int start, int length)
         {
 
-            if (Ignore) return;
+            if (Ignore)
+            {
+                return;
+            }
 
             if (content.Trim().Length == 0 && content.IndexOf(" ", StringComparison.Ordinal) < 0)
             {
                 return;
             }
 
-            StringBuilder buf = new StringBuilder();
-            int len = content.Length;
+            var buf = new StringBuilder();
+            var len = content.Length;
             char character;
-            bool newline = false;
-            for (int i = 0; i < len; i++)
+            var newline = false;
+            for (var i = 0; i < len; i++)
             {
                 switch (character = content[i])
                 {
@@ -149,10 +160,10 @@ namespace iTextSharp.text.xml
                 }
             }
 
-            string tmp = buf.ToString();
-            string rline = new string('\r', 1);
-            string nline = new string('\n', 1);
-            string tline = new string('\t', 1);
+            var tmp = buf.ToString();
+            var rline = new string('\r', 1);
+            var nline = new string('\n', 1);
+            var tline = new string('\t', 1);
             tmp = tmp.Replace("\\n", nline);
             tmp = tmp.Replace("\\t", tline);
             tmp = tmp.Replace("\\r", rline);
@@ -199,7 +210,10 @@ namespace iTextSharp.text.xml
                 Ignore = false;
                 return;
             }
-            if (Ignore) return;
+            if (Ignore)
+            {
+                return;
+            }
             // tags that don't have any content
             if (isNewpage(name) || ElementTags.ANNOTATION.Equals(name) || ElementTags.IMAGE.Equals(name) || isNewline(name))
             {
@@ -209,13 +223,13 @@ namespace iTextSharp.text.xml
             // titles of sections and chapters
             if (ElementTags.TITLE.Equals(name))
             {
-                Paragraph current = (Paragraph)Stack.Pop();
+                var current = (Paragraph)Stack.Pop();
                 if (CurrentChunk != null)
                 {
                     current.Add(CurrentChunk);
                     CurrentChunk = null;
                 }
-                Section previous = (Section)Stack.Pop();
+                var previous = (Section)Stack.Pop();
                 previous.Title = current;
                 Stack.Push(previous);
                 return;
@@ -248,10 +262,10 @@ namespace iTextSharp.text.xml
             if (ElementTags.PHRASE.Equals(name) || ElementTags.ANCHOR.Equals(name) || ElementTags.LIST.Equals(name)
                 || ElementTags.PARAGRAPH.Equals(name))
             {
-                IElement current = (IElement)Stack.Pop();
+                var current = (IElement)Stack.Pop();
                 try
                 {
-                    ITextElementArray previous = (ITextElementArray)Stack.Pop();
+                    var previous = (ITextElementArray)Stack.Pop();
                     previous.Add(current);
                     Stack.Push(previous);
                 }
@@ -265,8 +279,8 @@ namespace iTextSharp.text.xml
             // listitems
             if (ElementTags.LISTITEM.Equals(name))
             {
-                ListItem listItem = (ListItem)Stack.Pop();
-                List list = (List)Stack.Pop();
+                var listItem = (ListItem)Stack.Pop();
+                var list = (List)Stack.Pop();
                 list.Add(listItem);
                 Stack.Push(list);
             }
@@ -274,10 +288,10 @@ namespace iTextSharp.text.xml
             // tables
             if (ElementTags.TABLE.Equals(name))
             {
-                Table table = (Table)Stack.Pop();
+                var table = (Table)Stack.Pop();
                 try
                 {
-                    ITextElementArray previous = (ITextElementArray)Stack.Pop();
+                    var previous = (ITextElementArray)Stack.Pop();
                     previous.Add(table);
                     Stack.Push(previous);
                 }
@@ -291,13 +305,13 @@ namespace iTextSharp.text.xml
             // rows
             if (ElementTags.ROW.Equals(name))
             {
-                ArrayList cells = new ArrayList();
-                int columns = 0;
+                var cells = new ArrayList();
+                var columns = 0;
                 Table table;
                 Cell cell;
                 while (true)
                 {
-                    IElement element = (IElement)Stack.Pop();
+                    var element = (IElement)Stack.Pop();
                     if (element.Type == Element.CELL)
                     {
                         cell = (Cell)element;
@@ -316,15 +330,15 @@ namespace iTextSharp.text.xml
                 }
                 cells.Reverse(0, cells.Count);
                 string width;
-                float[] cellWidths = new float[columns];
-                bool[] cellNulls = new bool[columns];
-                for (int i = 0; i < columns; i++)
+                var cellWidths = new float[columns];
+                var cellNulls = new bool[columns];
+                for (var i = 0; i < columns; i++)
                 {
                     cellWidths[i] = 0;
                     cellNulls[i] = true;
                 }
                 float total = 0;
-                int j = 0;
+                var j = 0;
                 foreach (Cell c in cells)
                 {
                     cell = c;
@@ -363,11 +377,11 @@ namespace iTextSharp.text.xml
                     j += cell.Colspan;
                     table.AddCell(cell);
                 }
-                float[] widths = table.ProportionalWidths;
+                var widths = table.ProportionalWidths;
                 if (widths.Length == columns)
                 {
-                    float left = 0.0f;
-                    for (int i = 0; i < columns; i++)
+                    var left = 0.0f;
+                    for (var i = 0; i < columns; i++)
                     {
                         if (cellNulls[i] && widths[i].ApproxNotEqual(0))
                         {
@@ -377,7 +391,7 @@ namespace iTextSharp.text.xml
                     }
                     if (100.0 >= total)
                     {
-                        for (int i = 0; i < widths.Length; i++)
+                        for (var i = 0; i < widths.Length; i++)
                         {
                             if (cellWidths[i].ApproxEquals(0) && widths[i].ApproxNotEqual(0))
                             {
@@ -449,10 +463,10 @@ namespace iTextSharp.text.xml
                 {
                     while (true)
                     {
-                        IElement element = (IElement)Stack.Pop();
+                        var element = (IElement)Stack.Pop();
                         try
                         {
-                            ITextElementArray previous = (ITextElementArray)Stack.Pop();
+                            var previous = (ITextElementArray)Stack.Pop();
                             previous.Add(element);
                             Stack.Push(previous);
                         }
@@ -466,7 +480,11 @@ namespace iTextSharp.text.xml
                 {
                     // empty on purpose
                 }
-                if (ControlOpenClose) Document.Close();
+                if (ControlOpenClose)
+                {
+                    Document.Close();
+                }
+
                 return;
             }
         }
@@ -532,7 +550,7 @@ namespace iTextSharp.text.xml
             // before
             if (name.Equals("before"))
             {
-                HeaderFooter tmp = (HeaderFooter)Stack.Pop();
+                var tmp = (HeaderFooter)Stack.Pop();
 
                 tmp.Before = ElementFactory.GetPhrase(attributes);
                 Stack.Push(tmp);
@@ -542,7 +560,7 @@ namespace iTextSharp.text.xml
             // after
             if (name.Equals("after"))
             {
-                HeaderFooter tmp = (HeaderFooter)Stack.Pop();
+                var tmp = (HeaderFooter)Stack.Pop();
 
                 tmp.After = ElementFactory.GetPhrase(attributes);
                 Stack.Push(tmp);
@@ -563,7 +581,7 @@ namespace iTextSharp.text.xml
             // symbols
             if (ElementTags.ENTITY.Equals(name))
             {
-                Font f = new Font();
+                var f = new Font();
                 if (CurrentChunk != null)
                 {
                     HandleEndingTags(ElementTags.CHUNK);
@@ -618,9 +636,9 @@ namespace iTextSharp.text.xml
             // tables
             if (ElementTags.TABLE.Equals(name))
             {
-                Table table = ElementFactory.GetTable(attributes);
-                float[] widths = table.ProportionalWidths;
-                for (int i = 0; i < widths.Length; i++)
+                var table = ElementFactory.GetTable(attributes);
+                var widths = table.ProportionalWidths;
+                for (var i = 0; i < widths.Length; i++)
                 {
                     if (widths[i].ApproxEquals(0))
                     {
@@ -635,7 +653,7 @@ namespace iTextSharp.text.xml
             // sections
             if (ElementTags.SECTION.Equals(name))
             {
-                IElement previous = (IElement)Stack.Pop();
+                var previous = (IElement)Stack.Pop();
                 Section section;
                 section = ElementFactory.GetSection((Section)previous, attributes);
                 Stack.Push(previous);
@@ -653,7 +671,7 @@ namespace iTextSharp.text.xml
             // images
             if (ElementTags.IMAGE.Equals(name))
             {
-                Image img = ElementFactory.GetImage(attributes);
+                var img = ElementFactory.GetImage(attributes);
                 try
                 {
                     AddImage(img);
@@ -670,7 +688,7 @@ namespace iTextSharp.text.xml
             // annotations
             if (ElementTags.ANNOTATION.Equals(name))
             {
-                Annotation annotation = ElementFactory.GetAnnotation(attributes);
+                var annotation = ElementFactory.GetAnnotation(attributes);
                 ITextElementArray current;
                 try
                 {
@@ -723,7 +741,7 @@ namespace iTextSharp.text.xml
                 try
                 {
                     current = (ITextElementArray)Stack.Pop();
-                    Chunk newPage = new Chunk("");
+                    var newPage = new Chunk("");
                     newPage.SetNewPage();
                     if (DefaultFont != null)
                     {
@@ -742,7 +760,7 @@ namespace iTextSharp.text.xml
             if (ElementTags.HORIZONTALRULE.Equals(name))
             {
                 ITextElementArray current;
-                LineSeparator hr = new LineSeparator(1.0f, 100.0f, null, Element.ALIGN_CENTER, 0);
+                var hr = new LineSeparator(1.0f, 100.0f, null, Element.ALIGN_CENTER, 0);
                 try
                 {
                     current = (ITextElementArray)Stack.Pop();
@@ -769,13 +787,25 @@ namespace iTextSharp.text.xml
                     value = attributes[key];
                     // margin specific code suggested by Reza Nasiri
                     if (Util.EqualsIgnoreCase(ElementTags.LEFT, key))
+                    {
                         _leftMargin = float.Parse(value, System.Globalization.NumberFormatInfo.InvariantInfo);
+                    }
+
                     if (Util.EqualsIgnoreCase(ElementTags.RIGHT, key))
+                    {
                         _rightMargin = float.Parse(value, System.Globalization.NumberFormatInfo.InvariantInfo);
+                    }
+
                     if (Util.EqualsIgnoreCase(ElementTags.TOP, key))
+                    {
                         _topMargin = float.Parse(value, System.Globalization.NumberFormatInfo.InvariantInfo);
+                    }
+
                     if (Util.EqualsIgnoreCase(ElementTags.BOTTOM, key))
+                    {
                         _bottomMargin = float.Parse(value, System.Globalization.NumberFormatInfo.InvariantInfo);
+                    }
+
                     if (ElementTags.PAGE_SIZE.Equals(key))
                     {
                         pageSize = (Rectangle)typeof(PageSize).GetField(value).GetValue(null);
@@ -803,7 +833,9 @@ namespace iTextSharp.text.xml
                 Document.SetMargins(_leftMargin, _rightMargin, _topMargin,
                         _bottomMargin);
                 if (ControlOpenClose)
+                {
                     Document.Open();
+                }
             }
         }
 
@@ -842,7 +874,7 @@ namespace iTextSharp.text.xml
         public override void StartElement(string uri, string lname, string name, Hashtable attrs)
         {
 
-            Properties attributes = new Properties();
+            var attributes = new Properties();
             if (attrs != null)
             {
                 foreach (string key in attrs.Keys)
@@ -855,7 +887,7 @@ namespace iTextSharp.text.xml
         protected internal void AddImage(Image img)
         {
             // if there is an element on the stack...
-            object current = Stack.Pop();
+            var current = Stack.Pop();
             // ...and it's a Chapter or a Section, the Image can be
             // added directly
             if (current is Chapter
@@ -869,7 +901,7 @@ namespace iTextSharp.text.xml
             // ...if not, we need to to a lot of stuff
             else
             {
-                Stack newStack = new Stack();
+                var newStack = new Stack();
                 while (!(current is Chapter
                         || current is Section || current is Cell))
                 {

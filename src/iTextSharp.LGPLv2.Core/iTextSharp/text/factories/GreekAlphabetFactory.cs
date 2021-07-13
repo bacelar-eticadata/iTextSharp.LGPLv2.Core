@@ -1,8 +1,5 @@
-using System;
-
 namespace iTextSharp.text.factories
 {
-
     /// <summary>
     /// This class can produce String combinations representing a number built with
     /// Greek letters (from alpha to omega, then alpha alpha, alpha beta, alpha gamma).
@@ -51,12 +48,16 @@ namespace iTextSharp.text.factories
         /// <returns>the letter combination</returns>
         public static string GetString(int index, bool lowercase)
         {
-            if (index < 1) return "";
+            if (index < 1)
+            {
+                return "";
+            }
+
             index--;
 
-            int bytes = 1;
-            int start = 0;
-            int symbols = 24;
+            var bytes = 1;
+            var start = 0;
+            var symbols = 24;
             while (index >= symbols + start)
             {
                 bytes++;
@@ -64,13 +65,17 @@ namespace iTextSharp.text.factories
                 symbols *= 24;
             }
 
-            int c = index - start;
-            char[] value = new char[bytes];
+            var c = index - start;
+            var value = new char[bytes];
             while (bytes > 0)
             {
                 bytes--;
                 value[bytes] = (char)(c % 24);
-                if (value[bytes] > 16) value[bytes]++;
+                if (value[bytes] > 16)
+                {
+                    value[bytes]++;
+                }
+
                 value[bytes] += (char)(lowercase ? 945 : 913);
                 value[bytes] = SpecialSymbol.GetCorrespondingSymbol(value[bytes]);
                 c /= 24;

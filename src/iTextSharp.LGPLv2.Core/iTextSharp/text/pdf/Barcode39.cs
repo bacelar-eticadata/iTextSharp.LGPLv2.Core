@@ -21,7 +21,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class Barcode39 : Barcode
     {
-
         /// <summary>
         /// The index chars to  BARS .
         /// </summary>
@@ -89,6 +88,7 @@ namespace iTextSharp.text.pdf
             new byte[] {0,0,0,1,0,1,0,1,0},
             new byte[] {0,1,0,0,1,0,1,0,0}
         };
+
         /// <summary>
         /// Creates a new Barcode39.
         /// </summary>
@@ -118,28 +118,45 @@ namespace iTextSharp.text.pdf
             {
                 float fontX = 0;
                 float fontY = 0;
-                string fCode = code;
+                var fCode = code;
                 if (extended)
+                {
                     fCode = GetCode39Ex(code);
+                }
+
                 if (font != null)
                 {
                     if (baseline > 0)
+                    {
                         fontY = baseline - font.GetFontDescriptor(BaseFont.DESCENT, size);
+                    }
                     else
+                    {
                         fontY = -baseline + size;
-                    string fullCode = code;
+                    }
+
+                    var fullCode = code;
                     if (generateChecksum && checksumText)
+                    {
                         fullCode += GetChecksum(fCode);
+                    }
+
                     if (startStopText)
+                    {
                         fullCode = "*" + fullCode + "*";
+                    }
+
                     fontX = font.GetWidthPoint(altText != null ? altText : fullCode, size);
                 }
-                int len = fCode.Length + 2;
+                var len = fCode.Length + 2;
                 if (generateChecksum)
+                {
                     ++len;
-                float fullWidth = len * (6 * x + 3 * x * n) + (len - 1) * x;
+                }
+
+                var fullWidth = len * (6 * x + 3 * x * n) + (len - 1) * x;
                 fullWidth = Math.Max(fullWidth, fontX);
-                float fullHeight = barHeight + fontY;
+                var fullHeight = barHeight + fontY;
                 return new Rectangle(fullWidth, fullHeight);
             }
         }
@@ -153,12 +170,15 @@ namespace iTextSharp.text.pdf
         public static byte[] GetBarsCode39(string text)
         {
             text = "*" + text + "*";
-            byte[] bars = new byte[text.Length * 10 - 1];
-            for (int k = 0; k < text.Length; ++k)
+            var bars = new byte[text.Length * 10 - 1];
+            for (var k = 0; k < text.Length; ++k)
             {
-                int idx = Chars.IndexOf(text[k].ToString(), StringComparison.Ordinal);
+                var idx = Chars.IndexOf(text[k].ToString(), StringComparison.Ordinal);
                 if (idx < 0)
+                {
                     throw new ArgumentException($"The character \'{text[k]}\' is illegal in code 39.");
+                }
+
                 Array.Copy(_bars[idx], 0, bars, k * 10, 9);
             }
             return bars;
@@ -172,16 +192,22 @@ namespace iTextSharp.text.pdf
         /// <returns>the escaped text</returns>
         public static string GetCode39Ex(string text)
         {
-            string ret = "";
-            for (int k = 0; k < text.Length; ++k)
+            var ret = "";
+            for (var k = 0; k < text.Length; ++k)
             {
-                char c = text[k];
+                var c = text[k];
                 if (c > 127)
+                {
                     throw new ArgumentException($"The character \'{c}\' is illegal in code 39 extended.");
-                char c1 = EXTENDED[c * 2];
-                char c2 = EXTENDED[c * 2 + 1];
+                }
+
+                var c1 = EXTENDED[c * 2];
+                var c2 = EXTENDED[c * 2 + 1];
                 if (c1 != ' ')
+                {
                     ret += c1;
+                }
+
                 ret += c2;
             }
             return ret;
@@ -189,30 +215,41 @@ namespace iTextSharp.text.pdf
 
         public override System.Drawing.Image CreateDrawingImage(System.Drawing.Color foreground, System.Drawing.Color background)
         {
-            string bCode = code;
+            var bCode = code;
             if (extended)
-                bCode = GetCode39Ex(code);
-            if (generateChecksum)
-                bCode += GetChecksum(bCode);
-            int len = bCode.Length + 2;
-            int nn = (int)n;
-            int fullWidth = len * (6 + 3 * nn) + (len - 1);
-            int height = (int)barHeight;
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(fullWidth, height);
-            byte[] bars = GetBarsCode39(bCode);
-            for (int h = 0; h < height; ++h)
             {
-                bool print = true;
-                int ptr = 0;
-                for (int k = 0; k < bars.Length; ++k)
+                bCode = GetCode39Ex(code);
+            }
+
+            if (generateChecksum)
+            {
+                bCode += GetChecksum(bCode);
+            }
+
+            var len = bCode.Length + 2;
+            var nn = (int)n;
+            var fullWidth = len * (6 + 3 * nn) + (len - 1);
+            var height = (int)barHeight;
+            var bmp = new System.Drawing.Bitmap(fullWidth, height);
+            var bars = GetBarsCode39(bCode);
+            for (var h = 0; h < height; ++h)
+            {
+                var print = true;
+                var ptr = 0;
+                for (var k = 0; k < bars.Length; ++k)
                 {
-                    int w = (bars[k] == 0 ? 1 : nn);
-                    System.Drawing.Color c = background;
+                    var w = (bars[k] == 0 ? 1 : nn);
+                    var c = background;
                     if (print)
+                    {
                         c = foreground;
+                    }
+
                     print = !print;
-                    for (int j = 0; j < w; ++j)
+                    for (var j = 0; j < w; ++j)
+                    {
                         bmp.SetPixel(ptr++, h, c);
+                    }
                 }
             }
             return bmp;
@@ -257,40 +294,64 @@ namespace iTextSharp.text.pdf
         /// <returns>the dimensions the barcode occupies</returns>
         public override Rectangle PlaceBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
         {
-            string fullCode = code;
+            var fullCode = code;
             float fontX = 0;
-            string bCode = code;
+            var bCode = code;
             if (extended)
+            {
                 bCode = GetCode39Ex(code);
+            }
+
             if (font != null)
             {
                 if (generateChecksum && checksumText)
+                {
                     fullCode += GetChecksum(bCode);
+                }
+
                 if (startStopText)
+                {
                     fullCode = "*" + fullCode + "*";
+                }
+
                 fontX = font.GetWidthPoint(fullCode = altText != null ? altText : fullCode, size);
             }
             if (generateChecksum)
+            {
                 bCode += GetChecksum(bCode);
-            int len = bCode.Length + 2;
-            float fullWidth = len * (6 * x + 3 * x * n) + (len - 1) * x;
+            }
+
+            var len = bCode.Length + 2;
+            var fullWidth = len * (6 * x + 3 * x * n) + (len - 1) * x;
             float barStartX = 0;
             float textStartX = 0;
             switch (textAlignment)
             {
                 case Element.ALIGN_LEFT:
                     break;
+
                 case Element.ALIGN_RIGHT:
                     if (fontX > fullWidth)
+                    {
                         barStartX = fontX - fullWidth;
+                    }
                     else
+                    {
                         textStartX = fullWidth - fontX;
+                    }
+
                     break;
+
                 default:
                     if (fontX > fullWidth)
+                    {
                         barStartX = (fontX - fullWidth) / 2;
+                    }
                     else
+                    {
                         textStartX = (fullWidth - fontX) / 2;
+                    }
+
                     break;
             }
             float barStartY = 0;
@@ -298,22 +359,30 @@ namespace iTextSharp.text.pdf
             if (font != null)
             {
                 if (baseline <= 0)
+                {
                     textStartY = barHeight - baseline;
+                }
                 else
                 {
                     textStartY = -font.GetFontDescriptor(BaseFont.DESCENT, size);
                     barStartY = textStartY + baseline;
                 }
             }
-            byte[] bars = GetBarsCode39(bCode);
-            bool print = true;
+            var bars = GetBarsCode39(bCode);
+            var print = true;
             if (barColor != null)
-                cb.SetColorFill(barColor);
-            for (int k = 0; k < bars.Length; ++k)
             {
-                float w = (bars[k] == 0 ? x : x * n);
+                cb.SetColorFill(barColor);
+            }
+
+            for (var k = 0; k < bars.Length; ++k)
+            {
+                var w = (bars[k] == 0 ? x : x * n);
                 if (print)
+                {
                     cb.Rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
+                }
+
                 print = !print;
                 barStartX += w;
             }
@@ -321,7 +390,10 @@ namespace iTextSharp.text.pdf
             if (font != null)
             {
                 if (textColor != null)
+                {
                     cb.SetColorFill(textColor);
+                }
+
                 cb.BeginText();
                 cb.SetFontAndSize(font, size);
                 cb.SetTextMatrix(textStartX, textStartY);
@@ -338,12 +410,15 @@ namespace iTextSharp.text.pdf
         /// <returns>the checksum</returns>
         internal static char GetChecksum(string text)
         {
-            int chk = 0;
-            for (int k = 0; k < text.Length; ++k)
+            var chk = 0;
+            for (var k = 0; k < text.Length; ++k)
             {
-                int idx = Chars.IndexOf(text[k].ToString(), StringComparison.Ordinal);
+                var idx = Chars.IndexOf(text[k].ToString(), StringComparison.Ordinal);
                 if (idx < 0)
+                {
                     throw new ArgumentException($"The character \'{text[k]}\' is illegal in code 39.");
+                }
+
                 chk += idx;
             }
             return Chars[chk % 43];

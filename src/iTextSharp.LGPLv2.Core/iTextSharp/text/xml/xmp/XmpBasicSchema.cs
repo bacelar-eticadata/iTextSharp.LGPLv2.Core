@@ -86,8 +86,8 @@
         /// <param name="id"></param>
         public void AddIdentifiers(string[] id)
         {
-            XmpArray array = new XmpArray(XmpArray.UNORDERED);
-            for (int i = 0; i < id.Length; i++)
+            var array = new XmpArray(XmpArray.UNORDERED);
+            for (var i = 0; i < id.Length; i++)
             {
                 array.Add(id[i]);
             }

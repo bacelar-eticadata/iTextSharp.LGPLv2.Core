@@ -1,11 +1,13 @@
-namespace System.util.zlib {
+namespace System.util.zlib
+{
 
-    internal sealed class InfTree{
+    internal sealed class InfTree
+    {
 
         /// <summary>
         /// If BMAX needs to be larger than 16, then h and x[] should be uLong.
         /// </summary>
-        const int Bmax = 15;
+        private const int Bmax = 15;
 
         private const int FixedBd = 5;
         private const int FixedBl = 9;
@@ -17,15 +19,14 @@ namespace System.util.zlib {
         private const int ZMemError = -4;
         private const int ZNeedDict = 2;
         private const int ZOk = 0;
-        private const int ZStreamEnd=1;
-        private const int ZStreamError=-2;
-        private const int ZVersionError=-6;
-        static readonly int[] _cpdext = { // Extra bits for distance codes
+        private const int ZStreamEnd = 1;
+        private const int ZStreamError = -2;
+        private const int ZVersionError = -6;
+        private static readonly int[] _cpdext = { // Extra bits for distance codes
                                   0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
                                   7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
                                   12, 12, 13, 13};
-
-        static readonly int[] _cpdist = { // Copy offsets for distance codes 0..29
+        private static readonly int[] _cpdist = { // Copy offsets for distance codes 0..29
                                   1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
                                   257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
                                   8193, 12289, 16385, 24577
@@ -34,7 +35,7 @@ namespace System.util.zlib {
         /// <summary>
         /// Tables for deflate from PKZIP's appnote.txt.
         /// </summary>
-        static readonly int[] _cplens = { // Copy lengths for literal codes 257..285
+        private static readonly int[] _cplens = { // Copy lengths for literal codes 257..285
                                   3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
                                   35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0
                               };
@@ -42,12 +43,11 @@ namespace System.util.zlib {
         /// <summary>
         /// see note #13 above about 258
         /// </summary>
-        static readonly int[] _cplext = { // Extra bits for literal codes 257..285
+        private static readonly int[] _cplext = { // Extra bits for literal codes 257..285
                                   0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
                                   3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 112, 112  // 112==invalid
                               };
-
-        static readonly int[] _fixedTd = {
+        private static readonly int[] _fixedTd = {
                                     80,5,1, 87,5,257, 83,5,17, 91,5,4097,
                                     81,5,5, 89,5,1025, 85,5,65, 93,5,16385,
                                     80,5,3, 88,5,513, 84,5,33, 92,5,8193,
@@ -57,8 +57,7 @@ namespace System.util.zlib {
                                     80,5,4, 88,5,769, 84,5,49, 92,5,12289,
                                     82,5,13, 90,5,3073, 86,5,193, 192,5,24577
                                 };
-
-        static readonly int[] _fixedTl = {
+        private static readonly int[] _fixedTl = {
                                     96,7,256, 0,8,80, 0,8,16, 84,8,115,
                                     82,7,31, 0,8,112, 0,8,48, 0,9,192,
                                     80,7,10, 0,8,96, 0,8,32, 0,9,160,
@@ -189,19 +188,21 @@ namespace System.util.zlib {
                                     82,7,27, 0,8,111, 0,8,47, 0,9,191,
                                     0,8,15, 0,8,143, 0,8,79, 0,9,255
                                 };
+
         // maximum bit length of any code
 
-        int[] _c;
-        int[] _hn;  // hufts used in space
-                    // bit length count table
-        int[] _r;
+        private int[] _c;
+        private int[] _hn;  // hufts used in space
+                            // bit length count table
+
+        private int[] _r;
 
         // table entry for structure assignment
-        int[] _u;
+        private int[] _u;
+        private int[] _v;   // work area for huft_build
+                            // table stack
 
-        int[] _v;   // work area for huft_build
-                    // table stack
-        int[] _x;   // bit offsets, then code stack
+        private int[] _x;   // bit offsets, then code stack
 
         internal static int inflate_trees_fixed(int[] bl,  //literal desired/actual bit depth
             int[] bd,  //distance desired/actual bit depth
@@ -309,7 +310,8 @@ namespace System.util.zlib {
             int[] hp,// space for trees
             int[] hn,// hufts used in space
             int[] v  // working area: values in order of bit length
-            ){
+            )
+        {
             // Given a list of code lengths and a maximum table size, make a set of
             // tables to decode that set of codes.  Return Z_OK on success, Z_BUF_ERROR
             // if the given code set is incomplete (the tables are still built in this
@@ -335,11 +337,13 @@ namespace System.util.zlib {
             // Generate counts for each bit length
 
             p = 0; i = n;
-            do {
-                _c[b[bindex+p]]++; p++; i--;   // assume all entries <= BMAX
-            }while(i!=0);
+            do
+            {
+                _c[b[bindex + p]]++; p++; i--;   // assume all entries <= BMAX
+            } while (i != 0);
 
-            if(_c[0] == n){                // null input--all zero length codes
+            if (_c[0] == n)
+            {                // null input--all zero length codes
                 t[0] = -1;
                 m[0] = 0;
                 return ZOk;
@@ -348,35 +352,51 @@ namespace System.util.zlib {
             // Find minimum and maximum length, bound *m by those
             l = m[0];
             for (j = 1; j <= Bmax; j++)
-                if(_c[j]!=0) break;
+            {
+                if (_c[j] != 0)
+                {
+                    break;
+                }
+            }
+
             k = j;                        // minimum code length
-            if(l < j){
+            if (l < j)
+            {
                 l = j;
             }
-            for (i = Bmax; i!=0; i--){
-                if(_c[i]!=0) break;
+            for (i = Bmax; i != 0; i--)
+            {
+                if (_c[i] != 0)
+                {
+                    break;
+                }
             }
             g = i;                        // maximum code length
-            if(l > i){
+            if (l > i)
+            {
                 l = i;
             }
             m[0] = l;
 
             // Adjust last length count to fill out codes, if needed
-            for (y = 1 << j; j < i; j++, y <<= 1){
-                if ((y -= _c[j]) < 0){
+            for (y = 1 << j; j < i; j++, y <<= 1)
+            {
+                if ((y -= _c[j]) < 0)
+                {
                     return ZDataError;
                 }
             }
-            if ((y -= _c[i]) < 0){
+            if ((y -= _c[i]) < 0)
+            {
                 return ZDataError;
             }
             _c[i] += y;
 
             // Generate starting offsets into the value table for each length
             _x[1] = j = 0;
-            p = 1;  xp = 2;
-            while (--i!=0) {                 // note that i == g from above
+            p = 1; xp = 2;
+            while (--i != 0)
+            {                 // note that i == g from above
                 _x[xp] = (j += _c[p]);
                 xp++;
                 p++;
@@ -384,8 +404,10 @@ namespace System.util.zlib {
 
             // Make a table of values in order of bit lengths
             i = 0; p = 0;
-            do {
-                if ((j = b[bindex+p]) != 0){
+            do
+            {
+                if ((j = b[bindex + p]) != 0)
+                {
                     v[_x[j]++] = i;
                 }
                 p++;
@@ -403,25 +425,34 @@ namespace System.util.zlib {
             z = 0;                        // ditto
 
             // go through the bit lengths (k already is bits in shortest code)
-            for (; k <= g; k++){
+            for (; k <= g; k++)
+            {
                 a = _c[k];
-                while (a--!=0){
+                while (a-- != 0)
+                {
                     // here i is the Huffman code of length k bits for value *p
                     // make tables up to required level
-                    while (k > w + l){
+                    while (k > w + l)
+                    {
                         h++;
                         w += l;                 // previous table always l bits
                         // compute minimum size table less than or equal to l bits
                         z = g - w;
                         z = (z > l) ? l : z;        // table size upper limit
-                        if((f=1<<(j=k-w))>a+1){     // try a k-w bit table
+                        if ((f = 1 << (j = k - w)) > a + 1)
+                        {     // try a k-w bit table
                             // too few codes for k-w bit table
                             f -= a + 1;               // deduct codes from patterns left
                             xp = k;
-                            if(j < z){
-                                while (++j < z){        // try smaller tables up to z bits
-                                    if((f <<= 1) <= _c[++xp])
+                            if (j < z)
+                            {
+                                while (++j < z)
+                                {        // try smaller tables up to z bits
+                                    if ((f <<= 1) <= _c[++xp])
+                                    {
                                         break;              // enough codes to use up j bits
+                                    }
+
                                     f -= _c[xp];           // else deduct codes from patterns
                                 }
                             }
@@ -429,55 +460,64 @@ namespace System.util.zlib {
                         z = 1 << j;                 // table entries for j-bit table
 
                         // allocate new table
-                        if (hn[0] + z > Many){       // (note: doesn't matter for fixed)
+                        if (hn[0] + z > Many)
+                        {       // (note: doesn't matter for fixed)
                             return ZDataError;       // overflow of MANY
                         }
                         _u[h] = q = /*hp+*/ hn[0];   // DEBUG
                         hn[0] += z;
 
                         // connect to last table, if there is one
-                        if(h!=0){
-                            _x[h]=i;           // save pattern for backing up
-                            _r[0]=(byte)j;     // bits in this table
-                            _r[1]=(byte)l;     // bits to dump before this table
-                            j=i>>(w - l);
-                            _r[2] = q - _u[h-1] - j;               // offset to this table
-                            Array.Copy(_r, 0, hp, (_u[h-1]+j)*3, 3); // connect to last table
+                        if (h != 0)
+                        {
+                            _x[h] = i;           // save pattern for backing up
+                            _r[0] = (byte)j;     // bits in this table
+                            _r[1] = (byte)l;     // bits to dump before this table
+                            j = i >> (w - l);
+                            _r[2] = q - _u[h - 1] - j;               // offset to this table
+                            Array.Copy(_r, 0, hp, (_u[h - 1] + j) * 3, 3); // connect to last table
                         }
-                        else{
+                        else
+                        {
                             t[0] = q;               // first table is returned result
                         }
                     }
 
                     // set up table entry in r
                     _r[1] = (byte)(k - w);
-                    if (p >= n){
+                    if (p >= n)
+                    {
                         _r[0] = 128 + 64;      // out of values--invalid code
                     }
-                    else if (v[p] < s){
+                    else if (v[p] < s)
+                    {
                         _r[0] = (byte)(v[p] < 256 ? 0 : 32 + 64);  // 256 is end-of-block
                         _r[2] = v[p++];          // simple code is just the value
                     }
-                    else{
-                        _r[0]=(byte)(e[v[p]-s]+16+64); // non-simple--look up in lists
-                        _r[2]=d[v[p++] - s];
+                    else
+                    {
+                        _r[0] = (byte)(e[v[p] - s] + 16 + 64); // non-simple--look up in lists
+                        _r[2] = d[v[p++] - s];
                     }
 
                     // fill code-like entries with r
-                    f=1<<(k-w);
-                    for (j=i>>w;j<z;j+=f){
-                        Array.Copy(_r, 0, hp, (q+j)*3, 3);
+                    f = 1 << (k - w);
+                    for (j = i >> w; j < z; j += f)
+                    {
+                        Array.Copy(_r, 0, hp, (q + j) * 3, 3);
                     }
 
                     // backwards increment the k-bit code i
-                    for (j = 1 << (k - 1); (i & j)!=0; j >>= 1){
+                    for (j = 1 << (k - 1); (i & j) != 0; j >>= 1)
+                    {
                         i ^= j;
                     }
                     i ^= j;
 
                     // backup over finished tables
                     mask = (1 << w) - 1;      // needed on HP, cc -O bug
-                    while ((i & mask) != _x[h]){
+                    while ((i & mask) != _x[h])
+                    {
                         h--;                    // don't need to update q
                         w -= l;
                         mask = (1 << w) - 1;
@@ -487,23 +527,25 @@ namespace System.util.zlib {
             // Return Z_BUF_ERROR if we were given an incomplete table
             return y != 0 && g != 1 ? ZBufError : ZOk;
         }
-        private void initWorkArea(int vsize){
-            if(_hn==null){
-                _hn=new int[1];
-                _v=new int[vsize];
-                _c=new int[Bmax+1];
-                _r=new int[3];
-                _u=new int[Bmax];
-                _x=new int[Bmax+1];
+        private void initWorkArea(int vsize)
+        {
+            if (_hn == null)
+            {
+                _hn = new int[1];
+                _v = new int[vsize];
+                _c = new int[Bmax + 1];
+                _r = new int[3];
+                _u = new int[Bmax];
+                _x = new int[Bmax + 1];
             }
-            if(_v.Length<vsize){ _v=new int[vsize]; }
-            for(int i=0; i<vsize; i++){_v[i]=0;}
-            for(int i=0; i<Bmax+1; i++){_c[i]=0;}
-            for(int i=0; i<3; i++){_r[i]=0;}
+            if (_v.Length < vsize) { _v = new int[vsize]; }
+            for (var i = 0; i < vsize; i++) { _v[i] = 0; }
+            for (var i = 0; i < Bmax + 1; i++) { _c[i] = 0; }
+            for (var i = 0; i < 3; i++) { _r[i] = 0; }
             //  for(int i=0; i<BMAX; i++){u[i]=0;}
             Array.Copy(_c, 0, _u, 0, Bmax);
             //  for(int i=0; i<BMAX+1; i++){x[i]=0;}
-            Array.Copy(_c, 0, _x, 0, Bmax+1);
+            Array.Copy(_c, 0, _x, 0, Bmax + 1);
         }
     }
 }

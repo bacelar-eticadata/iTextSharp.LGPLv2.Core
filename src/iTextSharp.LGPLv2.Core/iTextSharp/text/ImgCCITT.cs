@@ -1,5 +1,5 @@
-using System;
 using iTextSharp.text.pdf.codec;
+using System;
 
 namespace iTextSharp.text
 {
@@ -40,9 +40,15 @@ namespace iTextSharp.text
         public ImgCcitt(int width, int height, bool reverseBits, int typeCcitt, int parameters, byte[] data) : base((Uri)null)
         {
             if (typeCcitt != CCITTG4 && typeCcitt != CCITTG3_1D && typeCcitt != CCITTG3_2D)
+            {
                 throw new BadElementException("The CCITT compression type must be CCITTG4, CCITTG3_1D or CCITTG3_2D");
+            }
+
             if (reverseBits)
+            {
                 TiffFaxDecoder.ReverseBits(data);
+            }
+
             type = IMGRAW;
             scaledHeight = height;
             Top = scaledHeight;

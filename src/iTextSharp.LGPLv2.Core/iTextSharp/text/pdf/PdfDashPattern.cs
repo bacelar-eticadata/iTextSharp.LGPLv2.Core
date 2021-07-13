@@ -2,7 +2,6 @@ using System.IO;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfDashPattern  defines a dash pattern as described in
     /// the PDF Reference Manual version 1.3 p 325 (section 8.4.3).
@@ -10,7 +9,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfDashPattern : PdfArray
     {
-
         /// <summary>
         /// membervariables
         /// </summary>

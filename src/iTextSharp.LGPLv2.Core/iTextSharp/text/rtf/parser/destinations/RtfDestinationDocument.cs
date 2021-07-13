@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Text;
-using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.direct;
+using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.parser.ctrlwords;
 using iTextSharp.text.rtf.parser.properties;
+using System.Collections;
+using System.Text;
 
 namespace iTextSharp.text.rtf.parser.destinations
 {
@@ -13,8 +13,6 @@ namespace iTextSharp.text.rtf.parser.destinations
     /// </summary>
     public sealed class RtfDestinationDocument : RtfDestination, IRtfPropertyListener
     {
-
-
         private static readonly ArrayList _importIgnoredCtrlwords = new ArrayList(new[]{
             "rtf",
             "ansicpg",
@@ -34,7 +32,7 @@ namespace iTextSharp.text.rtf.parser.destinations
             }
                 );
 
-        private static ArrayList _convertIgnoredCtrlwords = new ArrayList(new[] { "rtf" });
+        private static readonly ArrayList _convertIgnoredCtrlwords = new ArrayList(new[] { "rtf" });
 
         private StringBuilder _buffer;
 
@@ -60,13 +58,16 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// @see com.lowagie.text.rtf.document.RtfDocument
         /// </summary>
         private RtfDocument _rtfDoc;
+
         /// <summary>
         /// Indicates the current table level being processed
         /// </summary>
         private int _tableLevel;
+
         public RtfDestinationDocument() : base(null)
         {
         }
+
         /// <summary>
         /// Constructs a new  RtfDestinationDocument  using
         /// the parameters to initialize the object.
@@ -106,7 +107,6 @@ namespace iTextSharp.text.rtf.parser.destinations
                     {
                         if (propertyName.StartsWith(RtfProperty.DOCUMENT))
                         {
-
                         }
                     }
                 }
@@ -121,31 +121,52 @@ namespace iTextSharp.text.rtf.parser.destinations
         {
             // do we have any text to do anything with?
             // if not, then just return without action.
-            if (_buffer.Length == 0) return;
+            if (_buffer.Length == 0)
+            {
+                return;
+            }
 
             if (propertyName.StartsWith(RtfProperty.CHARACTER))
             {
                 // this is a character change,
                 // add a new chunck to the current paragraph using current character settings.
-                Chunk chunk = new Chunk();
+                var chunk = new Chunk();
                 chunk.Append(_buffer.ToString());
                 _buffer = new StringBuilder(255);
-                Hashtable charProperties = RtfParser.GetState().Properties.GetProperties(RtfProperty.CHARACTER);
-                string defFont = (string)charProperties[RtfProperty.CHARACTER_FONT];
-                if (defFont == null) defFont = "0";
-                RtfDestinationFontTable fontTable = (RtfDestinationFontTable)RtfParser.GetDestination("fonttbl");
-                Font currFont = fontTable.GetFont(defFont);
-                int fs = Font.NORMAL;
-                if (charProperties.ContainsKey(RtfProperty.CHARACTER_BOLD)) fs |= Font.BOLD;
-                if (charProperties.ContainsKey(RtfProperty.CHARACTER_ITALIC)) fs |= Font.ITALIC;
-                if (charProperties.ContainsKey(RtfProperty.CHARACTER_UNDERLINE)) fs |= Font.UNDERLINE;
-                Font useFont = FontFactory.GetFont(currFont.Familyname, 12, fs, new BaseColor(0, 0, 0));
+                var charProperties = RtfParser.GetState().Properties.GetProperties(RtfProperty.CHARACTER);
+                var defFont = (string)charProperties[RtfProperty.CHARACTER_FONT];
+                if (defFont == null)
+                {
+                    defFont = "0";
+                }
 
+                var fontTable = (RtfDestinationFontTable)RtfParser.GetDestination("fonttbl");
+                var currFont = fontTable.GetFont(defFont);
+                var fs = Font.NORMAL;
+                if (charProperties.ContainsKey(RtfProperty.CHARACTER_BOLD))
+                {
+                    fs |= Font.BOLD;
+                }
+
+                if (charProperties.ContainsKey(RtfProperty.CHARACTER_ITALIC))
+                {
+                    fs |= Font.ITALIC;
+                }
+
+                if (charProperties.ContainsKey(RtfProperty.CHARACTER_UNDERLINE))
+                {
+                    fs |= Font.UNDERLINE;
+                }
+
+                var useFont = FontFactory.GetFont(currFont.Familyname, 12, fs, new BaseColor(0, 0, 0));
 
                 chunk.Font = useFont;
-                if (_iTextParagraph == null) _iTextParagraph = new Paragraph();
-                _iTextParagraph.Add(chunk);
+                if (_iTextParagraph == null)
+                {
+                    _iTextParagraph = new Paragraph();
+                }
 
+                _iTextParagraph.Add(chunk);
             }
             else
             {
@@ -157,13 +178,11 @@ namespace iTextSharp.text.rtf.parser.destinations
                 {
                     if (propertyName.StartsWith(RtfProperty.SECTION))
                     {
-
                     }
                     else
                     {
                         if (propertyName.StartsWith(RtfProperty.DOCUMENT))
                         {
-
                         }
                     }
                 }
@@ -195,7 +214,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// </summary>
         public override bool HandleCharacter(int ch)
         {
-            bool result = true;
+            var result = true;
             OnCharacter(ch);   // event handler
 
             if (RtfParser.IsImport())
@@ -237,7 +256,7 @@ namespace iTextSharp.text.rtf.parser.destinations
                 }
                 if (_buffer.Length > 0)
                 {
-                    Chunk chunk = new Chunk();
+                    var chunk = new Chunk();
                     chunk.Append(_buffer.ToString());
                     _iTextParagraph.Add(chunk);
                 }
@@ -251,7 +270,7 @@ namespace iTextSharp.text.rtf.parser.destinations
 
         public override bool HandleControlWord(RtfCtrlWordData ctrlWordData)
         {
-            bool result = false;
+            var result = false;
             OnCtrlWord(ctrlWordData);  // event handler
 
             if (RtfParser.IsImport())
@@ -276,8 +295,6 @@ namespace iTextSharp.text.rtf.parser.destinations
                 // map lists
                 if (ctrlWordData.CtrlWord.Equals("ls")) { ctrlWordData.Param = RtfParser.GetImportManager().MapListNr(ctrlWordData.Param); }
             }
-
-
 
             if (RtfParser.IsConvert())
             {
@@ -490,6 +507,7 @@ namespace iTextSharp.text.rtf.parser.destinations
                     }
                     result = true;
                     break;
+
                 case RtfParser.TYPE_IMPORT_FRAGMENT:
                     if (!_importIgnoredCtrlwords.Contains(ctrlWordData.CtrlWord))
                     {
@@ -498,19 +516,18 @@ namespace iTextSharp.text.rtf.parser.destinations
                     }
                     result = true;
                     break;
+
                 case RtfParser.TYPE_CONVERT:
                     if (_importIgnoredCtrlwords.Contains(ctrlWordData.CtrlWord) == false)
                     {
                     }
                     result = true;
                     break;
+
                 default:    // error because is should be an import or convert
                     result = false;
                     break;
             }
-
-
-
 
             return result;
         }
@@ -528,7 +545,10 @@ namespace iTextSharp.text.rtf.parser.destinations
             }
             if (RtfParser.IsConvert())
             {
-                if (_iTextParagraph == null) _iTextParagraph = new Paragraph();
+                if (_iTextParagraph == null)
+                {
+                    _iTextParagraph = new Paragraph();
+                }
             }
             return true;
         }
@@ -561,6 +581,7 @@ namespace iTextSharp.text.rtf.parser.destinations
                 RtfParser.GetState().Properties.AddRtfPropertyListener(this);
             }
         }
+
         /// <summary>
         /// (non-Javadoc)
         /// @see com.lowagie.text.rtf.direct.RtfDestination#setDefaults()
@@ -594,6 +615,7 @@ namespace iTextSharp.text.rtf.parser.destinations
             writeText(_buffer.ToString());
             SetToDefaults();
         }
+
         /// <summary>
         /// Write the string value to the destiation.
         /// Used for direct content

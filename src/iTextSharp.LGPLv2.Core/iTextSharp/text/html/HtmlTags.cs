@@ -1,6 +1,5 @@
 namespace iTextSharp.text.html
 {
-
     /// <summary>
     /// A class that contains all the possible tagnames and their attributes.
     /// </summary>
@@ -196,6 +195,7 @@ namespace iTextSharp.text.html
         /// the root tag.
         /// </summary>
         public const string HTML = "html";
+
         /// <summary>
         /// some phrase tag
         /// </summary>
@@ -374,6 +374,7 @@ namespace iTextSharp.text.html
         /// attribute of the root tag
         /// </summary>
         public const string SUBJECT = "subject";
+
         /// <summary>
         /// some phrase tag
         /// </summary>
@@ -393,6 +394,7 @@ namespace iTextSharp.text.html
         /// the title tag.
         /// </summary>
         public const string TITLE = "title";
+
         /// <summary>
         /// attribute of the table/cell tag
         /// </summary>
@@ -402,6 +404,7 @@ namespace iTextSharp.text.html
         /// This is a possible HTML attribute for the BODY tag.
         /// </summary>
         public const string TOPMARGIN = "topmargin";
+
         /// <summary>
         /// This is a possible HTML attribute for the LINK tag.
         /// </summary>
@@ -429,6 +432,7 @@ namespace iTextSharp.text.html
         /// the phrase tag
         /// </summary>
         public const string VAR = "var";
+
         /// <summary>
         /// attribute of the cell tag
         /// </summary>

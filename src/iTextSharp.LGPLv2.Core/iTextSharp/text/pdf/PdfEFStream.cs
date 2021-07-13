@@ -3,7 +3,6 @@ using System.util.zlib;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Extends PdfStream and should be used to create Streams for Embedded Files
     /// (file attachments).
@@ -11,7 +10,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfEFStream : PdfStream
     {
-
         /// <summary>
         /// Creates a Stream object using an InputStream and a PdfWriter object
         /// </summary>
@@ -35,30 +33,40 @@ namespace iTextSharp.text.pdf
         public override void ToPdf(PdfWriter writer, Stream os)
         {
             if (InputStream != null && Compressed)
+            {
                 Put(PdfName.Filter, PdfName.Flatedecode);
+            }
+
             PdfEncryption crypto = null;
             if (writer != null)
+            {
                 crypto = writer.Encryption;
+            }
+
             if (crypto != null)
             {
-                PdfObject filter = Get(PdfName.Filter);
+                var filter = Get(PdfName.Filter);
                 if (filter != null)
                 {
                     if (PdfName.Crypt.Equals(filter))
+                    {
                         crypto = null;
+                    }
                     else if (filter.IsArray())
                     {
-                        PdfArray a = (PdfArray)filter;
+                        var a = (PdfArray)filter;
                         if (!a.IsEmpty() && PdfName.Crypt.Equals(a[0]))
+                        {
                             crypto = null;
+                        }
                     }
                 }
             }
             if (crypto != null && crypto.IsEmbeddedFilesOnly())
             {
-                PdfArray filter = new PdfArray();
-                PdfArray decodeparms = new PdfArray();
-                PdfDictionary crypt = new PdfDictionary();
+                var filter = new PdfArray();
+                var decodeparms = new PdfArray();
+                var crypt = new PdfDictionary();
                 crypt.Put(PdfName.Name, PdfName.Stdcf);
                 filter.Add(PdfName.Crypt);
                 decodeparms.Add(crypt);
@@ -70,43 +78,59 @@ namespace iTextSharp.text.pdf
                 Put(PdfName.Filter, filter);
                 Put(PdfName.Decodeparms, decodeparms);
             }
-            PdfObject nn = Get(PdfName.LENGTH);
+            var nn = Get(PdfName.LENGTH);
             if (crypto != null && nn != null && nn.IsNumber())
             {
-                int sz = ((PdfNumber)nn).IntValue;
+                var sz = ((PdfNumber)nn).IntValue;
                 Put(PdfName.LENGTH, new PdfNumber(crypto.CalculateStreamSize(sz)));
                 SuperToPdf(writer, os);
                 Put(PdfName.LENGTH, nn);
             }
             else
+            {
                 SuperToPdf(writer, os);
+            }
 
             os.Write(Startstream, 0, Startstream.Length);
             if (InputStream != null)
             {
                 rawLength = 0;
                 ZDeflaterOutputStream def = null;
-                OutputStreamCounter osc = new OutputStreamCounter(os);
+                var osc = new OutputStreamCounter(os);
                 OutputStreamEncryption ose = null;
                 Stream fout = osc;
                 if (crypto != null)
+                {
                     fout = ose = crypto.GetEncryptionStream(fout);
-                if (Compressed)
-                    fout = def = new ZDeflaterOutputStream(fout, CompressionLevel);
+                }
 
-                byte[] buf = new byte[4192];
+                if (Compressed)
+                {
+                    fout = def = new ZDeflaterOutputStream(fout, CompressionLevel);
+                }
+
+                var buf = new byte[4192];
                 while (true)
                 {
-                    int n = InputStream.Read(buf, 0, buf.Length);
+                    var n = InputStream.Read(buf, 0, buf.Length);
                     if (n <= 0)
+                    {
                         break;
+                    }
+
                     fout.Write(buf, 0, n);
                     rawLength += n;
                 }
                 if (def != null)
+                {
                     def.Finish();
+                }
+
                 if (ose != null)
+                {
                     ose.Finish();
+                }
+
                 InputStreamLength = osc.Counter;
             }
             else
@@ -114,9 +138,13 @@ namespace iTextSharp.text.pdf
                 if (crypto == null)
                 {
                     if (StreamBytes != null)
+                    {
                         StreamBytes.WriteTo(os);
+                    }
                     else
+                    {
                         os.Write(Bytes, 0, Bytes.Length);
+                    }
                 }
                 else
                 {

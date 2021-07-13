@@ -1,9 +1,9 @@
+using iTextSharp.LGPLv2.Core.System.NetUtils;
 using System;
 using System.IO;
 using System.Text;
-using System.util.zlib;
 using System.util;
-using iTextSharp.LGPLv2.Core.System.NetUtils;
+using System.util.zlib;
 
 namespace iTextSharp.text.pdf.codec
 {
@@ -69,51 +69,55 @@ namespace iTextSharp.text.pdf.codec
         /// Some PNG specific values.
         /// </summary>
         public static int[] Pngid = { 137, 80, 78, 71, 13, 10, 26, 10 };
+
         private const int PngFilterAverage = 3;
         private const int PngFilterNone = 0;
         private const int PngFilterPaeth = 4;
         private const int PngFilterSub = 1;
         private const int PngFilterUp = 2;
         private const int Transfersize = 4096;
+
         private static readonly PdfName[] _intents = {PdfName.Perceptual,
             PdfName.Relativecolorimetric,PdfName.Saturation,PdfName.Absolutecolorimetric};
 
-        readonly PdfDictionary _additional = new PdfDictionary();
-        readonly MemoryStream _idat = new MemoryStream();
-        readonly Stream _isp;
-        int _bitDepth;
-        int _bytesPerPixel;
-        // number of bytes per input pixel
-        byte[] _colorTable;
+        private readonly PdfDictionary _additional = new PdfDictionary();
+        private readonly MemoryStream _idat = new MemoryStream();
+        private readonly Stream _isp;
+        private int _bitDepth;
+        private int _bytesPerPixel;
 
-        int _colorType;
-        int _compressionMethod;
-        Stream _dataStream;
-        int _dpiX;
-        int _dpiY;
-        int _filterMethod;
-        float _gamma = 1f;
-        bool _genBwMask;
-        bool _hasChrm;
-        int _height;
-        IccProfile _iccProfile;
-        byte[] _image;
-        int _inputBands;
-        PdfName _intent;
-        int _interlaceMethod;
-        bool _palShades;
-        byte[] _smask;
-        byte[] _trans;
-        int _transBlue = -1;
-        int _transGreen = -1;
-        int _transRedGray = -1;
-        int _width;
-        float _xW, _yW, _xR, _yR, _xG, _yG, _xB, _yB;
-        float _xyRatio;
+        // number of bytes per input pixel
+        private byte[] _colorTable;
+
+        private int _colorType;
+        private int _compressionMethod;
+        private Stream _dataStream;
+        private int _dpiX;
+        private int _dpiY;
+        private int _filterMethod;
+        private float _gamma = 1f;
+        private bool _genBwMask;
+        private bool _hasChrm;
+        private int _height;
+        private IccProfile _iccProfile;
+        private byte[] _image;
+        private int _inputBands;
+        private PdfName _intent;
+        private int _interlaceMethod;
+        private bool _palShades;
+        private byte[] _smask;
+        private byte[] _trans;
+        private int _transBlue = -1;
+        private int _transGreen = -1;
+        private int _transRedGray = -1;
+        private int _width;
+        private float _xW, _yW, _xR, _yR, _xG, _yG, _xB, _yB;
+        private float _xyRatio;
+
         /// <summary>
         /// Creates a new instance of PngImage
         /// </summary>
-        PngImage(Stream isp)
+        private PngImage(Stream isp)
         {
             _isp = isp;
         }
@@ -130,7 +134,7 @@ namespace iTextSharp.text.pdf.codec
             try
             {
                 isp = url.GetResponseStream();
-                Image img = GetImage(isp);
+                var img = GetImage(isp);
                 img.Url = url;
                 return img;
             }
@@ -151,7 +155,7 @@ namespace iTextSharp.text.pdf.codec
         /// <returns>the image</returns>
         public static Image GetImage(Stream isp)
         {
-            PngImage png = new PngImage(isp);
+            var png = new PngImage(isp);
             return png.getImage();
         }
 
@@ -175,7 +179,7 @@ namespace iTextSharp.text.pdf.codec
         public static Image GetImage(byte[] data)
         {
             Stream isp = new MemoryStream(data);
-            Image img = GetImage(isp);
+            var img = GetImage(isp);
             img.OriginalData = data;
             return img;
         }
@@ -187,8 +191,8 @@ namespace iTextSharp.text.pdf.codec
 
         public static string GetString(Stream isp)
         {
-            StringBuilder buf = new StringBuilder();
-            for (int i = 0; i < 4; i++)
+            var buf = new StringBuilder();
+            for (var i = 0; i < 4; i++)
             {
                 buf.Append((char)isp.ReadByte());
             }
@@ -200,15 +204,20 @@ namespace iTextSharp.text.pdf.codec
             return (isp.ReadByte() << 8) + isp.ReadByte();
         }
 
-        static bool checkMarker(string s)
+        private static bool checkMarker(string s)
         {
             if (s.Length != 4)
-                return false;
-            for (int k = 0; k < 4; ++k)
             {
-                char c = s[k];
+                return false;
+            }
+
+            for (var k = 0; k < 4; ++k)
+            {
+                var c = s[k];
                 if ((c < 'a' || c > 'z') && (c < 'A' || c > 'Z'))
+                {
                     return false;
+                }
             }
             return true;
         }
@@ -218,7 +227,7 @@ namespace iTextSharp.text.pdf.codec
         {
             int raw, priorPixel, priorRow;
 
-            for (int i = 0; i < bpp; i++)
+            for (var i = 0; i < bpp; i++)
             {
                 raw = curr[i] & 0xff;
                 priorRow = prev[i] & 0xff;
@@ -226,7 +235,7 @@ namespace iTextSharp.text.pdf.codec
                 curr[i] = (byte)(raw + priorRow / 2);
             }
 
-            for (int i = bpp; i < count; i++)
+            for (var i = bpp; i < count; i++)
             {
                 raw = curr[i] & 0xff;
                 priorPixel = curr[i - bpp] & 0xff;
@@ -241,7 +250,7 @@ namespace iTextSharp.text.pdf.codec
         {
             int raw, priorPixel, priorRow, priorRowPixel;
 
-            for (int i = 0; i < bpp; i++)
+            for (var i = 0; i < bpp; i++)
             {
                 raw = curr[i] & 0xff;
                 priorRow = prev[i] & 0xff;
@@ -249,7 +258,7 @@ namespace iTextSharp.text.pdf.codec
                 curr[i] = (byte)(raw + priorRow);
             }
 
-            for (int i = bpp; i < count; i++)
+            for (var i = bpp; i < count; i++)
             {
                 raw = curr[i] & 0xff;
                 priorPixel = curr[i - bpp] & 0xff;
@@ -264,7 +273,7 @@ namespace iTextSharp.text.pdf.codec
 
         private static void decodeSubFilter(byte[] curr, int count, int bpp)
         {
-            for (int i = bpp; i < count; i++)
+            for (var i = bpp; i < count; i++)
             {
                 int val;
 
@@ -278,36 +287,36 @@ namespace iTextSharp.text.pdf.codec
         private static void decodeUpFilter(byte[] curr, byte[] prev,
         int count)
         {
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
-                int raw = curr[i] & 0xff;
-                int prior = prev[i] & 0xff;
+                var raw = curr[i] & 0xff;
+                var prior = prev[i] & 0xff;
 
                 curr[i] = (byte)(raw + prior);
             }
         }
 
-        static int getPixel(byte[] image, int x, int y, int bitDepth, int bytesPerRow)
+        private static int getPixel(byte[] image, int x, int y, int bitDepth, int bytesPerRow)
         {
             if (bitDepth == 8)
             {
-                int pos = bytesPerRow * y + x;
+                var pos = bytesPerRow * y + x;
                 return image[pos] & 0xff;
             }
             else
             {
-                int pos = bytesPerRow * y + x / (8 / bitDepth);
-                int v = image[pos] >> (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
+                var pos = bytesPerRow * y + x / (8 / bitDepth);
+                var v = image[pos] >> (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
                 return v & ((1 << bitDepth) - 1);
             }
         }
 
         private static int paethPredictor(int a, int b, int c)
         {
-            int p = a + b - c;
-            int pa = Math.Abs(p - a);
-            int pb = Math.Abs(p - b);
-            int pc = Math.Abs(p - c);
+            var p = a + b - c;
+            var pa = Math.Abs(p - a);
+            var pb = Math.Abs(p - b);
+            var pc = Math.Abs(p - c);
 
             if ((pa <= pb) && (pa <= pc))
             {
@@ -330,72 +339,97 @@ namespace iTextSharp.text.pdf.codec
         {
             while (count > 0)
             {
-                int n = inp.Read(b, offset, count);
+                var n = inp.Read(b, offset, count);
                 if (n <= 0)
+                {
                     throw new IOException("Insufficient data.");
+                }
+
                 count -= n;
                 offset += n;
             }
         }
 
-        static void setPixel(byte[] image, int[] data, int offset, int size, int x, int y, int bitDepth, int bytesPerRow)
+        private static void setPixel(byte[] image, int[] data, int offset, int size, int x, int y, int bitDepth, int bytesPerRow)
         {
             if (bitDepth == 8)
             {
-                int pos = bytesPerRow * y + size * x;
-                for (int k = 0; k < size; ++k)
+                var pos = bytesPerRow * y + size * x;
+                for (var k = 0; k < size; ++k)
+                {
                     image[pos + k] = (byte)data[k + offset];
+                }
             }
             else if (bitDepth == 16)
             {
-                int pos = bytesPerRow * y + size * x;
-                for (int k = 0; k < size; ++k)
+                var pos = bytesPerRow * y + size * x;
+                for (var k = 0; k < size; ++k)
+                {
                     image[pos + k] = (byte)(data[k + offset] >> 8);
+                }
             }
             else
             {
-                int pos = bytesPerRow * y + x / (8 / bitDepth);
-                int v = data[offset] << (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
+                var pos = bytesPerRow * y + x / (8 / bitDepth);
+                var v = data[offset] << (8 - bitDepth * (x % (8 / bitDepth)) - bitDepth);
                 image[pos] |= (byte)v;
             }
         }
 
-        void decodeIdat()
+        private void decodeIdat()
         {
-            int nbitDepth = _bitDepth;
+            var nbitDepth = _bitDepth;
             if (nbitDepth == 16)
+            {
                 nbitDepth = 8;
-            int size = -1;
+            }
+
+            var size = -1;
             _bytesPerPixel = (_bitDepth == 16) ? 2 : 1;
             switch (_colorType)
             {
                 case 0:
                     size = (nbitDepth * _width + 7) / 8 * _height;
                     break;
+
                 case 2:
                     size = _width * 3 * _height;
                     _bytesPerPixel *= 3;
                     break;
+
                 case 3:
                     if (_interlaceMethod == 1)
+                    {
                         size = (nbitDepth * _width + 7) / 8 * _height;
+                    }
+
                     _bytesPerPixel = 1;
                     break;
+
                 case 4:
                     size = _width * _height;
                     _bytesPerPixel *= 2;
                     break;
+
                 case 6:
                     size = _width * 3 * _height;
                     _bytesPerPixel *= 4;
                     break;
             }
             if (size >= 0)
+            {
                 _image = new byte[size];
+            }
+
             if (_palShades)
+            {
                 _smask = new byte[_width * _height];
+            }
             else if (_genBwMask)
+            {
                 _smask = new byte[(_width + 7) / 8 * _height];
+            }
+
             _idat.Position = 0;
             _dataStream = new ZInflaterInputStream(_idat);
 
@@ -413,10 +447,9 @@ namespace iTextSharp.text.pdf.codec
                 decodePass(1, 0, 2, 2, _width / 2, (_height + 1) / 2);
                 decodePass(0, 1, 1, 2, _width, _height / 2);
             }
-
         }
 
-        void decodePass(int xOffset, int yOffset,
+        private void decodePass(int xOffset, int yOffset,
         int xStep, int yStep,
         int passWidth, int passHeight)
         {
@@ -425,9 +458,9 @@ namespace iTextSharp.text.pdf.codec
                 return;
             }
 
-            int bytesPerRow = (_inputBands * passWidth * _bitDepth + 7) / 8;
-            byte[] curr = new byte[bytesPerRow];
-            byte[] prior = new byte[bytesPerRow];
+            var bytesPerRow = (_inputBands * passWidth * _bitDepth + 7) / 8;
+            var curr = new byte[bytesPerRow];
+            var prior = new byte[bytesPerRow];
 
             // Decode the (sub)image row-by-row
             int srcY, dstY;
@@ -436,7 +469,7 @@ namespace iTextSharp.text.pdf.codec
             srcY++, dstY += yStep)
             {
                 // Read the filter type byte and a row of data
-                int filter = 0;
+                var filter = 0;
                 try
                 {
                     filter = _dataStream.ReadByte();
@@ -451,18 +484,23 @@ namespace iTextSharp.text.pdf.codec
                 {
                     case PngFilterNone:
                         break;
+
                     case PngFilterSub:
                         decodeSubFilter(curr, bytesPerRow, _bytesPerPixel);
                         break;
+
                     case PngFilterUp:
                         decodeUpFilter(curr, prior, bytesPerRow);
                         break;
+
                     case PngFilterAverage:
                         decodeAverageFilter(curr, prior, bytesPerRow, _bytesPerPixel);
                         break;
+
                     case PngFilterPaeth:
                         decodePaethFilter(curr, prior, bytesPerRow, _bytesPerPixel);
                         break;
+
                     default:
                         // Error -- uknown filter type
                         throw new Exception("PNG filter unknown.");
@@ -471,36 +509,47 @@ namespace iTextSharp.text.pdf.codec
                 processPixels(curr, xOffset, xStep, dstY, passWidth);
 
                 // Swap curr and prior
-                byte[] tmp = prior;
+                var tmp = prior;
                 prior = curr;
                 curr = tmp;
             }
         }
 
-        PdfObject getColorspace()
+        private PdfObject getColorspace()
         {
             if (_iccProfile != null)
             {
                 if ((_colorType & 2) == 0)
+                {
                     return PdfName.Devicegray;
+                }
                 else
+                {
                     return PdfName.Devicergb;
+                }
             }
             if (_gamma.ApproxEquals(1f) && !_hasChrm)
             {
                 if ((_colorType & 2) == 0)
+                {
                     return PdfName.Devicegray;
+                }
                 else
+                {
                     return PdfName.Devicergb;
+                }
             }
             else
             {
-                PdfArray array = new PdfArray();
-                PdfDictionary dic = new PdfDictionary();
+                var array = new PdfArray();
+                var dic = new PdfDictionary();
                 if ((_colorType & 2) == 0)
                 {
                     if (_gamma.ApproxEquals(1f))
+                    {
                         return PdfName.Devicegray;
+                    }
+
                     array.Add(PdfName.Calgray);
                     dic.Put(PdfName.Gamma, new PdfNumber(_gamma));
                     dic.Put(PdfName.Whitepoint, new PdfLiteral("[1 1 1]"));
@@ -512,8 +561,8 @@ namespace iTextSharp.text.pdf.codec
                     array.Add(PdfName.Calrgb);
                     if (_gamma.ApproxNotEqual(1f))
                     {
-                        PdfArray gm = new PdfArray();
-                        PdfNumber n = new PdfNumber(_gamma);
+                        var gm = new PdfArray();
+                        var n = new PdfNumber(_gamma);
                         gm.Add(n);
                         gm.Add(n);
                         gm.Add(n);
@@ -521,25 +570,25 @@ namespace iTextSharp.text.pdf.codec
                     }
                     if (_hasChrm)
                     {
-                        float z = _yW * ((_xG - _xB) * _yR - (_xR - _xB) * _yG + (_xR - _xG) * _yB);
-                        float ya = _yR * ((_xG - _xB) * _yW - (_xW - _xB) * _yG + (_xW - _xG) * _yB) / z;
-                        float xa = ya * _xR / _yR;
-                        float za = ya * ((1 - _xR) / _yR - 1);
-                        float yb = -_yG * ((_xR - _xB) * _yW - (_xW - _xB) * _yR + (_xW - _xR) * _yB) / z;
-                        float xb = yb * _xG / _yG;
-                        float zb = yb * ((1 - _xG) / _yG - 1);
-                        float yc = _yB * ((_xR - _xG) * _yW - (_xW - _xG) * _yW + (_xW - _xR) * _yG) / z;
-                        float xc = yc * _xB / _yB;
-                        float zc = yc * ((1 - _xB) / _yB - 1);
-                        float xw = xa + xb + xc;
+                        var z = _yW * ((_xG - _xB) * _yR - (_xR - _xB) * _yG + (_xR - _xG) * _yB);
+                        var ya = _yR * ((_xG - _xB) * _yW - (_xW - _xB) * _yG + (_xW - _xG) * _yB) / z;
+                        var xa = ya * _xR / _yR;
+                        var za = ya * ((1 - _xR) / _yR - 1);
+                        var yb = -_yG * ((_xR - _xB) * _yW - (_xW - _xB) * _yR + (_xW - _xR) * _yB) / z;
+                        var xb = yb * _xG / _yG;
+                        var zb = yb * ((1 - _xG) / _yG - 1);
+                        var yc = _yB * ((_xR - _xG) * _yW - (_xW - _xG) * _yW + (_xW - _xR) * _yG) / z;
+                        var xc = yc * _xB / _yB;
+                        var zc = yc * ((1 - _xB) / _yB - 1);
+                        var xw = xa + xb + xc;
                         float yw = 1;//YA+YB+YC;
-                        float zw = za + zb + zc;
-                        PdfArray wpa = new PdfArray();
+                        var zw = za + zb + zc;
+                        var wpa = new PdfArray();
                         wpa.Add(new PdfNumber(xw));
                         wpa.Add(new PdfNumber(yw));
                         wpa.Add(new PdfNumber(zw));
                         wp = wpa;
-                        PdfArray matrix = new PdfArray();
+                        var matrix = new PdfArray();
                         matrix.Add(new PdfNumber(xa));
                         matrix.Add(new PdfNumber(ya));
                         matrix.Add(new PdfNumber(za));
@@ -558,17 +607,17 @@ namespace iTextSharp.text.pdf.codec
             }
         }
 
-        Image getImage()
+        private Image getImage()
         {
             readPng();
-            int pal0 = 0;
-            int palIdx = 0;
+            var pal0 = 0;
+            var palIdx = 0;
             _palShades = false;
             if (_trans != null)
             {
-                for (int k = 0; k < _trans.Length; ++k)
+                for (var k = 0; k < _trans.Length; ++k)
                 {
-                    int n = _trans[k] & 0xff;
+                    var n = _trans[k] & 0xff;
                     if (n == 0)
                     {
                         ++pal0;
@@ -582,52 +631,74 @@ namespace iTextSharp.text.pdf.codec
                 }
             }
             if ((_colorType & 4) != 0)
+            {
                 _palShades = true;
+            }
+
             _genBwMask = (!_palShades && (pal0 > 1 || _transRedGray >= 0));
             if (!_palShades && !_genBwMask && pal0 == 1)
             {
                 _additional.Put(PdfName.Mask, new PdfLiteral("[" + palIdx + " " + palIdx + "]"));
             }
-            bool needDecode = (_interlaceMethod == 1) || (_bitDepth == 16) || ((_colorType & 4) != 0) || _palShades || _genBwMask;
+            var needDecode = (_interlaceMethod == 1) || (_bitDepth == 16) || ((_colorType & 4) != 0) || _palShades || _genBwMask;
             switch (_colorType)
             {
                 case 0:
                     _inputBands = 1;
                     break;
+
                 case 2:
                     _inputBands = 3;
                     break;
+
                 case 3:
                     _inputBands = 1;
                     break;
+
                 case 4:
                     _inputBands = 2;
                     break;
+
                 case 6:
                     _inputBands = 4;
                     break;
             }
             if (needDecode)
+            {
                 decodeIdat();
-            int components = _inputBands;
+            }
+
+            var components = _inputBands;
             if ((_colorType & 4) != 0)
+            {
                 --components;
-            int bpc = _bitDepth;
+            }
+
+            var bpc = _bitDepth;
             if (bpc == 16)
+            {
                 bpc = 8;
+            }
+
             Image img;
             if (_image != null)
             {
                 if (_colorType == 3)
+                {
                     img = new ImgRaw(_width, _height, components, bpc, _image);
+                }
                 else
+                {
                     img = Image.GetInstance(_width, _height, components, bpc, _image);
+                }
             }
             else
             {
-                img = new ImgRaw(_width, _height, components, bpc, _idat.ToArray());
-                img.Deflated = true;
-                PdfDictionary decodeparms = new PdfDictionary();
+                img = new ImgRaw(_width, _height, components, bpc, _idat.ToArray())
+                {
+                    Deflated = true
+                };
+                var decodeparms = new PdfDictionary();
                 decodeparms.Put(PdfName.Bitspercomponent, new PdfNumber(_bitDepth));
                 decodeparms.Put(PdfName.Predictor, new PdfNumber(15));
                 decodeparms.Put(PdfName.Columns, new PdfNumber(_width));
@@ -635,22 +706,34 @@ namespace iTextSharp.text.pdf.codec
                 _additional.Put(PdfName.Decodeparms, decodeparms);
             }
             if (_additional.Get(PdfName.Colorspace) == null)
+            {
                 _additional.Put(PdfName.Colorspace, getColorspace());
+            }
+
             if (_intent != null)
+            {
                 _additional.Put(PdfName.Intent, _intent);
+            }
+
             if (_additional.Size > 0)
+            {
                 img.Additional = _additional;
+            }
+
             if (_iccProfile != null)
+            {
                 img.TagIcc = _iccProfile;
+            }
+
             if (_palShades)
             {
-                Image im2 = Image.GetInstance(_width, _height, 1, 8, _smask);
+                var im2 = Image.GetInstance(_width, _height, 1, 8, _smask);
                 im2.MakeMask();
                 img.ImageMask = im2;
             }
             if (_genBwMask)
             {
-                Image im2 = Image.GetInstance(_width, _height, 1, 1, _smask);
+                var im2 = Image.GetInstance(_width, _height, 1, 1, _smask);
                 im2.MakeMask();
                 img.ImageMask = im2;
             }
@@ -660,33 +743,39 @@ namespace iTextSharp.text.pdf.codec
             return img;
         }
 
-        int[] getPixel(byte[] curr)
+        private int[] getPixel(byte[] curr)
         {
             switch (_bitDepth)
             {
                 case 8:
                     {
-                        int[] outp = new int[curr.Length];
-                        for (int k = 0; k < outp.Length; ++k)
+                        var outp = new int[curr.Length];
+                        for (var k = 0; k < outp.Length; ++k)
+                        {
                             outp[k] = curr[k] & 0xff;
+                        }
+
                         return outp;
                     }
                 case 16:
                     {
-                        int[] outp = new int[curr.Length / 2];
-                        for (int k = 0; k < outp.Length; ++k)
+                        var outp = new int[curr.Length / 2];
+                        for (var k = 0; k < outp.Length; ++k)
+                        {
                             outp[k] = ((curr[k * 2] & 0xff) << 8) + (curr[k * 2 + 1] & 0xff);
+                        }
+
                         return outp;
                     }
                 default:
                     {
-                        int[] outp = new int[curr.Length * 8 / _bitDepth];
-                        int idx = 0;
-                        int passes = 8 / _bitDepth;
-                        int mask = (1 << _bitDepth) - 1;
-                        for (int k = 0; k < curr.Length; ++k)
+                        var outp = new int[curr.Length * 8 / _bitDepth];
+                        var idx = 0;
+                        var passes = 8 / _bitDepth;
+                        var mask = (1 << _bitDepth) - 1;
+                        for (var k = 0; k < curr.Length; ++k)
                         {
-                            for (int j = passes - 1; j >= 0; --j)
+                            for (var j = passes - 1; j >= 0; --j)
                             {
                                 outp[idx++] = Util.Usr(curr[k], _bitDepth * j) & mask;
                             }
@@ -696,12 +785,12 @@ namespace iTextSharp.text.pdf.codec
             }
         }
 
-        void processPixels(byte[] curr, int xOffset, int step, int y, int width)
+        private void processPixels(byte[] curr, int xOffset, int step, int y, int width)
         {
             int srcX, dstX;
 
-            int[] outp = getPixel(curr);
-            int sizes = 0;
+            var outp = getPixel(curr);
+            var sizes = 0;
             switch (_colorType)
             {
                 case 0:
@@ -709,6 +798,7 @@ namespace iTextSharp.text.pdf.codec
                 case 4:
                     sizes = 1;
                     break;
+
                 case 2:
                 case 6:
                     sizes = 3;
@@ -717,7 +807,7 @@ namespace iTextSharp.text.pdf.codec
             if (_image != null)
             {
                 dstX = xOffset;
-                int yStride = (sizes * _width * (_bitDepth == 16 ? 8 : _bitDepth) + 7) / 8;
+                var yStride = (sizes * _width * (_bitDepth == 16 ? 8 : _bitDepth) + 7) / 8;
                 for (srcX = 0; srcX < width; srcX++)
                 {
                     setPixel(_image, outp, _inputBands * srcX, sizes, dstX, y, _bitDepth, yStride);
@@ -730,13 +820,13 @@ namespace iTextSharp.text.pdf.codec
                 {
                     if (_bitDepth == 16)
                     {
-                        for (int k = 0; k < width; ++k)
+                        for (var k = 0; k < width; ++k)
                         {
-                            int t = k * _inputBands + sizes;
+                            var t = k * _inputBands + sizes;
                             outp[t] = Util.Usr(outp[t], 8);
                         }
                     }
-                    int yStride = _width;
+                    var yStride = _width;
                     dstX = xOffset;
                     for (srcX = 0; srcX < width; srcX++)
                     {
@@ -746,16 +836,21 @@ namespace iTextSharp.text.pdf.codec
                 }
                 else
                 { //colorType 3
-                    int yStride = _width;
-                    int[] v = new int[1];
+                    var yStride = _width;
+                    var v = new int[1];
                     dstX = xOffset;
                     for (srcX = 0; srcX < width; srcX++)
                     {
-                        int idx = outp[srcX];
+                        var idx = outp[srcX];
                         if (idx < _trans.Length)
+                        {
                             v[0] = _trans[idx];
+                        }
                         else
+                        {
                             v[0] = 255; // Patrick Valsecchi
+                        }
+
                         setPixel(_smask, v, 0, 1, dstX, y, 8, yStride);
                         dstX += step;
                     }
@@ -767,12 +862,12 @@ namespace iTextSharp.text.pdf.codec
                 {
                     case 3:
                         {
-                            int yStride = (_width + 7) / 8;
-                            int[] v = new int[1];
+                            var yStride = (_width + 7) / 8;
+                            var v = new int[1];
                             dstX = xOffset;
                             for (srcX = 0; srcX < width; srcX++)
                             {
-                                int idx = outp[srcX];
+                                var idx = outp[srcX];
                                 v[0] = ((idx < _trans.Length && _trans[idx] == 0) ? 1 : 0);
                                 setPixel(_smask, v, 0, 1, dstX, y, 1, yStride);
                                 dstX += step;
@@ -781,12 +876,12 @@ namespace iTextSharp.text.pdf.codec
                         }
                     case 0:
                         {
-                            int yStride = (_width + 7) / 8;
-                            int[] v = new int[1];
+                            var yStride = (_width + 7) / 8;
+                            var v = new int[1];
                             dstX = xOffset;
                             for (srcX = 0; srcX < width; srcX++)
                             {
-                                int g = outp[srcX];
+                                var g = outp[srcX];
                                 v[0] = (g == _transRedGray ? 1 : 0);
                                 setPixel(_smask, v, 0, 1, dstX, y, 1, yStride);
                                 dstX += step;
@@ -795,12 +890,12 @@ namespace iTextSharp.text.pdf.codec
                         }
                     case 2:
                         {
-                            int yStride = (_width + 7) / 8;
-                            int[] v = new int[1];
+                            var yStride = (_width + 7) / 8;
+                            var v = new int[1];
                             dstX = xOffset;
                             for (srcX = 0; srcX < width; srcX++)
                             {
-                                int markRed = _inputBands * srcX;
+                                var markRed = _inputBands * srcX;
                                 v[0] = (outp[markRed] == _transRedGray && outp[markRed + 1] == _transGreen
                                     && outp[markRed + 2] == _transBlue ? 1 : 0);
                                 setPixel(_smask, v, 0, 1, dstX, y, 1, yStride);
@@ -812,22 +907,25 @@ namespace iTextSharp.text.pdf.codec
             }
         }
 
-        void readPng()
+        private void readPng()
         {
-            for (int i = 0; i < Pngid.Length; i++)
+            for (var i = 0; i < Pngid.Length; i++)
             {
                 if (Pngid[i] != _isp.ReadByte())
                 {
                     throw new IOException("File is not a valid PNG.");
                 }
             }
-            byte[] buffer = new byte[Transfersize];
+            var buffer = new byte[Transfersize];
             while (true)
             {
-                int len = GetInt(_isp);
-                string marker = GetString(_isp);
+                var len = GetInt(_isp);
+                var marker = GetString(_isp);
                 if (len < 0 || !checkMarker(marker))
+                {
                     throw new IOException("Corrupted PNG file.");
+                }
+
                 if (IDAT.Equals(marker))
                 {
                     int size;
@@ -835,7 +933,10 @@ namespace iTextSharp.text.pdf.codec
                     {
                         size = _isp.Read(buffer, 0, Math.Min(len, Transfersize));
                         if (size <= 0)
+                        {
                             return;
+                        }
+
                         _idat.Write(buffer, 0, size);
                         len -= size;
                     }
@@ -848,20 +949,25 @@ namespace iTextSharp.text.pdf.codec
                             if (len >= 2)
                             {
                                 len -= 2;
-                                int gray = GetWord(_isp);
+                                var gray = GetWord(_isp);
                                 if (_bitDepth == 16)
+                                {
                                     _transRedGray = gray;
+                                }
                                 else
+                                {
                                     _additional.Put(PdfName.Mask, new PdfLiteral("[" + gray + " " + gray + "]"));
+                                }
                             }
                             break;
+
                         case 2:
                             if (len >= 6)
                             {
                                 len -= 6;
-                                int red = GetWord(_isp);
-                                int green = GetWord(_isp);
-                                int blue = GetWord(_isp);
+                                var red = GetWord(_isp);
+                                var green = GetWord(_isp);
+                                var blue = GetWord(_isp);
                                 if (_bitDepth == 16)
                                 {
                                     _transRedGray = red;
@@ -869,15 +975,21 @@ namespace iTextSharp.text.pdf.codec
                                     _transBlue = blue;
                                 }
                                 else
+                                {
                                     _additional.Put(PdfName.Mask, new PdfLiteral("[" + red + " " + red + " " + green + " " + green + " " + blue + " " + blue + "]"));
+                                }
                             }
                             break;
+
                         case 3:
                             if (len > 0)
                             {
                                 _trans = new byte[len];
-                                for (int k = 0; k < len; ++k)
+                                for (var k = 0; k < len; ++k)
+                                {
                                     _trans[k] = (byte)_isp.ReadByte();
+                                }
+
                                 len = 0;
                             }
                             break;
@@ -899,11 +1011,11 @@ namespace iTextSharp.text.pdf.codec
                 {
                     if (_colorType == 3)
                     {
-                        PdfArray colorspace = new PdfArray();
+                        var colorspace = new PdfArray();
                         colorspace.Add(PdfName.Indexed);
                         colorspace.Add(getColorspace());
                         colorspace.Add(new PdfNumber(len / 3 - 1));
-                        ByteBuffer colortable = new ByteBuffer();
+                        var colortable = new ByteBuffer();
                         while ((len--) > 0)
                         {
                             colortable.Append_i(_isp.ReadByte());
@@ -918,9 +1030,9 @@ namespace iTextSharp.text.pdf.codec
                 }
                 else if (pHYs.Equals(marker))
                 {
-                    int dx = GetInt(_isp);
-                    int dy = GetInt(_isp);
-                    int unit = _isp.ReadByte();
+                    var dx = GetInt(_isp);
+                    var dy = GetInt(_isp);
+                    var unit = _isp.ReadByte();
                     if (unit == 1)
                     {
                         _dpiX = (int)(dx * 0.0254f + 0.5f);
@@ -929,7 +1041,9 @@ namespace iTextSharp.text.pdf.codec
                     else
                     {
                         if (dy != 0)
+                        {
                             _xyRatio = dx / (float)dy;
+                        }
                     }
                 }
                 else if (cHRM.Equals(marker))
@@ -946,7 +1060,7 @@ namespace iTextSharp.text.pdf.codec
                 }
                 else if (sRGB.Equals(marker))
                 {
-                    int ri = _isp.ReadByte();
+                    var ri = _isp.ReadByte();
                     _intent = _intents[ri];
                     _gamma = 2.2f;
                     _xW = 0.3127f;
@@ -961,7 +1075,7 @@ namespace iTextSharp.text.pdf.codec
                 }
                 else if (gAMA.Equals(marker))
                 {
-                    int gm = GetInt(_isp);
+                    var gm = GetInt(_isp);
                     if (gm != 0)
                     {
                         _gamma = 100000f / gm;
@@ -987,17 +1101,20 @@ namespace iTextSharp.text.pdf.codec
                     } while (_isp.ReadByte() != 0);
                     _isp.ReadByte();
                     --len;
-                    byte[] icccom = new byte[len];
-                    int p = 0;
+                    var icccom = new byte[len];
+                    var p = 0;
                     while (len > 0)
                     {
-                        int r = _isp.Read(icccom, p, len);
+                        var r = _isp.Read(icccom, p, len);
                         if (r < 0)
+                        {
                             throw new IOException("Premature end of file.");
+                        }
+
                         p += r;
                         len -= r;
                     }
-                    byte[] iccp = PdfReader.FlateDecode(icccom, true);
+                    var iccp = PdfReader.FlateDecode(icccom, true);
                     icccom = null;
                     try
                     {

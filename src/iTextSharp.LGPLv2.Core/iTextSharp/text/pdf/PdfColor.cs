@@ -18,6 +18,8 @@ namespace iTextSharp.text.pdf
             Add(new PdfNumber((double)(blue & 0xFF) / 0xFF));
         }
 
-        internal PdfColor(BaseColor color) : this(color.R, color.G, color.B) { }
+        internal PdfColor(BaseColor color) : this(color.R, color.G, color.B)
+        {
+        }
     }
 }

@@ -1,6 +1,6 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.style
 {
@@ -51,8 +51,8 @@ namespace iTextSharp.text.rtf.style
             {
                 font = new RtfFont(Document, (RtfParagraphStyle)font);
             }
-            int fontIndex = -1;
-            for (int i = 0; i < _fontList.Count; i++)
+            var fontIndex = -1;
+            for (var i = 0; i < _fontList.Count; i++)
             {
                 if (_fontList[i].Equals(font))
                 {
@@ -83,12 +83,12 @@ namespace iTextSharp.text.rtf.style
             result.Write(t = IntToByteArray(0), 0, t.Length);
             result.Write(OpenGroup, 0, OpenGroup.Length);
             result.Write(_fontTable, 0, _fontTable.Length);
-            for (int i = 0; i < _fontList.Count; i++)
+            for (var i = 0; i < _fontList.Count; i++)
             {
                 result.Write(OpenGroup, 0, OpenGroup.Length);
                 result.Write(FontNumber, 0, FontNumber.Length);
                 result.Write(t = IntToByteArray(i), 0, t.Length);
-                RtfFont rf = (RtfFont)_fontList[i];
+                var rf = (RtfFont)_fontList[i];
                 rf.WriteDefinition(result);
                 result.Write(CommaDelimiter, 0, CommaDelimiter.Length);
                 result.Write(CloseGroup, 0, CloseGroup.Length);

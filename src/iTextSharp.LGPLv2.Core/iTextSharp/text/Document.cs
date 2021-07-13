@@ -129,6 +129,12 @@ namespace iTextSharp.text
         /// </summary>
         public static string Product { get; } = "iTextSharp.LGPLv2.Core";
 
+        /// <summary>
+        /// Gets the iText version.
+        /// </summary>
+        /// <value>iText version</value>
+        public static string Version => $"{Product} {Release}";
+
 #if NET40
         /// <summary>
         /// Gets the release number.
@@ -269,11 +275,6 @@ namespace iTextSharp.text
         /// <value>the top margin</value>
         public float TopMargin { get; protected set; }
 
-        /// <summary>
-        /// Gets the iText version.
-        /// </summary>
-        /// <value>iText version</value>
-        public static string Version => $"{Product} {Release}";
 
         /// <summary>
         /// Adds an Element to the Document.
@@ -290,8 +291,9 @@ namespace iTextSharp.text
             {
                 throw new DocumentException("The document is not open yet; you can only add Meta information.");
             }
-            bool success = false;
-            if (element is ChapterAutoNumber number)
+            var success = false;
+            var number = element as ChapterAutoNumber;
+            if (number != null)
             {
                 Chapternumber = number.SetAutomaticNumber(Chapternumber);
             }
@@ -301,9 +303,11 @@ namespace iTextSharp.text
             }
             if (element is ILargeElement largeElement)
             {
-                ILargeElement e = largeElement;
+                var e = largeElement;
                 if (!e.ElementComplete)
+                {
                     e.FlushContent();
+                }
             }
             return success;
         }

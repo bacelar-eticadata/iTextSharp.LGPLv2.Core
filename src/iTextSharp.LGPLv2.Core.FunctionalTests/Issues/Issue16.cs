@@ -1,8 +1,8 @@
+using iTextSharp.text.pdf;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections;
 using System.IO;
-using iTextSharp.text.pdf;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
 {

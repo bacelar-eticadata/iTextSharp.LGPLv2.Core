@@ -1,7 +1,7 @@
-using System;
-using System.IO;
-using System.Collections;
 using iTextSharp.text.xml.simpleparser;
+using System;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.pdf
 {
@@ -54,7 +54,8 @@ namespace iTextSharp.text.pdf
                 try
                 {
                     fin?.Dispose();
-                } catch { }
+                }
+                catch { }
             }
         }
 
@@ -74,32 +75,19 @@ namespace iTextSharp.text.pdf
         /// with the field content.
         /// </summary>
         /// <returns>all the fields</returns>
-        public Hashtable Fields
-        {
-            get
-            {
-                return fields;
-            }
-        }
+        public Hashtable Fields => fields;
 
         /// <summary>
         /// Gets the PDF file specification contained in the FDF.
         /// </summary>
         /// <returns>the PDF file specification contained in the FDF</returns>
-        public string FileSpec
-        {
-            get
-            {
-                return fileSpec;
-            }
-        }
+        public string FileSpec => fileSpec;
 
         /// <summary>
         /// Called after the document is parsed.
         /// </summary>
         public void EndDocument()
         {
-
         }
 
         /// <summary>
@@ -110,23 +98,28 @@ namespace iTextSharp.text.pdf
         {
             if (tag.Equals("value"))
             {
-                string fName = "";
-                for (int k = 0; k < _fieldNames.Count; ++k)
+                var fName = "";
+                for (var k = 0; k < _fieldNames.Count; ++k)
                 {
                     fName += "." + (string)_fieldNames[k];
                 }
                 if (fName.StartsWith("."))
+                {
                     fName = fName.Substring(1);
-                string fVal = (string)_fieldValues.Pop();
-                string old = (string)fields[fName];
+                }
+
+                var fVal = (string)_fieldValues.Pop();
+                var old = (string)fields[fName];
                 fields[fName] = fVal;
                 if (old != null)
                 {
-                    ArrayList l = (ArrayList)ListFields[fName];
+                    var l = (ArrayList)ListFields[fName];
                     if (l == null)
                     {
-                        l = new ArrayList();
-                        l.Add(old);
+                        l = new ArrayList
+                        {
+                            old
+                        };
                     }
                     l.Add(fVal);
                     ListFields[fName] = l;
@@ -135,7 +128,9 @@ namespace iTextSharp.text.pdf
             else if (tag.Equals("field"))
             {
                 if (_fieldNames.Count != 0)
+                {
                     _fieldNames.Pop();
+                }
             }
         }
 
@@ -157,11 +152,15 @@ namespace iTextSharp.text.pdf
         /// <returns>the field value or  null </returns>
         public string GetFieldValue(string name)
         {
-            string field = (string)fields[name];
+            var field = (string)fields[name];
             if (field == null)
+            {
                 return null;
+            }
             else
+            {
                 return field;
+            }
         }
 
         /// <summary>
@@ -175,6 +174,7 @@ namespace iTextSharp.text.pdf
         {
             return (ArrayList)ListFields[name];
         }
+
         /// <summary>
         /// Called when the document starts to be parsed.
         /// </summary>
@@ -193,14 +193,17 @@ namespace iTextSharp.text.pdf
             if (!_foundRoot)
             {
                 if (!tag.Equals("xfdf"))
+                {
                     throw new Exception("Root element is not Bookmark.");
+                }
                 else
+                {
                     _foundRoot = true;
+                }
             }
 
             if (tag.Equals("xfdf"))
             {
-
             }
             else if (tag.Equals("f"))
             {
@@ -213,7 +216,7 @@ namespace iTextSharp.text.pdf
             }
             else if (tag.Equals("field"))
             {
-                string fName = (string)h["name"];
+                var fName = (string)h["name"];
                 _fieldNames.Push(fName);
             }
             else if (tag.Equals("value"))
@@ -221,6 +224,7 @@ namespace iTextSharp.text.pdf
                 _fieldValues.Push("");
             }
         }
+
         /// <summary>
         /// Called when a text element is found.
         /// </summary>
@@ -228,9 +232,11 @@ namespace iTextSharp.text.pdf
         public void Text(string str)
         {
             if (_fieldNames.Count == 0 || _fieldValues.Count == 0)
+            {
                 return;
+            }
 
-            string val = (string)_fieldValues.Pop();
+            var val = (string)_fieldValues.Pop();
             val += str;
             _fieldValues.Push(val);
         }
@@ -240,8 +246,11 @@ namespace iTextSharp.text.pdf
             internal object Pop()
             {
                 if (Count == 0)
+                {
                     throw new InvalidOperationException("The stack is empty.");
-                object obj = this[Count - 1];
+                }
+
+                var obj = this[Count - 1];
                 RemoveAt(Count - 1);
                 return obj;
             }

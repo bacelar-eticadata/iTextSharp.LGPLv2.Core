@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf.crypto
 {
-
     public class ArcfourEncryption
     {
         private readonly byte[] _state = new byte[256];
@@ -9,9 +8,9 @@ namespace iTextSharp.text.pdf.crypto
 
         public void EncryptArcfour(byte[] dataIn, int off, int len, byte[] dataOut, int offOut)
         {
-            int length = len + off;
+            var length = len + off;
             byte tmp;
-            for (int k = off; k < length; ++k)
+            for (var k = off; k < length; ++k)
             {
                 _x = (_x + 1) & 255;
                 _y = (_state[_x] + _y) & 255;
@@ -44,14 +43,17 @@ namespace iTextSharp.text.pdf.crypto
 
         public void PrepareArcfourKey(byte[] key, int off, int len)
         {
-            int index1 = 0;
-            int index2 = 0;
-            for (int k = 0; k < 256; ++k)
+            var index1 = 0;
+            var index2 = 0;
+            for (var k = 0; k < 256; ++k)
+            {
                 _state[k] = (byte)k;
+            }
+
             _x = 0;
             _y = 0;
             byte tmp;
-            for (int k = 0; k < 256; ++k)
+            for (var k = 0; k < 256; ++k)
             {
                 index2 = (key[index1 + off] + _state[k] + index2) & 255;
                 tmp = _state[k];

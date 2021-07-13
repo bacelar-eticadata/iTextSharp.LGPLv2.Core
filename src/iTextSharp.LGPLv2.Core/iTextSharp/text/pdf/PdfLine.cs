@@ -1,11 +1,10 @@
 using System;
-using System.Text;
 using System.Collections;
+using System.Text;
 using System.util;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfLine  defines an array with  PdfChunk -objects
     /// that fit into 1 line.
@@ -127,15 +126,15 @@ namespace iTextSharp.text.pdf
             }
 
             // we split the chunk to be added
-            PdfChunk overflow = chunk.Split(Width);
+            var overflow = chunk.Split(Width);
             newlineSplit = (chunk.IsNewlineSplit() || overflow == null);
             //        if (chunk.IsNewlineSplit() && alignment == Element.ALIGN_JUSTIFIED)
             //            alignment = Element.ALIGN_LEFT;
             if (chunk.IsTab())
             {
-                object[] tab = (object[])chunk.GetAttribute(Chunk.TAB);
-                float tabPosition = (float)tab[1];
-                bool newline = (bool)tab[2];
+                var tab = (object[])chunk.GetAttribute(Chunk.TAB);
+                var tabPosition = (float)tab[1];
+                var newline = (bool)tab[2];
                 if (newline && tabPosition < originalWidth - Width)
                 {
                     return chunk;
@@ -148,7 +147,10 @@ namespace iTextSharp.text.pdf
             else if (chunk.Length > 0 || chunk.IsImage())
             {
                 if (overflow != null)
+                {
                     chunk.TrimLastSpace();
+                }
+
                 Width -= chunk.Width;
                 addToLine(chunk);
             }
@@ -169,7 +171,10 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     if (overflow != null)
+                    {
                         addToLine(chunk);
+                    }
+
                     return null;
                 }
             }
@@ -184,8 +189,11 @@ namespace iTextSharp.text.pdf
         {
             if (chunk.ChangeLeading && chunk.IsImage())
             {
-                float f = chunk.Image.ScaledHeight + chunk.ImageOffsetY + chunk.Image.BorderWidthTop;
-                if (f > height) height = f;
+                var f = chunk.Image.ScaledHeight + chunk.ImageOffsetY + chunk.Image.BorderWidthTop;
+                if (f > height)
+                {
+                    height = f;
+                }
             }
             Line.Add(chunk);
         }
@@ -199,13 +207,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a value</returns>
 
-        public int Size
-        {
-            get
-            {
-                return Line.Count;
-            }
-        }
+        public int Size => Line.Count;
 
         /// <summary>
         /// Returns an iterator of  PdfChunk s.
@@ -222,13 +224,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a value</returns>
 
-        internal float Height
-        {
-            get
-            {
-                return height;
-            }
-        }
+        internal float Height => height;
 
         /// <summary>
         /// Returns the left indentation of the line taking the alignment of the line into account.
@@ -245,8 +241,10 @@ namespace iTextSharp.text.pdf
                     {
                         case Element.ALIGN_LEFT:
                             return Left + Width;
+
                         case Element.ALIGN_CENTER:
                             return Left + (Width / 2f);
+
                         default:
                             return Left;
                     }
@@ -257,6 +255,7 @@ namespace iTextSharp.text.pdf
                     {
                         case Element.ALIGN_RIGHT:
                             return Left + Width;
+
                         case Element.ALIGN_CENTER:
                             return Left + (Width / 2f);
                     }
@@ -304,13 +303,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a value</returns>
 
-        internal float WidthLeft
-        {
-            get
-            {
-                return Width;
-            }
-        }
+        internal float WidthLeft => Width;
 
         /// <summary>
         /// Returns the number of space-characters in this line.
@@ -321,10 +314,10 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                string str = ToString();
-                int length = str.Length;
-                int numberOfSpaces = 0;
-                for (int i = 0; i < length; i++)
+                var str = ToString();
+                var length = str.Length;
+                var numberOfSpaces = 0;
+                for (var i = 0; i < length; i++)
                 {
                     if (str[i] == ' ')
                     {
@@ -354,26 +347,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a  PdfChunk  if the line has a listsymbol;  null  otherwise</returns>
 
-        public Chunk ListSymbol
-        {
-            get
-            {
-                return listSymbol;
-            }
-        }
+        public Chunk ListSymbol => listSymbol;
 
         /// <summary>
         /// Return the indentation needed to show the listsymbol.
         /// </summary>
         /// <returns>a value</returns>
 
-        public float ListIndent
-        {
-            get
-            {
-                return SymbolIndent;
-            }
-        }
+        public float ListIndent => SymbolIndent;
 
         /// <summary>
         /// Get the string representation of what is in this line.
@@ -382,7 +363,7 @@ namespace iTextSharp.text.pdf
 
         public override string ToString()
         {
-            StringBuilder tmp = new StringBuilder();
+            var tmp = new StringBuilder();
             foreach (PdfChunk c in Line)
             {
                 tmp.Append(c);
@@ -392,7 +373,7 @@ namespace iTextSharp.text.pdf
 
         public int GetLineLengthUtf32()
         {
-            int total = 0;
+            var total = 0;
             foreach (PdfChunk c in Line)
             {
                 total += c.LengthUtf32;
@@ -404,13 +385,7 @@ namespace iTextSharp.text.pdf
         /// Checks if a newline caused the line split.
         /// </summary>
         /// <returns> true  if a newline caused the line split</returns>
-        public bool NewlineSplit
-        {
-            get
-            {
-                return newlineSplit && (Alignment != Element.ALIGN_JUSTIFIED_ALL);
-            }
-        }
+        public bool NewlineSplit => newlineSplit && (Alignment != Element.ALIGN_JUSTIFIED_ALL);
 
         /// <summary>
         /// Gets the index of the last  PdfChunk  with metric attributes
@@ -420,12 +395,14 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                int lastIdx = Line.Count - 1;
+                var lastIdx = Line.Count - 1;
                 for (; lastIdx >= 0; --lastIdx)
                 {
-                    PdfChunk chunk = (PdfChunk)Line[lastIdx];
+                    var chunk = (PdfChunk)Line[lastIdx];
                     if (chunk.IsStroked())
+                    {
                         break;
+                    }
                 }
                 return lastIdx;
             }
@@ -439,7 +416,10 @@ namespace iTextSharp.text.pdf
         public PdfChunk GetChunk(int idx)
         {
             if (idx < 0 || idx >= Line.Count)
+            {
                 return null;
+            }
+
             return (PdfChunk)Line[idx];
         }
 
@@ -447,13 +427,7 @@ namespace iTextSharp.text.pdf
         /// Gets the original width of the line.
         /// </summary>
         /// <returns>the original width of the line</returns>
-        public float OriginalWidth
-        {
-            get
-            {
-                return originalWidth;
-            }
-        }
+        public float OriginalWidth => originalWidth;
 
         /// <summary>
         /// Gets the difference between the "normal" leading and the maximum
@@ -466,7 +440,7 @@ namespace iTextSharp.text.pdf
             float normalLeading = 0;
             float imageLeading = -10000;
             PdfChunk chunk;
-            for (int k = 0; k < Line.Count; ++k)
+            for (var k = 0; k < Line.Count; ++k)
             {
                 chunk = (PdfChunk)Line[k];
                 if (!chunk.IsImage())
@@ -481,13 +455,7 @@ namespace iTextSharp.text.pdf
             return new[] { normalLeading, imageLeading };
         }
 
-        internal bool Rtl
-        {
-            get
-            {
-                return IsRtl;
-            }
-        }
+        internal bool Rtl => IsRtl;
 
         /// <summary>
         /// Gets the number of separators in the line.
@@ -496,7 +464,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the number of separators in the line</returns>
         internal int GetSeparatorCount()
         {
-            int s = 0;
+            var s = 0;
             foreach (PdfChunk ck in Line)
             {
                 if (ck.IsTab())
@@ -514,9 +482,9 @@ namespace iTextSharp.text.pdf
         public float GetWidthCorrected(float charSpacing, float wordSpacing)
         {
             float total = 0;
-            for (int k = 0; k < Line.Count; ++k)
+            for (var k = 0; k < Line.Count; ++k)
             {
-                PdfChunk ck = (PdfChunk)Line[k];
+                var ck = (PdfChunk)Line[k];
                 total += ck.GetWidthCorrected(charSpacing, wordSpacing);
             }
             return total;
@@ -535,10 +503,12 @@ namespace iTextSharp.text.pdf
                 foreach (PdfChunk ck in Line)
                 {
                     if (ck.IsImage())
+                    {
                         ascender = Math.Max(ascender, ck.Image.ScaledHeight + ck.ImageOffsetY);
+                    }
                     else
                     {
-                        PdfFont font = ck.Font;
+                        var font = ck.Font;
                         ascender = Math.Max(ascender, font.Font.GetFontDescriptor(BaseFont.ASCENT, font.Size));
                     }
                 }
@@ -559,10 +529,12 @@ namespace iTextSharp.text.pdf
                 foreach (PdfChunk ck in Line)
                 {
                     if (ck.IsImage())
+                    {
                         descender = Math.Min(descender, ck.ImageOffsetY);
+                    }
                     else
                     {
-                        PdfFont font = ck.Font;
+                        var font = ck.Font;
                         descender = Math.Min(descender, font.Font.GetFontDescriptor(BaseFont.DESCENT, font.Size));
                     }
                 }

@@ -7,7 +7,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfXConformanceException : Exception
     {
-
         /// <summary>
         /// Creates a new instance of PdfXConformanceException.
         /// </summary>

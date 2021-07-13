@@ -1,12 +1,18 @@
+/* Unmerged change from project 'iTextSharp.LGPLv2.Core (netstandard2.0)'
+Before:
 using System.IO;
 using System.util;
+After:
+using iTextSharp.text.rtf.document;
+*/
+
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.style;
-using ST = iTextSharp.text.rtf.style;
+using System.IO;
+using System.util;
 
 namespace iTextSharp.text.rtf.text
 {
-
     /// <summary>
     /// The RtfChunk contains one piece of text. The smallest text element available
     /// in iText.
@@ -15,19 +21,21 @@ namespace iTextSharp.text.rtf.text
     /// </summary>
     public class RtfChunk : RtfElement
     {
-
         /// <summary>
         /// Constant for the subscript flag
         /// </summary>
         private static readonly byte[] _fontSubscript = DocWriter.GetIsoBytes("\\sub");
+
         /// <summary>
         /// Constant for the superscript flag
         /// </summary>
         private static readonly byte[] _fontSuperscript = DocWriter.GetIsoBytes("\\super");
+
         /// <summary>
         /// Constant for the end of sub / superscript flag
         /// </summary>
         private static readonly byte[] _fontEndSuperSubscript = DocWriter.GetIsoBytes("\\nosupersub");
+
         /// <summary>
         /// Constant for background colour.
         /// </summary>
@@ -37,18 +45,22 @@ namespace iTextSharp.text.rtf.text
         /// The font of this RtfChunk
         /// </summary>
         private readonly RtfFont _font;
+
         /// <summary>
         /// The actual content of this RtfChunk
         /// </summary>
         private readonly string _content = "";
+
         /// <summary>
         /// Whether to use soft line breaks instead of hard ones.
         /// </summary>
         private bool _softLineBreaks;
+
         /// <summary>
         /// The super / subscript of this RtfChunk
         /// </summary>
         private readonly float _superSubScript;
+
         /// <summary>
         /// An optional background colour.
         /// </summary>
@@ -61,7 +73,6 @@ namespace iTextSharp.text.rtf.text
         /// <param name="chunk">The Chunk that this RtfChunk is based on</param>
         public RtfChunk(RtfDocument doc, Chunk chunk) : base(doc)
         {
-
             if (chunk == null)
             {
                 return;

@@ -14,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfPage : PdfDictionary
     {
-
         /// <summary>
         /// value of the <B>Rotate</B> key for a page in INVERTEDPORTRAIT
         /// </summary>
@@ -41,10 +40,11 @@ namespace iTextSharp.text.pdf
         /// membervariables
         /// </summary>
         private static readonly string[] _boxStrings = { "crop", "trim", "art", "bleed" };
+
         /// <summary>
         /// value of the <B>MediaBox</B> key
         /// </summary>
-        PdfRectangle _mediaBox;
+        private PdfRectangle _mediaBox;
 
         /// <summary>
         /// constructors
@@ -65,11 +65,13 @@ namespace iTextSharp.text.pdf
             {
                 Put(PdfName.Rotate, new PdfNumber(rotate));
             }
-            for (int k = 0; k < _boxStrings.Length; ++k)
+            for (var k = 0; k < _boxStrings.Length; ++k)
             {
-                PdfObject rect = (PdfObject)boxSize[_boxStrings[k]];
+                var rect = (PdfObject)boxSize[_boxStrings[k]];
                 if (rect != null)
+                {
                     Put(_boxNames[k], rect);
+                }
             }
         }
 
@@ -90,13 +92,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns> false  because this is a single page</returns>
 
-        internal PdfRectangle MediaBox
-        {
-            get
-            {
-                return _mediaBox;
-            }
-        }
+        internal PdfRectangle MediaBox => _mediaBox;
 
         public bool IsParent()
         {

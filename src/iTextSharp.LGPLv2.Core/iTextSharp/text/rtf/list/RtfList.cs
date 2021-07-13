@@ -1,10 +1,10 @@
-using System;
-using System.IO;
-using System.Collections;
+using iTextSharp.text.factories;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.style;
 using iTextSharp.text.rtf.text;
-using iTextSharp.text.factories;
+using System;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.list
 {
@@ -18,7 +18,6 @@ namespace iTextSharp.text.rtf.list
     /// </summary>
     public class RtfList : RtfElement, IRtfExtendedElement
     {
-
         /// <summary>
         /// List type of listhybrid
         /// @since 2.1.3
@@ -80,6 +79,7 @@ namespace iTextSharp.text.rtf.list
         /// Constant for the list
         /// </summary>
         private static readonly byte[] _list = DocWriter.GetIsoBytes("\\list");
+
         /// <summary>
         /// Constant for the hybrid list
         /// </summary>
@@ -114,6 +114,7 @@ namespace iTextSharp.text.rtf.list
         /// Constant for the list template id
         /// </summary>
         private static readonly byte[] _listTemplateId = DocWriter.GetIsoBytes("\\listtemplateid");
+
         /// <summary>
         /// The subitems of this RtfList
         /// </summary>
@@ -148,11 +149,13 @@ namespace iTextSharp.text.rtf.list
         /// The parent list if there is one.
         /// </summary>
         private RtfList _parentList;
-               /*  Normal list type */
 
-               /*  Simple list type */
+        /*  Normal list type */
 
-               /*  Hybrid list type */
+        /*  Simple list type */
+
+        /*  Hybrid list type */
+
         /// <summary>
         /// Constructs an empty RtfList object.
         /// @since 2.1.3
@@ -172,7 +175,6 @@ namespace iTextSharp.text.rtf.list
             CreateDefaultLevels();
             // get the list number or create a new one adding it to the table
             _listNumber = Document.GetDocumentHeader().GetListNumber(this);
-
         }
 
         /// <summary>
@@ -192,7 +194,7 @@ namespace iTextSharp.text.rtf.list
             CreateDefaultLevels();
 
             _items = new ArrayList();       // list content
-            RtfListLevel ll = (RtfListLevel)_listLevels[0];
+            var ll = (RtfListLevel)_listLevels[0];
 
             // get the list number or create a new one adding it to the table
             _listNumber = Document.GetDocumentHeader().GetListNumber(this);
@@ -260,11 +262,11 @@ namespace iTextSharp.text.rtf.list
             }
 
             // now setup the actual list contents.
-            for (int i = 0; i < list.Items.Count; i++)
+            for (var i = 0; i < list.Items.Count; i++)
             {
                 try
                 {
-                    IElement element = (IElement)list.Items[i];
+                    var element = (IElement)list.Items[i];
 
                     if (element.Type == Element.CHUNK)
                     {
@@ -274,10 +276,10 @@ namespace iTextSharp.text.rtf.list
                     {
                         ll.SetAlignment(((ListItem)element).Alignment);
                     }
-                    IRtfBasicElement[] rtfElements = doc.GetMapper().MapElement(element);
-                    for (int j = 0; j < rtfElements.Length; j++)
+                    var rtfElements = doc.GetMapper().MapElement(element);
+                    for (var j = 0; j < rtfElements.Length; j++)
                     {
-                        IRtfBasicElement rtfElement = rtfElements[j];
+                        var rtfElement = rtfElements[j];
                         if (rtfElement is RtfList)
                         {
                             ((RtfList)rtfElement).SetParentList(this);
@@ -297,7 +299,6 @@ namespace iTextSharp.text.rtf.list
                         if (list.Symbol != null && list.Symbol.Font != null)
                         {
                             ll.SetBulletFont(list.Symbol.Font);
-
                         }
                         else
                         {
@@ -305,7 +306,6 @@ namespace iTextSharp.text.rtf.list
                         }
                         _items.Add(rtfElement);
                     }
-
                 }
                 catch (DocumentException)
                 {
@@ -334,7 +334,9 @@ namespace iTextSharp.text.rtf.list
                 return (RtfListLevel)_listLevels[index];
             }
             else
+            {
                 return null;
+            }
         }
 
         /// <summary>
@@ -387,9 +389,8 @@ namespace iTextSharp.text.rtf.list
             Document = doc;
             // get the list number or create a new one adding it to the table
             _listNumber = Document.GetDocumentHeader().GetListNumber(this);
-
-
         }
+
         /// <summary>
         /// Set the list ID number
         /// @since 2.1.3
@@ -409,7 +410,7 @@ namespace iTextSharp.text.rtf.list
         public override void SetInHeader(bool inHeader)
         {
             base.SetInHeader(inHeader);
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 ((IRtfBasicElement)_items[i]).SetInHeader(inHeader);
             }
@@ -424,11 +425,11 @@ namespace iTextSharp.text.rtf.list
         public override void SetInTable(bool inTable)
         {
             base.SetInTable(inTable);
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 ((IRtfBasicElement)_items[i]).SetInTable(inTable);
             }
-            for (int i = 0; i < _listLevels.Count; i++)
+            for (var i = 0; i < _listLevels.Count; i++)
             {
                 ((RtfListLevel)_listLevels[i]).SetInTable(inTable);
             }
@@ -494,19 +495,18 @@ namespace iTextSharp.text.rtf.list
                 result.Write(OpenGroup, 0, OpenGroup.Length);
             }
 
-            int itemNr = 0;
+            var itemNr = 0;
             if (_items != null)
             {
-                for (int i = 0; i < _items.Count; i++)
+                for (var i = 0; i < _items.Count; i++)
                 {
-
-                    RtfElement thisRtfElement = (RtfElement)_items[i];
+                    var thisRtfElement = (RtfElement)_items[i];
                     //thisRtfElement.WriteContent(result);
                     if (thisRtfElement is RtfListItem)
                     {
                         itemNr++;
-                        RtfListItem rtfElement = (RtfListItem)thisRtfElement;
-                        RtfListLevel listLevel = rtfElement.GetParent();
+                        var rtfElement = (RtfListItem)thisRtfElement;
+                        var listLevel = rtfElement.GetParent();
                         if (listLevel.GetListLevel() == 0)
                         {
                             CorrectIndentation();
@@ -558,22 +558,25 @@ namespace iTextSharp.text.rtf.list
             result.Write(_listTemplateId, 0, _listTemplateId.Length);
             result.Write(t = IntToByteArray(Document.GetRandomInt()), 0, t.Length);
 
-            int levelsToWrite = -1;
+            var levelsToWrite = -1;
 
             switch (_listType)
             {
                 case LIST_TYPE_NORMAL:
                     levelsToWrite = _listLevels.Count;
                     break;
+
                 case LIST_TYPE_SIMPLE:
                     result.Write(_listSimple, 0, _listSimple.Length);
                     result.Write(t = IntToByteArray(1), 0, t.Length);
                     levelsToWrite = 1;
                     break;
+
                 case LIST_TYPE_HYBRID:
                     result.Write(_listHybrid, 0, _listHybrid.Length);
                     levelsToWrite = _listLevels.Count;
                     break;
+
                 default:
                     break;
             }
@@ -591,7 +594,7 @@ namespace iTextSharp.text.rtf.list
             // 2. Line 2
 
             // write the listlevels here
-            for (int i = 0; i < levelsToWrite; i++)
+            for (var i = 0; i < levelsToWrite; i++)
             {
                 ((RtfListLevel)_listLevels[i]).WriteDefinition(result);
                 Document.OutputDebugLinebreak(result);
@@ -603,23 +606,27 @@ namespace iTextSharp.text.rtf.list
             Document.OutputDebugLinebreak(result);
             if (_items != null)
             {
-                for (int i = 0; i < _items.Count; i++)
+                for (var i = 0; i < _items.Count; i++)
                 {
-                    RtfElement rtfElement = (RtfElement)_items[i];
+                    var rtfElement = (RtfElement)_items[i];
                     if (rtfElement is RtfList)
                     {
-                        RtfList rl = (RtfList)rtfElement;
+                        var rl = (RtfList)rtfElement;
                         rl.WriteDefinition(result);
                         break;
                     }
                     else if (rtfElement is RtfListItem)
                     {
-                        RtfListItem rli = (RtfListItem)rtfElement;
-                        if (rli.WriteDefinition(result)) break;
+                        var rli = (RtfListItem)rtfElement;
+                        if (rli.WriteDefinition(result))
+                        {
+                            break;
+                        }
                     }
                 }
             }
         }
+
         /// <summary>
         /// Correct the indentation of this RtfList by adding left/first line indentation
         /// from the parent RtfList. Also calls correctIndentation on all child RtfLists.
@@ -631,7 +638,7 @@ namespace iTextSharp.text.rtf.list
             //        if (this.parentList != null) {
             //            this.leftIndent = this.leftIndent + this.parentList.GetLeftIndent() + this.parentList.GetFirstIndent();
             //        }
-            for (int i = 0; i < _items.Count; i++)
+            for (var i = 0; i < _items.Count; i++)
             {
                 if (_items[i] is RtfList)
                 {
@@ -651,10 +658,10 @@ namespace iTextSharp.text.rtf.list
         protected void CreateDefaultLevels()
         {
             _listLevels = new ArrayList();  // listlevels
-            for (int i = 0; i <= 8; i++)
+            for (var i = 0; i <= 8; i++)
             {
                 // create a list level
-                RtfListLevel ll = new RtfListLevel(Document);
+                var ll = new RtfListLevel(Document);
                 ll.SetListType(RtfListLevel.LIST_TYPE_NUMBERED);
                 ll.SetFirstIndent(0);
                 ll.SetLeftIndent(0);
@@ -663,7 +670,6 @@ namespace iTextSharp.text.rtf.list
                 ll.CorrectIndentation();
                 _listLevels.Add(ll);
             }
-
         }
 
         /// <summary>

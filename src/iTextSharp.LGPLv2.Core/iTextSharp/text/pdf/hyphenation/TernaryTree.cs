@@ -44,7 +44,6 @@ namespace iTextSharp.text.pdf.hyphenation
 
     public class TernaryTree : ICloneable
     {
-
         /// <summary>
         /// We use 4 arrays to represent a node. I guess I should have created
         /// a proper node class, but somehow Knuth's pascal code made me forget
@@ -79,6 +78,7 @@ namespace iTextSharp.text.pdf.hyphenation
         /// stored directly in this node, we don't have unions in java!
         /// </summary>
         protected char[] Lo;
+
         protected char Root;
 
         /// <summary>
@@ -91,30 +91,19 @@ namespace iTextSharp.text.pdf.hyphenation
         /// strings since 0xFFFF is garanteed not to be an Unicode character.
         /// </summary>
         protected char[] Sc;
-            // number of items in tree
 
-            // allocation size for arrays
+        // number of items in tree
+
+        // allocation size for arrays
 
         internal TernaryTree()
         {
             Init();
         }
 
-        public Iterator Keys
-        {
-            get
-            {
-                return new Iterator(this);
-            }
-        }
+        public Iterator Keys => new Iterator(this);
 
-        public int Size
-        {
-            get
-            {
-                return Length;
-            }
-        }
+        public int Size => Length;
 
         /// <summary>
         /// Compares 2 null terminated char arrays
@@ -122,8 +111,13 @@ namespace iTextSharp.text.pdf.hyphenation
         public static int Strcmp(char[] a, int startA, char[] b, int startB)
         {
             for (; a[startA] == b[startB]; startA++, startB++)
+            {
                 if (a[startA] == 0)
+                {
                     return 0;
+                }
+            }
+
             return a[startA] - b[startB];
         }
 
@@ -137,28 +131,41 @@ namespace iTextSharp.text.pdf.hyphenation
             {
                 d = str[i] - a[start + i];
                 if (d != 0)
+                {
                     return d;
+                }
+
                 if (a[start + i] == 0)
+                {
                     return d;
+                }
             }
             if (a[start + i] != 0)
+            {
                 return -a[start + i];
-            return 0;
+            }
 
+            return 0;
         }
 
         public static void Strcpy(char[] dst, int di, char[] src, int si)
         {
             while (src[si] != 0)
+            {
                 dst[di++] = src[si++];
+            }
+
             dst[di] = (char)0;
         }
 
         public static int Strlen(char[] a, int start)
         {
-            int len = 0;
-            for (int i = start; i < a.Length && a[i] != 0; i++)
+            var len = 0;
+            for (var i = start; i < a.Length && a[i] != 0; i++)
+            {
                 len++;
+            }
+
             return len;
         }
 
@@ -175,9 +182,9 @@ namespace iTextSharp.text.pdf.hyphenation
             // System.out.Print("Before root splitchar = "); System.out.Println(sc[root]);
 
             int i = 0, n = Length;
-            string[] k = new string[n];
-            char[] v = new char[n];
-            Iterator iter = new Iterator(this);
+            var k = new string[n];
+            var v = new char[n];
+            var iter = new Iterator(this);
             while (iter.HasMoreElements())
             {
                 v[i] = iter.Value;
@@ -192,23 +199,25 @@ namespace iTextSharp.text.pdf.hyphenation
 
         public object Clone()
         {
-            TernaryTree t = new TernaryTree();
-            t.Lo = (char[])Lo.Clone();
-            t.Hi = (char[])Hi.Clone();
-            t.Eq = (char[])Eq.Clone();
-            t.Sc = (char[])Sc.Clone();
-            t.Kv = (CharVector)Kv.Clone();
-            t.Root = Root;
-            t.Freenode = Freenode;
-            t.Length = Length;
+            var t = new TernaryTree
+            {
+                Lo = (char[])Lo.Clone(),
+                Hi = (char[])Hi.Clone(),
+                Eq = (char[])Eq.Clone(),
+                Sc = (char[])Sc.Clone(),
+                Kv = (CharVector)Kv.Clone(),
+                Root = Root,
+                Freenode = Freenode,
+                Length = Length
+            };
 
             return t;
         }
 
         public int Find(string key)
         {
-            int len = key.Length;
-            char[] strkey = new char[len + 1];
+            var len = key.Length;
+            var strkey = new char[len + 1];
             key.CopyTo(0, strkey, 0, len);
             strkey[len] = (char)0;
 
@@ -218,8 +227,8 @@ namespace iTextSharp.text.pdf.hyphenation
         public int Find(char[] key, int start)
         {
             int d;
-            char p = Root;
-            int i = start;
+            var p = Root;
+            var i = start;
             char c;
 
             while (p != 0)
@@ -227,23 +236,34 @@ namespace iTextSharp.text.pdf.hyphenation
                 if (Sc[p] == 0xFFFF)
                 {
                     if (Strcmp(key, i, Kv.Arr, Lo[p]) == 0)
+                    {
                         return Eq[p];
+                    }
                     else
+                    {
                         return -1;
+                    }
                 }
                 c = key[i];
                 d = c - Sc[p];
                 if (d == 0)
                 {
                     if (c == 0)
+                    {
                         return Eq[p];
+                    }
+
                     i++;
                     p = Eq[p];
                 }
                 else if (d < 0)
+                {
                     p = Lo[p];
+                }
                 else
+                {
                     p = Hi[p];
+                }
             }
             return -1;
         }
@@ -259,11 +279,14 @@ namespace iTextSharp.text.pdf.hyphenation
         public void Insert(string key, char val)
         {
             // make sure we have enough room in the arrays
-            int len = key.Length
+            var len = key.Length
                 + 1;    // maximum number of nodes that may be generated
             if (Freenode + len > Eq.Length)
+            {
                 redimNodeArrays(Eq.Length + BlockSize);
-            char[] strkey = new char[len--];
+            }
+
+            var strkey = new char[len--];
             key.CopyTo(0, strkey, 0, len);
             strkey[len] = (char)0;
             Root = insert(Root, strkey, 0, val);
@@ -271,9 +294,12 @@ namespace iTextSharp.text.pdf.hyphenation
 
         public void Insert(char[] key, int start, char val)
         {
-            int len = Strlen(key) + 1;
+            var len = Strlen(key) + 1;
             if (Freenode + len > Eq.Length)
+            {
                 redimNodeArrays(Eq.Length + BlockSize);
+            }
+
             Root = insert(Root, key, start, val);
         }
 
@@ -300,7 +326,6 @@ namespace iTextSharp.text.pdf.hyphenation
              * for (Enumeration enum = Keys(); enum.HasMoreElements(); )
              * System.out.Println(enum.NextElement());
              */
-
         }
 
         /// <summary>
@@ -324,9 +349,9 @@ namespace iTextSharp.text.pdf.hyphenation
             redimNodeArrays(Freenode);
 
             // ok, compact kv array
-            CharVector kx = new CharVector();
+            var kx = new CharVector();
             kx.Alloc(1);
-            TernaryTree map = new TernaryTree();
+            var map = new TernaryTree();
             compact(kx, map, Root);
             Kv = kx;
             Kv.TrimToSize();
@@ -343,6 +368,7 @@ namespace iTextSharp.text.pdf.hyphenation
             Sc = new char[BlockSize];
             Kv = new CharVector();
         }
+
         /// <summary>
         /// Recursively insert the median first and then the median of the
         /// lower and upper halves, and so on in order to get a balanced
@@ -353,7 +379,10 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             int m;
             if (n < 1)
+            {
                 return;
+            }
+
             m = n >> 1;
 
             Insert(k[m + offset], v[m + offset]);
@@ -366,7 +395,10 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             int k;
             if (p == 0)
+            {
                 return;
+            }
+
             if (Sc[p] == 0xFFFF)
             {
                 k = map.Find(Kv.Arr, Lo[p]);
@@ -382,7 +414,10 @@ namespace iTextSharp.text.pdf.hyphenation
             {
                 compact(kx, map, Lo[p]);
                 if (Sc[p] != 0)
+                {
                     compact(kx, map, Eq[p]);
+                }
+
                 compact(kx, map, Hi[p]);
             }
         }
@@ -392,7 +427,7 @@ namespace iTextSharp.text.pdf.hyphenation
         /// </summary>
         private char insert(char p, char[] key, int start, char val)
         {
-            int len = Strlen(key, start);
+            var len = Strlen(key, start);
             if (p == 0)
             {
                 // this means there is no branch, this node will start a new branch.
@@ -422,7 +457,7 @@ namespace iTextSharp.text.pdf.hyphenation
                 // branch is compressed: need to decompress
                 // this will generate garbage in the external key array
                 // but we can do some garbage collection later
-                char pp = Freenode++;
+                var pp = Freenode++;
                 Lo[pp] = Lo[p];    // previous pointer to key
                 Eq[pp] = Eq[p];    // previous pointer to data
                 Lo[p] = (char)0;
@@ -439,8 +474,10 @@ namespace iTextSharp.text.pdf.hyphenation
                         Hi[pp] = (char)0;
                     }
                     else
+                    {
                         Sc[pp] =
                             (char)0xFFFF;    // we only got first char of key, rest is still there
+                    }
                 }
                 else
                 {
@@ -454,31 +491,38 @@ namespace iTextSharp.text.pdf.hyphenation
                     return p;
                 }
             }
-            char s = key[start];
+            var s = key[start];
             if (s < Sc[p])
+            {
                 Lo[p] = insert(Lo[p], key, start, val);
+            }
             else if (s == Sc[p])
             {
                 if (s != 0)
+                {
                     Eq[p] = insert(Eq[p], key, start + 1, val);
+                }
                 else
                 {
                     // key already in tree, overwrite data
                     Eq[p] = val;
                 }
-
             }
             else
+            {
                 Hi[p] = insert(Hi[p], key, start, val);
+            }
+
             return p;
         }
+
         /// <summary>
         /// redimension the arrays
         /// </summary>
         private void redimNodeArrays(int newsize)
         {
-            int len = newsize < Lo.Length ? newsize : Lo.Length;
-            char[] na = new char[newsize];
+            var len = newsize < Lo.Length ? newsize : Lo.Length;
+            var na = new char[newsize];
             Array.Copy(Lo, 0, na, 0, len);
             Lo = na;
             na = new char[newsize];
@@ -491,33 +535,34 @@ namespace iTextSharp.text.pdf.hyphenation
             Array.Copy(Sc, 0, na, 0, len);
             Sc = na;
         }
+
         public class Iterator
         {
-
             /// <summary>
             /// key stack implemented with a StringBuilder
             /// </summary>
-            readonly StringBuilder _ks;
+            private readonly StringBuilder _ks;
 
             /// <summary>
             /// Node stack
             /// </summary>
-            readonly Stack _ns;
+            private readonly Stack _ns;
 
             /// <summary>
             /// TernaryTree parent
             /// </summary>
-            readonly TernaryTree _parent;
+            private readonly TernaryTree _parent;
 
             /// <summary>
             /// current node index
             /// </summary>
-            int _cur;
+            private int _cur;
 
             /// <summary>
             /// current key
             /// </summary>
-            string _curkey;
+            private string _curkey;
+
             public Iterator(TernaryTree parent)
             {
                 _parent = parent;
@@ -532,7 +577,10 @@ namespace iTextSharp.text.pdf.hyphenation
                 get
                 {
                     if (_cur >= 0)
+                    {
                         return _parent.Eq[_cur];
+                    }
+
                     return (char)0;
                 }
             }
@@ -544,7 +592,7 @@ namespace iTextSharp.text.pdf.hyphenation
 
             public object NextElement()
             {
-                string res = _curkey;
+                var res = _curkey;
                 _cur = up();
                 run();
                 return res;
@@ -564,10 +612,12 @@ namespace iTextSharp.text.pdf.hyphenation
             private int run()
             {
                 if (_cur == -1)
+                {
                     return -1;
+                }
 
-                bool leaf = false;
-                for (;;)
+                var leaf = false;
+                for (; ; )
                 {
                     // first go down on low branch until leaf or compressed branch
                     while (_cur != 0)
@@ -586,7 +636,9 @@ namespace iTextSharp.text.pdf.hyphenation
                         _cur = _parent.Lo[_cur];
                     }
                     if (leaf)
+                    {
                         break;
+                    }
                     // nothing found, go up one node and try again
                     _cur = up();
                     if (_cur == -1)
@@ -596,12 +648,14 @@ namespace iTextSharp.text.pdf.hyphenation
                 }
                 // The current node should be a data node and
                 // the key should be in the key stack (at least partially)
-                StringBuilder buf = new StringBuilder(_ks.ToString());
+                var buf = new StringBuilder(_ks.ToString());
                 if (_parent.Sc[_cur] == 0xFFFF)
                 {
                     int p = _parent.Lo[_cur];
                     while (_parent.Kv[p] != 0)
+                    {
                         buf.Append(_parent.Kv[p++]);
+                    }
                 }
                 _curkey = buf.ToString();
                 return 0;
@@ -612,16 +666,20 @@ namespace iTextSharp.text.pdf.hyphenation
             /// </summary>
             private int up()
             {
-                Item i = new Item();
-                int res = 0;
+                var i = new Item();
+                var res = 0;
 
                 if (_ns.Count == 0)
+                {
                     return -1;
+                }
 
                 if (_cur != 0 && _parent.Sc[_cur] == 0)
+                {
                     return _parent.Lo[_cur];
+                }
 
-                bool climb = true;
+                var climb = true;
 
                 while (climb)
                 {
@@ -649,13 +707,19 @@ namespace iTextSharp.text.pdf.hyphenation
                             res = _parent.Hi[i.Parent];
                             _ns.Push(i.Clone());
                             if (_ks.Length > 0)
+                            {
                                 _ks.Length = _ks.Length - 1;    // pop
+                            }
+
                             climb = false;
                             break;
 
                         default:
                             if (_ns.Count == 0)
+                            {
                                 return -1;
+                            }
+
                             climb = true;
                             break;
                     }
@@ -684,7 +748,6 @@ namespace iTextSharp.text.pdf.hyphenation
                 {
                     return new Item(Parent, Child);
                 }
-
             }
         }
     }

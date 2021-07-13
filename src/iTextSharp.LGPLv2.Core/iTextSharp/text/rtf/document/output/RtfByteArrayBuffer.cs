@@ -1,10 +1,9 @@
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.document.output
 {
-
     public class RtfByteArrayBuffer : Stream
     {
         private readonly ArrayList _arrays = new ArrayList();
@@ -22,9 +21,12 @@ namespace iTextSharp.text.rtf.document.output
         /// <param name="bufferSize">desired initial size in bytes</param>
         public RtfByteArrayBuffer(int bufferSize)
         {
-            if ((bufferSize <= 0) || (bufferSize > 1 << 30)) throw (new ArgumentException($"bufferSize {bufferSize}"));
+            if ((bufferSize <= 0) || (bufferSize > 1 << 30))
+            {
+                throw (new ArgumentException($"bufferSize {bufferSize}"));
+            }
 
-            int n = 1 << 5;
+            var n = 1 << 5;
             while (n < bufferSize)
             {
                 n <<= 1;
@@ -32,48 +34,18 @@ namespace iTextSharp.text.rtf.document.output
             _buffer = new byte[n];
         }
 
-        public override bool CanRead
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanRead => false;
 
-        public override bool CanSeek
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanWrite => true;
 
-        public override long Length
-        {
-            get
-            {
-                throw new NotSupportedException();
-            }
-        }
+        public override long Length => throw new NotSupportedException();
 
         public override long Position
         {
-            get
-            {
-                throw new NotSupportedException();
-            }
-            set
-            {
-                throw new NotSupportedException();
-            }
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
         }
 
         /// <summary>
@@ -82,8 +54,15 @@ namespace iTextSharp.text.rtf.document.output
         /// <param name="a"></param>
         public void Append(byte[] a)
         {
-            if (a == null) throw (new ArgumentNullException());
-            if (a.Length == 0) return;
+            if (a == null)
+            {
+                throw (new ArgumentNullException());
+            }
+
+            if (a.Length == 0)
+            {
+                return;
+            }
 
             if (a.Length <= 8)
             {
@@ -107,9 +86,12 @@ namespace iTextSharp.text.rtf.document.output
         /// <param name="a"></param>
         public void Append(byte[][] a)
         {
-            if (a == null) throw (new ArgumentNullException());
+            if (a == null)
+            {
+                throw (new ArgumentNullException());
+            }
 
-            for (int k = 0; k < a.Length; k++)
+            for (var k = 0; k < a.Length; k++)
             {
                 Append(a[k]);
             }
@@ -159,16 +141,20 @@ namespace iTextSharp.text.rtf.document.output
         /// <returns>a new byte array</returns>
         public byte[] ToArray()
         {
-            byte[] r = new byte[_size];
-            int off = 0;
-            int n = _arrays.Count;
-            for (int k = 0; k < n; k++)
+            var r = new byte[_size];
+            var off = 0;
+            var n = _arrays.Count;
+            for (var k = 0; k < n; k++)
             {
-                byte[] src = (byte[])_arrays[k];
+                var src = (byte[])_arrays[k];
                 Array.Copy(src, 0, r, off, src.Length);
                 off += src.Length;
             }
-            if (_pos > 0) Array.Copy(_buffer, 0, r, off, _pos);
+            if (_pos > 0)
+            {
+                Array.Copy(_buffer, 0, r, off, _pos);
+            }
+
             return (r);
         }
 
@@ -179,7 +165,7 @@ namespace iTextSharp.text.rtf.document.output
         public byte[][] ToArrayArray()
         {
             flushBuffer();
-            byte[][] a = new byte[_arrays.Count][];
+            var a = new byte[_arrays.Count][];
             _arrays.CopyTo(a);
             return a;
         }
@@ -191,8 +177,15 @@ namespace iTextSharp.text.rtf.document.output
 
         public override void Write(byte[] src, int off, int len)
         {
-            if (src == null) throw (new ArgumentNullException());
-            if ((off < 0) || (off > src.Length) || (len < 0) || ((off + len) > src.Length) || ((off + len) < 0)) throw new IndexOutOfRangeException();
+            if (src == null)
+            {
+                throw (new ArgumentNullException());
+            }
+
+            if ((off < 0) || (off > src.Length) || (len < 0) || ((off + len) > src.Length) || ((off + len) < 0))
+            {
+                throw new IndexOutOfRangeException();
+            }
 
             writeLoop(src, off, len);
         }
@@ -205,15 +198,26 @@ namespace iTextSharp.text.rtf.document.output
         /// <returns>number of bytes written</returns>
         public long Write(Stream inp)
         {
-            if (inp == null) throw (new ArgumentNullException());
+            if (inp == null)
+            {
+                throw (new ArgumentNullException());
+            }
+
             long sizeStart = _size;
             while (true)
             {
-                int n = inp.Read(_buffer, _pos, _buffer.Length - _pos);
-                if (n <= 0) break;
+                var n = inp.Read(_buffer, _pos, _buffer.Length - _pos);
+                if (n <= 0)
+                {
+                    break;
+                }
+
                 _pos += n;
                 _size += n;
-                if (_pos == _buffer.Length) flushBuffer();
+                if (_pos == _buffer.Length)
+                {
+                    flushBuffer();
+                }
             }
             return (_size - sizeStart);
         }
@@ -222,7 +226,10 @@ namespace iTextSharp.text.rtf.document.output
         {
             _buffer[_pos] = value;
             _size++;
-            if (++_pos == _buffer.Length) flushBuffer();
+            if (++_pos == _buffer.Length)
+            {
+                flushBuffer();
+            }
         }
 
         /// <summary>
@@ -232,15 +239,21 @@ namespace iTextSharp.text.rtf.document.output
         /// <param name="outp"></param>
         public void WriteTo(Stream outp)
         {
-            if (outp == null) throw (new ArgumentNullException());
-
-            int n = _arrays.Count;
-            for (int k = 0; k < n; k++)
+            if (outp == null)
             {
-                byte[] src = (byte[])_arrays[k];
+                throw (new ArgumentNullException());
+            }
+
+            var n = _arrays.Count;
+            for (var k = 0; k < n; k++)
+            {
+                var src = (byte[])_arrays[k];
                 outp.Write(src, 0, src.Length);
             }
-            if (_pos > 0) outp.Write(_buffer, 0, _pos);
+            if (_pos > 0)
+            {
+                outp.Write(_buffer, 0, _pos);
+            }
         }
 
         private void flushBuffer()
@@ -250,28 +263,37 @@ namespace iTextSharp.text.rtf.document.output
 
         private void flushBuffer(int reqSize)
         {
-            if (reqSize < 0) throw (new ArgumentException());
+            if (reqSize < 0)
+            {
+                throw (new ArgumentException());
+            }
 
-            if (_pos == 0) return;
+            if (_pos == 0)
+            {
+                return;
+            }
 
             if (_pos == _buffer.Length)
             {
                 //add old buffer, alloc new (possibly larger) buffer
                 _arrays.Add(_buffer);
-                int newSize = _buffer.Length;
+                var newSize = _buffer.Length;
                 _buffer = null;
-                int max = Math.Max(1, _size >> 24) << 16;
+                var max = Math.Max(1, _size >> 24) << 16;
                 while (newSize < max)
                 {
                     newSize <<= 1;
-                    if (newSize >= reqSize) break;
+                    if (newSize >= reqSize)
+                    {
+                        break;
+                    }
                 }
                 _buffer = new byte[newSize];
             }
             else
             {
                 //copy buffer contents to newly allocated buffer
-                byte[] c = new byte[_pos];
+                var c = new byte[_pos];
                 Array.Copy(_buffer, 0, c, 0, _pos);
                 _arrays.Add(c);
             }
@@ -282,14 +304,17 @@ namespace iTextSharp.text.rtf.document.output
         {
             while (len > 0)
             {
-                int room = _buffer.Length - _pos;
-                int n = len > room ? room : len;
+                var room = _buffer.Length - _pos;
+                var n = len > room ? room : len;
                 Array.Copy(src, off, _buffer, _pos, n);
                 len -= n;
                 off += n;
                 _pos += n;
                 _size += n;
-                if (_pos == _buffer.Length) flushBuffer(len);
+                if (_pos == _buffer.Length)
+                {
+                    flushBuffer(len);
+                }
             }
         }
     }

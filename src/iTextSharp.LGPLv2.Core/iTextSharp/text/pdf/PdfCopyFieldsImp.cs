@@ -30,9 +30,10 @@ namespace iTextSharp.text.pdf
         private static readonly object _zero = 0;
         private readonly ArrayList _calculationOrder = new ArrayList();
         private ArrayList _calculationOrderRefs;
-        bool _closing;
+        private bool _closing;
         private bool _hasSignature;
         private Hashtable _tabOrder;
+
         static PdfCopyFieldsImp()
         {
             object one = 1;
@@ -79,7 +80,10 @@ namespace iTextSharp.text.pdf
         {
             Pdf.AddWriter(this);
             if (pdfVersion != 0)
+            {
                 PdfVersion = pdfVersion;
+            }
+
             Nd = new Document();
             Nd.AddDocListener(Pdf);
         }
@@ -103,17 +107,25 @@ namespace iTextSharp.text.pdf
         public void OpenDoc()
         {
             if (!Nd.IsOpen())
+            {
                 Nd.Open();
+            }
         }
 
         internal void AddDocument(PdfReader reader, ArrayList pagesToKeep)
         {
             if (!Readers2Intrefs.ContainsKey(reader) && reader.Tampered)
+            {
                 throw new DocumentException("The document was reused.");
+            }
+
             reader = new PdfReader(reader);
             reader.SelectPages(pagesToKeep);
             if (reader.NumberOfPages == 0)
+            {
                 return;
+            }
+
             reader.Tampered = false;
             AddDocument(reader);
         }
@@ -121,7 +133,10 @@ namespace iTextSharp.text.pdf
         internal void AddDocument(PdfReader reader)
         {
             if (!reader.IsOpenedWithFullPermissions)
+            {
                 throw new BadPasswordException("PdfReader not opened with owner password");
+            }
+
             OpenDoc();
             if (Readers2Intrefs.ContainsKey(reader))
             {
@@ -130,16 +145,19 @@ namespace iTextSharp.text.pdf
             else
             {
                 if (reader.Tampered)
+                {
                     throw new DocumentException("The document was reused.");
+                }
+
                 reader.ConsolidateNamedDestinations();
                 reader.Tampered = true;
             }
             reader.ShuffleSubsetNames();
             Readers2Intrefs[reader] = new IntHashtable();
             Readers.Add(reader);
-            int len = reader.NumberOfPages;
-            IntHashtable refs = new IntHashtable();
-            for (int p = 1; p <= len; ++p)
+            var len = reader.NumberOfPages;
+            var refs = new IntHashtable();
+            for (var p = 1; p <= len; ++p)
             {
                 refs[reader.GetPageOrigRef(p).Number] = 1;
                 reader.ReleasePage(p);
@@ -153,13 +171,16 @@ namespace iTextSharp.text.pdf
         internal void AddPageOffsetToField(Hashtable fd, int pageOffset)
         {
             if (pageOffset == 0)
+            {
                 return;
+            }
+
             foreach (AcroFields.Item item in fd.Values)
             {
-                ArrayList page = item.Page;
-                for (int k = 0; k < page.Count; ++k)
+                var page = item.Page;
+                for (var k = 0; k < page.Count; ++k)
                 {
-                    int p = item.GetPage(k);
+                    var p = item.GetPage(k);
                     item.ForcePage(k, p + pageOffset);
                 }
             }
@@ -167,18 +188,23 @@ namespace iTextSharp.text.pdf
 
         internal void CreateWidgets(ArrayList list, AcroFields.Item item)
         {
-            for (int k = 0; k < item.Size; ++k)
+            for (var k = 0; k < item.Size; ++k)
             {
                 list.Add(item.GetPage(k));
-                PdfDictionary merged = item.GetMerged(k);
-                PdfObject dr = merged.Get(PdfName.Dr);
+                var merged = item.GetMerged(k);
+                var dr = merged.Get(PdfName.Dr);
                 if (dr != null)
+                {
                     PdfFormField.MergeResources(Resources, (PdfDictionary)PdfReader.GetPdfObject(dr));
-                PdfDictionary widget = new PdfDictionary();
+                }
+
+                var widget = new PdfDictionary();
                 foreach (PdfName key in merged.Keys)
                 {
                     if (WidgetKeys.ContainsKey(key))
+                    {
                         widget.Put(key, merged.Get(key));
+                    }
                 }
                 widget.Put(_iTextTag, new PdfNumber(item.GetTabOrder(k) + 1));
                 list.Add(widget);
@@ -192,14 +218,17 @@ namespace iTextSharp.text.pdf
 
         internal void MergeField(string name, AcroFields.Item item)
         {
-            Hashtable map = FieldTree;
-            StringTokenizer tk = new StringTokenizer(name, ".");
+            var map = FieldTree;
+            var tk = new StringTokenizer(name, ".");
             if (!tk.HasMoreTokens())
+            {
                 return;
+            }
+
             while (true)
             {
-                string s = tk.NextToken();
-                object obj = map[s];
+                var s = tk.NextToken();
+                var obj = map[s];
                 if (tk.HasMoreTokens())
                 {
                     if (obj == null)
@@ -210,57 +239,87 @@ namespace iTextSharp.text.pdf
                         continue;
                     }
                     else if (obj is Hashtable)
+                    {
                         map = (Hashtable)obj;
+                    }
                     else
+                    {
                         return;
+                    }
                 }
                 else
                 {
                     if (obj is Hashtable)
+                    {
                         return;
-                    PdfDictionary merged = item.GetMerged(0);
+                    }
+
+                    var merged = item.GetMerged(0);
                     if (obj == null)
                     {
-                        PdfDictionary field = new PdfDictionary();
+                        var field = new PdfDictionary();
                         if (PdfName.Sig.Equals(merged.Get(PdfName.Ft)))
+                        {
                             _hasSignature = true;
+                        }
+
                         foreach (PdfName key in merged.Keys)
                         {
                             if (FieldKeys.ContainsKey(key))
+                            {
                                 field.Put(key, merged.Get(key));
+                            }
                         }
-                        ArrayList list = new ArrayList();
-                        list.Add(field);
+                        var list = new ArrayList
+                        {
+                            field
+                        };
                         CreateWidgets(list, item);
                         map[s] = list;
                     }
                     else
                     {
-                        ArrayList list = (ArrayList)obj;
-                        PdfDictionary field = (PdfDictionary)list[0];
-                        PdfName type1 = (PdfName)field.Get(PdfName.Ft);
-                        PdfName type2 = (PdfName)merged.Get(PdfName.Ft);
+                        var list = (ArrayList)obj;
+                        var field = (PdfDictionary)list[0];
+                        var type1 = (PdfName)field.Get(PdfName.Ft);
+                        var type2 = (PdfName)merged.Get(PdfName.Ft);
                         if (type1 == null || !type1.Equals(type2))
+                        {
                             return;
-                        int flag1 = 0;
-                        PdfObject f1 = field.Get(PdfName.Ff);
+                        }
+
+                        var flag1 = 0;
+                        var f1 = field.Get(PdfName.Ff);
                         if (f1 != null && f1.IsNumber())
+                        {
                             flag1 = ((PdfNumber)f1).IntValue;
-                        int flag2 = 0;
-                        PdfObject f2 = merged.Get(PdfName.Ff);
+                        }
+
+                        var flag2 = 0;
+                        var f2 = merged.Get(PdfName.Ff);
                         if (f2 != null && f2.IsNumber())
+                        {
                             flag2 = ((PdfNumber)f2).IntValue;
+                        }
+
                         if (type1.Equals(PdfName.Btn))
                         {
                             if (((flag1 ^ flag2) & PdfFormField.FF_PUSHBUTTON) != 0)
+                            {
                                 return;
+                            }
+
                             if ((flag1 & PdfFormField.FF_PUSHBUTTON) == 0 && ((flag1 ^ flag2) & PdfFormField.FF_RADIO) != 0)
+                            {
                                 return;
+                            }
                         }
                         else if (type1.Equals(PdfName.Ch))
                         {
                             if (((flag1 ^ flag2) & PdfFormField.FF_COMBO) != 0)
+                            {
                                 return;
+                            }
                         }
                         CreateWidgets(list, item);
                     }
@@ -271,10 +330,10 @@ namespace iTextSharp.text.pdf
 
         internal virtual void MergeFields()
         {
-            int pageOffset = 0;
-            for (int k = 0; k < Fields.Count; ++k)
+            var pageOffset = 0;
+            for (var k = 0; k < Fields.Count; ++k)
             {
-                Hashtable fd = ((AcroFields)Fields[k]).Fields;
+                var fd = ((AcroFields)Fields[k]).Fields;
                 AddPageOffsetToField(fd, pageOffset);
                 MergeWithMaster(fd);
                 pageOffset += ((PdfReader)Readers[k]).NumberOfPages;
@@ -285,7 +344,7 @@ namespace iTextSharp.text.pdf
         {
             foreach (DictionaryEntry entry in fd)
             {
-                string name = (string)entry.Key;
+                var name = (string)entry.Key;
                 MergeField(name, (AcroFields.Item)entry.Value);
             }
         }
@@ -293,53 +352,65 @@ namespace iTextSharp.text.pdf
         internal void Propagate(PdfObject obj, PdfIndirectReference refo, bool restricted)
         {
             if (obj == null)
+            {
                 return;
+            }
             //        if (refo != null)
             //            AddToBody(obj, refo);
             if (obj is PdfIndirectReference)
+            {
                 return;
+            }
+
             switch (obj.Type)
             {
                 case PdfObject.DICTIONARY:
                 case PdfObject.STREAM:
                     {
-                        PdfDictionary dic = (PdfDictionary)obj;
+                        var dic = (PdfDictionary)obj;
                         foreach (PdfName key in dic.Keys)
                         {
                             if (restricted && (key.Equals(PdfName.Parent) || key.Equals(PdfName.Kids)))
+                            {
                                 continue;
-                            PdfObject ob = dic.Get(key);
+                            }
+
+                            var ob = dic.Get(key);
                             if (ob != null && ob.IsIndirect())
                             {
-                                PrIndirectReference ind = (PrIndirectReference)ob;
+                                var ind = (PrIndirectReference)ob;
                                 if (!SetVisited(ind) && !IsPage(ind))
                                 {
-                                    PdfIndirectReference refi = GetNewReference(ind);
+                                    var refi = GetNewReference(ind);
                                     Propagate(PdfReader.GetPdfObjectRelease(ind), refi, restricted);
                                 }
                             }
                             else
+                            {
                                 Propagate(ob, null, restricted);
+                            }
                         }
                         break;
                     }
                 case PdfObject.ARRAY:
                     {
                         //PdfArray arr = new PdfArray();
-                        for (ListIterator it = ((PdfArray)obj).GetListIterator(); it.HasNext();)
+                        for (var it = ((PdfArray)obj).GetListIterator(); it.HasNext();)
                         {
-                            PdfObject ob = (PdfObject)it.Next();
+                            var ob = (PdfObject)it.Next();
                             if (ob != null && ob.IsIndirect())
                             {
-                                PrIndirectReference ind = (PrIndirectReference)ob;
+                                var ind = (PrIndirectReference)ob;
                                 if (!IsVisited(ind) && !IsPage(ind))
                                 {
-                                    PdfIndirectReference refi = GetNewReference(ind);
+                                    var refi = GetNewReference(ind);
                                     Propagate(PdfReader.GetPdfObjectRelease(ind), refi, restricted);
                                 }
                             }
                             else
+                            {
                                 Propagate(ob, null, restricted);
+                            }
                         }
                         break;
                     }
@@ -352,8 +423,8 @@ namespace iTextSharp.text.pdf
 
         protected internal override int GetNewObjectNumber(PdfReader reader, int number, int generation)
         {
-            IntHashtable refs = (IntHashtable)Readers2Intrefs[reader];
-            int n = refs[number];
+            var refs = (IntHashtable)Readers2Intrefs[reader];
+            var n = refs[number];
             if (n == 0)
             {
                 n = IndirectReferenceNumber;
@@ -369,11 +440,15 @@ namespace iTextSharp.text.pdf
         /// <returns>true is the reference refers to a page object.</returns>
         protected internal bool IsPage(PrIndirectReference refi)
         {
-            IntHashtable refs = (IntHashtable)Pages2Intrefs[refi.Reader];
+            var refs = (IntHashtable)Pages2Intrefs[refi.Reader];
             if (refs != null)
+            {
                 return refs.ContainsKey(refi.Number);
+            }
             else
+            {
                 return false;
+            }
         }
 
         /// <summary>
@@ -383,16 +458,20 @@ namespace iTextSharp.text.pdf
         /// <returns>true if the reference was already visited</returns>
         protected internal bool IsVisited(PrIndirectReference refi)
         {
-            IntHashtable refs = (IntHashtable)Visited[refi.Reader];
+            var refs = (IntHashtable)Visited[refi.Reader];
             if (refs != null)
+            {
                 return refs.ContainsKey(refi.Number);
+            }
             else
+            {
                 return false;
+            }
         }
 
         protected internal bool IsVisited(PdfReader reader, int number, int generation)
         {
-            IntHashtable refs = (IntHashtable)Readers2Intrefs[reader];
+            var refs = (IntHashtable)Readers2Intrefs[reader];
             return refs.ContainsKey(number);
         }
 
@@ -403,58 +482,81 @@ namespace iTextSharp.text.pdf
         /// <returns>true if the reference was set to visited</returns>
         protected internal bool SetVisited(PrIndirectReference refi)
         {
-            IntHashtable refs = (IntHashtable)Visited[refi.Reader];
+            var refs = (IntHashtable)Visited[refi.Reader];
             if (refs != null)
             {
-                int old = refs[refi.Number];
+                var old = refs[refi.Number];
                 refs[refi.Number] = 1;
                 return (old != 0);
             }
             else
+            {
                 return false;
+            }
         }
 
         protected internal void UpdateCalculationOrder(PdfReader reader)
         {
-            PdfDictionary catalog = reader.Catalog;
-            PdfDictionary acro = catalog.GetAsDict(PdfName.Acroform);
+            var catalog = reader.Catalog;
+            var acro = catalog.GetAsDict(PdfName.Acroform);
             if (acro == null)
-                return;
-            PdfArray co = acro.GetAsArray(PdfName.Co);
-            if (co == null || co.Size == 0)
-                return;
-            AcroFields af = reader.AcroFields;
-            for (int k = 0; k < co.Size; ++k)
             {
-                PdfObject obj = co[k];
+                return;
+            }
+
+            var co = acro.GetAsArray(PdfName.Co);
+            if (co == null || co.Size == 0)
+            {
+                return;
+            }
+
+            var af = reader.AcroFields;
+            for (var k = 0; k < co.Size; ++k)
+            {
+                var obj = co[k];
                 if (obj == null || !obj.IsIndirect())
+                {
                     continue;
-                string name = getCoName(reader, (PrIndirectReference)obj);
+                }
+
+                var name = getCoName(reader, (PrIndirectReference)obj);
                 if (af.GetFieldItem(name) == null)
+                {
                     continue;
+                }
+
                 name = "." + name;
                 if (_calculationOrder.Contains(name))
+                {
                     continue;
+                }
+
                 _calculationOrder.Add(name);
             }
         }
 
         protected PdfArray BranchForm(Hashtable level, PdfIndirectReference parent, string fname)
         {
-            PdfArray arr = new PdfArray();
+            var arr = new PdfArray();
             foreach (DictionaryEntry entry in level)
             {
-                string name = (string)entry.Key;
-                object obj = entry.Value;
-                PdfIndirectReference ind = PdfIndirectReference;
-                PdfDictionary dic = new PdfDictionary();
+                var name = (string)entry.Key;
+                var obj = entry.Value;
+                var ind = PdfIndirectReference;
+                var dic = new PdfDictionary();
                 if (parent != null)
+                {
                     dic.Put(PdfName.Parent, parent);
+                }
+
                 dic.Put(PdfName.T, new PdfString(name, PdfObject.TEXT_UNICODE));
-                string fname2 = $"{fname}.{name}";
-                int coidx = _calculationOrder.IndexOf(fname2);
+                var fname2 = $"{fname}.{name}";
+                var coidx = _calculationOrder.IndexOf(fname2);
                 if (coidx >= 0)
+                {
                     _calculationOrderRefs[coidx] = ind;
+                }
+
                 if (obj is Hashtable)
                 {
                     dic.Put(PdfName.Kids, BranchForm((Hashtable)obj, ind, fname2));
@@ -463,42 +565,42 @@ namespace iTextSharp.text.pdf
                 }
                 else
                 {
-                    ArrayList list = (ArrayList)obj;
+                    var list = (ArrayList)obj;
                     dic.MergeDifferent((PdfDictionary)list[0]);
                     if (list.Count == 3)
                     {
                         dic.MergeDifferent((PdfDictionary)list[2]);
-                        int page = (int)list[1];
-                        PdfDictionary pageDic = (PdfDictionary)PageDics[page - 1];
-                        PdfArray annots = pageDic.GetAsArray(PdfName.Annots);
+                        var page = (int)list[1];
+                        var pageDic = (PdfDictionary)PageDics[page - 1];
+                        var annots = pageDic.GetAsArray(PdfName.Annots);
                         if (annots == null)
                         {
                             annots = new PdfArray();
                             pageDic.Put(PdfName.Annots, annots);
                         }
-                        PdfNumber nn = (PdfNumber)dic.Get(_iTextTag);
+                        var nn = (PdfNumber)dic.Get(_iTextTag);
                         dic.Remove(_iTextTag);
                         adjustTabOrder(annots, ind, nn);
                     }
                     else
                     {
-                        PdfArray kids = new PdfArray();
-                        for (int k = 1; k < list.Count; k += 2)
+                        var kids = new PdfArray();
+                        for (var k = 1; k < list.Count; k += 2)
                         {
-                            int page = (int)list[k];
-                            PdfDictionary pageDic = (PdfDictionary)PageDics[page - 1];
-                            PdfArray annots = pageDic.GetAsArray(PdfName.Annots);
+                            var page = (int)list[k];
+                            var pageDic = (PdfDictionary)PageDics[page - 1];
+                            var annots = pageDic.GetAsArray(PdfName.Annots);
                             if (annots == null)
                             {
                                 annots = new PdfArray();
                                 pageDic.Put(PdfName.Annots, annots);
                             }
-                            PdfDictionary widget = new PdfDictionary();
+                            var widget = new PdfDictionary();
                             widget.Merge((PdfDictionary)list[k + 1]);
                             widget.Put(PdfName.Parent, ind);
-                            PdfNumber nn = (PdfNumber)widget.Get(_iTextTag);
+                            var nn = (PdfNumber)widget.Get(_iTextTag);
                             widget.Remove(_iTextTag);
-                            PdfIndirectReference wref = AddToBody(widget).IndirectReference;
+                            var wref = AddToBody(widget).IndirectReference;
                             adjustTabOrder(annots, wref, nn);
                             kids.Add(wref);
                             Propagate(widget, null, false);
@@ -515,14 +617,14 @@ namespace iTextSharp.text.pdf
 
         protected void CloseIt()
         {
-            for (int k = 0; k < Readers.Count; ++k)
+            for (var k = 0; k < Readers.Count; ++k)
             {
                 ((PdfReader)Readers[k]).RemoveFields();
             }
-            for (int r = 0; r < Readers.Count; ++r)
+            for (var r = 0; r < Readers.Count; ++r)
             {
-                PdfReader reader = (PdfReader)Readers[r];
-                for (int page = 1; page <= reader.NumberOfPages; ++page)
+                var reader = (PdfReader)Readers[r];
+                for (var page = 1; page <= reader.NumberOfPages; ++page)
                 {
                     PageRefs.Add(GetNewReference(reader.GetPageOrigRef(page)));
                     PageDics.Add(reader.GetPageN(page));
@@ -530,30 +632,30 @@ namespace iTextSharp.text.pdf
             }
             MergeFields();
             CreateAcroForms();
-            for (int r = 0; r < Readers.Count; ++r)
+            for (var r = 0; r < Readers.Count; ++r)
             {
-                PdfReader reader = (PdfReader)Readers[r];
-                for (int page = 1; page <= reader.NumberOfPages; ++page)
+                var reader = (PdfReader)Readers[r];
+                for (var page = 1; page <= reader.NumberOfPages; ++page)
                 {
-                    PdfDictionary dic = reader.GetPageN(page);
-                    PdfIndirectReference pageRef = GetNewReference(reader.GetPageOrigRef(page));
-                    PdfIndirectReference parent = Root.AddPageRef(pageRef);
+                    var dic = reader.GetPageN(page);
+                    var pageRef = GetNewReference(reader.GetPageOrigRef(page));
+                    var parent = Root.AddPageRef(pageRef);
                     dic.Put(PdfName.Parent, parent);
                     Propagate(dic, pageRef, false);
                 }
             }
             foreach (DictionaryEntry entry in Readers2Intrefs)
             {
-                PdfReader reader = (PdfReader)entry.Key;
+                var reader = (PdfReader)entry.Key;
                 try
                 {
                     File = reader.SafeFile;
                     File.ReOpen();
-                    IntHashtable t = (IntHashtable)entry.Value;
-                    int[] keys = t.ToOrderedKeys();
-                    for (int k = 0; k < keys.Length; ++k)
+                    var t = (IntHashtable)entry.Value;
+                    var keys = t.ToOrderedKeys();
+                    for (var k = 0; k < keys.Length; ++k)
                     {
-                        PrIndirectReference refi = new PrIndirectReference(reader, keys[k]);
+                        var refi = new PrIndirectReference(reader, keys[k]);
                         AddToBody(PdfReader.GetPdfObjectRelease(refi), t[keys[k]]);
                     }
                 }
@@ -576,7 +678,10 @@ namespace iTextSharp.text.pdf
         protected void CreateAcroForms()
         {
             if (FieldTree.Count == 0)
+            {
                 return;
+            }
+
             Form = new PdfDictionary();
             Form.Put(PdfName.Dr, Resources);
             Propagate(Resources, null, false);
@@ -585,16 +690,23 @@ namespace iTextSharp.text.pdf
             _calculationOrderRefs = new ArrayList(_calculationOrder);
             Form.Put(PdfName.Fields, BranchForm(FieldTree, null, ""));
             if (_hasSignature)
-                Form.Put(PdfName.Sigflags, new PdfNumber(3));
-            PdfArray co = new PdfArray();
-            for (int k = 0; k < _calculationOrderRefs.Count; ++k)
             {
-                object obj = _calculationOrderRefs[k];
+                Form.Put(PdfName.Sigflags, new PdfNumber(3));
+            }
+
+            var co = new PdfArray();
+            for (var k = 0; k < _calculationOrderRefs.Count; ++k)
+            {
+                var obj = _calculationOrderRefs[k];
                 if (obj is PdfIndirectReference)
+                {
                     co.Add((PdfIndirectReference)obj);
+                }
             }
             if (co.Size > 0)
+            {
                 Form.Put(PdfName.Co, co);
+            }
         }
 
         protected override PdfDictionary GetCatalog(PdfIndirectReference rootObj)
@@ -602,7 +714,7 @@ namespace iTextSharp.text.pdf
             PdfDictionary cat = Pdf.GetCatalog(rootObj);
             if (Form != null)
             {
-                PdfIndirectReference refi = AddToBody(Form).IndirectReference;
+                var refi = AddToBody(Form).IndirectReference;
                 cat.Put(PdfName.Acroform, refi);
             }
             return cat;
@@ -615,14 +727,17 @@ namespace iTextSharp.text.pdf
 
         private static string getCoName(PdfReader reader, PrIndirectReference refi)
         {
-            string name = "";
+            var name = "";
             while (refi != null)
             {
-                PdfObject obj = PdfReader.GetPdfObject(refi);
+                var obj = PdfReader.GetPdfObject(refi);
                 if (obj == null || obj.Type != PdfObject.DICTIONARY)
+                {
                     break;
-                PdfDictionary dic = (PdfDictionary)obj;
-                PdfString t = dic.GetAsString(PdfName.T);
+                }
+
+                var dic = (PdfDictionary)obj;
+                var t = dic.GetAsString(PdfName.T);
                 if (t != null)
                 {
                     name = t.ToUnicodeString() + "." + name;
@@ -630,18 +745,22 @@ namespace iTextSharp.text.pdf
                 refi = (PrIndirectReference)dic.Get(PdfName.Parent);
             }
             if (name.EndsWith("."))
+            {
                 name = name.Substring(0, name.Length - 1);
+            }
+
             return name;
         }
+
         private void adjustTabOrder(PdfArray annots, PdfIndirectReference ind, PdfNumber nn)
         {
-            int v = nn.IntValue;
-            ArrayList t = (ArrayList)_tabOrder[annots];
+            var v = nn.IntValue;
+            var t = (ArrayList)_tabOrder[annots];
             if (t == null)
             {
                 t = new ArrayList();
-                int size = annots.Size - 1;
-                for (int k = 0; k < size; ++k)
+                var size = annots.Size - 1;
+                for (var k = 0; k < size; ++k)
                 {
                     t.Add(_zero);
                 }
@@ -651,8 +770,8 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                int size = t.Count - 1;
-                for (int k = size; k >= 0; --k)
+                var size = t.Count - 1;
+                for (var k = size; k >= 0; --k)
                 {
                     if ((int)t[k] <= v)
                     {

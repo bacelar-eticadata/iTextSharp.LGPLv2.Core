@@ -9,7 +9,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PrAcroForm : PdfDictionary
     {
-
         internal Hashtable FieldByName;
 
         internal ArrayList fields;
@@ -30,25 +29,13 @@ namespace iTextSharp.text.pdf
             Stack = new ArrayList();
         }
 
-        public ArrayList Fields
-        {
-            get
-            {
-                return fields;
-            }
-        }
+        public ArrayList Fields => fields;
 
         /// <summary>
         /// Number of fields found
         /// </summary>
         /// <returns>size</returns>
-        public new int Size
-        {
-            get
-            {
-                return fields.Count;
-            }
-        }
+        public new int Size => fields.Count;
 
         public FieldInformation GetField(string name)
         {
@@ -62,8 +49,12 @@ namespace iTextSharp.text.pdf
         /// <returns>a reference to the field, or null</returns>
         public PrIndirectReference GetRefByName(string name)
         {
-            FieldInformation fi = (FieldInformation)FieldByName[name];
-            if (fi == null) return null;
+            var fi = (FieldInformation)FieldByName[name];
+            if (fi == null)
+            {
+                return null;
+            }
+
             return fi.Ref;
         }
 
@@ -74,10 +65,13 @@ namespace iTextSharp.text.pdf
         public void ReadAcroForm(PdfDictionary root)
         {
             if (root == null)
+            {
                 return;
+            }
+
             HashMap = root.HashMap;
             PushAttrib(root);
-            PdfArray fieldlist = (PdfArray)PdfReader.GetPdfObjectRelease(root.Get(PdfName.Fields));
+            var fieldlist = (PdfArray)PdfReader.GetPdfObjectRelease(root.Get(PdfName.Fields));
             IterateFields(fieldlist, null, null);
         }
 
@@ -91,22 +85,28 @@ namespace iTextSharp.text.pdf
         {
             foreach (PrIndirectReference refi in fieldlist.ArrayList)
             {
-                PdfDictionary dict = (PdfDictionary)PdfReader.GetPdfObjectRelease(refi);
+                var dict = (PdfDictionary)PdfReader.GetPdfObjectRelease(refi);
 
                 // if we are not a field dictionary, pass our parent's values
-                PrIndirectReference myFieldDict = fieldDict;
-                string myTitle = title;
-                PdfString tField = (PdfString)dict.Get(PdfName.T);
-                bool isFieldDict = tField != null;
+                var myFieldDict = fieldDict;
+                var myTitle = title;
+                var tField = (PdfString)dict.Get(PdfName.T);
+                var isFieldDict = tField != null;
 
                 if (isFieldDict)
                 {
                     myFieldDict = refi;
-                    if (title == null) myTitle = tField.ToString();
-                    else myTitle = title + '.' + tField;
+                    if (title == null)
+                    {
+                        myTitle = tField.ToString();
+                    }
+                    else
+                    {
+                        myTitle = title + '.' + tField;
+                    }
                 }
 
-                PdfArray kids = (PdfArray)dict.Get(PdfName.Kids);
+                var kids = (PdfArray)dict.Get(PdfName.Kids);
                 if (kids != null)
                 {
                     PushAttrib(dict);
@@ -117,12 +117,14 @@ namespace iTextSharp.text.pdf
                 {          // leaf node
                     if (myFieldDict != null)
                     {
-                        PdfDictionary mergedDict = (PdfDictionary)Stack[Stack.Count - 1];
+                        var mergedDict = (PdfDictionary)Stack[Stack.Count - 1];
                         if (isFieldDict)
+                        {
                             mergedDict = MergeAttrib(mergedDict, dict);
+                        }
 
                         mergedDict.Put(PdfName.T, new PdfString(myTitle));
-                        FieldInformation fi = new FieldInformation(myTitle, mergedDict, myFieldDict);
+                        var fi = new FieldInformation(myTitle, mergedDict, myFieldDict);
                         fields.Add(fi);
                         FieldByName[myTitle] = fi;
                     }
@@ -138,8 +140,11 @@ namespace iTextSharp.text.pdf
         /// <returns>a merged dictionary</returns>
         protected PdfDictionary MergeAttrib(PdfDictionary parent, PdfDictionary child)
         {
-            PdfDictionary targ = new PdfDictionary();
-            if (parent != null) targ.Merge(parent);
+            var targ = new PdfDictionary();
+            if (parent != null)
+            {
+                targ.Merge(parent);
+            }
 
             foreach (PdfName key in child.Keys)
             {
@@ -182,28 +187,12 @@ namespace iTextSharp.text.pdf
             {
                 this.name = name; this.info = info; Refi = refi;
             }
-            public PdfDictionary Info
-            {
-                get
-                {
-                    return info;
-                }
-            }
 
-            public string Name
-            {
-                get
-                {
-                    return name;
-                }
-            }
-            public PrIndirectReference Ref
-            {
-                get
-                {
-                    return Refi;
-                }
-            }
+            public PdfDictionary Info => info;
+
+            public string Name => name;
+
+            public PrIndirectReference Ref => Refi;
         }
     }
 }

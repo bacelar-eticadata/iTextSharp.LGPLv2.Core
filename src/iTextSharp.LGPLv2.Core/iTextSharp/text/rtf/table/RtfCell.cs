@@ -1,9 +1,9 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.pdf;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.style;
 using iTextSharp.text.rtf.text;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.table
 {
@@ -214,7 +214,7 @@ namespace iTextSharp.text.rtf.table
         public void SetInHeader(bool inHeader)
         {
             _inHeader = inHeader;
-            for (int i = 0; i < _content.Count; i++)
+            for (var i = 0; i < _content.Count; i++)
             {
                 ((IRtfBasicElement)_content[i]).SetInHeader(inHeader);
             }
@@ -254,9 +254,9 @@ namespace iTextSharp.text.rtf.table
             }
             else
             {
-                for (int i = 0; i < _content.Count; i++)
+                for (var i = 0; i < _content.Count; i++)
                 {
-                    IRtfBasicElement rtfElement = (IRtfBasicElement)_content[i];
+                    var rtfElement = (IRtfBasicElement)_content[i];
                     if (rtfElement is RtfParagraph)
                     {
                         ((RtfParagraph)rtfElement).SetKeepTogetherWithNext(_parentRow.GetParentTable().GetTableFitToPage());
@@ -466,8 +466,10 @@ namespace iTextSharp.text.rtf.table
                         }
                         else
                         {
-                            container = new Paragraph();
-                            container.Alignment = cell.HorizontalAlignment;
+                            container = new Paragraph
+                            {
+                                Alignment = cell.HorizontalAlignment
+                            };
                             container.Add(element);
                         }
                     }
@@ -475,8 +477,8 @@ namespace iTextSharp.text.rtf.table
                     {
                         if (container != null)
                         {
-                            IRtfBasicElement[] rtfElements = _document.GetMapper().MapElement(container);
-                            for (int i = 0; i < rtfElements.Length; i++)
+                            var rtfElements = _document.GetMapper().MapElement(container);
+                            for (var i = 0; i < rtfElements.Length; i++)
                             {
                                 rtfElements[i].SetInTable(true);
                                 _content.Add(rtfElements[i]);
@@ -490,8 +492,8 @@ namespace iTextSharp.text.rtf.table
                             ((Paragraph)element).Alignment = cell.HorizontalAlignment;
                         }
 
-                        IRtfBasicElement[] rtfElements2 = _document.GetMapper().MapElement(element);
-                        for (int i = 0; i < rtfElements2.Length; i++)
+                        var rtfElements2 = _document.GetMapper().MapElement(element);
+                        for (var i = 0; i < rtfElements2.Length; i++)
                         {
                             rtfElements2[i].SetInTable(true);
                             _content.Add(rtfElements2[i]);
@@ -506,8 +508,8 @@ namespace iTextSharp.text.rtf.table
             {
                 try
                 {
-                    IRtfBasicElement[] rtfElements = _document.GetMapper().MapElement(container);
-                    for (int i = 0; i < rtfElements.Length; i++)
+                    var rtfElements = _document.GetMapper().MapElement(container);
+                    for (var i = 0; i < rtfElements.Length; i++)
                     {
                         rtfElements[i].SetInTable(true);
                         _content.Add(rtfElements[i]);
@@ -580,7 +582,7 @@ namespace iTextSharp.text.rtf.table
 
 
             // does it have column composite info?
-            ArrayList compositeElements = cell.CompositeElements;
+            var compositeElements = cell.CompositeElements;
             if (compositeElements != null)
             {
                 // does it have column info?
@@ -598,8 +600,10 @@ namespace iTextSharp.text.rtf.table
                             }
                             else
                             {
-                                container = new Paragraph();
-                                container.Alignment = cell.HorizontalAlignment;
+                                container = new Paragraph
+                                {
+                                    Alignment = cell.HorizontalAlignment
+                                };
                                 container.Add(element);
                             }
                         }
@@ -609,7 +613,7 @@ namespace iTextSharp.text.rtf.table
                             if (container != null)
                             {
                                 rtfElements = _document.GetMapper().MapElement(container);
-                                for (int i = 0; i < rtfElements.Length; i++)
+                                for (var i = 0; i < rtfElements.Length; i++)
                                 {
                                     rtfElements[i].SetInTable(true);
                                     _content.Add(rtfElements[i]);
@@ -624,7 +628,7 @@ namespace iTextSharp.text.rtf.table
                             }
 
                             rtfElements = _document.GetMapper().MapElement(element);
-                            for (int i = 0; i < rtfElements.Length; i++)
+                            for (var i = 0; i < rtfElements.Length; i++)
                             {
                                 rtfElements[i].SetInTable(true);
                                 _content.Add(rtfElements[i]);
@@ -639,8 +643,8 @@ namespace iTextSharp.text.rtf.table
                 {
                     try
                     {
-                        IRtfBasicElement[] rtfElements = _document.GetMapper().MapElement(container);
-                        for (int i = 0; i < rtfElements.Length; i++)
+                        var rtfElements = _document.GetMapper().MapElement(container);
+                        for (var i = 0; i < rtfElements.Length; i++)
                         {
                             rtfElements[i].SetInTable(true);
                             _content.Add(rtfElements[i]);
@@ -654,13 +658,13 @@ namespace iTextSharp.text.rtf.table
 
             // does it have image info?
 
-            Image img = cell.Image;
+            var img = cell.Image;
             if (img != null)
             {
                 try
                 {
-                    IRtfBasicElement[] rtfElements = _document.GetMapper().MapElement(img);
-                    for (int i = 0; i < rtfElements.Length; i++)
+                    var rtfElements = _document.GetMapper().MapElement(img);
+                    for (var i = 0; i < rtfElements.Length; i++)
                     {
                         rtfElements[i].SetInTable(true);
                         _content.Add(rtfElements[i]);
@@ -671,13 +675,13 @@ namespace iTextSharp.text.rtf.table
                 }
             }
             // does it have phrase info?
-            Phrase phrase = cell.Phrase;
+            var phrase = cell.Phrase;
             if (phrase != null)
             {
                 try
                 {
-                    IRtfBasicElement[] rtfElements = _document.GetMapper().MapElement(phrase);
-                    for (int i = 0; i < rtfElements.Length; i++)
+                    var rtfElements = _document.GetMapper().MapElement(phrase);
+                    for (var i = 0; i < rtfElements.Length; i++)
                     {
                         rtfElements[i].SetInTable(true);
                         _content.Add(rtfElements[i]);
@@ -688,7 +692,7 @@ namespace iTextSharp.text.rtf.table
                 }
             }
             // does it have table info?
-            PdfPTable table = cell.Table;
+            var table = cell.Table;
             if (table != null)
             {
                 Add(table);

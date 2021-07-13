@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Collections;
-using iTextSharp.text.pdf.interfaces;
 using iTextSharp.text.pdf.collection;
+using iTextSharp.text.pdf.interfaces;
 using Org.BouncyCastle.X509;
+using System;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.pdf
 {
@@ -76,13 +76,7 @@ namespace iTextSharp.text.pdf
         /// and to merge FDF forms.
         /// </summary>
         /// <returns>the  AcroFields  object</returns>
-        public AcroFields AcroFields
-        {
-            get
-            {
-                return Stamper.AcroFields;
-            }
-        }
+        public AcroFields AcroFields => Stamper.AcroFields;
 
         /// <summary>
         /// Determines if the fields are flattened on close. The fields added with
@@ -91,10 +85,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool FormFlattening
         {
-            set
-            {
-                Stamper.FormFlattening = value;
-            }
+            set => Stamper.FormFlattening = value;
         }
 
         /// <summary>
@@ -103,23 +94,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool FreeTextFlattening
         {
-            set
-            {
-                Stamper.FreeTextFlattening = value;
-            }
+            set => Stamper.FreeTextFlattening = value;
         }
 
         /// <summary>
         /// Gets the 1.5 compression status.
         /// </summary>
         /// <returns> true  if the 1.5 compression is on</returns>
-        public bool FullCompression
-        {
-            get
-            {
-                return Stamper.FullCompression;
-            }
-        }
+        public bool FullCompression => Stamper.FullCompression;
 
         /// <summary>
         /// Adds a JavaScript action at the document level. When the document
@@ -127,10 +109,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string JavaScript
         {
-            set
-            {
-                Stamper.AddJavaScript(value, !PdfEncodings.IsPdfDocEncoding(value));
-            }
+            set => Stamper.AddJavaScript(value, !PdfEncodings.IsPdfDocEncoding(value));
         }
 
         /// <summary>
@@ -151,23 +130,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public ArrayList Outlines
         {
-            set
-            {
-                Stamper.Outlines = value;
-            }
+            set => Stamper.Outlines = value;
         }
 
         /// <summary>
         /// Gets the underlying PdfReader.
         /// </summary>
         /// <returns>the underlying PdfReader</returns>
-        public PdfReader Reader
-        {
-            get
-            {
-                return Stamper.Reader;
-            }
-        }
+        public PdfReader Reader => Stamper.Reader;
 
         /// <summary>
         /// Checks if the content is automatically adjusted to compensate
@@ -181,14 +151,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool RotateContents
         {
-            set
-            {
-                Stamper.RotateContents = value;
-            }
-            get
-            {
-                return Stamper.RotateContents;
-            }
+            set => Stamper.RotateContents = value;
+            get => Stamper.RotateContents;
         }
 
         /// <summary>
@@ -203,23 +167,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public virtual int ViewerPreferences
         {
-            set
-            {
-                Stamper.ViewerPreferences = value;
-            }
+            set => Stamper.ViewerPreferences = value;
         }
 
         /// <summary>
         /// Gets the underlying PdfWriter.
         /// </summary>
         /// <returns>the underlying PdfWriter</returns>
-        public PdfWriter Writer
-        {
-            get
-            {
-                return Stamper;
-            }
-        }
+        public PdfWriter Writer => Stamper;
 
         /// <summary>
         /// Sets the XMP metadata.
@@ -227,10 +182,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public byte[] XmpMetadata
         {
-            set
-            {
-                Stamper.XmpMetadata = value;
-            }
+            set => Stamper.XmpMetadata = value;
         }
 
         /// <summary>
@@ -277,16 +229,21 @@ namespace iTextSharp.text.pdf
             PdfStamper stp;
             if (tempFile == null)
             {
-                ByteBuffer bout = new ByteBuffer();
+                var bout = new ByteBuffer();
                 stp = new PdfStamper(reader, bout, pdfVersion, append);
-                stp.SignatureAppearance = new PdfSignatureAppearance(stp.Stamper);
-                stp.SignatureAppearance.Sigout = bout;
+                stp.SignatureAppearance = new PdfSignatureAppearance(stp.Stamper)
+                {
+                    Sigout = bout
+                };
             }
             else
             {
                 if (Directory.Exists(tempFile))
+                {
                     tempFile = Path.GetTempFileName();
-                FileStream fout = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
+                }
+
+                var fout = new FileStream(tempFile, FileMode.Create, FileAccess.Write);
                 stp = new PdfStamper(reader, fout, pdfVersion, append);
                 stp.SignatureAppearance = new PdfSignatureAppearance(stp.Stamper);
                 stp.SignatureAppearance.SetTempFile(tempFile);
@@ -294,8 +251,8 @@ namespace iTextSharp.text.pdf
             stp.SignatureAppearance.Originalout = os;
             stp.SignatureAppearance.SetStamper(stp);
             stp._hasSignature = true;
-            PdfDictionary catalog = reader.Catalog;
-            PdfDictionary acroForm = (PdfDictionary)PdfReader.GetPdfObject(catalog.Get(PdfName.Acroform), catalog);
+            var catalog = reader.Catalog;
+            var acroForm = (PdfDictionary)PdfReader.GetPdfObject(catalog.Get(PdfName.Acroform), catalog);
             if (acroForm != null)
             {
                 acroForm.Remove(PdfName.Needappearances);
@@ -441,8 +398,8 @@ namespace iTextSharp.text.pdf
         /// <returns>a signature form field</returns>
         public PdfFormField AddSignature(string name, int page, float llx, float lly, float urx, float ury)
         {
-            PdfAcroForm acroForm = Stamper.AcroForm;
-            PdfFormField signature = PdfFormField.CreateSignature(Stamper);
+            var acroForm = Stamper.AcroForm;
+            var signature = PdfFormField.CreateSignature(Stamper);
             acroForm.SetSignatureParams(signature, name, llx, lly, urx, ury);
             acroForm.DrawSignatureAppearences(signature, llx, lly, urx, ury);
             AddAnnotation(signature, page);
@@ -471,22 +428,22 @@ namespace iTextSharp.text.pdf
                 return;
             }
             SignatureAppearance.PreClose();
-            PdfSigGenericPkcs sig = SignatureAppearance.SigStandard;
-            PdfLiteral lit = (PdfLiteral)sig.Get(PdfName.Contents);
-            int totalBuf = (lit.PosLength - 2) / 2;
-            byte[] buf = new byte[8192];
+            var sig = SignatureAppearance.SigStandard;
+            var lit = (PdfLiteral)sig.Get(PdfName.Contents);
+            var totalBuf = (lit.PosLength - 2) / 2;
+            var buf = new byte[8192];
             int n;
-            Stream inp = SignatureAppearance.RangeStream;
+            var inp = SignatureAppearance.RangeStream;
             while ((n = inp.Read(buf, 0, buf.Length)) > 0)
             {
                 sig.Signer.Update(buf, 0, n);
             }
             buf = new byte[totalBuf];
-            byte[] bsig = sig.SignerContents;
+            var bsig = sig.SignerContents;
             Array.Copy(bsig, 0, buf, 0, bsig.Length);
-            PdfString str = new PdfString(buf);
+            var str = new PdfString(buf);
             str.SetHexWriting(true);
-            PdfDictionary dic = new PdfDictionary();
+            var dic = new PdfDictionary();
             dic.Put(PdfName.Contents, str);
             SignatureAppearance.Close(dic);
             Stamper.Reader.Close();
@@ -566,7 +523,7 @@ namespace iTextSharp.text.pdf
         /// <param name="initialView">can be PdfName.D, PdfName.T or PdfName.H</param>
         public void MakePackage(PdfName initialView)
         {
-            PdfCollection collection = new PdfCollection(0);
+            var collection = new PdfCollection(0);
             collection.Put(PdfName.View, initialView);
             Stamper.MakePackage(collection);
         }
@@ -607,6 +564,7 @@ namespace iTextSharp.text.pdf
         {
             Stamper.ReplacePage(r, pageImported, pageReplaced);
         }
+
         /// <summary>
         /// Sets the display duration for the page (for presentations)
         /// </summary>
@@ -633,9 +591,15 @@ namespace iTextSharp.text.pdf
         public void SetEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, bool strength128Bits)
         {
             if (Stamper.Append)
+            {
                 throw new DocumentException("Append mode does not support changing the encryption status.");
+            }
+
             if (Stamper.ContentWritten)
+            {
                 throw new DocumentException("Content was already written to the output.");
+            }
+
             Stamper.SetEncryption(userPassword, ownerPassword, permissions, strength128Bits ? PdfWriter.STANDARD_ENCRYPTION_128 : PdfWriter.STANDARD_ENCRYPTION_40);
         }
 
@@ -656,9 +620,15 @@ namespace iTextSharp.text.pdf
         public void SetEncryption(byte[] userPassword, byte[] ownerPassword, int permissions, int encryptionType)
         {
             if (Stamper.IsAppend())
+            {
                 throw new DocumentException("Append mode does not support changing the encryption status.");
+            }
+
             if (Stamper.ContentWritten)
+            {
                 throw new DocumentException("Content was already written to the output.");
+            }
+
             Stamper.SetEncryption(userPassword, ownerPassword, permissions, encryptionType);
         }
 
@@ -715,9 +685,15 @@ namespace iTextSharp.text.pdf
         public void SetEncryption(X509Certificate[] certs, int[] permissions, int encryptionType)
         {
             if (Stamper.IsAppend())
+            {
                 throw new DocumentException("Append mode does not support changing the encryption status.");
+            }
+
             if (Stamper.ContentWritten)
+            {
                 throw new DocumentException("Content was already written to the output.");
+            }
+
             Stamper.SetEncryption(certs, permissions, encryptionType);
         }
 
@@ -728,7 +704,10 @@ namespace iTextSharp.text.pdf
         public void SetFullCompression()
         {
             if (Stamper.Append)
+            {
                 return;
+            }
+
             Stamper.SetFullCompression();
         }
 
@@ -756,6 +735,7 @@ namespace iTextSharp.text.pdf
         {
             Stamper.SetThumbnail(image, page);
         }
+
         /// <summary>
         /// Sets the transition for the page
         /// </summary>

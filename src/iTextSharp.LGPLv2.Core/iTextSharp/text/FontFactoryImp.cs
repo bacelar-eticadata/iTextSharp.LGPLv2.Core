@@ -1,13 +1,13 @@
-using System;
-using System.IO;
-using System.Collections;
-using System.util;
-using System.Globalization;
 using iTextSharp.text.html;
 using iTextSharp.text.pdf;
-using System.Collections.Generic;
-using System.Threading;
+using System;
+using System.Collections;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading;
+using System.util;
 
 namespace iTextSharp.text
 {
@@ -35,20 +35,20 @@ namespace iTextSharp.text
 
         private FontFactoryImp()
         {
-            _trueTypeFonts.Add(FontFactory.COURIER.ToLower(CultureInfo.InvariantCulture), FontFactory.COURIER);
-            _trueTypeFonts.Add(FontFactory.COURIER_BOLD.ToLower(CultureInfo.InvariantCulture), FontFactory.COURIER_BOLD);
-            _trueTypeFonts.Add(FontFactory.COURIER_OBLIQUE.ToLower(CultureInfo.InvariantCulture), FontFactory.COURIER_OBLIQUE);
-            _trueTypeFonts.Add(FontFactory.COURIER_BOLDOBLIQUE.ToLower(CultureInfo.InvariantCulture), FontFactory.COURIER_BOLDOBLIQUE);
-            _trueTypeFonts.Add(FontFactory.HELVETICA.ToLower(CultureInfo.InvariantCulture), FontFactory.HELVETICA);
-            _trueTypeFonts.Add(FontFactory.HELVETICA_BOLD.ToLower(CultureInfo.InvariantCulture), FontFactory.HELVETICA_BOLD);
-            _trueTypeFonts.Add(FontFactory.HELVETICA_OBLIQUE.ToLower(CultureInfo.InvariantCulture), FontFactory.HELVETICA_OBLIQUE);
-            _trueTypeFonts.Add(FontFactory.HELVETICA_BOLDOBLIQUE.ToLower(CultureInfo.InvariantCulture), FontFactory.HELVETICA_BOLDOBLIQUE);
-            _trueTypeFonts.Add(FontFactory.SYMBOL.ToLower(CultureInfo.InvariantCulture), FontFactory.SYMBOL);
-            _trueTypeFonts.Add(FontFactory.TIMES_ROMAN.ToLower(CultureInfo.InvariantCulture), FontFactory.TIMES_ROMAN);
-            _trueTypeFonts.Add(FontFactory.TIMES_BOLD.ToLower(CultureInfo.InvariantCulture), FontFactory.TIMES_BOLD);
-            _trueTypeFonts.Add(FontFactory.TIMES_ITALIC.ToLower(CultureInfo.InvariantCulture), FontFactory.TIMES_ITALIC);
-            _trueTypeFonts.Add(FontFactory.TIMES_BOLDITALIC.ToLower(CultureInfo.InvariantCulture), FontFactory.TIMES_BOLDITALIC);
-            _trueTypeFonts.Add(FontFactory.ZAPFDINGBATS.ToLower(CultureInfo.InvariantCulture), FontFactory.ZAPFDINGBATS);
+            _trueTypeFonts.Add(FontFactory.COURIER.ToLowerInvariant(), FontFactory.COURIER);
+            _trueTypeFonts.Add(FontFactory.COURIER_BOLD.ToLowerInvariant(), FontFactory.COURIER_BOLD);
+            _trueTypeFonts.Add(FontFactory.COURIER_OBLIQUE.ToLowerInvariant(), FontFactory.COURIER_OBLIQUE);
+            _trueTypeFonts.Add(FontFactory.COURIER_BOLDOBLIQUE.ToLowerInvariant(), FontFactory.COURIER_BOLDOBLIQUE);
+            _trueTypeFonts.Add(FontFactory.HELVETICA.ToLowerInvariant(), FontFactory.HELVETICA);
+            _trueTypeFonts.Add(FontFactory.HELVETICA_BOLD.ToLowerInvariant(), FontFactory.HELVETICA_BOLD);
+            _trueTypeFonts.Add(FontFactory.HELVETICA_OBLIQUE.ToLowerInvariant(), FontFactory.HELVETICA_OBLIQUE);
+            _trueTypeFonts.Add(FontFactory.HELVETICA_BOLDOBLIQUE.ToLowerInvariant(), FontFactory.HELVETICA_BOLDOBLIQUE);
+            _trueTypeFonts.Add(FontFactory.SYMBOL.ToLowerInvariant(), FontFactory.SYMBOL);
+            _trueTypeFonts.Add(FontFactory.TIMES_ROMAN.ToLowerInvariant(), FontFactory.TIMES_ROMAN);
+            _trueTypeFonts.Add(FontFactory.TIMES_BOLD.ToLowerInvariant(), FontFactory.TIMES_BOLD);
+            _trueTypeFonts.Add(FontFactory.TIMES_ITALIC.ToLowerInvariant(), FontFactory.TIMES_ITALIC);
+            _trueTypeFonts.Add(FontFactory.TIMES_BOLDITALIC.ToLowerInvariant(), FontFactory.TIMES_BOLDITALIC);
+            _trueTypeFonts.Add(FontFactory.ZAPFDINGBATS.ToLowerInvariant(), FontFactory.ZAPFDINGBATS);
 
             var tmp = new List<string>
             {
@@ -57,7 +57,7 @@ namespace iTextSharp.text
                 FontFactory.COURIER_OBLIQUE,
                 FontFactory.COURIER_BOLDOBLIQUE
             };
-            _fontFamilies[FontFactory.COURIER.ToLower(CultureInfo.InvariantCulture)] = tmp;
+            _fontFamilies[FontFactory.COURIER.ToLowerInvariant()] = tmp;
             tmp = new List<string>
             {
                 FontFactory.HELVETICA,
@@ -65,9 +65,9 @@ namespace iTextSharp.text
                 FontFactory.HELVETICA_OBLIQUE,
                 FontFactory.HELVETICA_BOLDOBLIQUE
             };
-            _fontFamilies[FontFactory.HELVETICA.ToLower(CultureInfo.InvariantCulture)] = tmp;
+            _fontFamilies[FontFactory.HELVETICA.ToLowerInvariant()] = tmp;
             tmp = new List<string> { FontFactory.SYMBOL };
-            _fontFamilies[FontFactory.SYMBOL.ToLower(CultureInfo.InvariantCulture)] = tmp;
+            _fontFamilies[FontFactory.SYMBOL.ToLowerInvariant()] = tmp;
             tmp = new List<string>
             {
                 FontFactory.TIMES_ROMAN,
@@ -75,10 +75,10 @@ namespace iTextSharp.text
                 FontFactory.TIMES_ITALIC,
                 FontFactory.TIMES_BOLDITALIC
             };
-            _fontFamilies[FontFactory.TIMES.ToLower(CultureInfo.InvariantCulture)] = tmp;
-            _fontFamilies[FontFactory.TIMES_ROMAN.ToLower(CultureInfo.InvariantCulture)] = tmp;
+            _fontFamilies[FontFactory.TIMES.ToLowerInvariant()] = tmp;
+            _fontFamilies[FontFactory.TIMES_ROMAN.ToLowerInvariant()] = tmp;
             tmp = new List<string> { FontFactory.ZAPFDINGBATS };
-            _fontFamilies[FontFactory.ZAPFDINGBATS.ToLower(CultureInfo.InvariantCulture)] = tmp;
+            _fontFamilies[FontFactory.ZAPFDINGBATS.ToLowerInvariant()] = tmp;
         }
 
         /// <summary>
@@ -138,20 +138,32 @@ namespace iTextSharp.text
         {
             lock (_syncLock)
             {
-                if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
-                string lowercasefontname = fontname.ToLower(CultureInfo.InvariantCulture);
+                if (fontname == null)
+                {
+                    return new Font(Font.UNDEFINED, size, style, color);
+                }
+
+                var lowercasefontname = fontname.ToLowerInvariant();
                 if (_fontFamilies.TryGetValue(lowercasefontname, out var tmp))
                 {
                     // some bugs were fixed here by Daniel Marczisovszky
-                    int fs = Font.NORMAL;
-                    bool found = false;
-                    int s = style == Font.UNDEFINED ? Font.NORMAL : style;
-                    foreach (string f in tmp)
+                    var fs = Font.NORMAL;
+                    var found = false;
+                    var s = style == Font.UNDEFINED ? Font.NORMAL : style;
+                    foreach (var f in tmp)
                     {
-                        string lcf = f.ToLower(CultureInfo.InvariantCulture);
+                        var lcf = f.ToLowerInvariant();
                         fs = Font.NORMAL;
-                        if (lcf.IndexOf("bold", StringComparison.OrdinalIgnoreCase) != -1) fs |= Font.BOLD;
-                        if (lcf.IndexOf("italic", StringComparison.OrdinalIgnoreCase) != -1 || lcf.IndexOf("oblique", StringComparison.OrdinalIgnoreCase) != -1) fs |= Font.ITALIC;
+                        if (lcf.IndexOf("bold", StringComparison.OrdinalIgnoreCase) != -1)
+                        {
+                            fs |= Font.BOLD;
+                        }
+
+                        if (lcf.IndexOf("italic", StringComparison.OrdinalIgnoreCase) != -1 || lcf.IndexOf("oblique", StringComparison.OrdinalIgnoreCase) != -1)
+                        {
+                            fs |= Font.ITALIC;
+                        }
+
                         if ((s & Font.BOLDITALIC) == fs)
                         {
                             fontname = f;
@@ -178,9 +190,12 @@ namespace iTextSharp.text
                     if (basefont == null)
                     {
                         // the font is a true type font or an unknown font
-                        fontname = _trueTypeFonts[fontname.ToLower(CultureInfo.InvariantCulture)];
+                        fontname = _trueTypeFonts[fontname.ToLowerInvariant()];
                         // the font is not registered as truetype font
-                        if (fontname == null) return new Font(Font.UNDEFINED, size, style, color);
+                        if (fontname == null)
+                        {
+                            return new Font(Font.UNDEFINED, size, style, color);
+                        }
                         // the font is registered as truetype font
                         basefont = BaseFont.CreateFont(fontname, encoding, embedded, cached, null, null);
                     }
@@ -214,15 +229,15 @@ namespace iTextSharp.text
             lock (_syncLock)
             {
                 string fontname = null;
-                string encoding = DefaultEncoding;
-                bool embedded = DefaultEmbedding;
+                var encoding = DefaultEncoding;
+                var embedded = DefaultEmbedding;
                 float size = Font.UNDEFINED;
-                int style = Font.NORMAL;
+                var style = Font.NORMAL;
                 BaseColor color = null;
-                string value = attributes[Markup.HTML_ATTR_STYLE];
+                var value = attributes[Markup.HTML_ATTR_STYLE];
                 if (!string.IsNullOrEmpty(value))
                 {
-                    Properties styleAttributes = Markup.ParseAttributes(value);
+                    var styleAttributes = Markup.ParseAttributes(value);
                     if (styleAttributes.Count == 0)
                     {
                         attributes.Add(Markup.HTML_ATTR_STYLE, value);
@@ -289,17 +304,29 @@ namespace iTextSharp.text
                 {
                     style |= Font.GetStyleValue(value);
                 }
-                string r = attributes[ElementTags.RED];
-                string g = attributes[ElementTags.GREEN];
-                string b = attributes[ElementTags.BLUE];
+                var r = attributes[ElementTags.RED];
+                var g = attributes[ElementTags.GREEN];
+                var b = attributes[ElementTags.BLUE];
                 if (r != null || g != null || b != null)
                 {
-                    int red = 0;
-                    int green = 0;
-                    int blue = 0;
-                    if (r != null) red = int.Parse(r);
-                    if (g != null) green = int.Parse(g);
-                    if (b != null) blue = int.Parse(b);
+                    var red = 0;
+                    var green = 0;
+                    var blue = 0;
+                    if (r != null)
+                    {
+                        red = int.Parse(r);
+                    }
+
+                    if (g != null)
+                    {
+                        green = int.Parse(g);
+                    }
+
+                    if (b != null)
+                    {
+                        blue = int.Parse(b);
+                    }
+
                     color = new BaseColor(red, green, blue);
                 }
                 else if ((value = attributes[ElementTags.COLOR]) != null)
@@ -470,7 +497,7 @@ namespace iTextSharp.text
         {
             lock (_syncLock)
             {
-                return _trueTypeFonts.ContainsKey(fontname.ToLower(CultureInfo.InvariantCulture));
+                return _trueTypeFonts.ContainsKey(fontname.ToLowerInvariant());
             }
         }
 
@@ -501,28 +528,28 @@ namespace iTextSharp.text
             {
                 if (path.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase) || path.EndsWith(".otf", StringComparison.OrdinalIgnoreCase) || path.IndexOf(".ttc,", StringComparison.OrdinalIgnoreCase) > 0)
                 {
-                    object[] allNames = BaseFont.GetAllFontNames(path, BaseFont.WINANSI, null);
-                    _trueTypeFonts.Add(((string)allNames[0]).ToLower(CultureInfo.InvariantCulture), path);
+                    var allNames = BaseFont.GetAllFontNames(path, BaseFont.WINANSI, null);
+                    _trueTypeFonts.Add(((string)allNames[0]).ToLowerInvariant(), path);
                     if (alias != null)
                     {
-                        _trueTypeFonts.Add(alias.ToLower(CultureInfo.InvariantCulture), path);
+                        _trueTypeFonts.Add(alias.ToLowerInvariant(), path);
                     }
                     // register all the font names with all the locales
-                    string[][] names = (string[][])allNames[2]; //full name
-                    for (int i = 0; i < names.Length; i++)
+                    var names = (string[][])allNames[2]; //full name
+                    for (var i = 0; i < names.Length; i++)
                     {
-                        _trueTypeFonts.Add(names[i][3].ToLower(CultureInfo.InvariantCulture), path);
+                        _trueTypeFonts.Add(names[i][3].ToLowerInvariant(), path);
                     }
                     string fullName = null;
                     string familyName = null;
                     names = (string[][])allNames[1]; //family name
-                    for (int k = 0; k < _ttFamilyOrder.Length; k += 3)
+                    for (var k = 0; k < _ttFamilyOrder.Length; k += 3)
                     {
-                        for (int i = 0; i < names.Length; i++)
+                        for (var i = 0; i < names.Length; i++)
                         {
                             if (_ttFamilyOrder[k].Equals(names[i][0]) && _ttFamilyOrder[k + 1].Equals(names[i][1]) && _ttFamilyOrder[k + 2].Equals(names[i][2]))
                             {
-                                familyName = names[i][3].ToLower(CultureInfo.InvariantCulture);
+                                familyName = names[i][3].ToLowerInvariant();
                                 k = _ttFamilyOrder.Length;
                                 break;
                             }
@@ -530,17 +557,20 @@ namespace iTextSharp.text
                     }
                     if (familyName != null)
                     {
-                        string lastName = "";
+                        var lastName = "";
                         names = (string[][])allNames[2]; //full name
-                        for (int i = 0; i < names.Length; i++)
+                        for (var i = 0; i < names.Length; i++)
                         {
-                            for (int k = 0; k < _ttFamilyOrder.Length; k += 3)
+                            for (var k = 0; k < _ttFamilyOrder.Length; k += 3)
                             {
                                 if (_ttFamilyOrder[k].Equals(names[i][0]) && _ttFamilyOrder[k + 1].Equals(names[i][1]) && _ttFamilyOrder[k + 2].Equals(names[i][2]))
                                 {
                                     fullName = names[i][3];
                                     if (fullName.Equals(lastName))
+                                    {
                                         continue;
+                                    }
+
                                     lastName = fullName;
                                     RegisterFamily(familyName, fullName, null);
                                     break;
@@ -549,20 +579,20 @@ namespace iTextSharp.text
                         }
                     }
                 }
-                else if (path.ToLower(CultureInfo.InvariantCulture).EndsWith(".ttc"))
+                else if (path.ToLowerInvariant().EndsWith(".ttc"))
                 {
-                    string[] names = BaseFont.EnumerateTtcNames(path);
-                    for (int i = 0; i < names.Length; i++)
+                    var names = BaseFont.EnumerateTtcNames(path);
+                    for (var i = 0; i < names.Length; i++)
                     {
                         Register(path + "," + i);
                     }
                 }
-                else if (path.ToLower(CultureInfo.InvariantCulture).EndsWith(".afm") || path.ToLower(CultureInfo.InvariantCulture).EndsWith(".pfm"))
+                else if (path.ToLowerInvariant().EndsWith(".afm") || path.ToLowerInvariant().EndsWith(".pfm"))
                 {
-                    BaseFont bf = BaseFont.CreateFont(path, BaseFont.CP1252, false);
-                    string fullName = (bf.FullFontName[0][3]).ToLower(CultureInfo.InvariantCulture);
-                    string familyName = (bf.FamilyFontName[0][3]).ToLower(CultureInfo.InvariantCulture);
-                    string psName = bf.PostscriptFontName.ToLower(CultureInfo.InvariantCulture);
+                    var bf = BaseFont.CreateFont(path, BaseFont.CP1252, false);
+                    var fullName = (bf.FullFontName[0][3]).ToLowerInvariant();
+                    var familyName = (bf.FamilyFontName[0][3]).ToLowerInvariant();
+                    var psName = bf.PostscriptFontName.ToLowerInvariant();
                     RegisterFamily(familyName, fullName, null);
                     _trueTypeFonts.Add(psName, path);
                     _trueTypeFonts.Add(fullName, path);
@@ -579,7 +609,7 @@ namespace iTextSharp.text
         {
             lock (_syncLock)
             {
-                int count = 0;
+                var count = 0;
                 count += RegisterDirectory("c:/windows/fonts");
                 count += RegisterDirectory("c:/winnt/fonts");
                 count += RegisterDirectory("d:/windows/fonts");
@@ -616,15 +646,21 @@ namespace iTextSharp.text
         {
             lock (_syncLock)
             {
-                int count = 0;
+                var count = 0;
                 try
                 {
                     if (!Directory.Exists(dir))
+                    {
                         return 0;
-                    string[] files = Directory.GetFiles(dir);
+                    }
+
+                    var files = Directory.GetFiles(dir);
                     if (files == null)
+                    {
                         return 0;
-                    for (int k = 0; k < files.Length; ++k)
+                    }
+
+                    for (var k = 0; k < files.Length; ++k)
                     {
                         try
                         {
@@ -637,12 +673,12 @@ namespace iTextSharp.text
                             }
                             else
                             {
-                                string name = Path.GetFullPath(files[k]);
-                                string suffix = name.Length < 4 ? null : name.Substring(name.Length - 4).ToLower(CultureInfo.InvariantCulture);
+                                var name = Path.GetFullPath(files[k]);
+                                var suffix = name.Length < 4 ? null : name.Substring(name.Length - 4).ToLowerInvariant();
                                 if (".afm".Equals(suffix) || ".pfm".Equals(suffix))
                                 {
                                     /* Only register Type 1 fonts with matching .pfb files */
-                                    string pfb = name.Substring(0, name.Length - 4) + ".pfb";
+                                    var pfb = name.Substring(0, name.Length - 4) + ".pfb";
                                     if (File.Exists(pfb))
                                     {
                                         Register(name, null);
@@ -681,7 +717,9 @@ namespace iTextSharp.text
             lock (_syncLock)
             {
                 if (path != null)
+                {
                     _trueTypeFonts.Add(fullName, path);
+                }
 
                 if (!_fontFamilies.TryGetValue(familyName, out var tmp))
                 {
@@ -693,9 +731,9 @@ namespace iTextSharp.text
                 }
                 else
                 {
-                    int fullNameLength = fullName.Length;
-                    bool inserted = false;
-                    for (int j = 0; j < tmp.Count; ++j)
+                    var fullNameLength = fullName.Length;
+                    var inserted = false;
+                    for (var j = 0; j < tmp.Count; ++j)
                     {
                         if (tmp[j].Length >= fullNameLength)
                         {
@@ -705,7 +743,9 @@ namespace iTextSharp.text
                         }
                     }
                     if (!inserted)
+                    {
                         tmp.Add(fullName);
+                    }
                 }
             }
         }

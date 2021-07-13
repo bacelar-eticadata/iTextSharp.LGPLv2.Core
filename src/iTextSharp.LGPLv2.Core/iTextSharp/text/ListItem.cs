@@ -133,10 +133,7 @@ namespace iTextSharp.text
         /// <value>a Chunk</value>
         public Chunk ListSymbol
         {
-            get
-            {
-                return _symbol;
-            }
+            get => _symbol;
 
             set
             {
@@ -169,7 +166,7 @@ namespace iTextSharp.text
         /// </summary>
         /// <param name="tag">the given tag</param>
         /// <returns>true if the tag corresponds</returns>
-        public new static bool IsTag(string tag)
+        public static new bool IsTag(string tag)
         {
             return ElementTags.LISTITEM.Equals(tag);
         }

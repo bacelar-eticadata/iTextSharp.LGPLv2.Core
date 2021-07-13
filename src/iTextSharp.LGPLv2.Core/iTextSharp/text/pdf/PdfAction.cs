@@ -1,7 +1,7 @@
+using iTextSharp.text.pdf.collection;
 using System;
 using System.Collections;
 using System.util;
-using iTextSharp.text.pdf.collection;
 
 namespace iTextSharp.text.pdf
 {
@@ -11,11 +11,11 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfAction : PdfDictionary
     {
-
         /// <summary>
         /// A named action to go to the first page.
         /// </summary>
         public const int FIRSTPAGE = 1;
+
         /// <summary>
         /// A named action to go to the last page.
         /// </summary>
@@ -30,6 +30,7 @@ namespace iTextSharp.text.pdf
         /// A named action to go to the previous page.
         /// </summary>
         public const int PREVPAGE = 2;
+
         /// <summary>
         /// A named action to open a print dialog.
         /// </summary>
@@ -66,8 +67,10 @@ namespace iTextSharp.text.pdf
         /// constructors
         /// </summary>
         public const int SUBMIT_EXCLUDE = 1;
+
         public const int SUBMIT_HTML_FORMAT = 4;
         public const int SUBMIT_HTML_GET = 8;
+
         /// <summary>
         /// a possible submitvalue
         /// </summary>
@@ -79,6 +82,7 @@ namespace iTextSharp.text.pdf
         public const int SUBMIT_INCLUDE_APPEND_SAVES = 64;
 
         public const int SUBMIT_INCLUDE_NO_VALUE_FIELDS = 2;
+
         /// <summary>
         /// a possible submitvalue
         /// </summary>
@@ -88,6 +92,7 @@ namespace iTextSharp.text.pdf
         /// a possible submitvalue
         /// </summary>
         public const int SUBMIT_XFDF = 32;
+
         /// <summary>
         /// Create an empty action.
         /// </summary>
@@ -100,23 +105,31 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <param name="url">the Url to go to</param>
 
-        public PdfAction(Uri url) : this(url.AbsoluteUri) { }
+        public PdfAction(Uri url) : this(url.AbsoluteUri)
+        {
+        }
 
-        public PdfAction(Uri url, bool isMap) : this(url.AbsoluteUri, isMap) { }
+        public PdfAction(Uri url, bool isMap) : this(url.AbsoluteUri, isMap)
+        {
+        }
 
         /// <summary>
         /// Constructs a new  PdfAction  of Subtype URI.
         /// </summary>
         /// <param name="url">the url to go to</param>
 
-        public PdfAction(string url) : this(url, false) { }
+        public PdfAction(string url) : this(url, false)
+        {
+        }
 
         public PdfAction(string url, bool isMap)
         {
             Put(PdfName.S, PdfName.Uri);
             Put(PdfName.Uri, new PdfString(url));
             if (isMap)
+            {
                 Put(PdfName.Ismap, PdfBoolean.Pdftrue);
+            }
         }
 
         /// <summary>
@@ -148,19 +161,24 @@ namespace iTextSharp.text.pdf
                 case FIRSTPAGE:
                     Put(PdfName.N, PdfName.Firstpage);
                     break;
+
                 case LASTPAGE:
                     Put(PdfName.N, PdfName.Lastpage);
                     break;
+
                 case NEXTPAGE:
                     Put(PdfName.N, PdfName.Nextpage);
                     break;
+
                 case PREVPAGE:
                     Put(PdfName.N, PdfName.Prevpage);
                     break;
+
                 case PRINTDIALOG:
                     Put(PdfName.S, PdfName.Javascript);
                     Put(PdfName.Js, new PdfString("this.print(true);\r"));
                     break;
+
                 default:
                     throw new ArgumentException("Invalid named action.");
             }
@@ -181,17 +199,28 @@ namespace iTextSharp.text.pdf
         {
             Put(PdfName.S, PdfName.Launch);
             if (parameters == null && operation == null && defaultDir == null)
+            {
                 Put(PdfName.F, new PdfString(application));
+            }
             else
             {
-                PdfDictionary dic = new PdfDictionary();
+                var dic = new PdfDictionary();
                 dic.Put(PdfName.F, new PdfString(application));
                 if (parameters != null)
+                {
                     dic.Put(PdfName.P, new PdfString(parameters));
+                }
+
                 if (operation != null)
+                {
                     dic.Put(PdfName.O, new PdfString(operation));
+                }
+
                 if (defaultDir != null)
+                {
                     dic.Put(PdfName.D, new PdfString(defaultDir));
+                }
+
                 Put(PdfName.Win, dic);
             }
         }
@@ -201,6 +230,7 @@ namespace iTextSharp.text.pdf
             Put(PdfName.S, PdfName.Goto);
             Put(PdfName.D, destination);
         }
+
         public static PdfAction CreateHide(PdfAnnotation annot, bool hide)
         {
             return CreateHide(annot.IndirectReference, hide);
@@ -218,7 +248,7 @@ namespace iTextSharp.text.pdf
 
         public static PdfAction CreateImportData(string file)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Importdata);
             action.Put(PdfName.F, new PdfString(file));
             return action;
@@ -243,24 +273,30 @@ namespace iTextSharp.text.pdf
 
         public static PdfAction CreateResetForm(object[] names, int flags)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Resetform);
             if (names != null)
+            {
                 action.Put(PdfName.Fields, BuildArray(names));
+            }
+
             action.Put(PdfName.Flags, new PdfNumber(flags));
             return action;
         }
 
         public static PdfAction CreateSubmitForm(string file, object[] names, int flags)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Submitform);
-            PdfDictionary dic = new PdfDictionary();
+            var dic = new PdfDictionary();
             dic.Put(PdfName.F, new PdfString(file));
             dic.Put(PdfName.Fs, PdfName.Url);
             action.Put(PdfName.F, dic);
             if (names != null)
+            {
                 action.Put(PdfName.Fields, BuildArray(names));
+            }
+
             action.Put(PdfName.Flags, new PdfNumber(flags));
             return action;
         }
@@ -277,9 +313,13 @@ namespace iTextSharp.text.pdf
         public static PdfAction GotoEmbedded(string filename, PdfTargetDictionary target, string dest, bool isName, bool newWindow)
         {
             if (isName)
+            {
                 return GotoEmbedded(filename, target, new PdfName(dest), newWindow);
+            }
             else
+            {
                 return GotoEmbedded(filename, target, new PdfString(dest, null), newWindow);
+            }
         }
 
         /// <summary>
@@ -292,7 +332,7 @@ namespace iTextSharp.text.pdf
         /// <returns>a GoToE action</returns>
         public static PdfAction GotoEmbedded(string filename, PdfTargetDictionary target, PdfObject dest, bool newWindow)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Gotoe);
             action.Put(PdfName.T, target);
             action.Put(PdfName.D, dest);
@@ -313,9 +353,9 @@ namespace iTextSharp.text.pdf
         /// <returns>a GoTo action</returns>
         public static PdfAction GotoLocalPage(int page, PdfDestination dest, PdfWriter writer)
         {
-            PdfIndirectReference piref = writer.GetPageReference(page);
+            var piref = writer.GetPageReference(page);
             dest.AddPage(piref);
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Goto);
             action.Put(PdfName.D, dest);
             return action;
@@ -329,12 +369,17 @@ namespace iTextSharp.text.pdf
         /// <returns>a GoToR action</returns>
         public static PdfAction GotoLocalPage(string dest, bool isName)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Goto);
             if (isName)
+            {
                 action.Put(PdfName.D, new PdfName(dest));
+            }
             else
+            {
                 action.Put(PdfName.D, new PdfString(dest, null));
+            }
+
             return action;
         }
 
@@ -348,15 +393,23 @@ namespace iTextSharp.text.pdf
         /// <returns>a GoToR action</returns>
         public static PdfAction GotoRemotePage(string filename, string dest, bool isName, bool newWindow)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.F, new PdfString(filename));
             action.Put(PdfName.S, PdfName.Gotor);
             if (isName)
+            {
                 action.Put(PdfName.D, new PdfName(dest));
+            }
             else
+            {
                 action.Put(PdfName.D, new PdfString(dest, null));
+            }
+
             if (newWindow)
+            {
                 action.Put(PdfName.Newwindow, PdfBoolean.Pdftrue);
+            }
+
             return action;
         }
 
@@ -373,7 +426,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the JavaScript action</returns>
         public static PdfAction JavaScript(string code, PdfWriter writer, bool unicode)
         {
-            PdfAction js = new PdfAction();
+            var js = new PdfAction();
             js.Put(PdfName.S, PdfName.Javascript);
             if (unicode && code.Length < 50)
             {
@@ -387,8 +440,8 @@ namespace iTextSharp.text.pdf
             {
                 try
                 {
-                    byte[] b = PdfEncodings.ConvertToBytes(code, unicode ? TEXT_UNICODE : TEXT_PDFDOCENCODING);
-                    PdfStream stream = new PdfStream(b);
+                    var b = PdfEncodings.ConvertToBytes(code, unicode ? TEXT_UNICODE : TEXT_PDFDOCENCODING);
+                    var stream = new PdfStream(b);
                     stream.FlateCompress(writer.CompressionLevel);
                     js.Put(PdfName.Js, writer.AddToBody(stream).IndirectReference);
                 }
@@ -424,13 +477,14 @@ namespace iTextSharp.text.pdf
         /// <returns>a Media Clip action</returns>
         public static PdfAction Rendition(string file, PdfFileSpecification fs, string mimeType, PdfIndirectReference refi)
         {
-            PdfAction js = new PdfAction();
+            var js = new PdfAction();
             js.Put(PdfName.S, PdfName.Rendition);
             js.Put(PdfName.R, new PdfRendition(file, fs, mimeType));
             js.Put(new PdfName("OP"), new PdfNumber(0));
             js.Put(new PdfName("AN"), refi);
             return js;
         }
+
         /// <summary>
         /// A set-OCG-state action (PDF 1.5) sets the state of one or more optional content
         /// groups.
@@ -455,40 +509,63 @@ namespace iTextSharp.text.pdf
         /// <returns>the action</returns>
         public static PdfAction SetOcGstate(ArrayList state, bool preserveRb)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Setocgstate);
-            PdfArray a = new PdfArray();
-            for (int k = 0; k < state.Count; ++k)
+            var a = new PdfArray();
+            for (var k = 0; k < state.Count; ++k)
             {
-                object o = state[k];
+                var o = state[k];
                 if (o == null)
+                {
                     continue;
+                }
+
                 if (o is PdfIndirectReference)
+                {
                     a.Add((PdfIndirectReference)o);
+                }
                 else if (o is PdfLayer)
+                {
                     a.Add(((PdfLayer)o).Ref);
+                }
                 else if (o is PdfName)
+                {
                     a.Add((PdfName)o);
+                }
                 else if (o is string)
                 {
                     PdfName name = null;
-                    string s = (string)o;
+                    var s = (string)o;
                     if (Util.EqualsIgnoreCase(s, "on"))
+                    {
                         name = PdfName.On;
+                    }
                     else if (Util.EqualsIgnoreCase(s, "off"))
+                    {
                         name = PdfName.OFF;
+                    }
                     else if (Util.EqualsIgnoreCase(s, "toggle"))
+                    {
                         name = PdfName.Toggle;
+                    }
                     else
+                    {
                         throw new ArgumentException("A string '" + s + " was passed in state. Only 'ON', 'OFF' and 'Toggle' are allowed.");
+                    }
+
                     a.Add(name);
                 }
                 else
+                {
                     throw new ArgumentException("Invalid type was passed in state: " + o.GetType());
+                }
             }
             action.Put(PdfName.State, a);
             if (!preserveRb)
+            {
                 action.Put(PdfName.Preserverb, PdfBoolean.Pdffalse);
+            }
+
             return action;
         }
 
@@ -498,12 +575,14 @@ namespace iTextSharp.text.pdf
         /// <param name="na">the next action</param>
         public void Next(PdfAction na)
         {
-            PdfObject nextAction = Get(PdfName.Next);
+            var nextAction = Get(PdfName.Next);
             if (nextAction == null)
+            {
                 Put(PdfName.Next, na);
+            }
             else if (nextAction.IsDictionary())
             {
-                PdfArray array = new PdfArray(nextAction);
+                var array = new PdfArray(nextAction);
                 array.Add(na);
                 Put(PdfName.Next, array);
             }
@@ -515,27 +594,36 @@ namespace iTextSharp.text.pdf
 
         internal static PdfArray BuildArray(object[] names)
         {
-            PdfArray array = new PdfArray();
-            for (int k = 0; k < names.Length; ++k)
+            var array = new PdfArray();
+            for (var k = 0; k < names.Length; ++k)
             {
-                object obj = names[k];
+                var obj = names[k];
                 if (obj is string)
+                {
                     array.Add(new PdfString((string)obj));
+                }
                 else if (obj is PdfAnnotation)
+                {
                     array.Add(((PdfAnnotation)obj).IndirectReference);
+                }
                 else
+                {
                     throw new ArgumentException("The array must contain string or PdfAnnotation.");
+                }
             }
             return array;
         }
 
         internal static PdfAction CreateHide(PdfObject obj, bool hide)
         {
-            PdfAction action = new PdfAction();
+            var action = new PdfAction();
             action.Put(PdfName.S, PdfName.Hide);
             action.Put(PdfName.T, obj);
             if (!hide)
+            {
                 action.Put(PdfName.H, PdfBoolean.Pdffalse);
+            }
+
             return action;
         }
     }

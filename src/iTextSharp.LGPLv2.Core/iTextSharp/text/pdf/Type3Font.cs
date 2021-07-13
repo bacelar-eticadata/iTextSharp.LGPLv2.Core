@@ -3,13 +3,11 @@ using System.Collections;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A class to support Type3 fonts.
     /// </summary>
     public class Type3Font : BaseFont
     {
-
         private readonly Hashtable _char2Glyph = new Hashtable();
         private readonly bool _colorized;
         private readonly PageResources _pageResources = new PageResources();
@@ -64,36 +62,15 @@ namespace iTextSharp.text.pdf
             _usedSlot = new bool[256];
         }
 
-        public override string[][] AllNameEntries
-        {
-            get
-            {
-                return new[] { new[] { "4", "", "", "", "" } };
-            }
-        }
+        public override string[][] AllNameEntries => new[] { new[] { "4", "", "", "", "" } };
 
-        public override string[][] FamilyFontName
-        {
-            get
-            {
-                return FullFontName;
-            }
-        }
+        public override string[][] FamilyFontName => FullFontName;
 
-        public override string[][] FullFontName
-        {
-            get
-            {
-                return new[] { new[] { "", "", "", "" } };
-            }
-        }
+        public override string[][] FullFontName => new[] { new[] { "", "", "", "" } };
 
         public override string PostscriptFontName
         {
-            get
-            {
-                return "";
-            }
+            get => "";
             set
             {
             }
@@ -128,11 +105,17 @@ namespace iTextSharp.text.pdf
         public PdfContentByte DefineGlyph(char c, float wx, float llx, float lly, float urx, float ury)
         {
             if (c == 0 || c > 255)
+            {
                 throw new ArgumentException("The char " + (int)c + " doesn't belong in this Type3 font");
+            }
+
             _usedSlot[c] = true;
-            Type3Glyph glyph = (Type3Glyph)_char2Glyph[c];
+            var glyph = (Type3Glyph)_char2Glyph[c];
             if (glyph != null)
+            {
                 return glyph;
+            }
+
             _widths3[c] = (int)wx;
             if (!_colorized)
             {
@@ -155,6 +138,7 @@ namespace iTextSharp.text.pdf
             _char2Glyph[c] = glyph;
             return glyph;
         }
+
         public override int[] GetCharBBox(int c)
         {
             return null;
@@ -164,6 +148,7 @@ namespace iTextSharp.text.pdf
         {
             return 0;
         }
+
         /// <summary>
         /// Always returns null, because you can't get the FontStream of a Type3 font.
         /// @since   2.1.3
@@ -178,19 +163,26 @@ namespace iTextSharp.text.pdf
         {
             return 0;
         }
+
         public override int GetWidth(int char1)
         {
             if (!_widths3.ContainsKey(char1))
+            {
                 throw new ArgumentException("The char " + char1 + " is not defined in a Type3 font");
+            }
+
             return _widths3[char1];
         }
 
         public override int GetWidth(string text)
         {
-            char[] c = text.ToCharArray();
-            int total = 0;
-            for (int k = 0; k < c.Length; ++k)
+            var c = text.ToCharArray();
+            var total = 0;
+            for (var k = 0; k < c.Length; ++k)
+            {
                 total += GetWidth(c[k]);
+            }
+
             return total;
         }
 
@@ -211,18 +203,23 @@ namespace iTextSharp.text.pdf
 
         internal override byte[] ConvertToBytes(string text)
         {
-            char[] cc = text.ToCharArray();
-            byte[] b = new byte[cc.Length];
-            int p = 0;
-            for (int k = 0; k < cc.Length; ++k)
+            var cc = text.ToCharArray();
+            var b = new byte[cc.Length];
+            var p = 0;
+            for (var k = 0; k < cc.Length; ++k)
             {
-                char c = cc[k];
+                var c = cc[k];
                 if (CharExists(c))
+                {
                     b[p++] = (byte)c;
+                }
             }
             if (b.Length == p)
+            {
                 return b;
-            byte[] b2 = new byte[p];
+            }
+
+            var b2 = new byte[p];
             Array.Copy(b, 0, b2, 0, p);
             return b2;
         }
@@ -230,8 +227,13 @@ namespace iTextSharp.text.pdf
         internal override byte[] ConvertToBytes(int char1)
         {
             if (CharExists(char1))
+            {
                 return new[] { (byte)char1 };
-            else return new byte[0];
+            }
+            else
+            {
+                return new byte[0];
+            }
         }
 
         internal override int GetRawWidth(int c, string name)
@@ -242,23 +244,31 @@ namespace iTextSharp.text.pdf
         internal override void WriteFont(PdfWriter writer, PdfIndirectReference piRef, object[] oParams)
         {
             if (_writer != writer)
+            {
                 throw new ArgumentException("Type3 font used with the wrong PdfWriter");
+            }
             // Get first & lastchar ...
-            int firstChar = 0;
-            while (firstChar < _usedSlot.Length && !_usedSlot[firstChar]) firstChar++;
+            var firstChar = 0;
+            while (firstChar < _usedSlot.Length && !_usedSlot[firstChar])
+            {
+                firstChar++;
+            }
 
             if (firstChar == _usedSlot.Length)
             {
                 throw new DocumentException("No glyphs defined for Type3 font");
             }
-            int lastChar = _usedSlot.Length - 1;
-            while (lastChar >= firstChar && !_usedSlot[lastChar]) lastChar--;
+            var lastChar = _usedSlot.Length - 1;
+            while (lastChar >= firstChar && !_usedSlot[lastChar])
+            {
+                lastChar--;
+            }
 
-            int[] localWidths = new int[lastChar - firstChar + 1];
-            int[] invOrd = new int[lastChar - firstChar + 1];
+            var localWidths = new int[lastChar - firstChar + 1];
+            var invOrd = new int[lastChar - firstChar + 1];
 
             int invOrdIndx = 0, w = 0;
-            for (int u = firstChar; u <= lastChar; u++, w++)
+            for (var u = firstChar; u <= lastChar; u++, w++)
             {
                 if (_usedSlot[u])
                 {
@@ -266,46 +276,57 @@ namespace iTextSharp.text.pdf
                     localWidths[w] = _widths3[u];
                 }
             }
-            PdfArray diffs = new PdfArray();
-            PdfDictionary charprocs = new PdfDictionary();
-            int last = -1;
-            for (int k = 0; k < invOrdIndx; ++k)
+            var diffs = new PdfArray();
+            var charprocs = new PdfDictionary();
+            var last = -1;
+            for (var k = 0; k < invOrdIndx; ++k)
             {
-                int c = invOrd[k];
+                var c = invOrd[k];
                 if (c > last)
                 {
                     last = c;
                     diffs.Add(new PdfNumber(last));
                 }
                 ++last;
-                int c2 = invOrd[k];
-                string s = GlyphList.UnicodeToName(c2);
+                var c2 = invOrd[k];
+                var s = GlyphList.UnicodeToName(c2);
                 if (s == null)
+                {
                     s = "a" + c2;
-                PdfName n = new PdfName(s);
+                }
+
+                var n = new PdfName(s);
                 diffs.Add(n);
-                Type3Glyph glyph = (Type3Glyph)_char2Glyph[(char)c2];
-                PdfStream stream = new PdfStream(glyph.ToPdf(null));
+                var glyph = (Type3Glyph)_char2Glyph[(char)c2];
+                var stream = new PdfStream(glyph.ToPdf(null));
                 stream.FlateCompress(compressionLevel);
-                PdfIndirectReference refp = writer.AddToBody(stream).IndirectReference;
+                var refp = writer.AddToBody(stream).IndirectReference;
                 charprocs.Put(n, refp);
             }
-            PdfDictionary font = new PdfDictionary(PdfName.Font);
+            var font = new PdfDictionary(PdfName.Font);
             font.Put(PdfName.Subtype, PdfName.Type3);
             if (_colorized)
+            {
                 font.Put(PdfName.Fontbbox, new PdfRectangle(0, 0, 0, 0));
+            }
             else
+            {
                 font.Put(PdfName.Fontbbox, new PdfRectangle(_llx, _lly, _urx, _ury));
+            }
+
             font.Put(PdfName.Fontmatrix, new PdfArray(new[] { 0.001f, 0, 0, 0.001f, 0, 0 }));
             font.Put(PdfName.Charprocs, writer.AddToBody(charprocs).IndirectReference);
-            PdfDictionary localEncoding = new PdfDictionary();
+            var localEncoding = new PdfDictionary();
             localEncoding.Put(PdfName.Differences, diffs);
             font.Put(PdfName.Encoding, writer.AddToBody(localEncoding).IndirectReference);
             font.Put(PdfName.Firstchar, new PdfNumber(firstChar));
             font.Put(PdfName.Lastchar, new PdfNumber(lastChar));
             font.Put(PdfName.Widths, writer.AddToBody(new PdfArray(localWidths)).IndirectReference);
             if (_pageResources.HasResources())
+            {
                 font.Put(PdfName.Resources, writer.AddToBody(_pageResources.Resources).IndirectReference);
+            }
+
             writer.AddToBody(font, piRef);
         }
 

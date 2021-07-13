@@ -10,10 +10,12 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// </summary>
         /// <returns>null or modified copy of the ctrlWordData object</returns>
         RtfCtrlWordData BeforeCtrlWord(RtfCtrlWordData ctrlWordData);
+
         /// <summary>
         /// </summary>
         /// <returns>null or modified copy of the ctrlWordData object</returns>
         RtfCtrlWordData OnCtrlWord(RtfCtrlWordData ctrlWordData);
+
         /// <summary>
         /// </summary>
         /// <returns>null or modified copy of the ctrlWordData object</returns>

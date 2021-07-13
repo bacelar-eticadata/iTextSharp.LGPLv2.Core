@@ -19,11 +19,11 @@ namespace iTextSharp.text.pdf.draw
         /// <param name="offset">the offset of the line relative to the current baseline (negative = under the baseline)</param>
         public LineSeparator(float lineWidth, float percentage, BaseColor lineColor, int align, float offset)
         {
-            this.LineWidth = lineWidth;
-            this.Percentage = percentage;
-            this.LineColor = lineColor;
+            LineWidth = lineWidth;
+            Percentage = percentage;
+            LineColor = lineColor;
             Alignment = align;
-            this.Offset = offset;
+            Offset = offset;
         }
 
         /// <summary>
@@ -73,25 +73,35 @@ namespace iTextSharp.text.pdf.draw
         {
             float w;
             if (Percentage < 0)
+            {
                 w = -Percentage;
+            }
             else
+            {
                 w = (rightX - leftX) * Percentage / 100.0f;
+            }
+
             float s;
             switch (Alignment)
             {
                 case Element.ALIGN_LEFT:
                     s = 0;
                     break;
+
                 case Element.ALIGN_RIGHT:
                     s = rightX - leftX - w;
                     break;
+
                 default:
                     s = (rightX - leftX - w) / 2;
                     break;
             }
             canvas.SetLineWidth(LineWidth);
             if (LineColor != null)
+            {
                 canvas.SetColorStroke(LineColor);
+            }
+
             canvas.MoveTo(s + leftX, y + Offset);
             canvas.LineTo(s + w + leftX, y + Offset);
             canvas.Stroke();

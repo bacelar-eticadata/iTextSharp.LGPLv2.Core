@@ -1,6 +1,6 @@
+using iTextSharp.LGPLv2.Core.System.NetUtils;
 using System;
 using System.IO;
-using iTextSharp.LGPLv2.Core.System.NetUtils;
 
 namespace iTextSharp.text.pdf
 {
@@ -10,7 +10,6 @@ namespace iTextSharp.text.pdf
 
     public class PdfImage : PdfStream
     {
-
         internal const int TRANSFERSIZE = 4096;
         /// <summary>
         /// membervariables
@@ -37,20 +36,36 @@ namespace iTextSharp.text.pdf
             Put(PdfName.Width, new PdfNumber(image.Width));
             Put(PdfName.Height, new PdfNumber(image.Height));
             if (image.Layer != null)
+            {
                 Put(PdfName.Oc, image.Layer.Ref);
+            }
+
             if (image.IsMask() && (image.Bpc == 1 || image.Bpc > 0xff))
+            {
                 Put(PdfName.Imagemask, PdfBoolean.Pdftrue);
+            }
+
             if (maskRef != null)
             {
                 if (image.Smask)
+                {
                     Put(PdfName.Smask, maskRef);
+                }
                 else
+                {
                     Put(PdfName.Mask, maskRef);
+                }
             }
             if (image.IsMask() && image.Inverted)
+            {
                 Put(PdfName.Decode, new PdfLiteral("[1 0]"));
+            }
+
             if (image.Interpolation)
+            {
                 Put(PdfName.Interpolate, PdfBoolean.Pdftrue);
+            }
+
             Stream isp = null;
             try
             {
@@ -58,37 +73,58 @@ namespace iTextSharp.text.pdf
                 if (image.IsImgRaw())
                 {
                     // will also have the CCITT parameters
-                    int colorspace = image.Colorspace;
-                    int[] transparency = image.Transparency;
+                    var colorspace = image.Colorspace;
+                    var transparency = image.Transparency;
                     if (transparency != null && !image.IsMask() && maskRef == null)
                     {
-                        string s = "[";
-                        for (int k = 0; k < transparency.Length; ++k)
+                        var s = "[";
+                        for (var k = 0; k < transparency.Length; ++k)
+                        {
                             s += transparency[k] + " ";
+                        }
+
                         s += "]";
                         Put(PdfName.Mask, new PdfLiteral(s));
                     }
                     Bytes = image.RawData;
                     Put(PdfName.LENGTH, new PdfNumber(Bytes.Length));
-                    int bpc = image.Bpc;
+                    var bpc = image.Bpc;
                     if (bpc > 0xff)
                     {
                         if (!image.IsMask())
+                        {
                             Put(PdfName.Colorspace, PdfName.Devicegray);
+                        }
+
                         Put(PdfName.Bitspercomponent, new PdfNumber(1));
                         Put(PdfName.Filter, PdfName.Ccittfaxdecode);
-                        int k = bpc - Element.CCITTG3_1D;
-                        PdfDictionary decodeparms = new PdfDictionary();
+                        var k = bpc - Element.CCITTG3_1D;
+                        var decodeparms = new PdfDictionary();
                         if (k != 0)
+                        {
                             decodeparms.Put(PdfName.K, new PdfNumber(k));
+                        }
+
                         if ((colorspace & Element.CCITT_BLACKIS1) != 0)
+                        {
                             decodeparms.Put(PdfName.Blackis1, PdfBoolean.Pdftrue);
+                        }
+
                         if ((colorspace & Element.CCITT_ENCODEDBYTEALIGN) != 0)
+                        {
                             decodeparms.Put(PdfName.Encodedbytealign, PdfBoolean.Pdftrue);
+                        }
+
                         if ((colorspace & Element.CCITT_ENDOFLINE) != 0)
+                        {
                             decodeparms.Put(PdfName.Endofline, PdfBoolean.Pdftrue);
+                        }
+
                         if ((colorspace & Element.CCITT_ENDOFBLOCK) != 0)
+                        {
                             decodeparms.Put(PdfName.Endofblock, PdfBoolean.Pdffalse);
+                        }
+
                         decodeparms.Put(PdfName.Columns, new PdfNumber(image.Width));
                         decodeparms.Put(PdfName.Rows, new PdfNumber(image.Height));
                         Put(PdfName.Decodeparms, decodeparms);
@@ -100,28 +136,47 @@ namespace iTextSharp.text.pdf
                             case 1:
                                 Put(PdfName.Colorspace, PdfName.Devicegray);
                                 if (image.Inverted)
+                                {
                                     Put(PdfName.Decode, new PdfLiteral("[1 0]"));
+                                }
+
                                 break;
+
                             case 3:
                                 Put(PdfName.Colorspace, PdfName.Devicergb);
                                 if (image.Inverted)
+                                {
                                     Put(PdfName.Decode, new PdfLiteral("[1 0 1 0 1 0]"));
+                                }
+
                                 break;
+
                             case 4:
                             default:
                                 Put(PdfName.Colorspace, PdfName.Devicecmyk);
                                 if (image.Inverted)
+                                {
                                     Put(PdfName.Decode, new PdfLiteral("[1 0 1 0 1 0 1 0]"));
+                                }
+
                                 break;
                         }
-                        PdfDictionary additional = image.Additional;
+                        var additional = image.Additional;
                         if (additional != null)
+                        {
                             Merge(additional);
+                        }
+
                         if (image.IsMask() && (image.Bpc == 1 || image.Bpc > 8))
+                        {
                             Remove(PdfName.Colorspace);
+                        }
+
                         Put(PdfName.Bitspercomponent, new PdfNumber(image.Bpc));
                         if (image.Deflated)
+                        {
                             Put(PdfName.Filter, PdfName.Flatedecode);
+                        }
                         else
                         {
                             FlateCompress(image.CompressionLevel);
@@ -151,9 +206,11 @@ namespace iTextSharp.text.pdf
                             case 1:
                                 Put(PdfName.Colorspace, PdfName.Devicegray);
                                 break;
+
                             case 3:
                                 Put(PdfName.Colorspace, PdfName.Devicergb);
                                 break;
+
                             default:
                                 Put(PdfName.Colorspace, PdfName.Devicecmyk);
                                 if (image.Inverted)
@@ -172,6 +229,7 @@ namespace iTextSharp.text.pdf
                         StreamBytes = new MemoryStream();
                         TransferBytes(isp, StreamBytes, -1);
                         break;
+
                     case Element.JPEG2000:
                         Put(PdfName.Filter, PdfName.Jpxdecode);
                         if (image.Colorspace > 0)
@@ -181,9 +239,11 @@ namespace iTextSharp.text.pdf
                                 case 1:
                                     Put(PdfName.Colorspace, PdfName.Devicegray);
                                     break;
+
                                 case 3:
                                     Put(PdfName.Colorspace, PdfName.Devicergb);
                                     break;
+
                                 default:
                                     Put(PdfName.Colorspace, PdfName.Devicecmyk);
                                     break;
@@ -199,6 +259,7 @@ namespace iTextSharp.text.pdf
                         StreamBytes = new MemoryStream();
                         TransferBytes(isp, StreamBytes, -1);
                         break;
+
                     case Element.JBIG2:
                         Put(PdfName.Filter, PdfName.Jbig2Decode);
                         Put(PdfName.Colorspace, PdfName.Devicegray);
@@ -212,6 +273,7 @@ namespace iTextSharp.text.pdf
                         StreamBytes = new MemoryStream();
                         TransferBytes(isp, StreamBytes, -1);
                         break;
+
                     default:
                         throw new IOException(errorId + " is an unknown Image format.");
                 }
@@ -238,25 +300,25 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>the name</returns>
 
-        public PdfName Name
-        {
-            get
-            {
-                return name;
-            }
-        }
+        public PdfName Name => name;
 
         internal static void TransferBytes(Stream inp, Stream outp, int len)
         {
-            byte[] buffer = new byte[TRANSFERSIZE];
+            var buffer = new byte[TRANSFERSIZE];
             if (len < 0)
+            {
                 len = 0x7ffffff;
+            }
+
             int size;
             while (len != 0)
             {
                 size = inp.Read(buffer, 0, Math.Min(len, TRANSFERSIZE));
                 if (size <= 0)
+                {
                     return;
+                }
+
                 outp.Write(buffer, 0, size);
                 len -= size;
             }

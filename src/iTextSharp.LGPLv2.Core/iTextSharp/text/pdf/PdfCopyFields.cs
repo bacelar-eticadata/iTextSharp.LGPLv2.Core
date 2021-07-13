@@ -1,7 +1,7 @@
-using System.Collections;
-using System.IO;
 using iTextSharp.text.pdf.interfaces;
 using Org.BouncyCastle.X509;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.pdf
 {
@@ -13,7 +13,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfCopyFields : IPdfViewerPreferences, IPdfEncryptionSettings
     {
-
         private readonly PdfCopyFieldsImp _fc;
 
         /// <summary>
@@ -43,13 +42,7 @@ namespace iTextSharp.text.pdf
         /// Gets the 1.5 compression status.
         /// </summary>
         /// <returns> true  if the 1.5 compression is on</returns>
-        public bool FullCompression
-        {
-            get
-            {
-                return _fc.FullCompression;
-            }
-        }
+        public bool FullCompression => _fc.FullCompression;
 
         /// <summary>
         /// Sets the bookmarks. The list structure is defined in
@@ -57,10 +50,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public ArrayList Outlines
         {
-            set
-            {
-                _fc.Outlines = value;
-            }
+            set => _fc.Outlines = value;
         }
 
         /// <summary>
@@ -68,23 +58,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int ViewerPreferences
         {
-            set
-            {
-                _fc.ViewerPreferences = value;
-            }
+            set => _fc.ViewerPreferences = value;
         }
 
         /// <summary>
         /// Gets the underlying PdfWriter.
         /// </summary>
         /// <returns>the underlying PdfWriter</returns>
-        public PdfWriter Writer
-        {
-            get
-            {
-                return _fc;
-            }
-        }
+        public PdfWriter Writer => _fc;
 
         /// <summary>
         /// Concatenates a PDF document.
@@ -191,6 +172,7 @@ namespace iTextSharp.text.pdf
         {
             SetEncryption(DocWriter.GetIsoBytes(userPassword), DocWriter.GetIsoBytes(ownerPassword), permissions, strength);
         }
+
         /// <summary>
         /// @see com.lowagie.text.pdf.interfaces.PdfEncryptionSettings#setEncryption(byte[], byte[], int, int)
         /// </summary>

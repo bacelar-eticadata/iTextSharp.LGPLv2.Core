@@ -1,7 +1,7 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
-using System.Globalization;
 
 namespace iTextSharp.text.pdf
 {
@@ -29,6 +29,7 @@ namespace iTextSharp.text.pdf
         /// The count of bytes in the buffer.
         /// </summary>
         protected int Count;
+
         private static readonly byte[] _bytes = { 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102 };
         private static readonly char[] _chars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
         private static byte[][] _byteCache;
@@ -51,7 +52,10 @@ namespace iTextSharp.text.pdf
         public ByteBuffer(int size)
         {
             if (size < 1)
+            {
                 size = 128;
+            }
+
             Buf = new byte[size];
         }
 
@@ -61,52 +65,19 @@ namespace iTextSharp.text.pdf
         /// This can only be used to increment the size.
         /// If the size that is passed through is smaller than the current size, nothing happens.
         /// </summary>
-        public byte[] Buffer
-        {
-            get
-            {
-                return Buf;
-            }
-        }
+        public byte[] Buffer => Buf;
 
-        public override bool CanRead
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanRead => false;
 
-        public override bool CanSeek
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanWrite => true;
 
-        public override long Length
-        {
-            get
-            {
-                return Count;
-            }
-        }
+        public override long Length => Count;
 
         public override long Position
         {
-            get
-            {
-                return Count;
-            }
+            get => Count;
             set
             {
             }
@@ -118,33 +89,38 @@ namespace iTextSharp.text.pdf
         /// <returns>the value of the  count  field, which is the number of valid bytes in this byte buffer.</returns>
         public int Size
         {
-            get
-            {
-                return Count;
-            }
+            get => Count;
             set
             {
                 if (value > Count || value < 0)
+                {
                     throw new ArgumentOutOfRangeException("The new size must be positive and <= of the current size");
+                }
+
                 Count = value;
             }
         }
 
         public static void FillCache(int decimals)
         {
-            int step = 1;
+            var step = 1;
             switch (decimals)
             {
                 case 0:
                     step = 100;
                     break;
+
                 case 1:
                     step = 10;
                     break;
             }
-            for (int i = 1; i < _byteCacheSize; i += step)
+            for (var i = 1; i < _byteCacheSize; i += step)
             {
-                if (_byteCache[i] != null) continue;
+                if (_byteCache[i] != null)
+                {
+                    continue;
+                }
+
                 _byteCache[i] = convertToBytes(i);
             }
         }
@@ -171,16 +147,18 @@ namespace iTextSharp.text.pdf
         {
             if (HighPrecision)
             {
-                string sform = d.ToString("0.######", CultureInfo.InvariantCulture);
+                var sform = d.ToString("0.######", CultureInfo.InvariantCulture);
                 if (buf == null)
+                {
                     return sform;
+                }
                 else
                 {
                     buf.Append(sform);
                     return null;
                 }
             }
-            bool negative = false;
+            var negative = false;
             if (Math.Abs(d) < 0.000015)
             {
                 if (buf != null)
@@ -231,9 +209,13 @@ namespace iTextSharp.text.pdf
                 }
                 if (buf != null)
                 {
-                    int v = (int)(d * 100000);
+                    var v = (int)(d * 100000);
 
-                    if (negative) buf.Append((byte)'-');
+                    if (negative)
+                    {
+                        buf.Append((byte)'-');
+                    }
+
                     buf.Append((byte)'0');
                     buf.Append((byte)'.');
 
@@ -258,11 +240,15 @@ namespace iTextSharp.text.pdf
                 }
                 else
                 {
-                    int x = 100000;
-                    int v = (int)(d * x);
+                    var x = 100000;
+                    var v = (int)(d * x);
 
-                    StringBuilder res = new StringBuilder();
-                    if (negative) res.Append('-');
+                    var res = new StringBuilder();
+                    if (negative)
+                    {
+                        res.Append('-');
+                    }
+
                     res.Append("0.");
 
                     while (v < x / 10)
@@ -271,7 +257,7 @@ namespace iTextSharp.text.pdf
                         x /= 10;
                     }
                     res.Append(v);
-                    int cut = res.Length - 1;
+                    var cut = res.Length - 1;
                     while (res[cut] == '0')
                     {
                         --cut;
@@ -283,20 +269,28 @@ namespace iTextSharp.text.pdf
             else if (d <= 32767)
             {
                 d += 0.005;
-                int v = (int)(d * 100);
+                var v = (int)(d * 100);
 
                 if (v < _byteCacheSize && _byteCache[v] != null)
                 {
                     if (buf != null)
                     {
-                        if (negative) buf.Append((byte)'-');
+                        if (negative)
+                        {
+                            buf.Append((byte)'-');
+                        }
+
                         buf.Append(_byteCache[v]);
                         return null;
                     }
                     else
                     {
-                        string tmp = PdfEncodings.ConvertToString(_byteCache[v], null);
-                        if (negative) tmp = "-" + tmp;
+                        var tmp = PdfEncodings.ConvertToString(_byteCache[v], null);
+                        if (negative)
+                        {
+                            tmp = "-" + tmp;
+                        }
+
                         return tmp;
                     }
                 }
@@ -306,7 +300,7 @@ namespace iTextSharp.text.pdf
                     {
                         //create the cachebyte[]
                         byte[] cache;
-                        int size = 0;
+                        var size = 0;
                         if (v >= 1000000)
                         {
                             //the original number is >=10000, we need 5 more bytes
@@ -344,7 +338,7 @@ namespace iTextSharp.text.pdf
                             size++;
                         }
                         cache = new byte[size];
-                        int add = 0;
+                        var add = 0;
                         if (v >= 1000000)
                         {
                             cache[add++] = _bytes[(v / 1000000)];
@@ -378,7 +372,11 @@ namespace iTextSharp.text.pdf
                         _byteCache[v] = cache;
                     }
 
-                    if (negative) buf.Append((byte)'-');
+                    if (negative)
+                    {
+                        buf.Append((byte)'-');
+                    }
+
                     if (v >= 1000000)
                     {
                         buf.Append(_bytes[(v / 1000000)]);
@@ -413,8 +411,12 @@ namespace iTextSharp.text.pdf
                 }
                 else
                 {
-                    StringBuilder res = new StringBuilder();
-                    if (negative) res.Append('-');
+                    var res = new StringBuilder();
+                    if (negative)
+                    {
+                        res.Append('-');
+                    }
+
                     if (v >= 1000000)
                     {
                         res.Append(_chars[(v / 1000000)]);
@@ -450,24 +452,35 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                StringBuilder res = new StringBuilder();
-                if (negative) res.Append('-');
+                var res = new StringBuilder();
+                if (negative)
+                {
+                    res.Append('-');
+                }
+
                 d += 0.5;
-                long v = (long)d;
+                var v = (long)d;
                 return res.Append(v).ToString();
             }
         }
 
         public static void SetCacheSize(int size)
         {
-            if (size > 3276700) size = 3276700;
-            if (size <= _byteCacheSize) return;
-            byte[][] tmpCache = new byte[size][];
+            if (size > 3276700)
+            {
+                size = 3276700;
+            }
+
+            if (size <= _byteCacheSize)
+            {
+                return;
+            }
+
+            var tmpCache = new byte[size][];
             Array.Copy(_byteCache, 0, tmpCache, 0, _byteCacheSize);
             _byteCache = tmpCache;
             _byteCacheSize = size;
         }
-
 
         /// <summary>
         /// Appends the subarray of the  byte  array. The buffer will grow by
@@ -481,11 +494,14 @@ namespace iTextSharp.text.pdf
         {
             if ((off < 0) || (off > b.Length) || (len < 0) ||
                 ((off + len) > b.Length) || ((off + len) < 0) || len == 0)
+            {
                 return this;
-            int newcount = Count + len;
+            }
+
+            var newcount = Count + len;
             if (newcount > Buf.Length)
             {
-                byte[] newbuf = new byte[Math.Max(Buf.Length << 1, newcount)];
+                var newbuf = new byte[Math.Max(Buf.Length << 1, newcount)];
                 Array.Copy(Buf, 0, newbuf, 0, Count);
                 Buf = newbuf;
             }
@@ -513,7 +529,10 @@ namespace iTextSharp.text.pdf
         public ByteBuffer Append(string str)
         {
             if (str != null)
+            {
                 return Append(DocWriter.GetIsoBytes(str));
+            }
+
             return this;
         }
 
@@ -583,10 +602,10 @@ namespace iTextSharp.text.pdf
         /// <returns>a reference to this  ByteBuffer  object</returns>
         public ByteBuffer Append_i(int b)
         {
-            int newcount = Count + 1;
+            var newcount = Count + 1;
             if (newcount > Buf.Length)
             {
-                byte[] newbuf = new byte[Math.Max(Buf.Length << 1, newcount)];
+                var newbuf = new byte[Math.Max(Buf.Length << 1, newcount)];
                 Array.Copy(Buf, 0, newbuf, 0, Count);
                 Buf = newbuf;
             }
@@ -635,7 +654,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the current contents of this output stream, as a byte array.</returns>
         public byte[] ToByteArray()
         {
-            byte[] newbuf = new byte[Count];
+            var newbuf = new byte[Count];
             Array.Copy(Buf, 0, newbuf, 0, Count);
             return newbuf;
         }
@@ -647,7 +666,7 @@ namespace iTextSharp.text.pdf
         /// <returns>string translated from the buffer's contents.</returns>
         public override string ToString()
         {
-            char[] tmp = convertToChar(Buf);
+            var tmp = convertToChar(Buf);
             return new string(tmp, 0, Count);
         }
 
@@ -675,7 +694,7 @@ namespace iTextSharp.text.pdf
 
         private static byte[] convertToBytes(int i)
         {
-            int size = (int)Math.Floor(Math.Log(i) / Math.Log(10));
+            var size = (int)Math.Floor(Math.Log(i) / Math.Log(10));
             if (i % 100 != 0)
             {
                 size += 2;
@@ -693,7 +712,7 @@ namespace iTextSharp.text.pdf
                 }
             }
             size--;
-            byte[] cache = new byte[size];
+            var cache = new byte[size];
             size--;
             if (i < 100)
             {
@@ -709,7 +728,7 @@ namespace iTextSharp.text.pdf
                 cache[size--] = (byte)'.';
             }
             size = (int)Math.Floor(Math.Log(i) / Math.Log(10)) - 1;
-            int add = 0;
+            var add = 0;
             while (add < size)
             {
                 cache[add] = _bytes[(i / (int)Math.Pow(10, size - add + 1)) % 10];
@@ -717,6 +736,7 @@ namespace iTextSharp.text.pdf
             }
             return cache;
         }
+
         /// <summary>
         /// Converts the buffer's contents into a string, translating bytes into
         /// characters according to the specified character encoding.
@@ -725,8 +745,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private char[] convertToChar(byte[] buf)
         {
-            char[] retVal = new char[Count + 1];
-            for (int i = 0; i <= Count; i++)
+            var retVal = new char[Count + 1];
+            for (var i = 0; i <= Count; i++)
             {
                 retVal[i] = (char)buf[i];
             }

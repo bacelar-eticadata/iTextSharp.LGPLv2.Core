@@ -34,7 +34,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PushbuttonField : BaseField
     {
-
         /// <summary>
         /// A layout option
         /// </summary>
@@ -59,6 +58,7 @@ namespace iTextSharp.text.pdf
         /// A layout option
         /// </summary>
         public const int LAYOUT_LABEL_ONLY = 1;
+
         /// <summary>
         /// A layout option
         /// </summary>
@@ -68,10 +68,12 @@ namespace iTextSharp.text.pdf
         /// A layout option
         /// </summary>
         public const int LAYOUT_LABEL_TOP_ICON_BOTTOM = 4;
+
         /// <summary>
         /// An icon scaling option
         /// </summary>
         public const int SCALE_ICON_ALWAYS = 1;
+
         /// <summary>
         /// An icon scaling option
         /// </summary>
@@ -86,6 +88,7 @@ namespace iTextSharp.text.pdf
         /// An icon scaling option
         /// </summary>
         public const int SCALE_ICON_NEVER = 2;
+
         /// <summary>
         /// Holds value of property iconFitToBounds.
         /// </summary>
@@ -115,6 +118,7 @@ namespace iTextSharp.text.pdf
         /// Holds value of property layout.
         /// </summary>
         private int _layout = LAYOUT_LABEL_ONLY;
+
         /// <summary>
         /// Holds value of property proportionalIcon.
         /// </summary>
@@ -129,6 +133,7 @@ namespace iTextSharp.text.pdf
         /// Holds value of property template.
         /// </summary>
         private PdfTemplate _template;
+
         private PdfTemplate _tp;
 
         /// <summary>
@@ -152,58 +157,93 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                PdfFormField field = PdfFormField.CreatePushButton(writer);
+                var field = PdfFormField.CreatePushButton(writer);
                 field.SetWidget(box, PdfAnnotation.HighlightInvert);
                 if (fieldName != null)
                 {
                     field.FieldName = fieldName;
                     if ((options & READ_ONLY) != 0)
+                    {
                         field.SetFieldFlags(PdfFormField.FF_READ_ONLY);
+                    }
+
                     if ((options & REQUIRED) != 0)
+                    {
                         field.SetFieldFlags(PdfFormField.FF_REQUIRED);
+                    }
                 }
                 if (text != null)
+                {
                     field.MkNormalCaption = text;
+                }
+
                 if (rotation != 0)
+                {
                     field.MkRotation = rotation;
+                }
+
                 field.BorderStyle = new PdfBorderDictionary(borderWidth, borderStyle, new PdfDashPattern(3));
-                PdfAppearance tpa = GetAppearance();
+                var tpa = GetAppearance();
                 field.SetAppearance(PdfAnnotation.AppearanceNormal, tpa);
-                PdfAppearance da = (PdfAppearance)tpa.Duplicate;
+                var da = (PdfAppearance)tpa.Duplicate;
                 da.SetFontAndSize(RealFont, fontSize);
                 if (textColor == null)
+                {
                     da.SetGrayFill(0);
+                }
                 else
+                {
                     da.SetColorFill(textColor);
+                }
+
                 field.DefaultAppearanceString = da;
                 if (borderColor != null)
+                {
                     field.MkBorderColor = borderColor;
+                }
+
                 if (backgroundColor != null)
+                {
                     field.MkBackgroundColor = backgroundColor;
+                }
+
                 switch (visibility)
                 {
                     case HIDDEN:
                         field.Flags = PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_HIDDEN;
                         break;
+
                     case VISIBLE_BUT_DOES_NOT_PRINT:
                         break;
+
                     case HIDDEN_BUT_PRINTABLE:
                         field.Flags = PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_NOVIEW;
                         break;
+
                     default:
                         field.Flags = PdfAnnotation.FLAGS_PRINT;
                         break;
                 }
                 if (_tp != null)
+                {
                     field.MkNormalIcon = _tp;
+                }
+
                 field.MkTextPosition = _layout - 1;
-                PdfName scale = PdfName.A;
+                var scale = PdfName.A;
                 if (_scaleIcon == SCALE_ICON_IS_TOO_BIG)
+                {
                     scale = PdfName.B;
+                }
                 else if (_scaleIcon == SCALE_ICON_IS_TOO_SMALL)
+                {
                     scale = PdfName.S;
+                }
                 else if (_scaleIcon == SCALE_ICON_NEVER)
+                {
                     scale = PdfName.N;
+                }
+
                 field.SetMkIconFit(scale, _proportionalIcon ? PdfName.P : PdfName.A, _iconHorizontalAdjustment,
                     _iconVerticalAdjustment, _iconFitToBounds);
                 return field;
@@ -218,14 +258,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool IconFitToBounds
         {
-            get
-            {
-                return _iconFitToBounds;
-            }
-            set
-            {
-                _iconFitToBounds = value;
-            }
+            get => _iconFitToBounds;
+            set => _iconFitToBounds = value;
         }
 
         /// <summary>
@@ -235,17 +269,18 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float IconHorizontalAdjustment
         {
-            get
-            {
-                return _iconHorizontalAdjustment;
-            }
+            get => _iconHorizontalAdjustment;
             set
             {
                 _iconHorizontalAdjustment = value;
                 if (_iconHorizontalAdjustment < 0)
+                {
                     _iconHorizontalAdjustment = 0;
+                }
                 else if (_iconHorizontalAdjustment > 1)
+                {
                     _iconHorizontalAdjustment = 1;
+                }
             }
         }
 
@@ -254,14 +289,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public PrIndirectReference IconReference
         {
-            get
-            {
-                return _iconReference;
-            }
-            set
-            {
-                _iconReference = value;
-            }
+            get => _iconReference;
+            set => _iconReference = value;
         }
 
         /// <summary>
@@ -271,17 +300,18 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float IconVerticalAdjustment
         {
-            get
-            {
-                return _iconVerticalAdjustment;
-            }
+            get => _iconVerticalAdjustment;
             set
             {
                 _iconVerticalAdjustment = value;
                 if (_iconVerticalAdjustment < 0)
+                {
                     _iconVerticalAdjustment = 0;
+                }
                 else if (_iconVerticalAdjustment > 1)
+                {
                     _iconVerticalAdjustment = 1;
+                }
             }
         }
 
@@ -290,10 +320,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public Image Image
         {
-            get
-            {
-                return _image;
-            }
+            get => _image;
             set
             {
                 _image = value;
@@ -313,28 +340,23 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value < LAYOUT_LABEL_ONLY || value > LAYOUT_LABEL_OVER_ICON)
+                {
                     throw new ArgumentException("Layout out of bounds.");
+                }
+
                 _layout = value;
             }
-            get
-            {
-                return _layout;
-            }
+            get => _layout;
         }
+
         /// <summary>
         /// Sets the way the icon is scaled. If  true  the icon is scaled proportionally,
         /// if  false  the scaling is done anamorphicaly.
         /// </summary>
         public bool ProportionalIcon
         {
-            get
-            {
-                return _proportionalIcon;
-            }
-            set
-            {
-                _proportionalIcon = value;
-            }
+            get => _proportionalIcon;
+            set => _proportionalIcon = value;
         }
 
         /// <summary>
@@ -348,14 +370,15 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value < SCALE_ICON_ALWAYS || value > SCALE_ICON_IS_TOO_SMALL)
+                {
                     _scaleIcon = SCALE_ICON_ALWAYS;
+                }
                 else
+                {
                     _scaleIcon = value;
+                }
             }
-            get
-            {
-                return _scaleIcon;
-            }
+            get => _scaleIcon;
         }
 
         /// <summary>
@@ -368,11 +391,9 @@ namespace iTextSharp.text.pdf
                 _template = value;
                 _image = null;
             }
-            get
-            {
-                return _template;
-            }
+            get => _template;
         }
+
         /// <summary>
         /// Gets the button appearance.
         /// @throws IOException on error
@@ -381,36 +402,42 @@ namespace iTextSharp.text.pdf
         /// <returns>the button appearance</returns>
         public PdfAppearance GetAppearance()
         {
-            PdfAppearance app = GetBorderAppearance();
-            Rectangle localBox = new Rectangle(app.BoundingBox);
+            var app = GetBorderAppearance();
+            var localBox = new Rectangle(app.BoundingBox);
             if (string.IsNullOrEmpty(text) && (_layout == LAYOUT_LABEL_ONLY || (_image == null && _template == null && _iconReference == null)))
             {
                 return app;
             }
             if (_layout == LAYOUT_ICON_ONLY && _image == null && _template == null && _iconReference == null)
+            {
                 return app;
-            BaseFont ufont = RealFont;
-            bool borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
-            float h = localBox.Height - borderWidth * 2;
-            float bw2 = borderWidth;
+            }
+
+            var ufont = RealFont;
+            var borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
+            var h = localBox.Height - borderWidth * 2;
+            var bw2 = borderWidth;
             if (borderExtra)
             {
                 h -= borderWidth * 2;
                 bw2 *= 2;
             }
-            float offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
+            var offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
             offsetX = Math.Max(offsetX, 1);
-            float offX = Math.Min(bw2, offsetX);
+            var offX = Math.Min(bw2, offsetX);
             _tp = null;
-            float textX = float.NaN;
+            var textX = float.NaN;
             float textY = 0;
-            float fsize = fontSize;
-            float wt = localBox.Width - 2 * offX - 2;
-            float ht = localBox.Height - 2 * offX;
-            float adj = (_iconFitToBounds ? 0 : offX + 1);
-            int nlayout = _layout;
+            var fsize = fontSize;
+            var wt = localBox.Width - 2 * offX - 2;
+            var ht = localBox.Height - 2 * offX;
+            var adj = (_iconFitToBounds ? 0 : offX + 1);
+            var nlayout = _layout;
             if (_image == null && _template == null && _iconReference == null)
+            {
                 nlayout = LAYOUT_LABEL_ONLY;
+            }
+
             Rectangle iconBox = null;
             while (true)
             {
@@ -427,23 +454,33 @@ namespace iTextSharp.text.pdf
                         goto case LAYOUT_ICON_ONLY;
                     case LAYOUT_ICON_ONLY:
                         if (nlayout == LAYOUT_LABEL_OVER_ICON || nlayout == LAYOUT_ICON_ONLY)
+                        {
                             iconBox = new Rectangle(localBox.Left + adj, localBox.Bottom + adj, localBox.Right - adj, localBox.Top - adj);
+                        }
+
                         break;
+
                     case LAYOUT_ICON_TOP_LABEL_BOTTOM:
                         if (string.IsNullOrEmpty(text) || wt <= 0 || ht <= 0)
                         {
                             nlayout = LAYOUT_ICON_ONLY;
                             continue;
                         }
-                        float nht = localBox.Height * 0.35f - offX;
+                        var nht = localBox.Height * 0.35f - offX;
                         if (nht > 0)
+                        {
                             fsize = calculateFontSize(wt, nht);
+                        }
                         else
+                        {
                             fsize = 4;
+                        }
+
                         textX = (localBox.Width - ufont.GetWidthPoint(text, fsize)) / 2;
                         textY = offX - ufont.GetFontDescriptor(BaseFont.DESCENT, fsize);
                         iconBox = new Rectangle(localBox.Left + adj, textY + fsize, localBox.Right - adj, localBox.Top - adj);
                         break;
+
                     case LAYOUT_LABEL_TOP_ICON_BOTTOM:
                         if (string.IsNullOrEmpty(text) || wt <= 0 || ht <= 0)
                         {
@@ -452,26 +489,40 @@ namespace iTextSharp.text.pdf
                         }
                         nht = localBox.Height * 0.35f - offX;
                         if (nht > 0)
+                        {
                             fsize = calculateFontSize(wt, nht);
+                        }
                         else
+                        {
                             fsize = 4;
+                        }
+
                         textX = (localBox.Width - ufont.GetWidthPoint(text, fsize)) / 2;
                         textY = localBox.Height - offX - fsize;
                         if (textY < offX)
+                        {
                             textY = offX;
+                        }
+
                         iconBox = new Rectangle(localBox.Left + adj, localBox.Bottom + adj, localBox.Right - adj, textY + ufont.GetFontDescriptor(BaseFont.DESCENT, fsize));
                         break;
+
                     case LAYOUT_LABEL_LEFT_ICON_RIGHT:
                         if (string.IsNullOrEmpty(text) || wt <= 0 || ht <= 0)
                         {
                             nlayout = LAYOUT_ICON_ONLY;
                             continue;
                         }
-                        float nw = localBox.Width * 0.35f - offX;
+                        var nw = localBox.Width * 0.35f - offX;
                         if (nw > 0)
+                        {
                             fsize = calculateFontSize(wt, nw);
+                        }
                         else
+                        {
                             fsize = 4;
+                        }
+
                         if (ufont.GetWidthPoint(text, fsize) >= wt)
                         {
                             nlayout = LAYOUT_LABEL_ONLY;
@@ -482,6 +533,7 @@ namespace iTextSharp.text.pdf
                         textY = (localBox.Height - ufont.GetFontDescriptor(BaseFont.ASCENT, fsize)) / 2;
                         iconBox = new Rectangle(textX + ufont.GetWidthPoint(text, fsize), localBox.Bottom + adj, localBox.Right - adj, localBox.Top - adj);
                         break;
+
                     case LAYOUT_ICON_LEFT_LABEL_RIGHT:
                         if (string.IsNullOrEmpty(text) || wt <= 0 || ht <= 0)
                         {
@@ -490,9 +542,14 @@ namespace iTextSharp.text.pdf
                         }
                         nw = localBox.Width * 0.35f - offX;
                         if (nw > 0)
+                        {
                             fsize = calculateFontSize(wt, nw);
+                        }
                         else
+                        {
                             fsize = 4;
+                        }
+
                         if (ufont.GetWidthPoint(text, fsize) >= wt)
                         {
                             nlayout = LAYOUT_LABEL_ONLY;
@@ -507,10 +564,16 @@ namespace iTextSharp.text.pdf
                 break;
             }
             if (textY < localBox.Bottom + offX)
+            {
                 textY = localBox.Bottom + offX;
+            }
+
             if (iconBox != null && (iconBox.Width <= 0 || iconBox.Height <= 0))
+            {
                 iconBox = null;
-            bool haveIcon = false;
+            }
+
+            var haveIcon = false;
             float boundingBoxWidth = 0;
             float boundingBoxHeight = 0;
             PdfArray matrix = null;
@@ -518,8 +581,10 @@ namespace iTextSharp.text.pdf
             {
                 if (_image != null)
                 {
-                    _tp = new PdfTemplate(writer);
-                    _tp.BoundingBox = new Rectangle(_image);
+                    _tp = new PdfTemplate(writer)
+                    {
+                        BoundingBox = new Rectangle(_image)
+                    };
                     writer.AddDirectTemplateSimple(_tp, PdfName.Frm);
                     _tp.AddImage(_image, _image.Width, 0, 0, _image.Height, 0, 0);
                     haveIcon = true;
@@ -528,8 +593,10 @@ namespace iTextSharp.text.pdf
                 }
                 else if (_template != null)
                 {
-                    _tp = new PdfTemplate(writer);
-                    _tp.BoundingBox = new Rectangle(_template.Width, _template.Height);
+                    _tp = new PdfTemplate(writer)
+                    {
+                        BoundingBox = new Rectangle(_template.Width, _template.Height)
+                    };
                     writer.AddDirectTemplateSimple(_tp, PdfName.Frm);
                     _tp.AddTemplate(_template, _template.BoundingBox.Left, _template.BoundingBox.Bottom);
                     haveIcon = true;
@@ -538,10 +605,10 @@ namespace iTextSharp.text.pdf
                 }
                 else if (_iconReference != null)
                 {
-                    PdfDictionary dic = (PdfDictionary)PdfReader.GetPdfObject(_iconReference);
+                    var dic = (PdfDictionary)PdfReader.GetPdfObject(_iconReference);
                     if (dic != null)
                     {
-                        Rectangle r2 = PdfReader.GetNormalizedRectangle(dic.GetAsArray(PdfName.Bbox));
+                        var r2 = PdfReader.GetNormalizedRectangle(dic.GetAsArray(PdfName.Bbox));
                         matrix = dic.GetAsArray(PdfName.Matrix);
                         haveIcon = true;
                         boundingBoxWidth = r2.Width;
@@ -551,8 +618,8 @@ namespace iTextSharp.text.pdf
             }
             if (haveIcon)
             {
-                float icx = iconBox.Width / boundingBoxWidth;
-                float icy = iconBox.Height / boundingBoxHeight;
+                var icx = iconBox.Width / boundingBoxWidth;
+                var icy = iconBox.Height / boundingBoxHeight;
                 if (_proportionalIcon)
                 {
                     switch (_scaleIcon)
@@ -561,13 +628,16 @@ namespace iTextSharp.text.pdf
                             icx = Math.Min(icx, icy);
                             icx = Math.Min(icx, 1);
                             break;
+
                         case SCALE_ICON_IS_TOO_SMALL:
                             icx = Math.Min(icx, icy);
                             icx = Math.Max(icx, 1);
                             break;
+
                         case SCALE_ICON_NEVER:
                             icx = 1;
                             break;
+
                         default:
                             icx = Math.Min(icx, icy);
                             break;
@@ -582,37 +652,47 @@ namespace iTextSharp.text.pdf
                             icx = Math.Min(icx, 1);
                             icy = Math.Min(icy, 1);
                             break;
+
                         case SCALE_ICON_IS_TOO_SMALL:
                             icx = Math.Max(icx, 1);
                             icy = Math.Max(icy, 1);
                             break;
+
                         case SCALE_ICON_NEVER:
                             icx = icy = 1;
                             break;
+
                         default:
                             break;
                     }
                 }
-                float xpos = iconBox.Left + (iconBox.Width - (boundingBoxWidth * icx)) * _iconHorizontalAdjustment;
-                float ypos = iconBox.Bottom + (iconBox.Height - (boundingBoxHeight * icy)) * _iconVerticalAdjustment;
+                var xpos = iconBox.Left + (iconBox.Width - (boundingBoxWidth * icx)) * _iconHorizontalAdjustment;
+                var ypos = iconBox.Bottom + (iconBox.Height - (boundingBoxHeight * icy)) * _iconVerticalAdjustment;
                 app.SaveState();
                 app.Rectangle(iconBox.Left, iconBox.Bottom, iconBox.Width, iconBox.Height);
                 app.Clip();
                 app.NewPath();
                 if (_tp != null)
+                {
                     app.AddTemplate(_tp, icx, 0, 0, icy, xpos, ypos);
+                }
                 else
                 {
                     float cox = 0;
                     float coy = 0;
                     if (matrix != null && matrix.Size == 6)
                     {
-                        PdfNumber nm = matrix.GetAsNumber(4);
+                        var nm = matrix.GetAsNumber(4);
                         if (nm != null)
+                        {
                             cox = nm.FloatValue;
+                        }
+
                         nm = matrix.GetAsNumber(5);
                         if (nm != null)
+                        {
                             coy = nm.FloatValue;
+                        }
                     }
                     app.AddTemplateReference(_iconReference, PdfName.Frm, icx, 0, 0, icy, xpos - cox * icx, ypos - coy * icy);
                 }
@@ -625,9 +705,14 @@ namespace iTextSharp.text.pdf
                 app.Clip();
                 app.NewPath();
                 if (textColor == null)
+                {
                     app.ResetGrayFill();
+                }
                 else
+                {
                     app.SetColorFill(textColor);
+                }
+
                 app.BeginText();
                 app.SetFontAndSize(ufont, fsize);
                 app.SetTextMatrix(textX, textY);
@@ -640,19 +725,26 @@ namespace iTextSharp.text.pdf
 
         private float calculateFontSize(float w, float h)
         {
-            BaseFont ufont = RealFont;
-            float fsize = fontSize;
+            var ufont = RealFont;
+            var fsize = fontSize;
             if (fsize.ApproxEquals(0))
             {
-                float bw = ufont.GetWidthPoint(text, 1);
+                var bw = ufont.GetWidthPoint(text, 1);
                 if (bw.ApproxEquals(0))
+                {
                     fsize = 12;
+                }
                 else
+                {
                     fsize = w / bw;
-                float nfsize = h / (1 - ufont.GetFontDescriptor(BaseFont.DESCENT, 1));
+                }
+
+                var nfsize = h / (1 - ufont.GetFontDescriptor(BaseFont.DESCENT, 1));
                 fsize = Math.Min(fsize, nfsize);
                 if (fsize < 4)
+                {
                     fsize = 4;
+                }
             }
             return fsize;
         }

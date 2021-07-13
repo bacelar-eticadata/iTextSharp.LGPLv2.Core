@@ -1,9 +1,9 @@
+using iTextSharp.text.xml.simpleparser;
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.util;
-using iTextSharp.text.xml.simpleparser;
 
 namespace iTextSharp.text.pdf
 {
@@ -12,7 +12,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public sealed class SimpleNamedDestination : ISimpleXmlDocHandler
     {
-
         private Hashtable _xmlLast;
         private Hashtable _xmlNames;
 
@@ -22,23 +21,27 @@ namespace iTextSharp.text.pdf
 
         public static string EscapeBinaryString(string s)
         {
-            StringBuilder buf = new StringBuilder();
-            char[] cc = s.ToCharArray();
-            int len = cc.Length;
-            for (int k = 0; k < len; ++k)
+            var buf = new StringBuilder();
+            var cc = s.ToCharArray();
+            var len = cc.Length;
+            for (var k = 0; k < len; ++k)
             {
-                char c = cc[k];
+                var c = cc[k];
                 if (c < ' ')
                 {
                     buf.Append('\\');
                     ((int)c).ToString("", System.Globalization.CultureInfo.InvariantCulture);
-                    string octal = "00" + Convert.ToString(c, 8);
+                    var octal = "00" + Convert.ToString(c, 8);
                     buf.Append(octal.Substring(octal.Length - 3));
                 }
                 else if (c == '\\')
+                {
                     buf.Append("\\\\");
+                }
                 else
+                {
                     buf.Append(c);
+                }
             }
             return buf.ToString();
         }
@@ -63,7 +66,7 @@ namespace iTextSharp.text.pdf
         /// <param name="onlyAscii">codes above 127 will always be escaped with &amp;#nn; if  true ,</param>
         public static void ExportToXml(Hashtable names, Stream outp, string encoding, bool onlyAscii)
         {
-            StreamWriter wrt = new StreamWriter(outp, IanaEncodings.GetEncodingEncoding(encoding));
+            var wrt = new StreamWriter(outp, IanaEncodings.GetEncodingEncoding(encoding));
             ExportToXml(names, wrt, encoding, onlyAscii);
         }
 
@@ -83,7 +86,7 @@ namespace iTextSharp.text.pdf
             wrt.Write("\"?>\n<Destination>\n");
             foreach (string key in names.Keys)
             {
-                string value = (string)names[key];
+                var value = (string)names[key];
                 wrt.Write("  <Name Page=\"");
                 wrt.Write(SimpleXmlParser.EscapeXml(value, onlyAscii));
                 wrt.Write("\">");
@@ -96,23 +99,29 @@ namespace iTextSharp.text.pdf
 
         public static Hashtable GetNamedDestination(PdfReader reader, bool fromNames)
         {
-            IntHashtable pages = new IntHashtable();
-            int numPages = reader.NumberOfPages;
-            for (int k = 1; k <= numPages; ++k)
-                pages[reader.GetPageOrigRef(k).Number] = k;
-            Hashtable names = fromNames ? reader.GetNamedDestinationFromNames() : reader.GetNamedDestinationFromStrings();
-            string[] keys = new string[names.Count];
-            names.Keys.CopyTo(keys, 0);
-            foreach (string name in keys)
+            var pages = new IntHashtable();
+            var numPages = reader.NumberOfPages;
+            for (var k = 1; k <= numPages; ++k)
             {
-                PdfArray arr = (PdfArray)names[name];
-                StringBuilder s = new StringBuilder();
+                pages[reader.GetPageOrigRef(k).Number] = k;
+            }
+
+            var names = fromNames ? reader.GetNamedDestinationFromNames() : reader.GetNamedDestinationFromStrings();
+            var keys = new string[names.Count];
+            names.Keys.CopyTo(keys, 0);
+            foreach (var name in keys)
+            {
+                var arr = (PdfArray)names[name];
+                var s = new StringBuilder();
                 try
                 {
                     s.Append(pages[(arr.GetAsIndirectObject(0)).Number]);
                     s.Append(' ').Append(arr[1].ToString().Substring(1));
-                    for (int k = 2; k < arr.Size; ++k)
+                    for (var k = 2; k < arr.Size; ++k)
+                    {
                         s.Append(' ').Append(arr[k]);
+                    }
+
                     names[name] = s.ToString();
                 }
                 catch
@@ -122,6 +131,7 @@ namespace iTextSharp.text.pdf
             }
             return names;
         }
+
         /// <summary>
         /// Import the names from XML.
         /// @throws IOException on error
@@ -130,7 +140,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the names</returns>
         public static Hashtable ImportFromXml(Stream inp)
         {
-            SimpleNamedDestination names = new SimpleNamedDestination();
+            var names = new SimpleNamedDestination();
             SimpleXmlParser.Parse(names, inp);
             return names._xmlNames;
         }
@@ -143,21 +153,21 @@ namespace iTextSharp.text.pdf
         /// <returns>the names</returns>
         public static Hashtable ImportFromXml(TextReader inp)
         {
-            SimpleNamedDestination names = new SimpleNamedDestination();
+            var names = new SimpleNamedDestination();
             SimpleXmlParser.Parse(names, inp);
             return names._xmlNames;
         }
 
         public static PdfDictionary OutputNamedDestinationAsNames(Hashtable names, PdfWriter writer)
         {
-            PdfDictionary dic = new PdfDictionary();
+            var dic = new PdfDictionary();
             foreach (string key in names.Keys)
             {
                 try
                 {
-                    string value = (string)names[key];
-                    PdfArray ar = CreateDestinationArray(value, writer);
-                    PdfName kn = new PdfName(key);
+                    var value = (string)names[key];
+                    var ar = CreateDestinationArray(value, writer);
+                    var kn = new PdfName(key);
                     dic.Put(kn, ar);
                 }
                 catch
@@ -170,13 +180,13 @@ namespace iTextSharp.text.pdf
 
         public static PdfDictionary OutputNamedDestinationAsStrings(Hashtable names, PdfWriter writer)
         {
-            Hashtable n2 = new Hashtable();
+            var n2 = new Hashtable();
             foreach (string key in names.Keys)
             {
                 try
                 {
-                    string value = (string)names[key];
-                    PdfArray ar = CreateDestinationArray(value, writer);
+                    var value = (string)names[key];
+                    var ar = CreateDestinationArray(value, writer);
                     n2[key] = writer.AddToBody(ar).IndirectReference;
                 }
                 catch
@@ -189,12 +199,12 @@ namespace iTextSharp.text.pdf
 
         public static string UnEscapeBinaryString(string s)
         {
-            StringBuilder buf = new StringBuilder();
-            char[] cc = s.ToCharArray();
-            int len = cc.Length;
-            for (int k = 0; k < len; ++k)
+            var buf = new StringBuilder();
+            var cc = s.ToCharArray();
+            var len = cc.Length;
+            for (var k = 0; k < len; ++k)
             {
-                char c = cc[k];
+                var c = cc[k];
                 if (c == '\\')
                 {
                     if (++k >= len)
@@ -205,9 +215,9 @@ namespace iTextSharp.text.pdf
                     c = cc[k];
                     if (c >= '0' && c <= '7')
                     {
-                        int n = c - '0';
+                        var n = c - '0';
                         ++k;
-                        for (int j = 0; j < 2 && k < len; ++j)
+                        for (var j = 0; j < 2 && k < len; ++j)
                         {
                             c = cc[k];
                             if (c >= '0' && c <= '7')
@@ -224,10 +234,14 @@ namespace iTextSharp.text.pdf
                         buf.Append((char)n);
                     }
                     else
+                    {
                         buf.Append(c);
+                    }
                 }
                 else
+                {
                     buf.Append(c);
+                }
             }
             return buf.ToString();
         }
@@ -241,16 +255,29 @@ namespace iTextSharp.text.pdf
             if (tag.Equals("Destination"))
             {
                 if (_xmlLast == null && _xmlNames != null)
+                {
                     return;
+                }
                 else
+                {
                     throw new ArgumentException("Destination end tag out of place.");
+                }
             }
             if (!tag.Equals("Name"))
+            {
                 throw new ArgumentException("Invalid end tag - " + tag);
+            }
+
             if (_xmlLast == null || _xmlNames == null)
+            {
                 throw new ArgumentException("Name end tag out of place.");
+            }
+
             if (!_xmlLast.ContainsKey("Page"))
+            {
                 throw new ArgumentException("Page attribute missing.");
+            }
+
             _xmlNames[UnEscapeBinaryString((string)_xmlLast["Name"])] = _xmlLast["Page"];
             _xmlLast = null;
         }
@@ -269,30 +296,43 @@ namespace iTextSharp.text.pdf
                     return;
                 }
                 else
+                {
                     throw new ArgumentException("Root element is not Destination.");
+                }
             }
             if (!tag.Equals("Name"))
+            {
                 throw new ArgumentException("Tag " + tag + " not allowed.");
+            }
+
             if (_xmlLast != null)
+            {
                 throw new ArgumentException("Nested tags are not allowed.");
-            _xmlLast = new Hashtable(h);
-            _xmlLast["Name"] = "";
+            }
+
+            _xmlLast = new Hashtable(h)
+            {
+                ["Name"] = ""
+            };
         }
 
         public void Text(string str)
         {
             if (_xmlLast == null)
+            {
                 return;
-            string name = (string)_xmlLast["Name"];
+            }
+
+            var name = (string)_xmlLast["Name"];
             name += str;
             _xmlLast["Name"] = name;
         }
 
         internal static PdfArray CreateDestinationArray(string value, PdfWriter writer)
         {
-            PdfArray ar = new PdfArray();
-            StringTokenizer tk = new StringTokenizer(value);
-            int n = int.Parse(tk.NextToken());
+            var ar = new PdfArray();
+            var tk = new StringTokenizer(value);
+            var n = int.Parse(tk.NextToken());
             ar.Add(writer.GetPageReference(n));
             if (!tk.HasMoreTokens())
             {
@@ -301,17 +341,24 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                string fn = tk.NextToken();
+                var fn = tk.NextToken();
                 if (fn.StartsWith("/"))
+                {
                     fn = fn.Substring(1);
+                }
+
                 ar.Add(new PdfName(fn));
-                for (int k = 0; k < 4 && tk.HasMoreTokens(); ++k)
+                for (var k = 0; k < 4 && tk.HasMoreTokens(); ++k)
                 {
                     fn = tk.NextToken();
                     if (fn.Equals("null"))
+                    {
                         ar.Add(PdfNull.Pdfnull);
+                    }
                     else
+                    {
                         ar.Add(new PdfNumber(fn));
+                    }
                 }
             }
             return ar;

@@ -1,4 +1,3 @@
-using System.IO;
 using System.Collections;
 
 namespace iTextSharp.text.pdf.hyphenation
@@ -16,6 +15,7 @@ namespace iTextSharp.text.pdf.hyphenation
         private HyphenationTree _hyphenTree;
         private int _pushCharCount = 2;
         private int _remainCharCount = 2;
+
         /// <summary>
         /// </summary>
         /// <param name="lang"></param>
@@ -38,7 +38,7 @@ namespace iTextSharp.text.pdf.hyphenation
         public static HyphenationTree GetHyphenationTree(string lang,
                 string country)
         {
-            string key = lang;
+            var key = lang;
             // check whether the country code has been used
             if (country != null && !country.Equals("none"))
             {
@@ -54,7 +54,7 @@ namespace iTextSharp.text.pdf.hyphenation
                 return (HyphenationTree)_hyphenTrees[lang];
             }
 
-            HyphenationTree hTree = GetResourceHyphenationTree(key);
+            var hTree = GetResourceHyphenationTree(key);
             //if (hTree == null)
             //    hTree = GetFileHyphenationTree(key);
             // put it into the pattern cache
@@ -73,12 +73,18 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             try
             {
-                Stream stream = BaseFont.GetResourceStream(DefaultHyphLocation + key + ".xml");
+                var stream = BaseFont.GetResourceStream(DefaultHyphLocation + key + ".xml");
                 if (stream == null && key.Length > 2)
+                {
                     stream = BaseFont.GetResourceStream(DefaultHyphLocation + key.Substring(0, 2) + ".xml");
+                }
+
                 if (stream == null)
+                {
                     return null;
-                HyphenationTree hTree = new HyphenationTree();
+                }
+
+                var hTree = new HyphenationTree();
                 hTree.LoadSimplePatterns(stream);
                 return hTree;
             }
@@ -87,7 +93,6 @@ namespace iTextSharp.text.pdf.hyphenation
                 return null;
             }
         }
-
 
         /// <summary>
         /// </summary>
@@ -101,7 +106,7 @@ namespace iTextSharp.text.pdf.hyphenation
                                             string word, int leftMin,
                                             int rightMin)
         {
-            HyphenationTree hTree = GetHyphenationTree(lang, country);
+            var hTree = GetHyphenationTree(lang, country);
             if (hTree == null)
             {
                 //log.Error("Error building hyphenation tree for language "
@@ -125,7 +130,7 @@ namespace iTextSharp.text.pdf.hyphenation
                                             char[] word, int offset, int len,
                                             int leftMin, int rightMin)
         {
-            HyphenationTree hTree = GetHyphenationTree(lang, country);
+            var hTree = GetHyphenationTree(lang, country);
             if (hTree == null)
             {
                 //log.Error("Error building hyphenation tree for language "

@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf.interfaces
 {
-
     public interface IPdfAnnotations
     {
         /// <summary>

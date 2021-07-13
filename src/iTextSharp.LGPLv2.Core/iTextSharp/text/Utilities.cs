@@ -1,9 +1,9 @@
-using System;
-using System.util;
-using System.Collections;
-using System.Text;
-using System.IO;
 using iTextSharp.text.pdf;
+using System;
+using System.Collections;
+using System.IO;
+using System.Text;
+using System.util;
 
 namespace iTextSharp.text
 {
@@ -31,7 +31,7 @@ namespace iTextSharp.text
             }
             else
             {
-                object[][] original2 = new object[original.Length + 1][];
+                var original2 = new object[original.Length + 1][];
                 Array.Copy(original, 0, original2, 0, original.Length);
                 original2[original.Length] = item;
                 return original2;
@@ -52,7 +52,10 @@ namespace iTextSharp.text
         public static string ConvertFromUtf32(int codePoint)
         {
             if (codePoint < 0x10000)
+            {
                 return char.ToString((char)codePoint);
+            }
+
             codePoint -= 0x10000;
             return new string(new[] { (char)((codePoint / 0x400) + 0xd800), (char)((codePoint % 0x400) + 0xdc00) });
         }
@@ -116,14 +119,20 @@ namespace iTextSharp.text
         public static bool IsSurrogatePair(string text, int idx)
         {
             if (idx < 0 || idx > text.Length - 2)
+            {
                 return false;
+            }
+
             return IsSurrogateHigh(text[idx]) && IsSurrogateLow(text[idx + 1]);
         }
 
         public static bool IsSurrogatePair(char[] text, int idx)
         {
             if (idx < 0 || idx > text.Length - 2)
+            {
                 return false;
+            }
+
             return IsSurrogateHigh(text[idx]) && IsSurrogateLow(text[idx + 1]);
         }
 
@@ -181,9 +190,12 @@ namespace iTextSharp.text
         {
             while (size > 0)
             {
-                int r = istr.Read(_skipBuffer, 0, Math.Min(_skipBuffer.Length, size));
+                var r = istr.Read(_skipBuffer, 0, Math.Min(_skipBuffer.Length, size));
                 if (r <= 0)
+                {
                     return;
+                }
+
                 size -= r;
             }
         }
@@ -215,11 +227,11 @@ namespace iTextSharp.text
         /// <returns>the eunescaped value</returns>
         public static string UnEscapeUrl(string src)
         {
-            StringBuilder bf = new StringBuilder();
-            char[] s = src.ToCharArray();
-            for (int k = 0; k < s.Length; ++k)
+            var bf = new StringBuilder();
+            var s = src.ToCharArray();
+            for (var k = 0; k < s.Length; ++k)
             {
-                char c = s[k];
+                var c = s[k];
                 if (c == '%')
                 {
                     if (k + 2 >= s.Length)
@@ -227,8 +239,8 @@ namespace iTextSharp.text
                         bf.Append(c);
                         continue;
                     }
-                    int a0 = PrTokeniser.GetHex(s[k + 1]);
-                    int a1 = PrTokeniser.GetHex(s[k + 2]);
+                    var a0 = PrTokeniser.GetHex(s[k + 1]);
+                    var a1 = PrTokeniser.GetHex(s[k + 2]);
                     if (a0 < 0 || a1 < 0)
                     {
                         bf.Append(c);
@@ -238,7 +250,9 @@ namespace iTextSharp.text
                     k += 2;
                 }
                 else
+                {
                     bf.Append(c);
+                }
             }
             return bf.ToString();
         }

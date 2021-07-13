@@ -1,5 +1,5 @@
-using System.Text;
 using System.Collections;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
@@ -8,7 +8,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfAcroForm : PdfDictionary
     {
-
         /// <summary>
         /// This is an array containing the calculationorder of the fields.
         /// </summary>
@@ -25,6 +24,7 @@ namespace iTextSharp.text.pdf
         private readonly Hashtable _fieldTemplates = new Hashtable();
 
         private readonly PdfWriter _writer;
+
         /// <summary>
         /// Contains the signature flags.
         /// </summary>
@@ -40,12 +40,8 @@ namespace iTextSharp.text.pdf
 
         public bool NeedAppearances
         {
-            set
-            {
-                Put(PdfName.Needappearances, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
-            }
+            set => Put(PdfName.Needappearances, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
         }
-
 
         /// <summary>
         /// Adds fieldTemplates.
@@ -53,10 +49,7 @@ namespace iTextSharp.text.pdf
 
         public int SigFlags
         {
-            set
-            {
-                _sigFlags |= value;
-            }
+            set => _sigFlags |= value;
         }
 
         public void AddCalculationOrder(PdfFormField formField)
@@ -66,7 +59,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddCheckBox(string name, string value, bool status, float llx, float lly, float urx, float ury)
         {
-            PdfFormField field = PdfFormField.CreateCheckBox(_writer);
+            var field = PdfFormField.CreateCheckBox(_writer);
             SetCheckBoxParams(field, name, value, status, llx, lly, urx, ury);
             DrawCheckBoxAppearences(field, value, llx, lly, urx, ury);
             AddFormField(field);
@@ -75,7 +68,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddComboBox(string name, string[] options, string defaultValue, bool editable, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfFormField choice = PdfFormField.CreateCombo(_writer, editable, options, 0);
+            var choice = PdfFormField.CreateCombo(_writer, editable, options, 0);
             SetChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
             if (defaultValue == null)
             {
@@ -88,10 +81,10 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddComboBox(string name, string[,] options, string defaultValue, bool editable, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfFormField choice = PdfFormField.CreateCombo(_writer, editable, options, 0);
+            var choice = PdfFormField.CreateCombo(_writer, editable, options, 0);
             SetChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
             string value = null;
-            for (int i = 0; i < options.GetLength(0); i++)
+            for (var i = 0; i < options.GetLength(0); i++)
             {
                 if (options[i, 0].Equals(defaultValue))
                 {
@@ -115,7 +108,7 @@ namespace iTextSharp.text.pdf
 
         public void AddFieldTemplates(Hashtable ft)
         {
-            foreach (object key in ft.Keys)
+            foreach (var key in ft.Keys)
             {
                 _fieldTemplates[key] = ft[key];
             }
@@ -135,7 +128,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddHiddenField(string name, string value)
         {
-            PdfFormField hidden = PdfFormField.CreateEmpty(_writer);
+            var hidden = PdfFormField.CreateEmpty(_writer);
             hidden.FieldName = name;
             hidden.ValueAsName = value;
             AddFormField(hidden);
@@ -153,8 +146,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public PdfFormField AddHtmlPostButton(string name, string caption, string value, string url, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfAction action = PdfAction.CreateSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT);
-            PdfFormField button = new PdfFormField(_writer, llx, lly, urx, ury, action);
+            var action = PdfAction.CreateSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT);
+            var button = new PdfFormField(_writer, llx, lly, urx, ury, action);
             SetButtonParams(button, PdfFormField.FF_PUSHBUTTON, name, value);
             DrawButton(button, caption, font, fontSize, llx, lly, urx, ury);
             AddFormField(button);
@@ -163,10 +156,10 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddMap(string name, string value, string url, PdfContentByte appearance, float llx, float lly, float urx, float ury)
         {
-            PdfAction action = PdfAction.CreateSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT | PdfAction.SUBMIT_COORDINATES);
-            PdfFormField button = new PdfFormField(_writer, llx, lly, urx, ury, action);
+            var action = PdfAction.CreateSubmitForm(url, null, PdfAction.SUBMIT_HTML_FORMAT | PdfAction.SUBMIT_COORDINATES);
+            var button = new PdfFormField(_writer, llx, lly, urx, ury, action);
             SetButtonParams(button, PdfFormField.FF_PUSHBUTTON, name, null);
-            PdfAppearance pa = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var pa = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
             pa.Add(appearance);
             button.SetAppearance(PdfAnnotation.AppearanceNormal, pa);
             AddFormField(button);
@@ -175,7 +168,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddMultiLineTextField(string name, string text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfFormField field = PdfFormField.CreateTextField(_writer, PdfFormField.MULTILINE, PdfFormField.PLAINTEXT, 0);
+            var field = PdfFormField.CreateTextField(_writer, PdfFormField.MULTILINE, PdfFormField.PLAINTEXT, 0);
             SetTextFieldParams(field, text, name, llx, lly, urx, ury);
             DrawMultiLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
             AddFormField(field);
@@ -184,9 +177,9 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddRadioButton(PdfFormField radiogroup, string value, float llx, float lly, float urx, float ury)
         {
-            PdfFormField radio = PdfFormField.CreateEmpty(_writer);
+            var radio = PdfFormField.CreateEmpty(_writer);
             radio.SetWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HighlightToggle);
-            string name = ((PdfName)radiogroup.Get(PdfName.V)).ToString().Substring(1);
+            var name = ((PdfName)radiogroup.Get(PdfName.V)).ToString().Substring(1);
             if (name.Equals(value))
             {
                 radio.AppearanceState = value;
@@ -207,8 +200,8 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddResetButton(string name, string caption, string value, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfAction action = PdfAction.CreateResetForm(null, 0);
-            PdfFormField button = new PdfFormField(_writer, llx, lly, urx, ury, action);
+            var action = PdfAction.CreateResetForm(null, 0);
+            var button = new PdfFormField(_writer, llx, lly, urx, ury, action);
             SetButtonParams(button, PdfFormField.FF_PUSHBUTTON, name, value);
             DrawButton(button, caption, font, fontSize, llx, lly, urx, ury);
             AddFormField(button);
@@ -217,10 +210,10 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddSelectList(string name, string[] options, string defaultValue, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfFormField choice = PdfFormField.CreateList(_writer, options, 0);
+            var choice = PdfFormField.CreateList(_writer, options, 0);
             SetChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
-            StringBuilder text = new StringBuilder();
-            for (int i = 0; i < options.Length; i++)
+            var text = new StringBuilder();
+            for (var i = 0; i < options.Length; i++)
             {
                 text.Append(options[i]).Append('\n');
             }
@@ -231,10 +224,10 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddSelectList(string name, string[,] options, string defaultValue, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfFormField choice = PdfFormField.CreateList(_writer, options, 0);
+            var choice = PdfFormField.CreateList(_writer, options, 0);
             SetChoiceParams(choice, name, defaultValue, llx, lly, urx, ury);
-            StringBuilder text = new StringBuilder();
-            for (int i = 0; i < options.GetLength(0); i++)
+            var text = new StringBuilder();
+            for (var i = 0; i < options.GetLength(0); i++)
             {
                 text.Append(options[i, 1]).Append('\n');
             }
@@ -245,7 +238,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddSignature(string name, float llx, float lly, float urx, float ury)
         {
-            PdfFormField signature = PdfFormField.CreateSignature(_writer);
+            var signature = PdfFormField.CreateSignature(_writer);
             SetSignatureParams(signature, name, llx, lly, urx, ury);
             DrawSignatureAppearences(signature, llx, lly, urx, ury);
             AddFormField(signature);
@@ -254,7 +247,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddSingleLinePasswordField(string name, string text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfFormField field = PdfFormField.CreateTextField(_writer, PdfFormField.SINGLELINE, PdfFormField.PASSWORD, 0);
+            var field = PdfFormField.CreateTextField(_writer, PdfFormField.SINGLELINE, PdfFormField.PASSWORD, 0);
             SetTextFieldParams(field, text, name, llx, lly, urx, ury);
             DrawSingleLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
             AddFormField(field);
@@ -263,7 +256,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField AddSingleLineTextField(string name, string text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfFormField field = PdfFormField.CreateTextField(_writer, PdfFormField.SINGLELINE, PdfFormField.PLAINTEXT, 0);
+            var field = PdfFormField.CreateTextField(_writer, PdfFormField.SINGLELINE, PdfFormField.PLAINTEXT, 0);
             SetTextFieldParams(field, text, name, llx, lly, urx, ury);
             DrawSingleLineOfText(field, text, font, fontSize, llx, lly, urx, ury);
             AddFormField(field);
@@ -272,17 +265,17 @@ namespace iTextSharp.text.pdf
 
         public void DrawButton(PdfFormField button, string caption, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfAppearance pa = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var pa = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
             pa.DrawButton(0f, 0f, urx - llx, ury - lly, caption, font, fontSize);
             button.SetAppearance(PdfAnnotation.AppearanceNormal, pa);
         }
 
         public void DrawCheckBoxAppearences(PdfFormField field, string value, float llx, float lly, float urx, float ury)
         {
-            BaseFont font = BaseFont.CreateFont(BaseFont.ZAPFDINGBATS, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
-            float size = (ury - lly);
-            PdfAppearance tpOn = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
-            PdfAppearance tp2 = (PdfAppearance)tpOn.Duplicate;
+            var font = BaseFont.CreateFont(BaseFont.ZAPFDINGBATS, BaseFont.WINANSI, BaseFont.NOT_EMBEDDED);
+            var size = (ury - lly);
+            var tpOn = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var tp2 = (PdfAppearance)tpOn.Duplicate;
             tp2.SetFontAndSize(font, size);
             tp2.ResetRgbColorFill();
             field.DefaultAppearanceString = tp2;
@@ -295,15 +288,15 @@ namespace iTextSharp.text.pdf
             tpOn.EndText();
             tpOn.RestoreState();
             field.SetAppearance(PdfAnnotation.AppearanceNormal, value, tpOn);
-            PdfAppearance tpOff = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var tpOff = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
             tpOff.DrawTextField(0f, 0f, urx - llx, ury - lly);
             field.SetAppearance(PdfAnnotation.AppearanceNormal, "Off", tpOff);
         }
 
         public void DrawMultiLineOfText(PdfFormField field, string text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfAppearance tp = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
-            PdfAppearance tp2 = (PdfAppearance)tp.Duplicate;
+            var tp = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var tp2 = (PdfAppearance)tp.Duplicate;
             tp2.SetFontAndSize(font, fontSize);
             tp2.ResetRgbColorFill();
             field.DefaultAppearanceString = tp2;
@@ -317,8 +310,8 @@ namespace iTextSharp.text.pdf
             tp.SetFontAndSize(font, fontSize);
             tp.ResetRgbColorFill();
             tp.SetTextMatrix(4, 5);
-            System.util.StringTokenizer tokenizer = new System.util.StringTokenizer(text, "\n");
-            float yPos = ury - lly;
+            var tokenizer = new System.util.StringTokenizer(text, "\n");
+            var yPos = ury - lly;
             while (tokenizer.HasMoreTokens())
             {
                 yPos -= fontSize * 1.2f;
@@ -332,10 +325,10 @@ namespace iTextSharp.text.pdf
 
         public void DrawRadioAppearences(PdfFormField field, string value, float llx, float lly, float urx, float ury)
         {
-            PdfAppearance tpOn = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var tpOn = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
             tpOn.DrawRadioField(0f, 0f, urx - llx, ury - lly, true);
             field.SetAppearance(PdfAnnotation.AppearanceNormal, value, tpOn);
-            PdfAppearance tpOff = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var tpOff = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
             tpOff.DrawRadioField(0f, 0f, urx - llx, ury - lly, false);
             field.SetAppearance(PdfAnnotation.AppearanceNormal, "Off", tpOff);
         }
@@ -349,7 +342,7 @@ namespace iTextSharp.text.pdf
         /// <param name="ury"></param>
         public void DrawSignatureAppearences(PdfFormField field, float llx, float lly, float urx, float ury)
         {
-            PdfAppearance tp = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var tp = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
             tp.SetGrayFill(1.0f);
             tp.Rectangle(0, 0, urx - llx, ury - lly);
             tp.Fill();
@@ -367,8 +360,8 @@ namespace iTextSharp.text.pdf
 
         public void DrawSingleLineOfText(PdfFormField field, string text, BaseFont font, float fontSize, float llx, float lly, float urx, float ury)
         {
-            PdfAppearance tp = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
-            PdfAppearance tp2 = (PdfAppearance)tp.Duplicate;
+            var tp = PdfAppearance.CreateAppearance(_writer, urx - llx, ury - lly);
+            var tp2 = (PdfAppearance)tp.Duplicate;
             tp2.SetFontAndSize(font, fontSize);
             tp2.ResetRgbColorFill();
             field.DefaultAppearanceString = tp2;
@@ -391,7 +384,7 @@ namespace iTextSharp.text.pdf
 
         public PdfFormField GetRadioGroup(string name, string defaultValue, bool noToggleToOff)
         {
-            PdfFormField radio = PdfFormField.CreateRadioButton(_writer, noToggleToOff);
+            var radio = PdfFormField.CreateRadioButton(_writer, noToggleToOff);
             radio.FieldName = name;
             radio.ValueAsName = defaultValue;
             return radio;
@@ -399,35 +392,54 @@ namespace iTextSharp.text.pdf
 
         public bool IsValid()
         {
-            if (_documentFields.Size == 0) return false;
+            if (_documentFields.Size == 0)
+            {
+                return false;
+            }
+
             Put(PdfName.Fields, _documentFields);
             if (_sigFlags != 0)
+            {
                 Put(PdfName.Sigflags, new PdfNumber(_sigFlags));
+            }
+
             if (_calculationOrder.Size > 0)
+            {
                 Put(PdfName.Co, _calculationOrder);
-            if (_fieldTemplates.Count == 0) return true;
-            PdfDictionary dic = new PdfDictionary();
+            }
+
+            if (_fieldTemplates.Count == 0)
+            {
+                return true;
+            }
+
+            var dic = new PdfDictionary();
             foreach (PdfTemplate template in _fieldTemplates.Keys)
             {
                 PdfFormField.MergeResources(dic, (PdfDictionary)template.Resources);
             }
             Put(PdfName.Dr, dic);
             Put(PdfName.Da, new PdfString("/Helv 0 Tf 0 g "));
-            PdfDictionary fonts = (PdfDictionary)dic.Get(PdfName.Font);
+            var fonts = (PdfDictionary)dic.Get(PdfName.Font);
             if (fonts != null)
             {
                 _writer.EliminateFontSubset(fonts);
             }
             return true;
         }
+
         public void SetButtonParams(PdfFormField button, int characteristics, string name, string value)
         {
             button.Button = characteristics;
             button.Flags = PdfAnnotation.FLAGS_PRINT;
             button.SetPage();
             button.FieldName = name;
-            if (value != null) button.ValueAsString = value;
+            if (value != null)
+            {
+                button.ValueAsString = value;
+            }
         }
+
         public void SetCheckBoxParams(PdfFormField field, string name, string value, bool status, float llx, float lly, float urx, float ury)
         {
             field.SetWidget(new Rectangle(llx, lly, urx, ury), PdfAnnotation.HighlightToggle);

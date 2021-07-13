@@ -1,5 +1,5 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
+using System.IO;
 using FD = iTextSharp.text.rtf.field;
 
 namespace iTextSharp.text.rtf.headerfooter
@@ -40,6 +40,7 @@ namespace iTextSharp.text.rtf.headerfooter
         /// Constant for the header type
         /// </summary>
         public const int TYPE_HEADER = 1;
+
         /// <summary>
         /// Constant for a footer on all pages
         /// </summary>
@@ -64,18 +65,22 @@ namespace iTextSharp.text.rtf.headerfooter
         /// Constant for a header on all pages
         /// </summary>
         private static readonly byte[] _headerAll = DocWriter.GetIsoBytes("\\header");
+
         /// <summary>
         /// Constant for a header on the first page
         /// </summary>
         private static readonly byte[] _headerFirst = DocWriter.GetIsoBytes("\\headerf");
+
         /// <summary>
         /// Constant for a header on all left hand pages
         /// </summary>
         private static readonly byte[] _headerLeft = DocWriter.GetIsoBytes("\\headerl");
+
         /// <summary>
         /// Constant for a header on all right hand pages
         /// </summary>
         private static readonly byte[] _headerRight = DocWriter.GetIsoBytes("\\headerr");
+
         /// <summary>
         /// The content of this RtfHeaderFooter
         /// </summary>
@@ -91,10 +96,12 @@ namespace iTextSharp.text.rtf.headerfooter
         /// The RtfDocument this RtfHeaderFooter belongs to
         /// </summary>
         private RtfDocument _document;
+
         /// <summary>
         /// The display type of this RtfHeaderFooter. TYPE_HEADER or TYPE_FOOTER
         /// </summary>
         private int _type = TYPE_HEADER;
+
         /// <summary>
         /// Constructs a RtfHeaderFooter for any Element.
         /// </summary>
@@ -110,7 +117,7 @@ namespace iTextSharp.text.rtf.headerfooter
         public RtfHeaderFooter(IElement[] elements) : base(new Phrase(""), false)
         {
             _content = new object[elements.Length];
-            for (int i = 0; i < elements.Length; i++)
+            for (var i = 0; i < elements.Length; i++)
             {
                 _content[i] = elements[i];
             }
@@ -129,8 +136,10 @@ namespace iTextSharp.text.rtf.headerfooter
             _document = doc;
             _type = type;
             _displayAt = displayAt;
-            Paragraph par = new Paragraph();
-            par.Alignment = headerFooter.Alignment;
+            var par = new Paragraph
+            {
+                Alignment = headerFooter.Alignment
+            };
             if (headerFooter.Before != null)
             {
                 par.Add(headerFooter.Before);
@@ -173,7 +182,7 @@ namespace iTextSharp.text.rtf.headerfooter
             _document = doc;
             _content = headerFooter.getContent();
             _displayAt = displayAt;
-            for (int i = 0; i < _content.Length; i++)
+            for (var i = 0; i < _content.Length; i++)
             {
                 if (_content[i] is IElement)
                 {
@@ -200,8 +209,10 @@ namespace iTextSharp.text.rtf.headerfooter
         protected internal RtfHeaderFooter(RtfDocument doc, HeaderFooter headerFooter) : base(new Phrase(""), false)
         {
             _document = doc;
-            Paragraph par = new Paragraph();
-            par.Alignment = headerFooter.Alignment;
+            var par = new Paragraph
+            {
+                Alignment = headerFooter.Alignment
+            };
             if (headerFooter.Before != null)
             {
                 par.Add(headerFooter.Before);
@@ -224,6 +235,7 @@ namespace iTextSharp.text.rtf.headerfooter
             {
             }
         }
+
         /// <summary>
         /// Set the alignment of this RtfHeaderFooter. Passes the setting
         /// on to the contained element.
@@ -231,7 +243,7 @@ namespace iTextSharp.text.rtf.headerfooter
         public void SetAlignment(int alignment)
         {
             Alignment = alignment;
-            for (int i = 0; i < _content.Length; i++)
+            for (var i = 0; i < _content.Length; i++)
             {
                 if (_content[i] is Paragraph)
                 {
@@ -282,7 +294,7 @@ namespace iTextSharp.text.rtf.headerfooter
             _document = doc;
             if (_document != null)
             {
-                for (int i = 0; i < _content.Length; i++)
+                for (var i = 0; i < _content.Length; i++)
                 {
                     try
                     {
@@ -358,16 +370,17 @@ namespace iTextSharp.text.rtf.headerfooter
                 }
             }
             result.Write(RtfElement.Delimiter, 0, RtfElement.Delimiter.Length);
-            for (int i = 0; i < _content.Length; i++)
+            for (var i = 0; i < _content.Length; i++)
             {
                 if (_content[i] is IRtfBasicElement)
                 {
-                    IRtfBasicElement rbe = (IRtfBasicElement)_content[i];
+                    var rbe = (IRtfBasicElement)_content[i];
                     rbe.WriteContent(result);
                 }
             }
             result.Write(RtfElement.CloseGroup, 0, RtfElement.CloseGroup.Length);
         }
+
         /// <summary>
         /// Gets the content of this RtfHeaderFooter
         /// </summary>

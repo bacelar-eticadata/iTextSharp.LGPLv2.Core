@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Beginning with BaseVersion 1.7, the extensions dictionary lets developers
     /// designate that a given document contains extensions to PDF. The presence
@@ -17,7 +16,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfDeveloperExtension
     {
-
         /// <summary>
         /// An instance of this class for Adobe 1.7 Extension level 3.
         /// </summary>
@@ -56,37 +54,19 @@ namespace iTextSharp.text.pdf
         /// Gets the baseversion name.
         /// </summary>
         /// <returns>a PdfName</returns>
-        public PdfName Baseversion
-        {
-            get
-            {
-                return baseversion;
-            }
-        }
+        public PdfName Baseversion => baseversion;
 
         /// <summary>
         /// Gets the extension level within the baseversion.
         /// </summary>
         /// <returns>an integer</returns>
-        public int ExtensionLevel
-        {
-            get
-            {
-                return extensionLevel;
-            }
-        }
+        public int ExtensionLevel => extensionLevel;
 
         /// <summary>
         /// Gets the prefix name.
         /// </summary>
         /// <returns>a PdfName</returns>
-        public PdfName Prefix
-        {
-            get
-            {
-                return prefix;
-            }
-        }
+        public PdfName Prefix => prefix;
 
         /// <summary>
         /// Generations the developer extension dictionary corresponding
@@ -95,7 +75,7 @@ namespace iTextSharp.text.pdf
         /// <returns>a PdfDictionary</returns>
         public PdfDictionary GetDeveloperExtensions()
         {
-            PdfDictionary developerextensions = new PdfDictionary();
+            var developerextensions = new PdfDictionary();
             developerextensions.Put(PdfName.Baseversion, baseversion);
             developerextensions.Put(PdfName.Extensionlevel, new PdfNumber(extensionLevel));
             return developerextensions;

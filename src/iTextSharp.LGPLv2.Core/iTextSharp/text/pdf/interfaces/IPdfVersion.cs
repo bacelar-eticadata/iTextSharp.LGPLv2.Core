@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf.interfaces
 {
-
     /// <summary>
     /// The PDF version is described in the PDF Reference 1.7 p92
     /// (about the PDF Header) and page 139 (the version entry in

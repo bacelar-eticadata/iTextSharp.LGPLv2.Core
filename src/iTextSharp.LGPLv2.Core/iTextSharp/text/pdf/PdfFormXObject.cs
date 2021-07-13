@@ -1,12 +1,10 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfFormObject  is a type of XObject containing a template-object.
     /// </summary>
     public class PdfFormXObject : PdfStream
     {
-
         /// <summary>
         /// public static variables
         /// </summary>
@@ -39,15 +37,26 @@ namespace iTextSharp.text.pdf
             Put(PdfName.Resources, template.Resources);
             Put(PdfName.Bbox, new PdfRectangle(template.BoundingBox));
             Put(PdfName.Formtype, One);
-            PdfArray matrix = template.Matrix;
+            var matrix = template.Matrix;
             if (template.Layer != null)
+            {
                 Put(PdfName.Oc, template.Layer.Ref);
+            }
+
             if (template.Group != null)
+            {
                 Put(PdfName.Group, template.Group);
+            }
+
             if (matrix == null)
+            {
                 Put(PdfName.Matrix, Matrix);
+            }
             else
+            {
                 Put(PdfName.Matrix, matrix);
+            }
+
             Bytes = template.ToPdf(null);
             Put(PdfName.LENGTH, new PdfNumber(Bytes.Length));
             FlateCompress(compressionLevel);

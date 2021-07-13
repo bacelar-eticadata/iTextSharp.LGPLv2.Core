@@ -48,27 +48,31 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class RadioCheckField : BaseField
     {
-
         /// <summary>
         /// A field with the symbol check
         /// </summary>
         public const int TYPE_CHECK = 1;
+
         /// <summary>
         /// A field with the symbol circle
         /// </summary>
         public const int TYPE_CIRCLE = 2;
+
         /// <summary>
         /// A field with the symbol cross
         /// </summary>
         public const int TYPE_CROSS = 3;
+
         /// <summary>
         /// A field with the symbol diamond
         /// </summary>
         public const int TYPE_DIAMOND = 4;
+
         /// <summary>
         /// A field with the symbol square
         /// </summary>
         public const int TYPE_SQUARE = 5;
+
         /// <summary>
         /// A field with the symbol star
         /// </summary>
@@ -110,14 +114,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool Checked
         {
-            get
-            {
-                return _vchecked;
-            }
-            set
-            {
-                _vchecked = value;
-            }
+            get => _vchecked;
+            set => _vchecked = value;
         }
 
         /// <summary>
@@ -126,13 +124,7 @@ namespace iTextSharp.text.pdf
         /// @throws DocumentException on error
         /// </summary>
         /// <returns>the check field</returns>
-        public PdfFormField CheckField
-        {
-            get
-            {
-                return GetField(false);
-            }
-        }
+        public PdfFormField CheckField => GetField(false);
 
         /// <summary>
         /// Sets the checked symbol. It can be
@@ -145,15 +137,15 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int CheckType
         {
-            get
-            {
-                return _checkType;
-            }
+            get => _checkType;
             set
             {
                 _checkType = value;
                 if (_checkType < TYPE_CHECK || _checkType > TYPE_STAR)
+                {
                     _checkType = TYPE_CIRCLE;
+                }
+
                 Text = _typeChars[_checkType - 1];
                 Font = BaseFont.CreateFont(BaseFont.ZAPFDINGBATS, BaseFont.WINANSI, false);
             }
@@ -164,15 +156,10 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string OnValue
         {
-            get
-            {
-                return _onValue;
-            }
-            set
-            {
-                _onValue = value;
-            }
+            get => _onValue;
+            set => _onValue = value;
         }
+
         /// <summary>
         /// Gets the radio field. It's only composed of the widget keys and must be used
         /// with {@link #getRadioGroup(bool,bool)}.
@@ -180,13 +167,7 @@ namespace iTextSharp.text.pdf
         /// @throws DocumentException on error
         /// </summary>
         /// <returns>the radio field</returns>
-        public PdfFormField RadioField
-        {
-            get
-            {
-                return GetField(true);
-            }
-        }
+        public PdfFormField RadioField => GetField(true);
 
         /// <summary>
         /// Gets the field appearance.
@@ -201,33 +182,44 @@ namespace iTextSharp.text.pdf
         public PdfAppearance GetAppearance(bool isRadio, bool on)
         {
             if (isRadio && _checkType == TYPE_CIRCLE)
+            {
                 return GetAppearanceRadioCircle(on);
-            PdfAppearance app = GetBorderAppearance();
+            }
+
+            var app = GetBorderAppearance();
             if (!on)
+            {
                 return app;
-            BaseFont ufont = RealFont;
-            bool borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
-            float h = box.Height - borderWidth * 2;
-            float bw2 = borderWidth;
+            }
+
+            var ufont = RealFont;
+            var borderExtra = borderStyle == PdfBorderDictionary.STYLE_BEVELED || borderStyle == PdfBorderDictionary.STYLE_INSET;
+            var h = box.Height - borderWidth * 2;
+            var bw2 = borderWidth;
             if (borderExtra)
             {
                 h -= borderWidth * 2;
                 bw2 *= 2;
             }
-            float offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
+            var offsetX = (borderExtra ? 2 * borderWidth : borderWidth);
             offsetX = Math.Max(offsetX, 1);
-            float offX = Math.Min(bw2, offsetX);
-            float wt = box.Width - 2 * offX;
-            float ht = box.Height - 2 * offX;
-            float fsize = fontSize;
+            var offX = Math.Min(bw2, offsetX);
+            var wt = box.Width - 2 * offX;
+            var ht = box.Height - 2 * offX;
+            var fsize = fontSize;
             if (fsize.ApproxEquals(0))
             {
-                float bw = ufont.GetWidthPoint(text, 1);
+                var bw = ufont.GetWidthPoint(text, 1);
                 if (bw.ApproxEquals(0))
+                {
                     fsize = 12;
+                }
                 else
+                {
                     fsize = wt / bw;
-                float nfsize = h / (ufont.GetFontDescriptor(BaseFont.ASCENT, 1));
+                }
+
+                var nfsize = h / (ufont.GetFontDescriptor(BaseFont.ASCENT, 1));
                 fsize = Math.Min(fsize, nfsize);
             }
             app.SaveState();
@@ -235,9 +227,14 @@ namespace iTextSharp.text.pdf
             app.Clip();
             app.NewPath();
             if (textColor == null)
+            {
                 app.ResetGrayFill();
+            }
             else
+            {
                 app.SetColorFill(textColor);
+            }
+
             app.BeginText();
             app.SetFontAndSize(ufont, fsize);
             app.SetTextMatrix((box.Width - ufont.GetWidthPoint(text, fsize)) / 2,
@@ -256,25 +253,30 @@ namespace iTextSharp.text.pdf
         /// <returns>the appearance</returns>
         public PdfAppearance GetAppearanceRadioCircle(bool on)
         {
-            PdfAppearance app = PdfAppearance.CreateAppearance(writer, box.Width, box.Height);
+            var app = PdfAppearance.CreateAppearance(writer, box.Width, box.Height);
             switch (rotation)
             {
                 case 90:
                     app.SetMatrix(0, 1, -1, 0, box.Height, 0);
                     break;
+
                 case 180:
                     app.SetMatrix(-1, 0, 0, -1, box.Width, box.Height);
                     break;
+
                 case 270:
                     app.SetMatrix(0, -1, 1, 0, 0, box.Width);
                     break;
             }
-            Rectangle boxc = new Rectangle(app.BoundingBox);
-            float cx = boxc.Width / 2;
-            float cy = boxc.Height / 2;
-            float r = (Math.Min(boxc.Width, boxc.Height) - borderWidth) / 2;
+            var boxc = new Rectangle(app.BoundingBox);
+            var cx = boxc.Width / 2;
+            var cy = boxc.Height / 2;
+            var r = (Math.Min(boxc.Width, boxc.Height) - borderWidth) / 2;
             if (r <= 0)
+            {
                 return app;
+            }
+
             if (backgroundColor != null)
             {
                 app.SetColorFill(backgroundColor);
@@ -291,9 +293,14 @@ namespace iTextSharp.text.pdf
             if (on)
             {
                 if (textColor == null)
+                {
                     app.ResetGrayFill();
+                }
                 else
+                {
                     app.SetColorFill(textColor);
+                }
+
                 app.Circle(cx, cy, r / 2);
                 app.Fill();
             }
@@ -315,17 +322,27 @@ namespace iTextSharp.text.pdf
         /// <returns>the radio group</returns>
         public PdfFormField GetRadioGroup(bool noToggleToOff, bool radiosInUnison)
         {
-            PdfFormField field = PdfFormField.CreateRadioButton(writer, noToggleToOff);
+            var field = PdfFormField.CreateRadioButton(writer, noToggleToOff);
             if (radiosInUnison)
+            {
                 field.SetFieldFlags(PdfFormField.FF_RADIOSINUNISON);
+            }
+
             field.FieldName = fieldName;
             if ((options & READ_ONLY) != 0)
+            {
                 field.SetFieldFlags(PdfFormField.FF_READ_ONLY);
+            }
+
             if ((options & REQUIRED) != 0)
+            {
                 field.SetFieldFlags(PdfFormField.FF_REQUIRED);
+            }
+
             field.ValueAsName = _vchecked ? _onValue : "Off";
             return field;
         }
+
         /// <summary>
         /// Gets a radio or check field.
         /// a check field
@@ -338,50 +355,81 @@ namespace iTextSharp.text.pdf
         {
             PdfFormField field = null;
             if (isRadio)
+            {
                 field = PdfFormField.CreateEmpty(writer);
+            }
             else
+            {
                 field = PdfFormField.CreateCheckBox(writer);
+            }
+
             field.SetWidget(box, PdfAnnotation.HighlightInvert);
             if (!isRadio)
             {
                 field.FieldName = fieldName;
                 if ((options & READ_ONLY) != 0)
+                {
                     field.SetFieldFlags(PdfFormField.FF_READ_ONLY);
+                }
+
                 if ((options & REQUIRED) != 0)
+                {
                     field.SetFieldFlags(PdfFormField.FF_REQUIRED);
+                }
+
                 field.ValueAsName = _vchecked ? _onValue : "Off";
             }
             if (text != null)
+            {
                 field.MkNormalCaption = text;
+            }
+
             if (rotation != 0)
+            {
                 field.MkRotation = rotation;
+            }
+
             field.BorderStyle = new PdfBorderDictionary(borderWidth, borderStyle, new PdfDashPattern(3));
-            PdfAppearance tpon = GetAppearance(isRadio, true);
-            PdfAppearance tpoff = GetAppearance(isRadio, false);
+            var tpon = GetAppearance(isRadio, true);
+            var tpoff = GetAppearance(isRadio, false);
             field.SetAppearance(PdfAnnotation.AppearanceNormal, _onValue, tpon);
             field.SetAppearance(PdfAnnotation.AppearanceNormal, "Off", tpoff);
             field.AppearanceState = _vchecked ? _onValue : "Off";
-            PdfAppearance da = (PdfAppearance)tpon.Duplicate;
+            var da = (PdfAppearance)tpon.Duplicate;
             da.SetFontAndSize(RealFont, fontSize);
             if (textColor == null)
+            {
                 da.SetGrayFill(0);
+            }
             else
+            {
                 da.SetColorFill(textColor);
+            }
+
             field.DefaultAppearanceString = da;
             if (borderColor != null)
+            {
                 field.MkBorderColor = borderColor;
+            }
+
             if (backgroundColor != null)
+            {
                 field.MkBackgroundColor = backgroundColor;
+            }
+
             switch (visibility)
             {
                 case HIDDEN:
                     field.Flags = PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_HIDDEN;
                     break;
+
                 case VISIBLE_BUT_DOES_NOT_PRINT:
                     break;
+
                 case HIDDEN_BUT_PRINTABLE:
                     field.Flags = PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_NOVIEW;
                     break;
+
                 default:
                     field.Flags = PdfAnnotation.FLAGS_PRINT;
                     break;

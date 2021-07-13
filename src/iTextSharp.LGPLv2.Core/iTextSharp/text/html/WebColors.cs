@@ -5,7 +5,6 @@ using System.util;
 
 namespace iTextSharp.text.html
 {
-
     /// <summary>
     /// This class is a HashMap that contains the names of colors as a key and the
     /// corresponding Color as value. (Source: Wikipedia
@@ -14,7 +13,6 @@ namespace iTextSharp.text.html
     /// </summary>
     public class WebColors : Hashtable
     {
-
         public static WebColors Names = new WebColors();
 
         static WebColors()
@@ -195,25 +193,37 @@ namespace iTextSharp.text.html
             }
             else if (name.StartsWith("rgb("))
             {
-                StringTokenizer tok = new StringTokenizer(name, "rgb(), \t\r\n\f");
-                for (int k = 0; k < 3; ++k)
+                var tok = new StringTokenizer(name, "rgb(), \t\r\n\f");
+                for (var k = 0; k < 3; ++k)
                 {
-                    string v = tok.NextToken();
+                    var v = tok.NextToken();
                     if (v.EndsWith("%"))
+                    {
                         c[k] = int.Parse(v.Substring(0, v.Length - 1)) * 255 / 100;
+                    }
                     else
+                    {
                         c[k] = int.Parse(v);
+                    }
+
                     if (c[k] < 0)
+                    {
                         c[k] = 0;
+                    }
                     else if (c[k] > 255)
+                    {
                         c[k] = 255;
+                    }
                 }
                 return new BaseColor(c[0], c[1], c[2], c[3]);
             }
-            name = name.ToLower(CultureInfo.InvariantCulture);
+            name = name.ToLowerInvariant();
             if (!Names.ContainsKey(name))
+            {
                 throw new ArgumentException("Color '" + name
                         + "' not found.");
+            }
+
             c = (int[])Names[name];
             return new BaseColor(c[0], c[1], c[2], c[3]);
         }

@@ -17,13 +17,15 @@ using System.Text;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
+namespace iTextSharp.text.pdf.qrcode
+{
 
     /**
      * @author satorux@google.com (Satoru Takabayashi) - creator
      * @author dswitkin@google.com (Daniel Switkin) - ported from C++
      */
-    public sealed class Encoder {
+    public sealed class Encoder
+    {
 
         // The original table is defined in the table 5 of JISX0510:2004 (p.19).
         private static readonly int[] ALPHANUMERIC_TABLE = {
@@ -35,15 +37,17 @@ namespace iTextSharp.text.pdf.qrcode {
             25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, -1, -1, -1, -1, -1   // 0x50-0x5f
         };
 
-        private const String DEFAULT_BYTE_MODE_ENCODING = "ISO-8859-1";
+        private const string DEFAULT_BYTE_MODE_ENCODING = "ISO-8859-1";
 
-        private Encoder() {
+        private Encoder()
+        {
         }
 
         // The mask penalty calculation is complicated.  See Table 21 of JISX0510:2004 (p.45) for details.
         // Basically it applies four rules and summate all penalties.
-        private static int CalculateMaskPenalty(ByteMatrix matrix) {
-            int penalty = 0;
+        private static int CalculateMaskPenalty(ByteMatrix matrix)
+        {
+            var penalty = 0;
             penalty += MaskUtil.ApplyMaskPenaltyRule1(matrix);
             penalty += MaskUtil.ApplyMaskPenaltyRule2(matrix);
             penalty += MaskUtil.ApplyMaskPenaltyRule3(matrix);
@@ -62,44 +66,52 @@ namespace iTextSharp.text.pdf.qrcode {
          * Note that there is no way to encode bytes in MODE_KANJI. We might want to add EncodeWithMode()
          * with which clients can specify the encoding mode. For now, we don't need the functionality.
          */
-        public static void Encode(String content, ErrorCorrectionLevel ecLevel, QRCode qrCode) {
+        public static void Encode(string content, ErrorCorrectionLevel ecLevel, QRCode qrCode)
+        {
             Encode(content, ecLevel, null, qrCode);
         }
 
-        public static void Encode(String content, ErrorCorrectionLevel ecLevel, IDictionary<EncodeHintType, Object> hints,
-            QRCode qrCode) {
+        public static void Encode(string content, ErrorCorrectionLevel ecLevel, IDictionary<EncodeHintType, object> hints,
+            QRCode qrCode)
+        {
 
-            String encoding = null;
+            string encoding = null;
             if (hints != null && hints.ContainsKey(EncodeHintType.CHARACTER_SET))
+            {
                 encoding = (string)hints[EncodeHintType.CHARACTER_SET];
-            if (encoding == null) {
+            }
+
+            if (encoding == null)
+            {
                 encoding = DEFAULT_BYTE_MODE_ENCODING;
             }
 
             // Step 1: Choose the mode (encoding).
-            Mode mode = ChooseMode(content, encoding);
+            var mode = ChooseMode(content, encoding);
 
             // Step 2: Append "bytes" into "dataBits" in appropriate encoding.
-            BitVector dataBits = new BitVector();
+            var dataBits = new BitVector();
             AppendBytes(content, mode, dataBits, encoding);
             // Step 3: Initialize QR code that can contain "dataBits".
-            int numInputBytes = dataBits.SizeInBytes();
+            var numInputBytes = dataBits.SizeInBytes();
             InitQRCode(numInputBytes, ecLevel, mode, qrCode);
 
             // Step 4: Build another bit vector that contains header and data.
-            BitVector headerAndDataBits = new BitVector();
+            var headerAndDataBits = new BitVector();
 
             // Step 4.5: Append ECI message if applicable
-            if (mode == Mode.BYTE && !DEFAULT_BYTE_MODE_ENCODING.Equals(encoding)) {
-                CharacterSetECI eci = CharacterSetECI.GetCharacterSetECIByName(encoding);
-                if (eci != null) {
+            if (mode == Mode.BYTE && !DEFAULT_BYTE_MODE_ENCODING.Equals(encoding))
+            {
+                var eci = CharacterSetECI.GetCharacterSetECIByName(encoding);
+                if (eci != null)
+                {
                     AppendECI(eci, headerAndDataBits);
                 }
             }
 
             AppendModeInfo(mode, headerAndDataBits);
 
-            int numLetters = mode.Equals(Mode.BYTE) ? dataBits.SizeInBytes() : content.Length;
+            var numLetters = mode.Equals(Mode.BYTE) ? dataBits.SizeInBytes() : content.Length;
             AppendLengthInfo(numLetters, qrCode.GetVersion(), mode, headerAndDataBits);
             headerAndDataBits.AppendBitVector(dataBits);
 
@@ -107,12 +119,12 @@ namespace iTextSharp.text.pdf.qrcode {
             TerminateBits(qrCode.GetNumDataBytes(), headerAndDataBits);
 
             // Step 6: Interleave data bits with error correction code.
-            BitVector finalBits = new BitVector();
+            var finalBits = new BitVector();
             InterleaveWithECBytes(headerAndDataBits, qrCode.GetNumTotalBytes(), qrCode.GetNumDataBytes(),
                 qrCode.GetNumRSBlocks(), finalBits);
 
             // Step 7: Choose the mask pattern and set to "qrCode".
-            ByteMatrix matrix = new ByteMatrix(qrCode.GetMatrixWidth(), qrCode.GetMatrixWidth());
+            var matrix = new ByteMatrix(qrCode.GetMatrixWidth(), qrCode.GetMatrixWidth());
             qrCode.SetMaskPattern(ChooseMaskPattern(finalBits, qrCode.GetECLevel(), qrCode.GetVersion(),
                 matrix));
 
@@ -121,7 +133,8 @@ namespace iTextSharp.text.pdf.qrcode {
                 qrCode.GetMaskPattern(), matrix);
             qrCode.SetMatrix(matrix);
             // Step 9.  Make sure we have a valid QR Code.
-            if (!qrCode.IsValid()) {
+            if (!qrCode.IsValid())
+            {
                 throw new WriterException("Invalid QR code: " + qrCode.ToString());
             }
         }
@@ -130,14 +143,17 @@ namespace iTextSharp.text.pdf.qrcode {
          * @return the code point of the table used in alphanumeric mode or
          *  -1 if there is no corresponding code in the table.
          */
-        static int GetAlphanumericCode(int code) {
-            if (code < ALPHANUMERIC_TABLE.Length) {
+        private static int GetAlphanumericCode(int code)
+        {
+            if (code < ALPHANUMERIC_TABLE.Length)
+            {
                 return ALPHANUMERIC_TABLE[code];
             }
             return -1;
         }
 
-        public static Mode ChooseMode(String content) {
+        public static Mode ChooseMode(string content)
+        {
             return ChooseMode(content, null);
         }
 
@@ -145,49 +161,63 @@ namespace iTextSharp.text.pdf.qrcode {
          * Choose the best mode by examining the content. Note that 'encoding' is used as a hint;
          * if it is Shift_JIS, and the input is only double-byte Kanji, then we return {@link Mode#KANJI}.
          */
-        public static Mode ChooseMode(String content, String encoding) {
-            if ("Shift_JIS".Equals(encoding)) {
+        public static Mode ChooseMode(string content, string encoding)
+        {
+            if ("Shift_JIS".Equals(encoding))
+            {
                 // Choose Kanji mode if all input are double-byte characters
                 return IsOnlyDoubleByteKanji(content) ? Mode.KANJI : Mode.BYTE;
             }
-            bool hasNumeric = false;
-            bool hasAlphanumeric = false;
-            for (int i = 0; i < content.Length; ++i) {
-                char c = content[i];
-                if (c >= '0' && c <= '9') {
+            var hasNumeric = false;
+            var hasAlphanumeric = false;
+            for (var i = 0; i < content.Length; ++i)
+            {
+                var c = content[i];
+                if (c >= '0' && c <= '9')
+                {
                     hasNumeric = true;
                 }
-                else if (GetAlphanumericCode(c) != -1) {
+                else if (GetAlphanumericCode(c) != -1)
+                {
                     hasAlphanumeric = true;
                 }
-                else {
+                else
+                {
                     return Mode.BYTE;
                 }
             }
-            if (hasAlphanumeric) {
+            if (hasAlphanumeric)
+            {
                 return Mode.ALPHANUMERIC;
             }
-            else if (hasNumeric) {
+            else if (hasNumeric)
+            {
                 return Mode.NUMERIC;
             }
             return Mode.BYTE;
         }
 
-        private static bool IsOnlyDoubleByteKanji(String content) {
+        private static bool IsOnlyDoubleByteKanji(string content)
+        {
             byte[] bytes;
-            try {
+            try
+            {
                 bytes = Encoding.GetEncoding("Shift_JIS").GetBytes(content);
             }
-            catch {
+            catch
+            {
                 return false;
             }
-            int length = bytes.Length;
-            if (length % 2 != 0) {
+            var length = bytes.Length;
+            if (length % 2 != 0)
+            {
                 return false;
             }
-            for (int i = 0; i < length; i += 2) {
-                int byte1 = bytes[i] & 0xFF;
-                if ((byte1 < 0x81 || byte1 > 0x9F) && (byte1 < 0xE0 || byte1 > 0xEB)) {
+            for (var i = 0; i < length; i += 2)
+            {
+                var byte1 = bytes[i] & 0xFF;
+                if ((byte1 < 0x81 || byte1 > 0x9F) && (byte1 < 0xE0 || byte1 > 0xEB))
+                {
                     return false;
                 }
             }
@@ -195,15 +225,18 @@ namespace iTextSharp.text.pdf.qrcode {
         }
 
         private static int ChooseMaskPattern(BitVector bits, ErrorCorrectionLevel ecLevel, int version,
-            ByteMatrix matrix) {
+            ByteMatrix matrix)
+        {
 
-            int minPenalty = int.MaxValue;  // Lower penalty is better.
-            int bestMaskPattern = -1;
+            var minPenalty = int.MaxValue;  // Lower penalty is better.
+            var bestMaskPattern = -1;
             // We try all mask patterns to choose the best one.
-            for (int maskPattern = 0; maskPattern < QRCode.NUM_MASK_PATTERNS; maskPattern++) {
+            for (var maskPattern = 0; maskPattern < QRCode.NUM_MASK_PATTERNS; maskPattern++)
+            {
                 MatrixUtil.BuildMatrix(bits, ecLevel, version, maskPattern, matrix);
-                int penalty = CalculateMaskPenalty(matrix);
-                if (penalty < minPenalty) {
+                var penalty = CalculateMaskPenalty(matrix);
+                if (penalty < minPenalty)
+                {
                     minPenalty = penalty;
                     bestMaskPattern = maskPattern;
                 }
@@ -216,26 +249,29 @@ namespace iTextSharp.text.pdf.qrcode {
          * modify "qrCode".
          */
         private static void InitQRCode(int numInputBytes, ErrorCorrectionLevel ecLevel, Mode mode,
-            QRCode qrCode) {
+            QRCode qrCode)
+        {
             qrCode.SetECLevel(ecLevel);
             qrCode.SetMode(mode);
 
             // In the following comments, we use numbers of Version 7-H.
-            for (int versionNum = 1; versionNum <= 40; versionNum++) {
-                Version version = Version.GetVersionForNumber(versionNum);
+            for (var versionNum = 1; versionNum <= 40; versionNum++)
+            {
+                var version = Version.GetVersionForNumber(versionNum);
                 // numBytes = 196
-                int numBytes = version.GetTotalCodewords();
+                var numBytes = version.GetTotalCodewords();
                 // getNumECBytes = 130
-                Version.ECBlocks ecBlocks = version.GetECBlocksForLevel(ecLevel);
-                int numEcBytes = ecBlocks.GetTotalECCodewords();
+                var ecBlocks = version.GetECBlocksForLevel(ecLevel);
+                var numEcBytes = ecBlocks.GetTotalECCodewords();
                 // getNumRSBlocks = 5
-                int numRSBlocks = ecBlocks.GetNumBlocks();
+                var numRSBlocks = ecBlocks.GetNumBlocks();
                 // getNumDataBytes = 196 - 130 = 66
-                int numDataBytes = numBytes - numEcBytes;
+                var numDataBytes = numBytes - numEcBytes;
                 // We want to choose the smallest version which can contain data of "numInputBytes" + some
                 // extra bits for the header (mode info and length info). The header can be three bytes
                 // (precisely 4 + 16 bits) at most. Hence we do +3 here.
-                if (numDataBytes >= numInputBytes + 3) {
+                if (numDataBytes >= numInputBytes + 3)
+                {
                     // Yay, we found the proper rs block info!
                     qrCode.SetVersion(versionNum);
                     qrCode.SetNumTotalBytes(numBytes);
@@ -254,9 +290,11 @@ namespace iTextSharp.text.pdf.qrcode {
         /**
          * Terminate bits as described in 8.4.8 and 8.4.9 of JISX0510:2004 (p.24).
          */
-        static void TerminateBits(int numDataBytes, BitVector bits) {
-            int capacity = numDataBytes << 3;
-            if (bits.Size() > capacity) {
+        private static void TerminateBits(int numDataBytes, BitVector bits)
+        {
+            var capacity = numDataBytes << 3;
+            if (bits.Size() > capacity)
+            {
                 throw new WriterException("data bits cannot fit in the QR Code" + bits.Size() + " > " +
                     capacity);
             }
@@ -264,32 +302,40 @@ namespace iTextSharp.text.pdf.qrcode {
             // TODO: srowen says we can remove this for loop, since the 4 terminator bits are optional if
             // the last byte has less than 4 bits left. So it amounts to padding the last byte with zeroes
             // either way.
-            for (int i = 0; i < 4 && bits.Size() < capacity; ++i) {
+            for (var i = 0; i < 4 && bits.Size() < capacity; ++i)
+            {
                 bits.AppendBit(0);
             }
-            int numBitsInLastByte = bits.Size() % 8;
+            var numBitsInLastByte = bits.Size() % 8;
             // If the last byte isn't 8-bit aligned, we'll add padding bits.
-            if (numBitsInLastByte > 0) {
-                int numPaddingBits = 8 - numBitsInLastByte;
-                for (int i = 0; i < numPaddingBits; ++i) {
+            if (numBitsInLastByte > 0)
+            {
+                var numPaddingBits = 8 - numBitsInLastByte;
+                for (var i = 0; i < numPaddingBits; ++i)
+                {
                     bits.AppendBit(0);
                 }
             }
             // Should be 8-bit aligned here.
-            if (bits.Size() % 8 != 0) {
+            if (bits.Size() % 8 != 0)
+            {
                 throw new WriterException("Number of bits is not a multiple of 8");
             }
             // If we have more space, we'll fill the space with padding patterns defined in 8.4.9 (p.24).
-            int numPaddingBytes = numDataBytes - bits.SizeInBytes();
-            for (int i = 0; i < numPaddingBytes; ++i) {
-                if (i % 2 == 0) {
+            var numPaddingBytes = numDataBytes - bits.SizeInBytes();
+            for (var i = 0; i < numPaddingBytes; ++i)
+            {
+                if (i % 2 == 0)
+                {
                     bits.AppendBits(0xec, 8);
                 }
-                else {
+                else
+                {
                     bits.AppendBits(0x11, 8);
                 }
             }
-            if (bits.Size() != capacity) {
+            if (bits.Size() != capacity)
+            {
                 throw new WriterException("Bits size does not equal capacity");
             }
         }
@@ -299,35 +345,39 @@ namespace iTextSharp.text.pdf.qrcode {
          * the result in "numDataBytesInBlock", and "numECBytesInBlock". See table 12 in 8.5.1 of
          * JISX0510:2004 (p.30)
          */
-        static void GetNumDataBytesAndNumECBytesForBlockID(int numTotalBytes, int numDataBytes,
+        private static void GetNumDataBytesAndNumECBytesForBlockID(int numTotalBytes, int numDataBytes,
             int numRSBlocks, int blockID, int[] numDataBytesInBlock,
-            int[] numECBytesInBlock) {
-            if (blockID >= numRSBlocks) {
+            int[] numECBytesInBlock)
+        {
+            if (blockID >= numRSBlocks)
+            {
                 throw new WriterException("Block ID too large");
             }
             // numRsBlocksInGroup2 = 196 % 5 = 1
-            int numRsBlocksInGroup2 = numTotalBytes % numRSBlocks;
+            var numRsBlocksInGroup2 = numTotalBytes % numRSBlocks;
             // numRsBlocksInGroup1 = 5 - 1 = 4
-            int numRsBlocksInGroup1 = numRSBlocks - numRsBlocksInGroup2;
+            var numRsBlocksInGroup1 = numRSBlocks - numRsBlocksInGroup2;
             // numTotalBytesInGroup1 = 196 / 5 = 39
-            int numTotalBytesInGroup1 = numTotalBytes / numRSBlocks;
+            var numTotalBytesInGroup1 = numTotalBytes / numRSBlocks;
             // numTotalBytesInGroup2 = 39 + 1 = 40
-            int numTotalBytesInGroup2 = numTotalBytesInGroup1 + 1;
+            var numTotalBytesInGroup2 = numTotalBytesInGroup1 + 1;
             // numDataBytesInGroup1 = 66 / 5 = 13
-            int numDataBytesInGroup1 = numDataBytes / numRSBlocks;
+            var numDataBytesInGroup1 = numDataBytes / numRSBlocks;
             // numDataBytesInGroup2 = 13 + 1 = 14
-            int numDataBytesInGroup2 = numDataBytesInGroup1 + 1;
+            var numDataBytesInGroup2 = numDataBytesInGroup1 + 1;
             // numEcBytesInGroup1 = 39 - 13 = 26
-            int numEcBytesInGroup1 = numTotalBytesInGroup1 - numDataBytesInGroup1;
+            var numEcBytesInGroup1 = numTotalBytesInGroup1 - numDataBytesInGroup1;
             // numEcBytesInGroup2 = 40 - 14 = 26
-            int numEcBytesInGroup2 = numTotalBytesInGroup2 - numDataBytesInGroup2;
+            var numEcBytesInGroup2 = numTotalBytesInGroup2 - numDataBytesInGroup2;
             // Sanity checks.
             // 26 = 26
-            if (numEcBytesInGroup1 != numEcBytesInGroup2) {
+            if (numEcBytesInGroup1 != numEcBytesInGroup2)
+            {
                 throw new WriterException("EC bytes mismatch");
             }
             // 5 = 4 + 1.
-            if (numRSBlocks != numRsBlocksInGroup1 + numRsBlocksInGroup2) {
+            if (numRSBlocks != numRsBlocksInGroup1 + numRsBlocksInGroup2)
+            {
                 throw new WriterException("RS blocks mismatch");
             }
             // 196 = (13 + 26) * 4 + (14 + 26) * 1
@@ -335,15 +385,18 @@ namespace iTextSharp.text.pdf.qrcode {
                 ((numDataBytesInGroup1 + numEcBytesInGroup1) *
                     numRsBlocksInGroup1) +
                     ((numDataBytesInGroup2 + numEcBytesInGroup2) *
-                        numRsBlocksInGroup2)) {
+                        numRsBlocksInGroup2))
+            {
                 throw new WriterException("Total bytes mismatch");
             }
 
-            if (blockID < numRsBlocksInGroup1) {
+            if (blockID < numRsBlocksInGroup1)
+            {
                 numDataBytesInBlock[0] = numDataBytesInGroup1;
                 numECBytesInBlock[0] = numEcBytesInGroup1;
             }
-            else {
+            else
+            {
                 numDataBytesInBlock[0] = numDataBytesInGroup2;
                 numECBytesInBlock[0] = numEcBytesInGroup2;
             }
@@ -353,77 +406,91 @@ namespace iTextSharp.text.pdf.qrcode {
          * Interleave "bits" with corresponding error correction bytes. On success, store the result in
          * "result". The interleave rule is complicated. See 8.6 of JISX0510:2004 (p.37) for details.
          */
-        static void InterleaveWithECBytes(BitVector bits, int numTotalBytes,
-            int numDataBytes, int numRSBlocks, BitVector result) {
+        private static void InterleaveWithECBytes(BitVector bits, int numTotalBytes,
+            int numDataBytes, int numRSBlocks, BitVector result)
+        {
 
             // "bits" must have "getNumDataBytes" bytes of data.
-            if (bits.SizeInBytes() != numDataBytes) {
+            if (bits.SizeInBytes() != numDataBytes)
+            {
                 throw new WriterException("Number of bits and data bytes does not match");
             }
 
             // Step 1.  Divide data bytes into blocks and generate error correction bytes for them. We'll
             // store the divided data bytes blocks and error correction bytes blocks into "blocks".
-            int dataBytesOffset = 0;
-            int maxNumDataBytes = 0;
-            int maxNumEcBytes = 0;
+            var dataBytesOffset = 0;
+            var maxNumDataBytes = 0;
+            var maxNumEcBytes = 0;
 
             // Since, we know the number of reedsolmon blocks, we can initialize the vector with the number.
-            List<BlockPair> blocks = new List<BlockPair>(numRSBlocks);
+            var blocks = new List<BlockPair>(numRSBlocks);
 
-            for (int i = 0; i < numRSBlocks; ++i) {
-                int[] numDataBytesInBlock = new int[1];
-                int[] numEcBytesInBlock = new int[1];
+            for (var i = 0; i < numRSBlocks; ++i)
+            {
+                var numDataBytesInBlock = new int[1];
+                var numEcBytesInBlock = new int[1];
                 GetNumDataBytesAndNumECBytesForBlockID(
                     numTotalBytes, numDataBytes, numRSBlocks, i,
                     numDataBytesInBlock, numEcBytesInBlock);
 
-                ByteArray dataBytes = new ByteArray();
+                var dataBytes = new ByteArray();
                 dataBytes.Set(bits.GetArray(), dataBytesOffset, numDataBytesInBlock[0]);
-                ByteArray ecBytes = GenerateECBytes(dataBytes, numEcBytesInBlock[0]);
+                var ecBytes = GenerateECBytes(dataBytes, numEcBytesInBlock[0]);
                 blocks.Add(new BlockPair(dataBytes, ecBytes));
 
                 maxNumDataBytes = Math.Max(maxNumDataBytes, dataBytes.Size());
                 maxNumEcBytes = Math.Max(maxNumEcBytes, ecBytes.Size());
                 dataBytesOffset += numDataBytesInBlock[0];
             }
-            if (numDataBytes != dataBytesOffset) {
+            if (numDataBytes != dataBytesOffset)
+            {
                 throw new WriterException("Data bytes does not match offset");
             }
 
             // First, place data blocks.
-            for (int i = 0; i < maxNumDataBytes; ++i) {
-                for (int j = 0; j < blocks.Count; ++j) {
-                    ByteArray dataBytes = blocks[j].GetDataBytes();
-                    if (i < dataBytes.Size()) {
+            for (var i = 0; i < maxNumDataBytes; ++i)
+            {
+                for (var j = 0; j < blocks.Count; ++j)
+                {
+                    var dataBytes = blocks[j].GetDataBytes();
+                    if (i < dataBytes.Size())
+                    {
                         result.AppendBits(dataBytes.At(i), 8);
                     }
                 }
             }
             // Then, place error correction blocks.
-            for (int i = 0; i < maxNumEcBytes; ++i) {
-                for (int j = 0; j < blocks.Count; ++j) {
-                    ByteArray ecBytes = blocks[j].GetErrorCorrectionBytes();
-                    if (i < ecBytes.Size()) {
+            for (var i = 0; i < maxNumEcBytes; ++i)
+            {
+                for (var j = 0; j < blocks.Count; ++j)
+                {
+                    var ecBytes = blocks[j].GetErrorCorrectionBytes();
+                    if (i < ecBytes.Size())
+                    {
                         result.AppendBits(ecBytes.At(i), 8);
                     }
                 }
             }
-            if (numTotalBytes != result.SizeInBytes()) {  // Should be same.
+            if (numTotalBytes != result.SizeInBytes())
+            {  // Should be same.
                 throw new WriterException("Interleaving error: " + numTotalBytes + " and " +
                     result.SizeInBytes() + " differ.");
             }
         }
 
-        static ByteArray GenerateECBytes(ByteArray dataBytes, int numEcBytesInBlock) {
-            int numDataBytes = dataBytes.Size();
-            int[] toEncode = new int[numDataBytes + numEcBytesInBlock];
-            for (int i = 0; i < numDataBytes; i++) {
+        private static ByteArray GenerateECBytes(ByteArray dataBytes, int numEcBytesInBlock)
+        {
+            var numDataBytes = dataBytes.Size();
+            var toEncode = new int[numDataBytes + numEcBytesInBlock];
+            for (var i = 0; i < numDataBytes; i++)
+            {
                 toEncode[i] = dataBytes.At(i);
             }
             new ReedSolomonEncoder(GF256.QR_CODE_FIELD).Encode(toEncode, numEcBytesInBlock);
 
-            ByteArray ecBytes = new ByteArray(numEcBytesInBlock);
-            for (int i = 0; i < numEcBytesInBlock; i++) {
+            var ecBytes = new ByteArray(numEcBytesInBlock);
+            for (var i = 0; i < numEcBytesInBlock; i++)
+            {
                 ecBytes.Set(i, toEncode[numDataBytes + i]);
             }
             return ecBytes;
@@ -432,7 +499,8 @@ namespace iTextSharp.text.pdf.qrcode {
         /**
          * Append mode info. On success, store the result in "bits".
          */
-        static void AppendModeInfo(Mode mode, BitVector bits) {
+        private static void AppendModeInfo(Mode mode, BitVector bits)
+        {
             bits.AppendBits(mode.GetBits(), 4);
         }
 
@@ -440,9 +508,11 @@ namespace iTextSharp.text.pdf.qrcode {
         /**
          * Append length info. On success, store the result in "bits".
          */
-        static void AppendLengthInfo(int numLetters, int version, Mode mode, BitVector bits) {
-            int numBits = mode.GetCharacterCountBits(Version.GetVersionForNumber(version));
-            if (numLetters > ((1 << numBits) - 1)) {
+        private static void AppendLengthInfo(int numLetters, int version, Mode mode, BitVector bits)
+        {
+            var numBits = mode.GetCharacterCountBits(Version.GetVersionForNumber(version));
+            if (numLetters > ((1 << numBits) - 1))
+            {
                 throw new WriterException(numLetters + "is bigger than" + ((1 << numBits) - 1));
             }
             bits.AppendBits(numLetters, numBits);
@@ -451,43 +521,54 @@ namespace iTextSharp.text.pdf.qrcode {
         /**
          * Append "bytes" in "mode" mode (encoding) into "bits". On success, store the result in "bits".
          */
-        static void AppendBytes(String content, Mode mode, BitVector bits, String encoding) {
-            if (mode.Equals(Mode.NUMERIC)) {
+        private static void AppendBytes(string content, Mode mode, BitVector bits, string encoding)
+        {
+            if (mode.Equals(Mode.NUMERIC))
+            {
                 AppendNumericBytes(content, bits);
             }
-            else if (mode.Equals(Mode.ALPHANUMERIC)) {
+            else if (mode.Equals(Mode.ALPHANUMERIC))
+            {
                 AppendAlphanumericBytes(content, bits);
             }
-            else if (mode.Equals(Mode.BYTE)) {
+            else if (mode.Equals(Mode.BYTE))
+            {
                 Append8BitBytes(content, bits, encoding);
             }
-            else if (mode.Equals(Mode.KANJI)) {
+            else if (mode.Equals(Mode.KANJI))
+            {
                 AppendKanjiBytes(content, bits);
             }
-            else {
+            else
+            {
                 throw new WriterException("Invalid mode: " + mode);
             }
         }
 
-        static void AppendNumericBytes(String content, BitVector bits) {
-            int length = content.Length;
-            int i = 0;
-            while (i < length) {
-                int num1 = content[i] - '0';
-                if (i + 2 < length) {
+        private static void AppendNumericBytes(string content, BitVector bits)
+        {
+            var length = content.Length;
+            var i = 0;
+            while (i < length)
+            {
+                var num1 = content[i] - '0';
+                if (i + 2 < length)
+                {
                     // Encode three numeric letters in ten bits.
-                    int num2 = content[i + 1] - '0';
-                    int num3 = content[i + 2] - '0';
+                    var num2 = content[i + 1] - '0';
+                    var num3 = content[i + 2] - '0';
                     bits.AppendBits(num1 * 100 + num2 * 10 + num3, 10);
                     i += 3;
                 }
-                else if (i + 1 < length) {
+                else if (i + 1 < length)
+                {
                     // Encode two numeric letters in seven bits.
-                    int num2 = content[i + 1] - '0';
+                    var num2 = content[i + 1] - '0';
                     bits.AppendBits(num1 * 10 + num2, 7);
                     i += 2;
                 }
-                else {
+                else
+                {
                     // Encode one numeric letter in four bits.
                     bits.AppendBits(num1, 4);
                     i++;
@@ -495,24 +576,30 @@ namespace iTextSharp.text.pdf.qrcode {
             }
         }
 
-        static void AppendAlphanumericBytes(String content, BitVector bits) {
-            int length = content.Length;
-            int i = 0;
-            while (i < length) {
-                int code1 = GetAlphanumericCode(content[i]);
-                if (code1 == -1) {
+        private static void AppendAlphanumericBytes(string content, BitVector bits)
+        {
+            var length = content.Length;
+            var i = 0;
+            while (i < length)
+            {
+                var code1 = GetAlphanumericCode(content[i]);
+                if (code1 == -1)
+                {
                     throw new WriterException();
                 }
-                if (i + 1 < length) {
-                    int code2 = GetAlphanumericCode(content[i + 1]);
-                    if (code2 == -1) {
+                if (i + 1 < length)
+                {
+                    var code2 = GetAlphanumericCode(content[i + 1]);
+                    if (code2 == -1)
+                    {
                         throw new WriterException();
                     }
                     // Encode two alphanumeric letters in 11 bits.
                     bits.AppendBits(code1 * 45 + code2, 11);
                     i += 2;
                 }
-                else {
+                else
+                {
                     // Encode one alphanumeric letter in six bits.
                     bits.AppendBits(code1, 6);
                     i++;
@@ -520,48 +607,60 @@ namespace iTextSharp.text.pdf.qrcode {
             }
         }
 
-        static void Append8BitBytes(String content, BitVector bits, String encoding) {
+        private static void Append8BitBytes(string content, BitVector bits, string encoding)
+        {
             byte[] bytes;
-            try {
+            try
+            {
                 bytes = Encoding.GetEncoding(encoding).GetBytes(content);
             }
-            catch (Exception uee) {
+            catch (Exception uee)
+            {
                 throw new WriterException(uee.Message);
             }
-            for (int i = 0; i < bytes.Length; ++i) {
+            for (var i = 0; i < bytes.Length; ++i)
+            {
                 bits.AppendBits(bytes[i], 8);
             }
         }
 
-        static void AppendKanjiBytes(String content, BitVector bits) {
+        private static void AppendKanjiBytes(string content, BitVector bits)
+        {
             byte[] bytes;
-            try {
+            try
+            {
                 bytes = Encoding.GetEncoding("Shift_JIS").GetBytes(content);
             }
-            catch (Exception uee) {
+            catch (Exception uee)
+            {
                 throw new WriterException(uee.Message);
             }
-            int length = bytes.Length;
-            for (int i = 0; i < length; i += 2) {
-                int byte1 = bytes[i] & 0xFF;
-                int byte2 = bytes[i + 1] & 0xFF;
-                int code = (byte1 << 8) | byte2;
-                int subtracted = -1;
-                if (code >= 0x8140 && code <= 0x9ffc) {
+            var length = bytes.Length;
+            for (var i = 0; i < length; i += 2)
+            {
+                var byte1 = bytes[i] & 0xFF;
+                var byte2 = bytes[i + 1] & 0xFF;
+                var code = (byte1 << 8) | byte2;
+                var subtracted = -1;
+                if (code >= 0x8140 && code <= 0x9ffc)
+                {
                     subtracted = code - 0x8140;
                 }
-                else if (code >= 0xe040 && code <= 0xebbf) {
+                else if (code >= 0xe040 && code <= 0xebbf)
+                {
                     subtracted = code - 0xc140;
                 }
-                if (subtracted == -1) {
+                if (subtracted == -1)
+                {
                     throw new WriterException("Invalid byte sequence");
                 }
-                int encoded = ((subtracted >> 8) * 0xc0) + (subtracted & 0xff);
+                var encoded = ((subtracted >> 8) * 0xc0) + (subtracted & 0xff);
                 bits.AppendBits(encoded, 13);
             }
         }
 
-        private static void AppendECI(CharacterSetECI eci, BitVector bits) {
+        private static void AppendECI(CharacterSetECI eci, BitVector bits)
+        {
             bits.AppendBits(Mode.ECI.GetBits(), 4);
             // This is correct for values up to 127, which is all we need now.
             bits.AppendBits(eci.GetValue(), 8);

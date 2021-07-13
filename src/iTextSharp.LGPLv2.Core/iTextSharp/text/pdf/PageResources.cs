@@ -4,7 +4,6 @@ namespace iTextSharp.text.pdf
 {
     public class PageResources
     {
-
         protected PdfDictionary ColorDictionary = new PdfDictionary();
         protected PdfDictionary ExtGStateDictionary = new PdfDictionary();
         protected PdfDictionary FontDictionary = new PdfDictionary();
@@ -25,9 +24,12 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                PdfResources resources = new PdfResources();
+                var resources = new PdfResources();
                 if (OriginalResources != null)
+                {
                     resources.Merge(OriginalResources);
+                }
+
                 resources.Put(PdfName.Procset, new PdfLiteral("[/PDF /Text /ImageB /ImageC /ImageI]"));
                 resources.Add(PdfName.Font, FontDictionary);
                 resources.Add(PdfName.Xobject, XObjectDictionary);
@@ -50,9 +52,13 @@ namespace iTextSharp.text.pdf
         internal void AddDefaultColor(PdfName name, PdfObject obj)
         {
             if (obj == null || obj.IsNull())
+            {
                 ColorDictionary.Remove(name);
+            }
             else
+            {
                 ColorDictionary.Put(name, obj);
+            }
         }
 
         internal void AddDefaultColor(PdfDictionary dic)
@@ -121,24 +127,30 @@ namespace iTextSharp.text.pdf
         internal void SetOriginalResources(PdfDictionary resources, int[] newNamePtr)
         {
             if (newNamePtr != null)
+            {
                 NamePtr = newNamePtr;
+            }
+
             ForbiddenNames = new Hashtable();
             UsedNames = new Hashtable();
             if (resources == null)
+            {
                 return;
+            }
+
             OriginalResources = new PdfDictionary();
             OriginalResources.Merge(resources);
             foreach (PdfName key in resources.Keys)
             {
-                PdfObject sub = PdfReader.GetPdfObject(resources.Get(key));
+                var sub = PdfReader.GetPdfObject(resources.Get(key));
                 if (sub != null && sub.IsDictionary())
                 {
-                    PdfDictionary dic = (PdfDictionary)sub;
+                    var dic = (PdfDictionary)sub;
                     foreach (PdfName name in dic.Keys)
                     {
                         ForbiddenNames[name] = null;
                     }
-                    PdfDictionary dic2 = new PdfDictionary();
+                    var dic2 = new PdfDictionary();
                     dic2.Merge(dic);
                     OriginalResources.Put(key, dic2);
                 }
@@ -147,7 +159,7 @@ namespace iTextSharp.text.pdf
 
         internal PdfName TranslateName(PdfName name)
         {
-            PdfName translated = name;
+            var translated = name;
             if (ForbiddenNames != null)
             {
                 translated = (PdfName)UsedNames[name];
@@ -157,7 +169,9 @@ namespace iTextSharp.text.pdf
                     {
                         translated = new PdfName("Xi" + (NamePtr[0]++));
                         if (!ForbiddenNames.ContainsKey(translated))
+                        {
                             break;
+                        }
                     }
                     UsedNames[name] = translated;
                 }

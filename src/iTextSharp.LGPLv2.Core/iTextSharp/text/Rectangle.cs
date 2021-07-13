@@ -1,8 +1,8 @@
+using iTextSharp.text.pdf;
 using System;
 using System.Collections;
 using System.Text;
 using System.util;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text
 {
@@ -154,15 +154,9 @@ namespace iTextSharp.text
         /// </summary>
         public virtual BaseColor BackgroundColor
         {
-            get
-            {
-                return backgroundColor;
-            }
+            get => backgroundColor;
 
-            set
-            {
-                backgroundColor = value;
-            }
+            set => backgroundColor = value;
         }
 
         /// <summary>
@@ -171,15 +165,9 @@ namespace iTextSharp.text
         /// <value>a int</value>
         public virtual int Border
         {
-            get
-            {
-                return border;
-            }
+            get => border;
 
-            set
-            {
-                border = value;
-            }
+            set => border = value;
         }
 
         /// <summary>
@@ -192,67 +180,65 @@ namespace iTextSharp.text
         /// <value>a Color</value>
         public virtual BaseColor BorderColor
         {
-            get
-            {
-                return borderColor;
-            }
+            get => borderColor;
 
-            set
-            {
-                borderColor = value;
-            }
+            set => borderColor = value;
         }
 
         public virtual BaseColor BorderColorBottom
         {
             get
             {
-                if (borderColorBottom == null) return borderColor;
+                if (borderColorBottom == null)
+                {
+                    return borderColor;
+                }
+
                 return borderColorBottom;
             }
-            set
-            {
-                borderColorBottom = value;
-            }
+            set => borderColorBottom = value;
         }
 
         public virtual BaseColor BorderColorLeft
         {
             get
             {
-                if (borderColorLeft == null) return borderColor;
+                if (borderColorLeft == null)
+                {
+                    return borderColor;
+                }
+
                 return borderColorLeft;
             }
-            set
-            {
-                borderColorLeft = value;
-            }
+            set => borderColorLeft = value;
         }
 
         public virtual BaseColor BorderColorRight
         {
             get
             {
-                if (borderColorRight == null) return borderColor;
+                if (borderColorRight == null)
+                {
+                    return borderColor;
+                }
+
                 return borderColorRight;
             }
-            set
-            {
-                borderColorRight = value;
-            }
+            set => borderColorRight = value;
         }
 
         public virtual BaseColor BorderColorTop
         {
             get
             {
-                if (borderColorTop == null) return borderColor;
+                if (borderColorTop == null)
+                {
+                    return borderColor;
+                }
+
                 return borderColorTop;
             }
-            set
-            {
-                borderColorTop = value;
-            }
+            set => borderColorTop = value;
         }
 
         /// <summary>
@@ -261,23 +247,14 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public virtual float BorderWidth
         {
-            get
-            {
-                return borderWidth;
-            }
+            get => borderWidth;
 
-            set
-            {
-                borderWidth = value;
-            }
+            set => borderWidth = value;
         }
 
         public virtual float BorderWidthBottom
         {
-            get
-            {
-                return getVariableBorderWidth(borderWidthBottom, BOTTOM_BORDER);
-            }
+            get => getVariableBorderWidth(borderWidthBottom, BOTTOM_BORDER);
             set
             {
                 borderWidthBottom = value;
@@ -287,10 +264,7 @@ namespace iTextSharp.text
 
         public virtual float BorderWidthLeft
         {
-            get
-            {
-                return getVariableBorderWidth(borderWidthLeft, LEFT_BORDER);
-            }
+            get => getVariableBorderWidth(borderWidthLeft, LEFT_BORDER);
             set
             {
                 borderWidthLeft = value;
@@ -300,10 +274,7 @@ namespace iTextSharp.text
 
         public virtual float BorderWidthRight
         {
-            get
-            {
-                return getVariableBorderWidth(borderWidthRight, RIGHT_BORDER);
-            }
+            get => getVariableBorderWidth(borderWidthRight, RIGHT_BORDER);
             set
             {
                 borderWidthRight = value;
@@ -313,10 +284,7 @@ namespace iTextSharp.text
 
         public virtual float BorderWidthTop
         {
-            get
-            {
-                return getVariableBorderWidth(borderWidthTop, TOP_BORDER);
-            }
+            get => getVariableBorderWidth(borderWidthTop, TOP_BORDER);
             set
             {
                 borderWidthTop = value;
@@ -330,27 +298,15 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public virtual float Bottom
         {
-            get
-            {
-                return Lly;
-            }
-            set
-            {
-                Lly = value;
-            }
+            get => Lly;
+            set => Lly = value;
         }
 
         /// <summary>
         /// Gets all the chunks in this element.
         /// </summary>
         /// <value>an ArrayList</value>
-        public virtual ArrayList Chunks
-        {
-            get
-            {
-                return new ArrayList();
-            }
-        }
+        public virtual ArrayList Chunks => new ArrayList();
 
         /// <summary>
         /// Get/set the grayscale of the rectangle.
@@ -361,27 +317,22 @@ namespace iTextSharp.text
             get
             {
                 if (backgroundColor is GrayColor)
+                {
                     return ((GrayColor)backgroundColor).Gray;
+                }
                 else
+                {
                     return 0;
+                }
             }
-            set
-            {
-                backgroundColor = new GrayColor(value);
-            }
+            set => backgroundColor = new GrayColor(value);
         }
 
         /// <summary>
         /// Returns the height of the rectangle.
         /// </summary>
         /// <value>a height</value>
-        public float Height
-        {
-            get
-            {
-                return Ury - Lly;
-            }
-        }
+        public float Height => Ury - Lly;
 
         /// <summary>
         /// Get/set the lower left x-coordinate.
@@ -389,15 +340,9 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public virtual float Left
         {
-            get
-            {
-                return Llx;
-            }
+            get => Llx;
 
-            set
-            {
-                Llx = value;
-            }
+            set => Llx = value;
         }
 
         /// <summary>
@@ -409,28 +354,16 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public virtual float Right
         {
-            get
-            {
-                return Urx;
-            }
+            get => Urx;
 
-            set
-            {
-                Urx = value;
-            }
+            set => Urx = value;
         }
 
         /// <summary>
         /// Returns the rotation
         /// </summary>
         /// <value>a int</value>
-        public int Rotation
-        {
-            get
-            {
-                return rotation;
-            }
-        }
+        public int Rotation => rotation;
 
         /// <summary>
         /// Get/set the upper right y-coordinate.
@@ -438,28 +371,16 @@ namespace iTextSharp.text
         /// <value>a float</value>
         public virtual float Top
         {
-            get
-            {
-                return Ury;
-            }
+            get => Ury;
 
-            set
-            {
-                Ury = value;
-            }
+            set => Ury = value;
         }
 
         /// <summary>
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public virtual int Type
-        {
-            get
-            {
-                return RECTANGLE;
-            }
-        }
+        public virtual int Type => RECTANGLE;
 
         /// <summary>
         /// Sets a parameter indicating if the rectangle has variable borders
@@ -467,14 +388,8 @@ namespace iTextSharp.text
         /// </summary>
         public virtual bool UseVariableBorders
         {
-            get
-            {
-                return useVariableBorders;
-            }
-            set
-            {
-                useVariableBorders = value;
-            }
+            get => useVariableBorders;
+            set => useVariableBorders = value;
         }
 
         /// <summary>
@@ -483,14 +398,8 @@ namespace iTextSharp.text
         /// <value>a width</value>
         public virtual float Width
         {
-            get
-            {
-                return Urx - Llx;
-            }
-            set
-            {
-                throw new InvalidOperationException("The width cannot be set.");
-            }
+            get => Urx - Llx;
+            set => throw new InvalidOperationException("The width cannot be set.");
         }
 
         public virtual void CloneNonPositionParameters(Rectangle rect)
@@ -573,7 +482,7 @@ namespace iTextSharp.text
         /// <returns>a Rectangle</returns>
         public Rectangle GetRectangle(float top, float bottom)
         {
-            Rectangle tmp = new Rectangle(this);
+            var tmp = new Rectangle(this);
             if (Top > top)
             {
                 tmp.Top = top;
@@ -615,7 +524,10 @@ namespace iTextSharp.text
         public bool HasBorder(int type)
         {
             if (border == UNDEFINED)
+            {
                 return false;
+            }
+
             return (border & type) == type;
         }
 
@@ -661,13 +573,13 @@ namespace iTextSharp.text
         {
             if (Llx > Urx)
             {
-                float a = Llx;
+                var a = Llx;
                 Llx = Urx;
                 Urx = a;
             }
             if (Lly > Ury)
             {
-                float a = Lly;
+                var a = Lly;
                 Lly = Ury;
                 Ury = a;
             }
@@ -703,8 +615,10 @@ namespace iTextSharp.text
         /// <returns>a Rectangle</returns>
         public Rectangle Rotate()
         {
-            Rectangle rect = new Rectangle(Lly, Llx, Ury, Urx);
-            rect.rotation = rotation + 90;
+            var rect = new Rectangle(Lly, Llx, Ury, Urx)
+            {
+                rotation = rotation + 90
+            };
             rect.rotation %= 360;
             return rect;
         }
@@ -712,33 +626,74 @@ namespace iTextSharp.text
         public virtual void SoftCloneNonPositionParameters(Rectangle rect)
         {
             if (rect.rotation != 0)
+            {
                 rotation = rect.rotation;
+            }
+
             if (rect.border != UNDEFINED)
+            {
                 border = rect.border;
+            }
+
             if (rect.borderWidth.ApproxNotEqual(UNDEFINED))
+            {
                 borderWidth = rect.borderWidth;
+            }
+
             if (rect.borderColor != null)
+            {
                 borderColor = rect.borderColor;
+            }
+
             if (rect.backgroundColor != null)
+            {
                 backgroundColor = rect.backgroundColor;
+            }
+
             if (rect.borderColorLeft != null)
+            {
                 borderColorLeft = rect.borderColorLeft;
+            }
+
             if (rect.borderColorRight != null)
+            {
                 borderColorRight = rect.borderColorRight;
+            }
+
             if (rect.borderColorTop != null)
+            {
                 borderColorTop = rect.borderColorTop;
+            }
+
             if (rect.borderColorBottom != null)
+            {
                 borderColorBottom = rect.borderColorBottom;
+            }
+
             if (rect.borderWidthLeft.ApproxNotEqual(UNDEFINED))
+            {
                 borderWidthLeft = rect.borderWidthLeft;
+            }
+
             if (rect.borderWidthRight.ApproxNotEqual(UNDEFINED))
+            {
                 borderWidthRight = rect.borderWidthRight;
+            }
+
             if (rect.borderWidthTop.ApproxNotEqual(UNDEFINED))
+            {
                 borderWidthTop = rect.borderWidthTop;
+            }
+
             if (rect.borderWidthBottom.ApproxNotEqual(UNDEFINED))
+            {
                 borderWidthBottom = rect.borderWidthBottom;
+            }
+
             if (useVariableBorders)
+            {
                 useVariableBorders = rect.useVariableBorders;
+            }
         }
         /// <summary>
         /// Updates the border flag for a side based on the specified width. A width
@@ -748,7 +703,7 @@ namespace iTextSharp.text
         /// </summary>
         public override string ToString()
         {
-            StringBuilder buf = new StringBuilder("Rectangle: ");
+            var buf = new StringBuilder("Rectangle: ");
             buf.Append(Width);
             buf.Append('x');
             buf.Append(Height);
@@ -761,7 +716,10 @@ namespace iTextSharp.text
         private float getVariableBorderWidth(float variableWidthValue, int side)
         {
             if ((border & side) != 0)
+            {
                 return variableWidthValue.ApproxNotEqual(UNDEFINED) ? variableWidthValue : borderWidth;
+            }
+
             return 0;
         }
 

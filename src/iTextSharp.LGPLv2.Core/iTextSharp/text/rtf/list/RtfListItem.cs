@@ -1,7 +1,7 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
-using iTextSharp.text.rtf.text;
 using iTextSharp.text.rtf.style;
+using iTextSharp.text.rtf.text;
+using System.IO;
 
 namespace iTextSharp.text.rtf.list
 {
@@ -22,6 +22,7 @@ namespace iTextSharp.text.rtf.list
         /// The RtfList this RtfListItem belongs to.
         /// </summary>
         private RtfListLevel _parentList;
+
         /// <summary>
         /// Constructs a RtfListItem for a ListItem belonging to a RtfDocument.
         /// </summary>
@@ -58,9 +59,9 @@ namespace iTextSharp.text.rtf.list
         /// <param name="listLevel">The list level to inherit.</param>
         public void InheritListSettings(int listNumber, int listLevel)
         {
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
-                IRtfBasicElement rtfElement = (IRtfBasicElement)Chunks[i];
+                var rtfElement = (IRtfBasicElement)Chunks[i];
                 if (rtfElement is RtfList)
                 {
                     ((RtfList)rtfElement).SetListNumber(listNumber);
@@ -117,9 +118,9 @@ namespace iTextSharp.text.rtf.list
                 result.Write(LineSpacing, 0, LineSpacing.Length);
                 result.Write(t = IntToByteArray(ParagraphStyle.GetLineLeading()), 0, t.Length);
             }
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
-                IRtfBasicElement rtfElement = (IRtfBasicElement)Chunks[i];
+                var rtfElement = (IRtfBasicElement)Chunks[i];
                 if (rtfElement is RtfChunk)
                 {
                     ((RtfChunk)rtfElement).SetSoftLineBreaks(true);
@@ -136,10 +137,12 @@ namespace iTextSharp.text.rtf.list
                     {
                         case RtfListLevel.LIST_LEVEL_FOLLOW_NOTHING:
                             break;
+
                         case RtfListLevel.LIST_LEVEL_FOLLOW_TAB:
                             _parentList.WriteListBeginning(result);
                             result.Write(RtfList.Tab, 0, RtfList.Tab.Length);
                             break;
+
                         case RtfListLevel.LIST_LEVEL_FOLLOW_SPACE:
                             _parentList.WriteListBeginning(result);
                             result.Write(t = DocWriter.GetIsoBytes(" "), 0, t.Length);
@@ -161,27 +164,28 @@ namespace iTextSharp.text.rtf.list
         /// <returns> true  if a RtfList definition was written,  false  otherwise</returns>
         public bool WriteDefinition(Stream outp)
         {
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
-                IRtfBasicElement rtfElement = (IRtfBasicElement)Chunks[i];
+                var rtfElement = (IRtfBasicElement)Chunks[i];
                 if (rtfElement is RtfList)
                 {
-                    RtfList rl = (RtfList)rtfElement;
+                    var rl = (RtfList)rtfElement;
                     rl.WriteDefinition(outp);
                     return true;
                 }
             }
             return false;
         }
+
         /// <summary>
         /// Correct the indentation of RtfLists in this RtfListItem by adding left/first line indentation
         /// from the parent RtfList. Also calls correctIndentation on all child RtfLists.
         /// </summary>
         protected internal void CorrectIndentation()
         {
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
-                IRtfBasicElement rtfElement = (IRtfBasicElement)Chunks[i];
+                var rtfElement = (IRtfBasicElement)Chunks[i];
                 if (rtfElement is RtfList)
                 {
                     ((RtfList)rtfElement).CorrectIndentation();

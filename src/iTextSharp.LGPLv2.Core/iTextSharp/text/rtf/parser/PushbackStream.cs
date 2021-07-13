@@ -12,26 +12,14 @@ namespace iTextSharp.text.rtf.parser
             _s = s;
         }
 
-        public override bool CanRead
-        {
-            get { return _s.CanRead; }
-        }
-        public override bool CanSeek
-        {
-            get { return _s.CanSeek; }
-        }
-        public override bool CanWrite
-        {
-            get { return _s.CanWrite; }
-        }
-        public override long Length
-        {
-            get { return _s.Length; }
-        }
+        public override bool CanRead => _s.CanRead;
+        public override bool CanSeek => _s.CanSeek;
+        public override bool CanWrite => _s.CanWrite;
+        public override long Length => _s.Length;
         public override long Position
         {
-            get { return _s.Position; }
-            set { _s.Position = value; }
+            get => _s.Position;
+            set => _s.Position = value;
         }
 
         public override void Flush()
@@ -55,7 +43,7 @@ namespace iTextSharp.text.rtf.parser
         {
             if (_buf != -1)
             {
-                int tmp = _buf;
+                var tmp = _buf;
                 _buf = -1;
                 return tmp;
             }
@@ -74,7 +62,9 @@ namespace iTextSharp.text.rtf.parser
         public virtual void Unread(int b)
         {
             if (_buf != -1)
+            {
                 throw new InvalidOperationException("Can only push back one byte");
+            }
 
             _buf = b & 0xFF;
         }

@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf.collection
 {
-
     public class PdfCollectionSchema : PdfDictionary
     {
         /// <summary>

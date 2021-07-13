@@ -20,13 +20,13 @@ namespace System.IO
                 throw new ArgumentOutOfRangeException(nameof(bufferSize));
             }
 
-            bool sourceCanRead = source.CanRead;
+            var sourceCanRead = source.CanRead;
             if (!sourceCanRead && !source.CanWrite)
             {
                 throw new ObjectDisposedException(null);
             }
 
-            bool destinationCanWrite = destination.CanWrite;
+            var destinationCanWrite = destination.CanWrite;
             if (!destinationCanWrite && !destination.CanRead)
             {
                 throw new ObjectDisposedException(nameof(destination));

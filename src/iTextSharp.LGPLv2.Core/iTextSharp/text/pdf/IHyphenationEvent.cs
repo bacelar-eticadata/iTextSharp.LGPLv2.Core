@@ -6,7 +6,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public interface IHyphenationEvent
     {
-
         /// <summary>
         /// Gets the second part of the hyphenated word. Must be called
         /// after  getHyphenatedWordPre() .

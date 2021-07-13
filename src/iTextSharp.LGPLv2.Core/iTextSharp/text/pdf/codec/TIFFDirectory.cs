@@ -42,32 +42,33 @@ namespace iTextSharp.text.pdf.codec
         /// <summary>
         /// A Hashtable indexing the fields by tag number.
         /// </summary>
-        readonly Hashtable _fieldIndex = new Hashtable();
+        private readonly Hashtable _fieldIndex = new Hashtable();
 
         /// <summary>
         /// A bool storing the endianness of the stream.
         /// </summary>
-        readonly bool _isBigEndian;
+        private readonly bool _isBigEndian;
 
         /// <summary>
         /// An array of TIFFFields.
         /// </summary>
-        TiffField[] _fields;
+        private TiffField[] _fields;
 
         /// <summary>
         /// The offset of this IFD.
         /// </summary>
-        long _ifdOffset = 8;
+        private long _ifdOffset = 8;
 
         /// <summary>
         /// The offset of the next IFD.
         /// </summary>
-        long _nextIfdOffset;
+        private long _nextIfdOffset;
 
         /// <summary>
         /// The number of entries in the IFD.
         /// </summary>
-        int _numEntries;
+        private int _numEntries;
+
         /// <summary>
         /// Constructs a TIFFDirectory from a SeekableStream.
         /// The directory parameter specifies which directory to read from
@@ -79,20 +80,19 @@ namespace iTextSharp.text.pdf.codec
         /// <param name="directory">the index of the directory to read.</param>
         public TiffDirectory(RandomAccessFileOrArray stream, int directory)
         {
-
             long globalSaveOffset = stream.FilePointer;
             long ifdOffset;
 
             // Read the TIFF header
             stream.Seek(0L);
-            int endian = stream.ReadUnsignedShort();
+            var endian = stream.ReadUnsignedShort();
             if (!isValidEndianTag(endian))
             {
                 throw new InvalidOperationException("Bad endianness tag (not 0x4949 or 0x4d4d).");
             }
             _isBigEndian = (endian == 0x4d4d);
 
-            int magic = readUnsignedShort(stream);
+            var magic = readUnsignedShort(stream);
             if (magic != 42)
             {
                 throw new InvalidOperationException("Bad magic number, should be 42.");
@@ -101,7 +101,7 @@ namespace iTextSharp.text.pdf.codec
             // Get the initial ifd offset as an unsigned int (using a long)
             ifdOffset = readUnsignedInt(stream);
 
-            for (int i = 0; i < directory; i++)
+            for (var i = 0; i < directory; i++)
             {
                 if (ifdOffset == 0L)
                 {
@@ -109,7 +109,7 @@ namespace iTextSharp.text.pdf.codec
                 }
 
                 stream.Seek(ifdOffset);
-                int entries = readUnsignedShort(stream);
+                var entries = readUnsignedShort(stream);
                 stream.Skip(12 * entries);
 
                 ifdOffset = readUnsignedInt(stream);
@@ -134,10 +134,9 @@ namespace iTextSharp.text.pdf.codec
         /// <param name="directory">the index of the directory to read beyond the</param>
         public TiffDirectory(RandomAccessFileOrArray stream, long ifdOffset, int directory)
         {
-
             long globalSaveOffset = stream.FilePointer;
             stream.Seek(0L);
-            int endian = stream.ReadUnsignedShort();
+            var endian = stream.ReadUnsignedShort();
             if (!isValidEndianTag(endian))
             {
                 throw new InvalidOperationException("Bad endianness tag (not 0x4949 or 0x4d4d).");
@@ -148,11 +147,11 @@ namespace iTextSharp.text.pdf.codec
             stream.Seek(ifdOffset);
 
             // Seek to desired IFD if necessary.
-            int dirNum = 0;
+            var dirNum = 0;
             while (dirNum < directory)
             {
                 // Get the number of fields in the current IFD.
-                int numEntries = readUnsignedShort(stream);
+                var numEntries = readUnsignedShort(stream);
 
                 // Skip to the next IFD offset value field.
                 stream.Seek(ifdOffset + 12 * numEntries);
@@ -174,7 +173,8 @@ namespace iTextSharp.text.pdf.codec
         /// <summary>
         /// The default constructor.
         /// </summary>
-        TiffDirectory() { }
+        private TiffDirectory()
+        { }
 
         /// <summary>
         /// Returns the number of image directories (subimages) stored in a
@@ -185,22 +185,22 @@ namespace iTextSharp.text.pdf.codec
             long pointer = stream.FilePointer; // Save stream pointer
 
             stream.Seek(0L);
-            int endian = stream.ReadUnsignedShort();
+            var endian = stream.ReadUnsignedShort();
             if (!isValidEndianTag(endian))
             {
                 throw new InvalidOperationException("Bad endianness tag (not 0x4949 or 0x4d4d).");
             }
-            bool isBigEndian = (endian == 0x4d4d);
-            int magic = readUnsignedShort(stream, isBigEndian);
+            var isBigEndian = (endian == 0x4d4d);
+            var magic = readUnsignedShort(stream, isBigEndian);
             if (magic != 42)
             {
                 throw new InvalidOperationException("Bad magic number, should be 42.");
             }
 
             stream.Seek(4L);
-            long offset = readUnsignedInt(stream, isBigEndian);
+            var offset = readUnsignedInt(stream, isBigEndian);
 
-            int numDirectories = 0;
+            var numDirectories = 0;
             while (offset != 0L)
             {
                 ++numDirectories;
@@ -209,7 +209,7 @@ namespace iTextSharp.text.pdf.codec
                 try
                 {
                     stream.Seek(offset);
-                    int entries = readUnsignedShort(stream, isBigEndian);
+                    var entries = readUnsignedShort(stream, isBigEndian);
                     stream.Skip(12 * entries);
                     offset = readUnsignedInt(stream, isBigEndian);
                 }
@@ -230,7 +230,7 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public TiffField GetField(int tag)
         {
-            object i = _fieldIndex[tag];
+            var i = _fieldIndex[tag];
             if (i == null)
             {
                 return null;
@@ -249,8 +249,8 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public byte GetFieldAsByte(int tag, int index)
         {
-            int i = (int)_fieldIndex[tag];
-            byte[] b = (_fields[i]).GetAsBytes();
+            var i = (int)_fieldIndex[tag];
+            var b = (_fields[i]).GetAsBytes();
             return b[index];
         }
 
@@ -273,7 +273,7 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public double GetFieldAsDouble(int tag, int index)
         {
-            int i = (int)_fieldIndex[tag];
+            var i = (int)_fieldIndex[tag];
             return _fields[i].GetAsDouble(index);
         }
 
@@ -295,7 +295,7 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public float GetFieldAsFloat(int tag, int index)
         {
-            int i = (int)_fieldIndex[tag];
+            var i = (int)_fieldIndex[tag];
             return _fields[i].GetAsFloat(index);
         }
 
@@ -317,7 +317,7 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public long GetFieldAsLong(int tag, int index)
         {
-            int i = (int)_fieldIndex[tag];
+            var i = (int)_fieldIndex[tag];
             return (_fields[i]).GetAsLong(index);
         }
 
@@ -373,7 +373,7 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public int[] GetTags()
         {
-            int[] tags = new int[_fieldIndex.Count];
+            var tags = new int[_fieldIndex.Count];
             _fieldIndex.Keys.CopyTo(tags, 0);
             return tags;
         }
@@ -403,6 +403,7 @@ namespace iTextSharp.text.pdf.codec
         {
             return ((endian == 0x4949) || (endian == 0x4d4d));
         }
+
         private static long readUnsignedInt(RandomAccessFileOrArray stream,
         bool isBigEndian)
         {
@@ -431,7 +432,7 @@ namespace iTextSharp.text.pdf.codec
 
         private void initialize(RandomAccessFileOrArray stream)
         {
-            long nextTagOffset = 0L;
+            var nextTagOffset = 0L;
             long maxOffset = stream.Length;
             int i, j;
 
@@ -442,10 +443,10 @@ namespace iTextSharp.text.pdf.codec
 
             for (i = 0; (i < _numEntries) && (nextTagOffset < maxOffset); i++)
             {
-                int tag = readUnsignedShort(stream);
-                int type = readUnsignedShort(stream);
-                int count = (int)(readUnsignedInt(stream));
-                bool processTag = true;
+                var tag = readUnsignedShort(stream);
+                var type = readUnsignedShort(stream);
+                var count = (int)(readUnsignedInt(stream));
+                var processTag = true;
 
                 // The place to return to to read the next tag
                 nextTagOffset = stream.FilePointer + 4;
@@ -456,7 +457,7 @@ namespace iTextSharp.text.pdf.codec
                     // contain the starting offset of the data
                     if (count * _sizeOfType[type] > 4)
                     {
-                        long valueOffset = readUnsignedInt(stream);
+                        var valueOffset = readUnsignedInt(stream);
 
                         // bounds check offset for EOF
                         if (valueOffset < maxOffset)
@@ -487,31 +488,32 @@ namespace iTextSharp.text.pdf.codec
                         case TiffField.TIFF_SBYTE:
                         case TiffField.TIFF_UNDEFINED:
                         case TiffField.TIFF_ASCII:
-                            byte[] bvalues = new byte[count];
+                            var bvalues = new byte[count];
                             stream.ReadFully(bvalues, 0, count);
 
                             if (type == TiffField.TIFF_ASCII)
                             {
-
                                 // Can be multiple strings
                                 int index = 0, prevIndex = 0;
-                                ArrayList v = new ArrayList();
+                                var v = new ArrayList();
 
                                 while (index < count)
                                 {
-
-                                    while ((index < count) && (bvalues[index++] != 0)) ;
+                                    while ((index < count) && (bvalues[index++] != 0))
+                                    {
+                                        ;
+                                    }
 
                                     // When we encountered zero, means one string has ended
-                                    char[] cht = new char[index - prevIndex];
+                                    var cht = new char[index - prevIndex];
                                     Array.Copy(bvalues, prevIndex, cht, 0, index - prevIndex);
                                     v.Add(new string(cht));
                                     prevIndex = index;
                                 }
 
                                 count = v.Count;
-                                string[] strings = new string[count];
-                                for (int c = 0; c < count; c++)
+                                var strings = new string[count];
+                                for (var c = 0; c < count; c++)
                                 {
                                     strings[c] = (string)v[c];
                                 }
@@ -526,7 +528,7 @@ namespace iTextSharp.text.pdf.codec
                             break;
 
                         case TiffField.TIFF_SHORT:
-                            char[] cvalues = new char[count];
+                            var cvalues = new char[count];
                             for (j = 0; j < count; j++)
                             {
                                 cvalues[j] = (char)(readUnsignedShort(stream));
@@ -535,7 +537,7 @@ namespace iTextSharp.text.pdf.codec
                             break;
 
                         case TiffField.TIFF_LONG:
-                            long[] lvalues = new long[count];
+                            var lvalues = new long[count];
                             for (j = 0; j < count; j++)
                             {
                                 lvalues[j] = readUnsignedInt(stream);
@@ -544,18 +546,18 @@ namespace iTextSharp.text.pdf.codec
                             break;
 
                         case TiffField.TIFF_RATIONAL:
-                            long[][] llvalues = new long[count][];
+                            var llvalues = new long[count][];
                             for (j = 0; j < count; j++)
                             {
-                                long v0 = readUnsignedInt(stream);
-                                long v1 = readUnsignedInt(stream);
+                                var v0 = readUnsignedInt(stream);
+                                var v1 = readUnsignedInt(stream);
                                 llvalues[j] = new[] { v0, v1 };
                             }
                             obj = llvalues;
                             break;
 
                         case TiffField.TIFF_SSHORT:
-                            short[] svalues = new short[count];
+                            var svalues = new short[count];
                             for (j = 0; j < count; j++)
                             {
                                 svalues[j] = readShort(stream);
@@ -564,7 +566,7 @@ namespace iTextSharp.text.pdf.codec
                             break;
 
                         case TiffField.TIFF_SLONG:
-                            int[] ivalues = new int[count];
+                            var ivalues = new int[count];
                             for (j = 0; j < count; j++)
                             {
                                 ivalues[j] = readInt(stream);
@@ -573,7 +575,7 @@ namespace iTextSharp.text.pdf.codec
                             break;
 
                         case TiffField.TIFF_SRATIONAL:
-                            int[,] iivalues = new int[count, 2];
+                            var iivalues = new int[count, 2];
                             for (j = 0; j < count; j++)
                             {
                                 iivalues[j, 0] = readInt(stream);
@@ -583,7 +585,7 @@ namespace iTextSharp.text.pdf.codec
                             break;
 
                         case TiffField.TIFF_FLOAT:
-                            float[] fvalues = new float[count];
+                            var fvalues = new float[count];
                             for (j = 0; j < count; j++)
                             {
                                 fvalues[j] = readFloat(stream);
@@ -592,7 +594,7 @@ namespace iTextSharp.text.pdf.codec
                             break;
 
                         case TiffField.TIFF_DOUBLE:
-                            double[] dvalues = new double[count];
+                            var dvalues = new double[count];
                             for (j = 0; j < count; j++)
                             {
                                 dvalues[j] = readDouble(stream);
@@ -621,6 +623,7 @@ namespace iTextSharp.text.pdf.codec
                 _nextIfdOffset = 0;
             }
         }
+
         /// <summary>
         /// Methods to read primitive data types from the stream
         /// </summary>

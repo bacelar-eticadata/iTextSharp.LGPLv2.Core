@@ -1,8 +1,8 @@
+using iTextSharp.LGPLv2.Core.System.NetUtils;
+using iTextSharp.text.pdf;
 using System;
 using System.IO;
 using System.util;
-using iTextSharp.LGPLv2.Core.System.NetUtils;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text
 {
@@ -122,21 +122,21 @@ namespace iTextSharp.text
         /// <returns>a type: VALID_MARKER, UNSUPPORTED_MARKER or NOPARAM_MARKER</returns>
         private static int markerType(int marker)
         {
-            for (int i = 0; i < ValidMarkers.Length; i++)
+            for (var i = 0; i < ValidMarkers.Length; i++)
             {
                 if (marker == ValidMarkers[i])
                 {
                     return VALID_MARKER;
                 }
             }
-            for (int i = 0; i < NoparamMarkers.Length; i++)
+            for (var i = 0; i < NoparamMarkers.Length; i++)
             {
                 if (marker == NoparamMarkers[i])
                 {
                     return NOPARAM_MARKER;
                 }
             }
-            for (int i = 0; i < UnsupportedMarkers.Length; i++)
+            for (var i = 0; i < UnsupportedMarkers.Length; i++)
             {
                 if (marker == UnsupportedMarkers[i])
                 {
@@ -175,16 +175,19 @@ namespace iTextSharp.text
                 {
                     throw new BadElementException(errorId + " is not a valid JPEG-file.");
                 }
-                bool firstPass = true;
+                var firstPass = true;
                 int len;
                 while (true)
                 {
-                    int v = istr.ReadByte();
+                    var v = istr.ReadByte();
                     if (v < 0)
+                    {
                         throw new IOException("Premature EOF while reading JPG.");
+                    }
+
                     if (v == 0xFF)
                     {
-                        int marker = istr.ReadByte();
+                        var marker = istr.ReadByte();
                         if (firstPass && marker == M_APP0)
                         {
                             firstPass = false;
@@ -194,12 +197,15 @@ namespace iTextSharp.text
                                 Utilities.Skip(istr, len - 2);
                                 continue;
                             }
-                            byte[] bcomp = new byte[JfifId.Length];
-                            int r = istr.Read(bcomp, 0, bcomp.Length);
+                            var bcomp = new byte[JfifId.Length];
+                            var r = istr.Read(bcomp, 0, bcomp.Length);
                             if (r != bcomp.Length)
+                            {
                                 throw new BadElementException(errorId + " corrupted JFIF marker.");
-                            bool found = true;
-                            for (int k = 0; k < bcomp.Length; ++k)
+                            }
+
+                            var found = true;
+                            for (var k = 0; k < bcomp.Length; ++k)
                             {
                                 if (bcomp[k] != JfifId[k])
                                 {
@@ -213,9 +219,9 @@ namespace iTextSharp.text
                                 continue;
                             }
                             Utilities.Skip(istr, 2);
-                            int units = istr.ReadByte();
-                            int dx = getShort(istr);
-                            int dy = getShort(istr);
+                            var units = istr.ReadByte();
+                            var dx = getShort(istr);
+                            var dy = getShort(istr);
                             if (units == 1)
                             {
                                 dpiX = dx;
@@ -232,14 +238,14 @@ namespace iTextSharp.text
                         if (marker == M_APPE)
                         {
                             len = getShort(istr) - 2;
-                            byte[] byteappe = new byte[len];
-                            for (int k = 0; k < len; ++k)
+                            var byteappe = new byte[len];
+                            for (var k = 0; k < len; ++k)
                             {
                                 byteappe[k] = (byte)istr.ReadByte();
                             }
                             if (byteappe.Length >= 12)
                             {
-                                string appe = System.Text.Encoding.ASCII.GetString(byteappe, 0, 5);
+                                var appe = System.Text.Encoding.ASCII.GetString(byteappe, 0, 5);
                                 if (Util.EqualsIgnoreCase(appe, "adobe"))
                                 {
                                     Invert = true;
@@ -250,27 +256,30 @@ namespace iTextSharp.text
                         if (marker == M_APP2)
                         {
                             len = getShort(istr) - 2;
-                            byte[] byteapp2 = new byte[len];
-                            for (int k = 0; k < len; ++k)
+                            var byteapp2 = new byte[len];
+                            for (var k = 0; k < len; ++k)
                             {
                                 byteapp2[k] = (byte)istr.ReadByte();
                             }
                             if (byteapp2.Length >= 14)
                             {
-                                string app2 = System.Text.Encoding.ASCII.GetString(byteapp2, 0, 11);
+                                var app2 = System.Text.Encoding.ASCII.GetString(byteapp2, 0, 11);
                                 if (app2.Equals("ICC_PROFILE"))
                                 {
-                                    int order = byteapp2[12] & 0xff;
-                                    int count = byteapp2[13] & 0xff;
+                                    var order = byteapp2[12] & 0xff;
+                                    var count = byteapp2[13] & 0xff;
                                     if (_icc == null)
+                                    {
                                         _icc = new byte[count][];
+                                    }
+
                                     _icc[order - 1] = byteapp2;
                                 }
                             }
                             continue;
                         }
                         firstPass = false;
-                        int markertype = markerType(marker);
+                        var markertype = markerType(marker);
                         if (markertype == VALID_MARKER)
                         {
                             Utilities.Skip(istr, 2);
@@ -308,8 +317,8 @@ namespace iTextSharp.text
             plainHeight = Height;
             if (_icc != null)
             {
-                int total = 0;
-                for (int k = 0; k < _icc.Length; ++k)
+                var total = 0;
+                for (var k = 0; k < _icc.Length; ++k)
                 {
                     if (_icc[k] == null)
                     {
@@ -318,16 +327,16 @@ namespace iTextSharp.text
                     }
                     total += _icc[k].Length - 14;
                 }
-                byte[] ficc = new byte[total];
+                var ficc = new byte[total];
                 total = 0;
-                for (int k = 0; k < _icc.Length; ++k)
+                for (var k = 0; k < _icc.Length; ++k)
                 {
                     Array.Copy(_icc[k], 14, ficc, total, _icc[k].Length - 14);
                     total += _icc[k].Length - 14;
                 }
                 try
                 {
-                    IccProfile iccProf = IccProfile.GetInstance(ficc);
+                    var iccProf = IccProfile.GetInstance(ficc);
                     TagIcc = iccProf;
                 }
                 catch { }

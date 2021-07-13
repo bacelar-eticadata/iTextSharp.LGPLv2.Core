@@ -1,14 +1,14 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
     [TestClass]
     public class Chapter08Tests
     {
-        readonly string[] _languages = { "English", "German", "French", "Spanish", "Dutch" };
+        private readonly string[] _languages = { "English", "German", "French", "Spanish", "Dutch" };
 
         [TestMethod]
         public void Verify_RadioButtons_CanBeCreated()
@@ -42,7 +42,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
                 radiogroup.AddKid(radiofield);
             }
             writer.AddAnnotation(radiogroup);
-            foreach (string lang in _languages)
+            foreach (var lang in _languages)
             {
                 cb.BeginText();
                 cb.SetFontAndSize(bf, 18);

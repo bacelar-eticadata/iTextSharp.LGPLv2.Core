@@ -1,7 +1,7 @@
 using System;
-using System.util;
-using System.Text;
 using System.Globalization;
+using System.Text;
+using System.util;
 
 namespace iTextSharp.text.html
 {
@@ -356,6 +356,7 @@ namespace iTextSharp.text.html
         /// the key for any tag
         /// </summary>
         public const string ITEXT_TAG = "tag";
+
         /// <summary>
         /// Converts a  Color  into a HTML representation of this  Color .
         /// </summary>
@@ -364,8 +365,11 @@ namespace iTextSharp.text.html
         public static BaseColor DecodeColor(string s)
         {
             if (s == null)
+            {
                 return null;
-            s = s.ToLower(CultureInfo.InvariantCulture).Trim();
+            }
+
+            s = s.ToLowerInvariant().Trim();
             try
             {
                 return WebColors.GetRgbColor(s);
@@ -383,22 +387,48 @@ namespace iTextSharp.text.html
         /// <returns>a Properties object</returns>
         public static Properties ParseAttributes(string str)
         {
-            Properties result = new Properties();
-            if (str == null) return result;
-            StringTokenizer keyValuePairs = new StringTokenizer(str, ";");
+            var result = new Properties();
+            if (str == null)
+            {
+                return result;
+            }
+
+            var keyValuePairs = new StringTokenizer(str, ";");
             StringTokenizer keyValuePair;
             string key;
             string value;
             while (keyValuePairs.HasMoreTokens())
             {
                 keyValuePair = new StringTokenizer(keyValuePairs.NextToken(), ":");
-                if (keyValuePair.HasMoreTokens()) key = keyValuePair.NextToken().Trim().Trim();
-                else continue;
-                if (keyValuePair.HasMoreTokens()) value = keyValuePair.NextToken().Trim();
-                else continue;
-                if (value.StartsWith("\"")) value = value.Substring(1);
-                if (value.EndsWith("\"")) value = value.Substring(0, value.Length - 1);
-                result.Add(key.ToLower(CultureInfo.InvariantCulture), value);
+                if (keyValuePair.HasMoreTokens())
+                {
+                    key = keyValuePair.NextToken().Trim().Trim();
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (keyValuePair.HasMoreTokens())
+                {
+                    value = keyValuePair.NextToken().Trim();
+                }
+                else
+                {
+                    continue;
+                }
+
+                if (value.StartsWith("\""))
+                {
+                    value = value.Substring(1);
+                }
+
+                if (value.EndsWith("\""))
+                {
+                    value = value.Substring(0, value.Length - 1);
+                }
+
+                result.Add(key.ToLowerInvariant(), value);
             }
             return result;
         }
@@ -416,9 +446,9 @@ namespace iTextSharp.text.html
             // TODO: Evaluate the effect of this.
             // It may change the default behavour of the methd if this is changed.
             // return ParseLength(string, Markup.DEFAULT_FONT_SIZE);
-            int pos = 0;
-            int length = str.Length;
-            bool ok = true;
+            var pos = 0;
+            var length = str.Length;
+            var ok = true;
             while (ok && pos < length)
             {
                 switch (str[pos])
@@ -438,16 +468,23 @@ namespace iTextSharp.text.html
                     case '.':
                         pos++;
                         break;
+
                     default:
                         ok = false;
                         break;
                 }
             }
             if (pos == 0)
+            {
                 return 0f;
+            }
+
             if (pos == length)
+            {
                 return float.Parse(str, NumberFormatInfo.InvariantInfo);
-            float f = float.Parse(str.Substring(0, pos), NumberFormatInfo.InvariantInfo);
+            }
+
+            var f = float.Parse(str.Substring(0, pos), NumberFormatInfo.InvariantInfo);
             str = str.Substring(pos);
             // inches
             if (str.StartsWith("in"))
@@ -480,10 +517,13 @@ namespace iTextSharp.text.html
         public static float ParseLength(string str, float actualFontSize)
         {
             if (str == null)
+            {
                 return 0f;
-            int pos = 0;
-            int length = str.Length;
-            bool ok = true;
+            }
+
+            var pos = 0;
+            var length = str.Length;
+            var ok = true;
             while (ok && pos < length)
             {
                 switch (str[pos])
@@ -503,14 +543,23 @@ namespace iTextSharp.text.html
                     case '.':
                         pos++;
                         break;
+
                     default:
                         ok = false;
                         break;
                 }
             }
-            if (pos == 0) return 0f;
-            if (pos == length) return float.Parse(str, NumberFormatInfo.InvariantInfo);
-            float f = float.Parse(str.Substring(0, pos), NumberFormatInfo.InvariantInfo);
+            if (pos == 0)
+            {
+                return 0f;
+            }
+
+            if (pos == length)
+            {
+                return float.Parse(str, NumberFormatInfo.InvariantInfo);
+            }
+
+            var f = float.Parse(str.Substring(0, pos), NumberFormatInfo.InvariantInfo);
             str = str.Substring(pos);
             // inches
             if (str.StartsWith("in"))
@@ -546,6 +595,7 @@ namespace iTextSharp.text.html
             // default: we assume the length was measured in points
             return f;
         }
+
         /// <summary>
         /// Removes the comments sections of a String.
         /// the original String
@@ -559,10 +609,10 @@ namespace iTextSharp.text.html
         public static string RemoveComment(string str, string startComment,
                 string endComment)
         {
-            StringBuilder result = new StringBuilder();
-            int pos = 0;
-            int end = endComment.Length;
-            int start = str.IndexOf(startComment, pos, StringComparison.Ordinal);
+            var result = new StringBuilder();
+            var pos = 0;
+            var end = endComment.Length;
+            var start = str.IndexOf(startComment, pos, StringComparison.Ordinal);
             while (start > -1)
             {
                 result.Append(str.Substring(pos, start - pos));

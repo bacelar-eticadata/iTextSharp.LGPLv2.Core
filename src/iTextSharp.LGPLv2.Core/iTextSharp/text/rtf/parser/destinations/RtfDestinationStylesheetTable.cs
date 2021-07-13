@@ -1,5 +1,5 @@
-﻿using iTextSharp.text.rtf.style;
-using iTextSharp.text.rtf.parser.ctrlwords;
+﻿using iTextSharp.text.rtf.parser.ctrlwords;
+using iTextSharp.text.rtf.style;
 
 namespace iTextSharp.text.rtf.parser.destinations
 {
@@ -310,7 +310,7 @@ namespace iTextSharp.text.rtf.parser.destinations
 
         public override bool HandleControlWord(RtfCtrlWordData ctrlWordData)
         {
-            bool result = true;
+            var result = true;
             OnCtrlWord(ctrlWordData);  // event handler
 
             if (RtfParser.IsImport())

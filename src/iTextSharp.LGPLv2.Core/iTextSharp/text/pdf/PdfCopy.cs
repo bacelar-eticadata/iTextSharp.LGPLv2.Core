@@ -56,17 +56,13 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool RotateContents
         {
-            set
-            {
-                _rotateContents = value;
-            }
-            get
-            {
-                return _rotateContents;
-            }
+            set => _rotateContents = value;
+            get => _rotateContents;
         }
 
-        public override void AddAnnotation(PdfAnnotation annot) { }
+        public override void AddAnnotation(PdfAnnotation annot)
+        {
+        }
 
         /// <summary>
         /// Add an imported page to our output
@@ -75,14 +71,14 @@ namespace iTextSharp.text.pdf
         /// <param name="iPage">an imported page</param>
         public void AddPage(PdfImportedPage iPage)
         {
-            int pageNum = SetFromIPage(iPage);
+            var pageNum = SetFromIPage(iPage);
 
-            PdfDictionary thePage = Reader.GetPageN(pageNum);
-            PrIndirectReference origRef = Reader.GetPageOrigRef(pageNum);
+            var thePage = Reader.GetPageN(pageNum);
+            var origRef = Reader.GetPageOrigRef(pageNum);
             Reader.ReleasePage(pageNum);
-            RefKey key = new RefKey(origRef);
+            var key = new RefKey(origRef);
             PdfIndirectReference pageRef;
-            IndirectReferences iRef = (IndirectReferences)Indirects[key];
+            var iRef = (IndirectReferences)Indirects[key];
             if (iRef != null && !iRef.Copied)
             {
                 PageReferences.Add(iRef.Ref);
@@ -95,7 +91,7 @@ namespace iTextSharp.text.pdf
                 Indirects[key] = iRef;
             }
             iRef.SetCopied();
-            PdfDictionary newPage = CopyDictionary(thePage);
+            var newPage = CopyDictionary(thePage);
             Root.AddPage(newPage);
             ++currentPageNumber;
         }
@@ -108,9 +104,9 @@ namespace iTextSharp.text.pdf
         /// <param name="rotation">rotation angle in degrees</param>
         public void AddPage(Rectangle rect, int rotation)
         {
-            PdfRectangle mediabox = new PdfRectangle(rect, rotation);
-            PageResources resources = new PageResources();
-            PdfPage page = new PdfPage(mediabox, new Hashtable(), resources.Resources, 0);
+            var mediabox = new PdfRectangle(rect, rotation);
+            var resources = new PageResources();
+            var page = new PdfPage(mediabox, new Hashtable(), resources.Resources, 0);
             page.Put(PdfName.Tabs, Tabs);
             Root.AddPage(page);
             ++currentPageNumber;
@@ -120,7 +116,7 @@ namespace iTextSharp.text.pdf
         {
             if (open)
             {
-                PdfReaderInstance ri = CurrentPdfReaderInstance;
+                var ri = CurrentPdfReaderInstance;
                 Pdf.Close();
                 base.Close();
                 if (ri != null)
@@ -148,15 +144,22 @@ namespace iTextSharp.text.pdf
         {
             SetFromReader(reader);
 
-            PdfDictionary catalog = reader.Catalog;
+            var catalog = reader.Catalog;
             PrIndirectReference hisRef = null;
-            PdfObject o = catalog.Get(PdfName.Acroform);
+            var o = catalog.Get(PdfName.Acroform);
             if (o != null && o.Type == PdfObject.INDIRECT)
+            {
                 hisRef = (PrIndirectReference)o;
-            if (hisRef == null) return; // bugfix by John Engla
-            RefKey key = new RefKey(hisRef);
+            }
+
+            if (hisRef == null)
+            {
+                return; // bugfix by John Engla
+            }
+
+            var key = new RefKey(hisRef);
             PdfIndirectReference myRef;
-            IndirectReferences iRef = (IndirectReferences)Indirects[key];
+            var iRef = (IndirectReferences)Indirects[key];
             if (iRef != null)
             {
                 acroForm = myRef = iRef.Ref;
@@ -170,7 +173,7 @@ namespace iTextSharp.text.pdf
             if (!iRef.Copied)
             {
                 iRef.SetCopied();
-                PdfDictionary theForm = CopyDictionary((PdfDictionary)PdfReader.GetPdfObject(hisRef));
+                var theForm = CopyDictionary((PdfDictionary)PdfReader.GetPdfObject(hisRef));
                 AddToBody(theForm, myRef);
             }
         }
@@ -200,9 +203,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the  PageStamp </returns>
         public PageStamp CreatePageStamp(PdfImportedPage iPage)
         {
-            int pageNum = iPage.PageNumber;
-            PdfReader reader = iPage.PdfReaderInstance.Reader;
-            PdfDictionary pageN = reader.GetPageN(pageNum);
+            var pageNum = iPage.PageNumber;
+            var reader = iPage.PdfReaderInstance.Reader;
+            var pageN = reader.GetPageN(pageNum);
             return new PageStamp(reader, pageN, this);
         }
 
@@ -275,7 +278,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected PdfArray CopyArray(PdfArray inp)
         {
-            PdfArray outp = new PdfArray();
+            var outp = new PdfArray();
 
             foreach (PdfObject value in inp.ArrayList)
             {
@@ -290,19 +293,23 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected PdfDictionary CopyDictionary(PdfDictionary inp)
         {
-            PdfDictionary outp = new PdfDictionary();
-            PdfObject type = PdfReader.GetPdfObjectRelease(inp.Get(PdfName.TYPE));
+            var outp = new PdfDictionary();
+            var type = PdfReader.GetPdfObjectRelease(inp.Get(PdfName.TYPE));
 
             foreach (PdfName key in inp.Keys)
             {
-                PdfObject value = inp.Get(key);
+                var value = inp.Get(key);
                 if (type != null && PdfName.Page.Equals(type))
                 {
                     if (!key.Equals(PdfName.B) && !key.Equals(PdfName.Parent))
+                    {
                         outp.Put(key, CopyObject(value));
+                    }
                 }
                 else
+                {
                     outp.Put(key, CopyObject(value));
+                }
             }
             return outp;
         }
@@ -319,8 +326,8 @@ namespace iTextSharp.text.pdf
         protected virtual PdfIndirectReference CopyIndirect(PrIndirectReference inp)
         {
             PdfIndirectReference theRef;
-            RefKey key = new RefKey(inp);
-            IndirectReferences iRef = (IndirectReferences)Indirects[key];
+            var key = new RefKey(inp);
+            var iRef = (IndirectReferences)Indirects[key];
             if (iRef != null)
             {
                 theRef = iRef.Ref;
@@ -335,10 +342,10 @@ namespace iTextSharp.text.pdf
                 iRef = new IndirectReferences(theRef);
                 Indirects[key] = iRef;
             }
-            PdfObject obj = PdfReader.GetPdfObjectRelease(inp);
+            var obj = PdfReader.GetPdfObjectRelease(inp);
             if (obj != null && obj.IsDictionary())
             {
-                PdfObject type = PdfReader.GetPdfObjectRelease(((PdfDictionary)obj).Get(PdfName.TYPE));
+                var type = PdfReader.GetPdfObjectRelease(((PdfDictionary)obj).Get(PdfName.TYPE));
                 if (type != null && PdfName.Page.Equals(type))
                 {
                     return theRef;
@@ -356,15 +363,21 @@ namespace iTextSharp.text.pdf
         protected PdfObject CopyObject(PdfObject inp)
         {
             if (inp == null)
+            {
                 return PdfNull.Pdfnull;
+            }
+
             switch (inp.Type)
             {
                 case PdfObject.DICTIONARY:
                     return CopyDictionary((PdfDictionary)inp);
+
                 case PdfObject.INDIRECT:
                     return CopyIndirect((PrIndirectReference)inp);
+
                 case PdfObject.ARRAY:
                     return CopyArray((PdfArray)inp);
+
                 case PdfObject.NUMBER:
                 case PdfObject.NAME:
                 case PdfObject.STRING:
@@ -372,13 +385,14 @@ namespace iTextSharp.text.pdf
                 case PdfObject.BOOLEAN:
                 case 0:
                     return inp;
+
                 case PdfObject.STREAM:
                     return CopyStream((PrStream)inp);
                 //                return in;
                 default:
                     if (inp.Type < 0)
                     {
-                        string lit = ((PdfLiteral)inp).ToString();
+                        var lit = ((PdfLiteral)inp).ToString();
                         if (lit.Equals("true") || lit.Equals("false"))
                         {
                             return new PdfBoolean(lit);
@@ -394,11 +408,11 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected PdfStream CopyStream(PrStream inp)
         {
-            PrStream outp = new PrStream(inp, null);
+            var outp = new PrStream(inp, null);
 
             foreach (PdfName key in inp.Keys)
             {
-                PdfObject value = inp.Get(key);
+                var value = inp.Get(key);
                 outp.Put(key, CopyObject(value));
             }
 
@@ -414,10 +428,16 @@ namespace iTextSharp.text.pdf
             PdfDictionary theCat = Pdf.GetCatalog(rootObj);
             if (FieldArray == null)
             {
-                if (acroForm != null) theCat.Put(PdfName.Acroform, acroForm);
+                if (acroForm != null)
+                {
+                    theCat.Put(PdfName.Acroform, acroForm);
+                }
             }
             else
+            {
                 addFieldResources(theCat);
+            }
+
             return theCat;
         }
 
@@ -426,8 +446,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         protected int SetFromIPage(PdfImportedPage iPage)
         {
-            int pageNum = iPage.PageNumber;
-            PdfReaderInstance inst = CurrentPdfReaderInstance = iPage.PdfReaderInstance;
+            var pageNum = iPage.PageNumber;
+            var inst = CurrentPdfReaderInstance = iPage.PdfReaderInstance;
             Reader = inst.Reader;
             SetFromReader(Reader);
             return pageNum;
@@ -444,13 +464,20 @@ namespace iTextSharp.text.pdf
             {
                 Indirects = new Hashtable();
                 IndirectMap[reader] = Indirects;
-                PdfDictionary catalog = reader.Catalog;
+                var catalog = reader.Catalog;
                 PrIndirectReference refi = null;
-                PdfObject o = catalog.Get(PdfName.Acroform);
+                var o = catalog.Get(PdfName.Acroform);
                 if (o == null || o.Type != PdfObject.INDIRECT)
+                {
                     return;
+                }
+
                 refi = (PrIndirectReference)o;
-                if (acroForm == null) acroForm = Body.PdfIndirectReference;
+                if (acroForm == null)
+                {
+                    acroForm = Body.PdfIndirectReference;
+                }
+
                 Indirects[new RefKey(refi)] = new IndirectReferences(acroForm);
             }
         }
@@ -458,20 +485,26 @@ namespace iTextSharp.text.pdf
         private void addFieldResources(PdfDictionary catalog)
         {
             if (FieldArray == null)
+            {
                 return;
-            PdfDictionary localAcroForm = new PdfDictionary();
+            }
+
+            var localAcroForm = new PdfDictionary();
             catalog.Put(PdfName.Acroform, localAcroForm);
             localAcroForm.Put(PdfName.Fields, FieldArray);
             localAcroForm.Put(PdfName.Da, new PdfString("/Helv 0 Tf 0 g "));
             if (FieldTemplates.Count == 0)
+            {
                 return;
-            PdfDictionary dr = new PdfDictionary();
+            }
+
+            var dr = new PdfDictionary();
             localAcroForm.Put(PdfName.Dr, dr);
             foreach (PdfTemplate template in FieldTemplates.Keys)
             {
                 PdfFormField.MergeResources(dr, (PdfDictionary)template.Resources);
             }
-            PdfDictionary fonts = dr.GetAsDict(PdfName.Font);
+            var fonts = dr.GetAsDict(PdfName.Font);
             if (fonts == null)
             {
                 fonts = new PdfDictionary();
@@ -479,7 +512,7 @@ namespace iTextSharp.text.pdf
             }
             if (!fonts.Contains(PdfName.Helv))
             {
-                PdfDictionary dic = new PdfDictionary(PdfName.Font);
+                var dic = new PdfDictionary(PdfName.Font);
                 dic.Put(PdfName.Basefont, PdfName.Helvetica);
                 dic.Put(PdfName.Encoding, PdfName.WinAnsiEncoding);
                 dic.Put(PdfName.Name, PdfName.Helv);
@@ -488,7 +521,7 @@ namespace iTextSharp.text.pdf
             }
             if (!fonts.Contains(PdfName.Zadb))
             {
-                PdfDictionary dic = new PdfDictionary(PdfName.Font);
+                var dic = new PdfDictionary(PdfName.Font);
                 dic.Put(PdfName.Basefont, PdfName.Zapfdingbats);
                 dic.Put(PdfName.Name, PdfName.Zadb);
                 dic.Put(PdfName.Subtype, PdfName.Type1);
@@ -498,12 +531,13 @@ namespace iTextSharp.text.pdf
 
         public class PageStamp
         {
-            readonly PdfCopy _cstp;
-            readonly PdfDictionary _pageN;
-            readonly PdfReader _reader;
-            StampContent _over;
-            PageResources _pageResources;
-            StampContent _under;
+            private readonly PdfCopy _cstp;
+            private readonly PdfDictionary _pageN;
+            private readonly PdfReader _reader;
+            private StampContent _over;
+            private PageResources _pageResources;
+            private StampContent _under;
+
             internal PageStamp(PdfReader reader, PdfDictionary pageN, PdfCopy cstp)
             {
                 _pageN = pageN;
@@ -513,41 +547,51 @@ namespace iTextSharp.text.pdf
 
             public void AddAnnotation(PdfAnnotation annot)
             {
-                ArrayList allAnnots = new ArrayList();
+                var allAnnots = new ArrayList();
                 if (annot.IsForm())
                 {
-                    PdfFormField field = (PdfFormField)annot;
+                    var field = (PdfFormField)annot;
                     if (field.Parent != null)
+                    {
                         return;
+                    }
+
                     expandFields(field, allAnnots);
                     if (_cstp.FieldTemplates == null)
+                    {
                         _cstp.FieldTemplates = new Hashtable();
+                    }
                 }
                 else
+                {
                     allAnnots.Add(annot);
-                for (int k = 0; k < allAnnots.Count; ++k)
+                }
+
+                for (var k = 0; k < allAnnots.Count; ++k)
                 {
                     annot = (PdfAnnotation)allAnnots[k];
                     if (annot.IsForm())
                     {
                         if (!annot.IsUsed())
                         {
-                            Hashtable templates = annot.Templates;
+                            var templates = annot.Templates;
                             if (templates != null)
                             {
-                                foreach (object tpl in templates.Keys)
+                                foreach (var tpl in templates.Keys)
                                 {
                                     _cstp.FieldTemplates[tpl] = null;
                                 }
                             }
                         }
-                        PdfFormField field = (PdfFormField)annot;
+                        var field = (PdfFormField)annot;
                         if (field.Parent == null)
+                        {
                             addDocumentField(field.IndirectReference);
+                        }
                     }
                     if (annot.IsAnnotation())
                     {
-                        PdfObject pdfobj = PdfReader.GetPdfObject(_pageN.Get(PdfName.Annots), _pageN);
+                        var pdfobj = PdfReader.GetPdfObject(_pageN.Get(PdfName.Annots), _pageN);
                         PdfArray annots = null;
                         if (pdfobj == null || !pdfobj.IsArray())
                         {
@@ -555,15 +599,18 @@ namespace iTextSharp.text.pdf
                             _pageN.Put(PdfName.Annots, annots);
                         }
                         else
+                        {
                             annots = (PdfArray)pdfobj;
+                        }
+
                         annots.Add(annot.IndirectReference);
                         if (!annot.IsUsed())
                         {
-                            PdfRectangle rect = (PdfRectangle)annot.Get(PdfName.Rect);
+                            var rect = (PdfRectangle)annot.Get(PdfName.Rect);
                             if (rect != null && (rect.Left.ApproxNotEqual(0) || rect.Right.ApproxNotEqual(0) || rect.Top.ApproxNotEqual(0) || rect.Bottom.ApproxNotEqual(0)))
                             {
-                                int rotation = _reader.GetPageRotation(_pageN);
-                                Rectangle pageSize = _reader.GetPageSizeWithRotation(_pageN);
+                                var rotation = _reader.GetPageRotation(_pageN);
+                                var pageSize = _reader.GetPageSizeWithRotation(_pageN);
                                 switch (rotation)
                                 {
                                     case 90:
@@ -573,6 +620,7 @@ namespace iTextSharp.text.pdf
                                             pageSize.Top - rect.Top,
                                             rect.Right));
                                         break;
+
                                     case 180:
                                         annot.Put(PdfName.Rect, new PdfRectangle(
                                             pageSize.Right - rect.Left,
@@ -580,6 +628,7 @@ namespace iTextSharp.text.pdf
                                             pageSize.Right - rect.Right,
                                             pageSize.Top - rect.Top));
                                         break;
+
                                     case 270:
                                         annot.Put(PdfName.Rect, new PdfRectangle(
                                             rect.Bottom,
@@ -602,9 +651,12 @@ namespace iTextSharp.text.pdf
             public void AlterContents()
             {
                 if (_over == null && _under == null)
+                {
                     return;
+                }
+
                 PdfArray ar = null;
-                PdfObject content = PdfReader.GetPdfObject(_pageN.Get(PdfName.Contents), _pageN);
+                var content = PdfReader.GetPdfObject(_pageN.Get(PdfName.Contents), _pageN);
                 if (content == null)
                 {
                     ar = new PdfArray();
@@ -625,7 +677,7 @@ namespace iTextSharp.text.pdf
                     ar = new PdfArray();
                     _pageN.Put(PdfName.Contents, ar);
                 }
-                ByteBuffer outP = new ByteBuffer();
+                var outP = new ByteBuffer();
                 if (_under != null)
                 {
                     outP.Append(PdfContents.Savestate);
@@ -634,10 +686,13 @@ namespace iTextSharp.text.pdf
                     outP.Append(PdfContents.Restorestate);
                 }
                 if (_over != null)
+                {
                     outP.Append(PdfContents.Savestate);
-                PdfStream stream = new PdfStream(outP.ToByteArray());
+                }
+
+                var stream = new PdfStream(outP.ToByteArray());
                 stream.FlateCompress(_cstp.CompressionLevel);
-                PdfIndirectReference ref1 = _cstp.AddToBody(stream).IndirectReference;
+                var ref1 = _cstp.AddToBody(stream).IndirectReference;
                 ar.AddFirst(ref1);
                 outP.Reset();
                 if (_over != null)
@@ -662,7 +717,7 @@ namespace iTextSharp.text.pdf
                     if (_pageResources == null)
                     {
                         _pageResources = new PageResources();
-                        PdfDictionary resources = _pageN.GetAsDict(PdfName.Resources);
+                        var resources = _pageN.GetAsDict(PdfName.Resources);
                         _pageResources.SetOriginalResources(resources, _cstp.NamePtr);
                     }
                     _over = new StampContent(_cstp, _pageResources);
@@ -677,26 +732,33 @@ namespace iTextSharp.text.pdf
                     if (_pageResources == null)
                     {
                         _pageResources = new PageResources();
-                        PdfDictionary resources = _pageN.GetAsDict(PdfName.Resources);
+                        var resources = _pageN.GetAsDict(PdfName.Resources);
                         _pageResources.SetOriginalResources(resources, _cstp.NamePtr);
                     }
                     _under = new StampContent(_cstp, _pageResources);
                 }
                 return _under;
             }
+
             private void addDocumentField(PdfIndirectReference refi)
             {
                 if (_cstp.FieldArray == null)
+                {
                     _cstp.FieldArray = new PdfArray();
+                }
+
                 _cstp.FieldArray.Add(refi);
             }
 
-            void applyRotation(PdfDictionary pageN, ByteBuffer outP)
+            private void applyRotation(PdfDictionary pageN, ByteBuffer outP)
             {
                 if (!_cstp._rotateContents)
+                {
                     return;
-                Rectangle page = _reader.GetPageSizeWithRotation(pageN);
-                int rotation = page.Rotation;
+                }
+
+                var page = _reader.GetPageSizeWithRotation(pageN);
+                var rotation = page.Rotation;
                 switch (rotation)
                 {
                     case 90:
@@ -704,6 +766,7 @@ namespace iTextSharp.text.pdf
                         outP.Append(page.Top);
                         outP.Append(' ').Append('0').Append(PdfContents.Rotatefinal);
                         break;
+
                     case 180:
                         outP.Append(PdfContents.Rotate180);
                         outP.Append(page.Right);
@@ -711,6 +774,7 @@ namespace iTextSharp.text.pdf
                         outP.Append(page.Top);
                         outP.Append(PdfContents.Rotatefinal);
                         break;
+
                     case 270:
                         outP.Append(PdfContents.Rotate270);
                         outP.Append('0').Append(' ');
@@ -719,21 +783,24 @@ namespace iTextSharp.text.pdf
                         break;
                 }
             }
+
             private void expandFields(PdfFormField field, ArrayList allAnnots)
             {
                 allAnnots.Add(field);
-                ArrayList kids = field.Kids;
+                var kids = field.Kids;
                 if (kids != null)
                 {
-                    for (int k = 0; k < kids.Count; ++k)
+                    for (var k = 0; k < kids.Count; ++k)
+                    {
                         expandFields((PdfFormField)kids[k], allAnnots);
+                    }
                 }
             }
         }
 
         public class StampContent : PdfContentByte
         {
-            readonly PageResources _pageResources;
+            private readonly PageResources _pageResources;
 
             /// <summary>
             /// Creates a new instance of StampContent
@@ -748,21 +815,9 @@ namespace iTextSharp.text.pdf
             /// the members are copied by reference but the buffer stays different.
             /// </summary>
             /// <returns>a copy of this  PdfContentByte </returns>
-            public override PdfContentByte Duplicate
-            {
-                get
-                {
-                    return new StampContent(Writer, _pageResources);
-                }
-            }
+            public override PdfContentByte Duplicate => new StampContent(Writer, _pageResources);
 
-            internal override PageResources PageResources
-            {
-                get
-                {
-                    return _pageResources;
-                }
-            }
+            internal override PageResources PageResources => _pageResources;
         }
 
         /// <summary>
@@ -776,12 +831,17 @@ namespace iTextSharp.text.pdf
                 Ref = refi;
                 Copied = false;
             }
+
             internal bool Copied { get; private set; }
 
             internal PdfIndirectReference Ref { get; }
 
-            internal void SetCopied() { Copied = true; }
+            internal void SetCopied()
+            {
+                Copied = true;
+            }
         };
+
         /// <summary>
         /// A key to allow us to hash indirect references
         /// </summary>
@@ -789,25 +849,33 @@ namespace iTextSharp.text.pdf
         {
             internal readonly int Gen;
             internal readonly int Num;
+
             internal RefKey(int num, int gen)
             {
                 Num = num;
                 Gen = gen;
             }
+
             internal RefKey(PdfIndirectReference refi)
             {
                 Num = refi.Number;
                 Gen = refi.Generation;
             }
+
             internal RefKey(PrIndirectReference refi)
             {
                 Num = refi.Number;
                 Gen = refi.Generation;
             }
+
             public override bool Equals(object o)
             {
-                if (!(o is RefKey)) return false;
-                RefKey other = (RefKey)o;
+                if (!(o is RefKey))
+                {
+                    return false;
+                }
+
+                var other = (RefKey)o;
                 return Gen == other.Gen && Num == other.Num;
             }
 
@@ -815,6 +883,7 @@ namespace iTextSharp.text.pdf
             {
                 return (Gen << 16) + Num;
             }
+
             public override string ToString()
             {
                 return $"{Num} {Gen}";

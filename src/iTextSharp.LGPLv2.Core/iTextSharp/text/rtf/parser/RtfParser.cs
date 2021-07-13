@@ -1,12 +1,12 @@
-using System;
-using System.IO;
-using System.Collections;
-using System.Globalization;
-using System.Text;
 using iTextSharp.text.rtf.direct;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.parser.ctrlwords;
 using iTextSharp.text.rtf.parser.destinations;
+using System;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Text;
 
 namespace iTextSharp.text.rtf.parser
 {
@@ -318,9 +318,9 @@ namespace iTextSharp.text.rtf.parser
         /// Debugging flag.
         /// </summary>
         private static readonly bool _debugParser = false;   // DEBUG Files are unlikely to be read by any reader!
-                                                             /// <summary>
-                                                             /// The  RtfCtrlWordListener .
-                                                             /// </summary>
+        /// <summary>
+        /// The  RtfCtrlWordListener .
+        /// </summary>
         private readonly ArrayList _listeners = new ArrayList();
 
         /// <summary>
@@ -497,9 +497,17 @@ namespace iTextSharp.text.rtf.parser
         public static void OutputDebug(object doc, int groupLevel, string str)
         {
             Console.Out.WriteLine(str);
-            if (doc == null) return;
-            if (groupLevel < 0) groupLevel = 0;
-            string spaces = new string(' ', groupLevel * 2);
+            if (doc == null)
+            {
+                return;
+            }
+
+            if (groupLevel < 0)
+            {
+                groupLevel = 0;
+            }
+
+            var spaces = new string(' ', groupLevel * 2);
             if (doc is RtfDocument)
             {
                 ((RtfDocument)doc).Add(new RtfDirectContent("\n" + spaces + str));
@@ -538,7 +546,11 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="doc"></param>
         public void ConvertRtfDocument(Stream readerIn, Document doc)
         {
-            if (readerIn == null || doc == null) return;
+            if (readerIn == null || doc == null)
+            {
+                return;
+            }
+
             init(TYPE_CONVERT, null, readerIn, doc, null);
             SetCurrentDestination(RtfDestinationMgr.DESTINATION_DOCUMENT);
             _startDate = DateTime.Now;
@@ -681,9 +693,9 @@ namespace iTextSharp.text.rtf.parser
                 return errOK;
             }
 
-            bool handled = false;
+            var handled = false;
 
-            RtfDestination dest = GetCurrentDestination();
+            var dest = GetCurrentDestination();
             if (dest != null)
             {
                 handled = dest.HandleCharacter(nextChar);
@@ -698,7 +710,7 @@ namespace iTextSharp.text.rtf.parser
         /// <returns>errOK if ok, other if an error occurred.</returns>
         public int HandleCloseGroup()
         {
-            int result = errOK;
+            var result = errOK;
             _closeGroupCount++; // stats
 
             if (GetTokeniserState() != TOKENISER_SKIP_GROUP)
@@ -707,13 +719,16 @@ namespace iTextSharp.text.rtf.parser
                 {
                     OutputDebug(_rtfDoc, _groupLevel, "DEBUG: HandleCloseGroup()");
                     if (_lastCtrlWordParam != null)
+                    {
                         OutputDebug(_rtfDoc, _groupLevel, "DEBUG: LastCtrlWord=" + _lastCtrlWordParam.CtrlWord);
+                    }
+
                     OutputDebug(_rtfDoc, _groupLevel, "DEBUG: grouplevel=" + _groupLevel);
                     OutputDebug(_rtfDoc, _groupLevel, "DEBUG: destination=" + GetCurrentDestination());
                     OutputDebug(_rtfDoc, _groupLevel, "");
                 }
-                RtfDestination dest = GetCurrentDestination();
-                bool handled = false;
+                var dest = GetCurrentDestination();
+                var handled = false;
 
                 if (dest != null)
                 {
@@ -756,7 +771,7 @@ namespace iTextSharp.text.rtf.parser
         /// <returns>errOK if ok, other if an error occurred.</returns>
         public int HandleCtrlWord(RtfCtrlWordData ctrlWordData)
         {
-            int result = errOK;
+            var result = errOK;
             _ctrlWordCount++; // stats
 
             if (_debugParser)
@@ -801,7 +816,7 @@ namespace iTextSharp.text.rtf.parser
         /// <returns>errOK if ok, other if an error occurred.</returns>
         public int HandleOpenGroup()
         {
-            int result = errOK;
+            var result = errOK;
             _openGroupCount++;  // stats
             _groupLevel++;      // current group level in tokeniser
             _docGroupLevel++;   // current group level in document
@@ -810,8 +825,8 @@ namespace iTextSharp.text.rtf.parser
                 _groupSkippedCount++;
             }
 
-            RtfDestination dest = GetCurrentDestination();
-            bool handled = false;
+            var dest = GetCurrentDestination();
+            var handled = false;
 
             if (dest != null)
             {
@@ -828,17 +843,22 @@ namespace iTextSharp.text.rtf.parser
             }
 
             _stackState.Push(_currentState);
-            _currentState = new RtfParserState(_currentState);
-            // do not set this true until after the state is pushed
-            // otherwise it inserts a { where one does not belong.
-            _currentState.NewGroup = true;
+            _currentState = new RtfParserState(_currentState)
+            {
+                // do not set this true until after the state is pushed
+                // otherwise it inserts a { where one does not belong.
+                NewGroup = true
+            };
             dest = GetCurrentDestination();
 
             if (_debugParser)
             {
                 OutputDebug(_rtfDoc, _groupLevel, "DEBUG: HandleOpenGroup()");
                 if (_lastCtrlWordParam != null)
+                {
                     OutputDebug(_rtfDoc, _groupLevel, "DEBUG: LastCtrlWord=" + _lastCtrlWordParam.CtrlWord);
+                }
+
                 OutputDebug(_rtfDoc, _groupLevel, "DEBUG: grouplevel=" + _groupLevel);
                 OutputDebug(_rtfDoc, _groupLevel, "DEBUG: destination=" + dest);
             }
@@ -869,7 +889,11 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="rtfDoc"></param>
         public void ImportRtfDocument(Stream readerIn, RtfDocument rtfDoc)
         {
-            if (readerIn == null || rtfDoc == null) return;
+            if (readerIn == null || rtfDoc == null)
+            {
+                return;
+            }
+
             init(TYPE_IMPORT_FULL, rtfDoc, readerIn, _document, null);
             SetCurrentDestination(RtfDestinationMgr.DESTINATION_NULL);
             _startDate = DateTime.Now;
@@ -898,7 +922,11 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="rtfDoc"></param>
         public void ImportRtfDocumentIntoElement(IElement elem, Stream readerIn, RtfDocument rtfDoc)
         {
-            if (readerIn == null || rtfDoc == null || elem == null) return;
+            if (readerIn == null || rtfDoc == null || elem == null)
+            {
+                return;
+            }
+
             init(TYPE_IMPORT_INTO_ELEMENT, rtfDoc, readerIn, _document, elem);
             SetCurrentDestination(RtfDestinationMgr.DESTINATION_NULL);
             _startDate = DateTime.Now;
@@ -928,7 +956,11 @@ namespace iTextSharp.text.rtf.parser
         public void ImportRtfFragment(Stream readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings)
         {
             //public void ImportRtfFragment2(Reader readerIn, RtfDocument rtfDoc, RtfImportMappings importMappings) throws IOException {
-            if (readerIn == null || rtfDoc == null || importMappings == null) return;
+            if (readerIn == null || rtfDoc == null || importMappings == null)
+            {
+                return;
+            }
+
             init(TYPE_IMPORT_FRAGMENT, rtfDoc, readerIn, null, null);
             handleImportMappings(importMappings);
             SetCurrentDestination(RtfDestinationMgr.DESTINATION_DOCUMENT);
@@ -1027,7 +1059,7 @@ namespace iTextSharp.text.rtf.parser
         /// <param name="destination">The destination value to set.</param>
         public bool SetCurrentDestination(string destination)
         {
-            RtfDestination dest = RtfDestinationMgr.GetDestination(destination);
+            var dest = RtfDestinationMgr.GetDestination(destination);
             if (dest != null)
             {
                 _currentState.Destination = dest;
@@ -1189,8 +1221,8 @@ namespace iTextSharp.text.rtf.parser
         /// </summary>
         public void Tokenise()
         {
-            int errorCode = errOK;  // error code
-            int nextChar = 0;
+            var errorCode = errOK;  // error code
+            var nextChar = 0;
             SetTokeniserState(TOKENISER_NORMAL);   // set initial tokeniser state
 
 
@@ -1201,7 +1233,9 @@ namespace iTextSharp.text.rtf.parser
                 if (GetTokeniserState() == TOKENISER_BINARY)                      // if we're parsing binary data, handle it directly
                 {
                     if ((errorCode = parseChar(nextChar)) != errOK)
+                    {
                         return;
+                    }
                 }
                 else
                 {
@@ -1233,7 +1267,7 @@ namespace iTextSharp.text.rtf.parser
                             }
                             if (GetTokeniserState() == TOKENISER_HEX)
                             {
-                                StringBuilder hexChars = new StringBuilder();
+                                var hexChars = new StringBuilder();
                                 hexChars.Append(nextChar);
                                 if ((nextChar = _pbReader.ReadByte()) == -1)
                                 {
@@ -1265,7 +1299,7 @@ namespace iTextSharp.text.rtf.parser
                 //          if (groupLevel < 0 && this.IsConvert()) return; //return errStackUnderflow;
 
             }// end while (reader.Read(nextChar) != -1)
-            RtfDestination dest = GetCurrentDestination();
+            var dest = GetCurrentDestination();
             if (dest != null)
             {
                 dest.CloseDestination();
@@ -1363,7 +1397,7 @@ namespace iTextSharp.text.rtf.parser
 
             _rtfKeywordMgr = new RtfCtrlWordMgr(this, _pbReader);/////////DO NOT COMMENT OUT THIS LINE ///////////
 
-            foreach (object listener in _listeners)
+            foreach (var listener in _listeners)
             {
                 if (listener is IRtfCtrlWordListener)
                 {
@@ -1502,9 +1536,15 @@ namespace iTextSharp.text.rtf.parser
             * ... document text ...
             */
             if (GetTokeniserState() == TOKENISER_BINARY && --_binByteCount <= 0)
+            {
                 SetTokeniserStateNormal();
+            }
+
             if (GetTokeniserState() == TOKENISER_SKIP_BYTES && --_binSkipByteCount <= 0)
+            {
                 SetTokeniserStateNormal();
+            }
+
             return HandleCharacter(nextChar);
         }
 
@@ -1519,8 +1559,8 @@ namespace iTextSharp.text.rtf.parser
         /// <returns></returns>
         private int parseCtrlWord(PushbackStream reader)
         {
-            int nextChar = 0;
-            int result = errOK;
+            var nextChar = 0;
+            var result = errOK;
 
             if ((nextChar = reader.ReadByte()) == -1)
             {
@@ -1528,9 +1568,9 @@ namespace iTextSharp.text.rtf.parser
             }
             _byteCount++;
 
-            StringBuilder parsedCtrlWord = new StringBuilder();
-            StringBuilder parsedParam = new StringBuilder();
-            RtfCtrlWordData ctrlWordParam = new RtfCtrlWordData();
+            var parsedCtrlWord = new StringBuilder();
+            var parsedParam = new StringBuilder();
+            var ctrlWordParam = new RtfCtrlWordData();
 
             if (!char.IsLetterOrDigit((char)nextChar))
             {

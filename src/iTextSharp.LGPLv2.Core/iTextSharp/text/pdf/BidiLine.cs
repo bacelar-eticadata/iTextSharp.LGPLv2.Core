@@ -4,7 +4,6 @@ using System.Text;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Does all the line bidirectional processing with PdfChunk assembly.
     /// @author Paulo Soares (psoares@consiste.pt)
@@ -35,6 +34,7 @@ namespace iTextSharp.text.pdf
         protected char[] Text = new char[PieceSizeStart];
         protected int TotalTextLength;
         private const int PieceSizeStart = 256;
+
         static BidiLine()
         {
             MirrorChars[0x0028] = 0x0029; // LEFT PARENTHESIS
@@ -415,8 +415,8 @@ namespace iTextSharp.text.pdf
         {
             if (TotalTextLength >= PieceSize)
             {
-                char[] tempText = Text;
-                PdfChunk[] tempDetailChunks = DetailChunks;
+                var tempText = Text;
+                var tempDetailChunks = DetailChunks;
                 PieceSize *= 2;
                 Text = new char[PieceSize];
                 DetailChunks = new PdfChunk[PieceSize];
@@ -441,22 +441,28 @@ namespace iTextSharp.text.pdf
 
         public ArrayList CreateArrayOfPdfChunks(int startIdx, int endIdx, PdfChunk extraPdfChunk)
         {
-            bool bidi = (RunDirection == PdfWriter.RUN_DIRECTION_LTR || RunDirection == PdfWriter.RUN_DIRECTION_RTL);
+            var bidi = (RunDirection == PdfWriter.RUN_DIRECTION_LTR || RunDirection == PdfWriter.RUN_DIRECTION_RTL);
             if (bidi)
+            {
                 Reorder(startIdx, endIdx);
-            ArrayList ar = new ArrayList();
-            PdfChunk refCk = DetailChunks[startIdx];
+            }
+
+            var ar = new ArrayList();
+            var refCk = DetailChunks[startIdx];
             PdfChunk ck = null;
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
             char c;
-            int idx = 0;
+            var idx = 0;
             for (; startIdx <= endIdx; ++startIdx)
             {
                 idx = bidi ? IndexChars[startIdx] : startIdx;
                 c = Text[idx];
                 ck = DetailChunks[idx];
                 if (PdfChunk.NoPrint(ck.GetUnicodeEquivalent(c)))
+                {
                     continue;
+                }
+
                 if (ck.IsImage() || ck.IsSeparator() || ck.IsTab())
                 {
                     if (buf.Length > 0)
@@ -478,7 +484,10 @@ namespace iTextSharp.text.pdf
                         buf = new StringBuilder();
                     }
                     if (!ck.IsImage() && !ck.IsSeparator() && !ck.IsTab())
+                    {
                         buf.Append(c);
+                    }
+
                     refCk = ck;
                 }
             }
@@ -487,21 +496,27 @@ namespace iTextSharp.text.pdf
                 ar.Add(new PdfChunk(buf.ToString(), refCk));
             }
             if (extraPdfChunk != null)
+            {
                 ar.Add(extraPdfChunk);
+            }
+
             return ar;
         }
 
         public void DoArabicShapping()
         {
-            int src = 0;
-            int dest = 0;
-            for (;;)
+            var src = 0;
+            var dest = 0;
+            for (; ; )
             {
                 while (src < TotalTextLength)
                 {
-                    char c = Text[src];
+                    var c = Text[src];
                     if (c >= 0x0600 && c <= 0x06ff)
+                    {
                         break;
+                    }
+
                     if (src != dest)
                     {
                         Text[dest] = Text[src];
@@ -516,37 +531,42 @@ namespace iTextSharp.text.pdf
                     TotalTextLength = dest;
                     return;
                 }
-                int startArabicIdx = src;
+                var startArabicIdx = src;
                 ++src;
                 while (src < TotalTextLength)
                 {
-                    char c = Text[src];
+                    var c = Text[src];
                     if (c < 0x0600 || c > 0x06ff)
+                    {
                         break;
+                    }
+
                     ++src;
                 }
-                int arabicWordSize = src - startArabicIdx;
-                int size = ArabicLigaturizer.Arabic_shape(Text, startArabicIdx, arabicWordSize, Text, dest, arabicWordSize, ArabicOptions);
+                var arabicWordSize = src - startArabicIdx;
+                var size = ArabicLigaturizer.Arabic_shape(Text, startArabicIdx, arabicWordSize, Text, dest, arabicWordSize, ArabicOptions);
                 if (startArabicIdx != dest)
                 {
-                    for (int k = 0; k < size; ++k)
+                    for (var k = 0; k < size; ++k)
                     {
                         DetailChunks[dest] = DetailChunks[startArabicIdx];
                         OrderLevels[dest++] = OrderLevels[startArabicIdx++];
                     }
                 }
                 else
+                {
                     dest += size;
+                }
             }
         }
 
         public void Flip(int start, int end)
         {
-            int mid = (start + end) / 2;
+            var mid = (start + end) / 2;
             --end;
             for (; start < mid; ++start, --end)
             {
-                int temp = IndexChars[start];
+                var temp = IndexChars[start];
                 IndexChars[start] = IndexChars[end];
                 IndexChars[end] = temp;
             }
@@ -557,16 +577,16 @@ namespace iTextSharp.text.pdf
             RunDirection = runDirection;
             CurrentChar = 0;
             TotalTextLength = 0;
-            bool hasText = false;
+            var hasText = false;
             char c;
             char uniC;
             BaseFont bf;
             for (; IndexChunk < Chunks.Count; ++IndexChunk)
             {
-                PdfChunk ck = (PdfChunk)Chunks[IndexChunk];
+                var ck = (PdfChunk)Chunks[IndexChunk];
                 bf = ck.Font.Font;
-                string s = ck.ToString();
-                int len = s.Length;
+                var s = ck.ToString();
+                var len = s.Length;
                 for (; IndexChunkChar < len; ++IndexChunkChar)
                 {
                     c = s[IndexChunkChar];
@@ -575,7 +595,10 @@ namespace iTextSharp.text.pdf
                     {
                         // next condition is never true for CID
                         if (uniC == '\r' && IndexChunkChar + 1 < len && s[IndexChunkChar + 1] == '\n')
+                        {
                             ++IndexChunkChar;
+                        }
+
                         ++IndexChunkChar;
                         if (IndexChunkChar >= len)
                         {
@@ -584,22 +607,32 @@ namespace iTextSharp.text.pdf
                         }
                         hasText = true;
                         if (TotalTextLength == 0)
+                        {
                             DetailChunks[0] = ck;
+                        }
+
                         break;
                     }
                     AddPiece(c, ck);
                 }
                 if (hasText)
+                {
                     break;
+                }
+
                 IndexChunkChar = 0;
             }
             if (TotalTextLength == 0)
+            {
                 return hasText;
+            }
 
             // remove trailing WS
             TotalTextLength = TrimRight(0, TotalTextLength - 1) + 1;
             if (TotalTextLength == 0)
+            {
                 return true;
+            }
 
             if (runDirection == PdfWriter.RUN_DIRECTION_LTR || runDirection == PdfWriter.RUN_DIRECTION_RTL)
             {
@@ -610,9 +643,9 @@ namespace iTextSharp.text.pdf
                 }
 
                 ArabicLigaturizer.ProcessNumbers(Text, 0, TotalTextLength, ArabicOptions);
-                BidiOrder order = new BidiOrder(Text, 0, TotalTextLength, (sbyte)(runDirection == PdfWriter.RUN_DIRECTION_RTL ? 1 : 0));
-                byte[] od = order.GetLevels();
-                for (int k = 0; k < TotalTextLength; ++k)
+                var order = new BidiOrder(Text, 0, TotalTextLength, (sbyte)(runDirection == PdfWriter.RUN_DIRECTION_RTL ? 1 : 0));
+                var od = order.GetLevels();
+                for (var k = 0; k < TotalTextLength; ++k)
                 {
                     OrderLevels[k] = od[k];
                     IndexChars[k] = k;
@@ -632,12 +665,12 @@ namespace iTextSharp.text.pdf
         /// <returns>the sum of all widths</returns>
         public float GetWidth(int startIdx, int lastIdx)
         {
-            char c = (char)0;
+            var c = (char)0;
             PdfChunk ck = null;
             float width = 0;
             for (; startIdx <= lastIdx; ++startIdx)
             {
-                bool surrogate = Utilities.IsSurrogatePair(Text, startIdx);
+                var surrogate = Utilities.IsSurrogatePair(Text, startIdx);
                 if (surrogate)
                 {
                     width += DetailChunks[startIdx].GetCharWidth(Utilities.ConvertToUtf32(Text, startIdx));
@@ -648,7 +681,10 @@ namespace iTextSharp.text.pdf
                     c = Text[startIdx];
                     ck = DetailChunks[startIdx];
                     if (PdfChunk.NoPrint(ck.GetUnicodeEquivalent(c)))
+                    {
                         continue;
+                    }
+
                     width += DetailChunks[startIdx].GetCharWidth(c);
                 }
             }
@@ -657,21 +693,27 @@ namespace iTextSharp.text.pdf
 
         public int[] GetWord(int startIdx, int idx)
         {
-            int last = idx;
-            int first = idx;
+            var last = idx;
+            var first = idx;
             // forward
             for (; last < TotalTextLength; ++last)
             {
                 if (!char.IsLetter(Text[last]))
+                {
                     break;
+                }
             }
             if (last == idx)
+            {
                 return null;
+            }
             // backward
             for (; first >= startIdx; --first)
             {
                 if (!char.IsLetter(Text[first]))
+                {
                     break;
+                }
             }
             ++first;
             return new[] { first, last };
@@ -681,15 +723,18 @@ namespace iTextSharp.text.pdf
         {
             return (CurrentChar >= TotalTextLength && IndexChunk >= Chunks.Count);
         }
+
         public void MirrorGlyphs()
         {
-            for (int k = 0; k < TotalTextLength; ++k)
+            for (var k = 0; k < TotalTextLength; ++k)
             {
                 if ((OrderLevels[k] & 1) == 1)
                 {
-                    int mirror = MirrorChars[Text[k]];
+                    var mirror = MirrorChars[Text[k]];
                     if (mirror != 0)
+                    {
                         Text[k] = (char)mirror;
+                    }
                 }
             }
         }
@@ -698,61 +743,92 @@ namespace iTextSharp.text.pdf
         {
             ArabicOptions = arabicOptions;
             Save();
-            bool isRtl = (runDirection == PdfWriter.RUN_DIRECTION_RTL);
+            var isRtl = (runDirection == PdfWriter.RUN_DIRECTION_RTL);
             if (CurrentChar >= TotalTextLength)
             {
-                bool hasText = GetParagraph(runDirection);
+                var hasText = GetParagraph(runDirection);
                 if (!hasText)
+                {
                     return null;
+                }
+
                 if (TotalTextLength == 0)
                 {
-                    ArrayList ar = new ArrayList();
-                    PdfChunk ckx = new PdfChunk("", DetailChunks[0]);
+                    var ar = new ArrayList();
+                    var ckx = new PdfChunk("", DetailChunks[0]);
                     ar.Add(ckx);
                     return new PdfLine(0, 0, 0, alignment, true, ar, isRtl);
                 }
             }
-            float originalWidth = width;
-            int lastSplit = -1;
+            var originalWidth = width;
+            var lastSplit = -1;
             if (CurrentChar != 0)
+            {
                 CurrentChar = TrimLeftEx(CurrentChar, TotalTextLength - 1);
-            int oldCurrentChar = CurrentChar;
-            int uniC = 0;
+            }
+
+            var oldCurrentChar = CurrentChar;
+            var uniC = 0;
             PdfChunk ck = null;
             float charWidth = 0;
             PdfChunk lastValidChunk = null;
-            bool splitChar = false;
-            bool surrogate = false;
+            var splitChar = false;
+            var surrogate = false;
             for (; CurrentChar < TotalTextLength; ++CurrentChar)
             {
                 ck = DetailChunks[CurrentChar];
                 surrogate = Utilities.IsSurrogatePair(Text, CurrentChar);
                 if (surrogate)
+                {
                     uniC = ck.GetUnicodeEquivalent(Utilities.ConvertToUtf32(Text, CurrentChar));
+                }
                 else
+                {
                     uniC = ck.GetUnicodeEquivalent(Text[CurrentChar]);
+                }
+
                 if (PdfChunk.NoPrint(uniC))
+                {
                     continue;
+                }
+
                 if (surrogate)
+                {
                     charWidth = ck.GetCharWidth(uniC);
+                }
                 else
+                {
                     charWidth = ck.GetCharWidth(Text[CurrentChar]);
+                }
+
                 splitChar = ck.IsExtSplitCharacter(oldCurrentChar, CurrentChar, TotalTextLength, Text, DetailChunks);
                 if (splitChar && char.IsWhiteSpace((char)uniC))
+                {
                     lastSplit = CurrentChar;
+                }
+
                 if (width - charWidth < 0)
+                {
                     break;
+                }
+
                 if (splitChar)
+                {
                     lastSplit = CurrentChar;
+                }
+
                 width -= charWidth;
                 lastValidChunk = ck;
                 if (surrogate)
+                {
                     ++CurrentChar;
+                }
+
                 if (ck.IsTab())
                 {
-                    object[] tab = (object[])ck.GetAttribute(Chunk.TAB);
-                    float tabPosition = (float)tab[1];
-                    bool newLine = (bool)tab[2];
+                    var tab = (object[])ck.GetAttribute(Chunk.TAB);
+                    var tabPosition = (float)tab[1];
+                    var newLine = (bool)tab[2];
                     if (newLine && tabPosition < originalWidth - width)
                     {
                         return new PdfLine(0, originalWidth, width, alignment, true, CreateArrayOfPdfChunks(oldCurrentChar, CurrentChar - 1), isRtl);
@@ -766,7 +842,10 @@ namespace iTextSharp.text.pdf
                 // not even a single char fit; must output the first char
                 ++CurrentChar;
                 if (surrogate)
+                {
                     ++CurrentChar;
+                }
+
                 return new PdfLine(0, originalWidth, 0, alignment, false, CreateArrayOfPdfChunks(CurrentChar - 1, CurrentChar - 1), isRtl);
             }
             if (CurrentChar >= TotalTextLength)
@@ -774,7 +853,7 @@ namespace iTextSharp.text.pdf
                 // there was more line than text
                 return new PdfLine(0, originalWidth, width, alignment, true, CreateArrayOfPdfChunks(oldCurrentChar, TotalTextLength - 1), isRtl);
             }
-            int newCurrentChar = TrimRightEx(oldCurrentChar, CurrentChar - 1);
+            var newCurrentChar = TrimRightEx(oldCurrentChar, CurrentChar - 1);
             if (newCurrentChar < oldCurrentChar)
             {
                 // only WS
@@ -782,18 +861,18 @@ namespace iTextSharp.text.pdf
             }
             if (newCurrentChar == CurrentChar - 1)
             { // middle of word
-                IHyphenationEvent he = (IHyphenationEvent)lastValidChunk.GetAttribute(Chunk.HYPHENATION);
+                var he = (IHyphenationEvent)lastValidChunk.GetAttribute(Chunk.HYPHENATION);
                 if (he != null)
                 {
-                    int[] word = GetWord(oldCurrentChar, newCurrentChar);
+                    var word = GetWord(oldCurrentChar, newCurrentChar);
                     if (word != null)
                     {
-                        float testWidth = width + GetWidth(word[0], CurrentChar - 1);
-                        string pre = he.GetHyphenatedWordPre(new string(Text, word[0], word[1] - word[0]), lastValidChunk.Font.Font, lastValidChunk.Font.Size, testWidth);
-                        string post = he.HyphenatedWordPost;
+                        var testWidth = width + GetWidth(word[0], CurrentChar - 1);
+                        var pre = he.GetHyphenatedWordPre(new string(Text, word[0], word[1] - word[0]), lastValidChunk.Font.Font, lastValidChunk.Font.Size, testWidth);
+                        var post = he.HyphenatedWordPost;
                         if (pre.Length > 0)
                         {
-                            PdfChunk extra = new PdfChunk(pre, lastValidChunk);
+                            var extra = new PdfChunk(pre, lastValidChunk);
                             CurrentChar = word[1] - post.Length;
                             return new PdfLine(0, originalWidth, testWidth - lastValidChunk.Font.Width(pre), alignment, false, CreateArrayOfPdfChunks(oldCurrentChar, word[0] - 1, extra), isRtl);
                         }
@@ -818,22 +897,30 @@ namespace iTextSharp.text.pdf
 
         public void Reorder(int start, int end)
         {
-            byte maxLevel = OrderLevels[start];
-            byte minLevel = maxLevel;
-            byte onlyOddLevels = maxLevel;
-            byte onlyEvenLevels = maxLevel;
-            for (int k = start + 1; k <= end; ++k)
+            var maxLevel = OrderLevels[start];
+            var minLevel = maxLevel;
+            var onlyOddLevels = maxLevel;
+            var onlyEvenLevels = maxLevel;
+            for (var k = start + 1; k <= end; ++k)
             {
-                byte b = OrderLevels[k];
+                var b = OrderLevels[k];
                 if (b > maxLevel)
+                {
                     maxLevel = b;
+                }
                 else if (b < minLevel)
+                {
                     minLevel = b;
+                }
+
                 onlyOddLevels &= b;
                 onlyEvenLevels |= b;
             }
             if ((onlyEvenLevels & 1) == 0) // nothing to do
+            {
                 return;
+            }
+
             if ((onlyOddLevels & 1) == 1)
             { // single inversion
                 Flip(start, end + 1);
@@ -842,21 +929,28 @@ namespace iTextSharp.text.pdf
             minLevel |= 1;
             for (; maxLevel >= minLevel; --maxLevel)
             {
-                int pstart = start;
-                for (;;)
+                var pstart = start;
+                for (; ; )
                 {
                     for (; pstart <= end; ++pstart)
                     {
                         if (OrderLevels[pstart] >= maxLevel)
+                        {
                             break;
+                        }
                     }
                     if (pstart > end)
+                    {
                         break;
-                    int pend = pstart + 1;
+                    }
+
+                    var pend = pstart + 1;
                     for (; pend <= end; ++pend)
                     {
                         if (OrderLevels[pend] < maxLevel)
+                        {
                             break;
+                        }
                     }
                     Flip(pstart, pend);
                     pstart = pend + 1;
@@ -889,11 +983,15 @@ namespace iTextSharp.text.pdf
             if (IndexChunk > 0)
             {
                 if (IndexChunk >= Chunks.Count)
+                {
                     Chunks.Clear();
+                }
                 else
                 {
                     for (--IndexChunk; IndexChunk >= 0; --IndexChunk)
+                    {
                         Chunks.RemoveAt(IndexChunk);
+                    }
                 }
                 IndexChunk = 0;
             }
@@ -925,53 +1023,63 @@ namespace iTextSharp.text.pdf
                 Array.Copy(IndexChars, CurrentChar, StoredIndexChars, CurrentChar, TotalTextLength - CurrentChar);
             }
         }
+
         public int TrimLeft(int startIdx, int endIdx)
         {
-            int idx = startIdx;
+            var idx = startIdx;
             char c;
             for (; idx <= endIdx; ++idx)
             {
                 c = (char)DetailChunks[idx].GetUnicodeEquivalent(Text[idx]);
                 if (!IsWs(c))
+                {
                     break;
+                }
             }
             return idx;
         }
 
         public int TrimLeftEx(int startIdx, int endIdx)
         {
-            int idx = startIdx;
-            char c = (char)0;
+            var idx = startIdx;
+            var c = (char)0;
             for (; idx <= endIdx; ++idx)
             {
                 c = (char)DetailChunks[idx].GetUnicodeEquivalent(Text[idx]);
                 if (!IsWs(c) && !PdfChunk.NoPrint(c))
+                {
                     break;
+                }
             }
             return idx;
         }
 
         public int TrimRight(int startIdx, int endIdx)
         {
-            int idx = endIdx;
+            var idx = endIdx;
             char c;
             for (; idx >= startIdx; --idx)
             {
                 c = (char)DetailChunks[idx].GetUnicodeEquivalent(Text[idx]);
                 if (!IsWs(c))
+                {
                     break;
+                }
             }
             return idx;
         }
+
         public int TrimRightEx(int startIdx, int endIdx)
         {
-            int idx = endIdx;
-            char c = (char)0;
+            var idx = endIdx;
+            var c = (char)0;
             for (; idx >= startIdx; --idx)
             {
                 c = (char)DetailChunks[idx].GetUnicodeEquivalent(Text[idx]);
                 if (!IsWs(c) && !PdfChunk.NoPrint(c))
+                {
                     break;
+                }
             }
             return idx;
         }

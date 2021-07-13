@@ -1,4 +1,3 @@
-using System;
 /*
  * Copyright 2007 ZXing authors
  *
@@ -15,7 +14,8 @@ using System;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
+namespace iTextSharp.text.pdf.qrcode
+{
 
     /**
      * <p>Encapsulates a QR Code's format information, including the data mask used and
@@ -24,7 +24,8 @@ namespace iTextSharp.text.pdf.qrcode {
      * @author Sean Owen
      * @see ErrorCorrectionLevel
      */
-    public sealed class FormatInformation {
+    public sealed class FormatInformation
+    {
 
         private const int FORMAT_INFO_MASK_QR = 0x5412;
 
@@ -72,17 +73,19 @@ namespace iTextSharp.text.pdf.qrcode {
         private static readonly int[] BITS_SET_IN_HALF_BYTE =
             { 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4 };
 
-        private ErrorCorrectionLevel errorCorrectionLevel;
-        private byte dataMask;
+        private readonly ErrorCorrectionLevel errorCorrectionLevel;
+        private readonly byte dataMask;
 
-        private FormatInformation(int formatInfo) {
+        private FormatInformation(int formatInfo)
+        {
             // Bits 3,4
             errorCorrectionLevel = ErrorCorrectionLevel.ForBits((formatInfo >> 3) & 0x03);
             // Bottom 3 bits
             dataMask = (byte)(formatInfo & 0x07);
         }
 
-        public static int NumBitsDiffering(int a, int b) {
+        public static int NumBitsDiffering(int a, int b)
+        {
             a ^= b; // a now has a 1 bit exactly where its bit differs with b's
             // Count bits set quickly with a series of lookups:
             return BITS_SET_IN_HALF_BYTE[a & 0x0F] +
@@ -102,9 +105,11 @@ namespace iTextSharp.text.pdf.qrcode {
          * @return information about the format it specifies, or <code>null</code>
          *  if doesn't seem to match any known pattern
          */
-        public static FormatInformation DecodeFormatInformation(int maskedFormatInfo1, int maskedFormatInfo2) {
-            FormatInformation formatInfo = DoDecodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2);
-            if (formatInfo != null) {
+        public static FormatInformation DecodeFormatInformation(int maskedFormatInfo1, int maskedFormatInfo2)
+        {
+            var formatInfo = DoDecodeFormatInformation(maskedFormatInfo1, maskedFormatInfo2);
+            if (formatInfo != null)
+            {
                 return formatInfo;
             }
             // Should return null, but, some QR codes apparently
@@ -114,26 +119,32 @@ namespace iTextSharp.text.pdf.qrcode {
                                              maskedFormatInfo2 ^ FORMAT_INFO_MASK_QR);
         }
 
-        private static FormatInformation DoDecodeFormatInformation(int maskedFormatInfo1, int maskedFormatInfo2) {
+        private static FormatInformation DoDecodeFormatInformation(int maskedFormatInfo1, int maskedFormatInfo2)
+        {
             // Find the int in FORMAT_INFO_DECODE_LOOKUP with fewest bits differing
-            int bestDifference = int.MaxValue;
-            int bestFormatInfo = 0;
-            for (int i = 0; i < FORMAT_INFO_DECODE_LOOKUP.GetLength(0); i++) {
-                int[] decodeInfo = FORMAT_INFO_DECODE_LOOKUP[i];
-                int targetInfo = decodeInfo[0];
-                if (targetInfo == maskedFormatInfo1 || targetInfo == maskedFormatInfo2) {
+            var bestDifference = int.MaxValue;
+            var bestFormatInfo = 0;
+            for (var i = 0; i < FORMAT_INFO_DECODE_LOOKUP.GetLength(0); i++)
+            {
+                var decodeInfo = FORMAT_INFO_DECODE_LOOKUP[i];
+                var targetInfo = decodeInfo[0];
+                if (targetInfo == maskedFormatInfo1 || targetInfo == maskedFormatInfo2)
+                {
                     // Found an exact match
                     return new FormatInformation(decodeInfo[1]);
                 }
-                int bitsDifference = NumBitsDiffering(maskedFormatInfo1, targetInfo);
-                if (bitsDifference < bestDifference) {
+                var bitsDifference = NumBitsDiffering(maskedFormatInfo1, targetInfo);
+                if (bitsDifference < bestDifference)
+                {
                     bestFormatInfo = decodeInfo[1];
                     bestDifference = bitsDifference;
                 }
-                if (maskedFormatInfo1 != maskedFormatInfo2) {
+                if (maskedFormatInfo1 != maskedFormatInfo2)
+                {
                     // also try the other option
                     bitsDifference = NumBitsDiffering(maskedFormatInfo2, targetInfo);
-                    if (bitsDifference < bestDifference) {
+                    if (bitsDifference < bestDifference)
+                    {
                         bestFormatInfo = decodeInfo[1];
                         bestDifference = bitsDifference;
                     }
@@ -141,35 +152,42 @@ namespace iTextSharp.text.pdf.qrcode {
             }
             // Hamming distance of the 32 masked codes is 7, by construction, so <= 3 bits
             // differing means we found a match
-            if (bestDifference <= 3) {
+            if (bestDifference <= 3)
+            {
                 return new FormatInformation(bestFormatInfo);
             }
             return null;
         }
 
-        public ErrorCorrectionLevel GetErrorCorrectionLevel() {
+        public ErrorCorrectionLevel GetErrorCorrectionLevel()
+        {
             return errorCorrectionLevel;
         }
 
-        public byte GetDataMask() {
+        public byte GetDataMask()
+        {
             return dataMask;
         }
 
-        public int HashCode() {
-            return (errorCorrectionLevel.Ordinal() << 3) | (int)dataMask;
+        public int HashCode()
+        {
+            return (errorCorrectionLevel.Ordinal() << 3) | dataMask;
         }
 
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return base.GetHashCode();
         }
 
-        public override bool Equals(Object o) {
-            if (!(o is FormatInformation)) {
+        public override bool Equals(object o)
+        {
+            if (!(o is FormatInformation))
+            {
                 return false;
             }
-            FormatInformation other = (FormatInformation)o;
-            return this.errorCorrectionLevel == other.errorCorrectionLevel &&
-                this.dataMask == other.dataMask;
+            var other = (FormatInformation)o;
+            return errorCorrectionLevel == other.errorCorrectionLevel &&
+                dataMask == other.dataMask;
         }
     }
 }

@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Implements the form XObject.
     /// </summary>
@@ -10,6 +9,7 @@ namespace iTextSharp.text.pdf
         public const int TYPE_IMPORTED = 2;
         public const int TYPE_PATTERN = 3;
         public const int TYPE_TEMPLATE = 1;
+
         /// <summary>
         /// The bounding box of this template
         /// </summary>
@@ -18,6 +18,7 @@ namespace iTextSharp.text.pdf
         protected PdfTransparencyGroup group;
         protected IPdfOcg layer;
         protected PdfArray matrix;
+
         /// <summary>
         /// The resources used by this template
         /// </summary>
@@ -48,28 +49,24 @@ namespace iTextSharp.text.pdf
 
         public Rectangle BoundingBox
         {
-            get
-            {
-                return BBox;
-            }
-            set
-            {
-                BBox = value;
-            }
+            get => BBox;
+            set => BBox = value;
         }
 
         public override PdfContentByte Duplicate
         {
             get
             {
-                PdfTemplate tpl = new PdfTemplate();
-                tpl.Writer = Writer;
-                tpl.Pdf = Pdf;
-                tpl.ThisReference = ThisReference;
-                tpl.pageResources = pageResources;
-                tpl.BBox = new Rectangle(BBox);
-                tpl.group = group;
-                tpl.layer = layer;
+                var tpl = new PdfTemplate
+                {
+                    Writer = Writer,
+                    Pdf = Pdf,
+                    ThisReference = ThisReference,
+                    pageResources = pageResources,
+                    BBox = new Rectangle(BBox),
+                    group = group,
+                    layer = layer
+                };
                 if (matrix != null)
                 {
                     tpl.matrix = new PdfArray(matrix);
@@ -81,22 +78,13 @@ namespace iTextSharp.text.pdf
 
         public virtual PdfTransparencyGroup Group
         {
-            get
-            {
-                return group;
-            }
-            set
-            {
-                group = value;
-            }
+            get => group;
+            set => group = value;
         }
 
         public float Height
         {
-            get
-            {
-                return BBox.Height;
-            }
+            get => BBox.Height;
 
             set
             {
@@ -128,14 +116,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the layer this template belongs to or  null  for no layer defined</returns>
         public IPdfOcg Layer
         {
-            get
-            {
-                return layer;
-            }
-            set
-            {
-                layer = value;
-            }
+            get => layer;
+            set => layer = value;
         }
 
         /// <summary>
@@ -143,13 +125,7 @@ namespace iTextSharp.text.pdf
         /// the members are copied by reference but the buffer stays different.
         /// </summary>
         /// <returns>a copy of this  PdfTemplate </returns>
-        public int Type
-        {
-            get
-            {
-                return type;
-            }
-        }
+        public int Type => type;
 
         /// <summary>
         /// Gets the bounding width of this template.
@@ -157,10 +133,7 @@ namespace iTextSharp.text.pdf
         /// <returns>width the bounding width</returns>
         public float Width
         {
-            get
-            {
-                return BBox.Width;
-            }
+            get => BBox.Width;
 
             set
             {
@@ -169,29 +142,11 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        internal PdfArray Matrix
-        {
-            get
-            {
-                return matrix;
-            }
-        }
+        internal PdfArray Matrix => matrix;
 
-        internal override PageResources PageResources
-        {
-            get
-            {
-                return pageResources;
-            }
-        }
+        internal override PageResources PageResources => pageResources;
 
-        internal virtual PdfObject Resources
-        {
-            get
-            {
-                return PageResources.Resources;
-            }
-        }
+        internal virtual PdfObject Resources => PageResources.Resources;
 
         ///  <summary>
         ///  Creates a new template.
@@ -237,12 +192,15 @@ namespace iTextSharp.text.pdf
 
         internal static PdfTemplate CreateTemplate(PdfWriter writer, float width, float height, PdfName forcedName)
         {
-            PdfTemplate template = new PdfTemplate(writer);
-            template.Width = width;
-            template.Height = height;
+            var template = new PdfTemplate(writer)
+            {
+                Width = width,
+                Height = height
+            };
             writer.AddDirectTemplateSimple(template, forcedName);
             return template;
         }
+
         /// <summary>
         /// Constructs the resources used by this template.
         /// </summary>

@@ -282,25 +282,13 @@ namespace iTextSharp.text
         /// Gets the content of this Annotation.
         /// </summary>
         /// <value>a reference</value>
-        public Hashtable Attributes
-        {
-            get
-            {
-                return AnnotationAttributes;
-            }
-        }
+        public Hashtable Attributes => AnnotationAttributes;
 
         /// <summary>
         /// Gets all the chunks in this element.
         /// </summary>
         /// <value>an ArrayList</value>
-        public ArrayList Chunks
-        {
-            get
-            {
-                return new ArrayList();
-            }
-        }
+        public ArrayList Chunks => new ArrayList();
 
         /// <summary>
         /// Gets the content of this Annotation.
@@ -310,8 +298,12 @@ namespace iTextSharp.text
         {
             get
             {
-                string s = (string)AnnotationAttributes[CONTENT];
-                if (s == null) s = "";
+                var s = (string)AnnotationAttributes[CONTENT];
+                if (s == null)
+                {
+                    s = "";
+                }
+
                 return s;
             }
         }
@@ -324,9 +316,12 @@ namespace iTextSharp.text
         {
             get
             {
-                string s = (string)AnnotationAttributes[TITLE];
+                var s = (string)AnnotationAttributes[TITLE];
                 if (s == null)
+                {
                     s = "";
+                }
+
                 return s;
             }
         }
@@ -334,13 +329,7 @@ namespace iTextSharp.text
         /// <summary>
         /// Gets the type of the text element
         /// </summary>
-        public int Type
-        {
-            get
-            {
-                return Element.ANNOTATION;
-            }
-        }
+        public int Type => Element.ANNOTATION;
 
         /// <summary>
         /// methods
@@ -363,7 +352,10 @@ namespace iTextSharp.text
         public float GetLlx(float def)
         {
             if (float.IsNaN(_llx))
+            {
                 return def;
+            }
+
             return _llx;
         }
 
@@ -387,7 +379,10 @@ namespace iTextSharp.text
         public float GetLly(float def)
         {
             if (float.IsNaN(_lly))
+            {
                 return def;
+            }
+
             return _lly;
         }
 
@@ -408,7 +403,10 @@ namespace iTextSharp.text
         public float GetUrx(float def)
         {
             if (float.IsNaN(_urx))
+            {
                 return def;
+            }
+
             return _urx;
         }
 
@@ -429,7 +427,10 @@ namespace iTextSharp.text
         public float GetUry(float def)
         {
             if (float.IsNaN(_ury))
+            {
                 return def;
+            }
+
             return _ury;
         }
 

@@ -9,7 +9,6 @@ namespace iTextSharp.text.pdf.hyphenation
     /// </summary>
     public interface IPatternConsumer
     {
-
         /// <summary>
         /// Add a character class.
         /// A character class defines characters that are considered

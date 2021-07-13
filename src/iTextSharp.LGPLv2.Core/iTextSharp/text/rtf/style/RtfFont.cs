@@ -1,11 +1,10 @@
+using iTextSharp.text.rtf.document;
 using System;
 using System.IO;
 using System.util;
-using iTextSharp.text.rtf.document;
 
 namespace iTextSharp.text.rtf.style
 {
-
     /// <summary>
     /// The RtfFont class stores one font for an rtf document. It extends Font,
     /// so can be set as a font, to allow adding of fonts with arbitrary names.
@@ -114,6 +113,7 @@ namespace iTextSharp.text.rtf.style
         /// Constant for the font family to use ("froman")
         /// </summary>
         private static readonly byte[] _fontFamily = DocWriter.GetIsoBytes("\\froman");
+
         /// <summary>
         /// Constant for hidden text flag
         /// </summary>
@@ -123,6 +123,7 @@ namespace iTextSharp.text.rtf.style
         /// Constant for the italic flag
         /// </summary>
         private static readonly byte[] _fontItalic = DocWriter.GetIsoBytes("\\i");
+
         /// <summary>
         /// Constant for the outline flag
         /// </summary>
@@ -142,6 +143,7 @@ namespace iTextSharp.text.rtf.style
         /// Constant for the underline flag
         /// </summary>
         private static readonly byte[] _fontUnderline = DocWriter.GetIsoBytes("\\ul");
+
         /// <summary>
         /// The character set to use for this font
         /// </summary>
@@ -156,6 +158,7 @@ namespace iTextSharp.text.rtf.style
         /// The font name. Defaults to "Times New Roman"
         /// </summary>
         private string _fontName = "Times New Roman";
+
         /// <summary>
         /// The number of this font
         /// </summary>
@@ -165,10 +168,12 @@ namespace iTextSharp.text.rtf.style
         /// The font size. Defaults to 10
         /// </summary>
         private int _fontSize = 10;
+
         /// <summary>
         /// The font style. Defaults to STYLE_NONE
         /// </summary>
         private int _fontStyle = STYLE_NONE;
+
         /// <summary>
         /// Constructs a RtfFont with the given font name and all other properties
         /// at their default values.
@@ -250,8 +255,8 @@ namespace iTextSharp.text.rtf.style
                 }
                 if (font.BaseFont != null)
                 {
-                    string[][] fontNames = font.BaseFont.FullFontName;
-                    for (int i = 0; i < fontNames.Length; i++)
+                    var fontNames = font.BaseFont.FullFontName;
+                    for (var i = 0; i < fontNames.Length; i++)
                     {
                         if (fontNames[i][2].Equals("0"))
                         {
@@ -294,6 +299,7 @@ namespace iTextSharp.text.rtf.style
             _fontNumber = fontNumber;
             _color = new RtfColor(doc, 0, 0, 0);
         }
+
         /// <summary>
         /// @see com.lowagie.text.Font#setColor(Color)
         /// </summary>
@@ -316,13 +322,7 @@ namespace iTextSharp.text.rtf.style
         /// <summary>
         /// @see com.lowagie.text.Font#getFamilyname()
         /// </summary>
-        public override string Familyname
-        {
-            get
-            {
-                return _fontName;
-            }
-        }
+        public override string Familyname => _fontName;
 
         /// <summary>
         /// @see com.lowagie.text.Font#setSize(float)
@@ -349,7 +349,7 @@ namespace iTextSharp.text.rtf.style
             }
             if (obj is RtfFont)
             {
-                if (String.Compare(GetFontName(), ((RtfFont)obj).GetFontName(), StringComparison.Ordinal) != 0)
+                if (string.Compare(GetFontName(), ((RtfFont)obj).GetFontName(), StringComparison.Ordinal) != 0)
                 {
                     return 1;
                 }
@@ -376,19 +376,19 @@ namespace iTextSharp.text.rtf.style
         /// <returns>A RtfFont</returns>
         public override Font Difference(Font font)
         {
-            string dFamilyname = font.Familyname;
+            var dFamilyname = font.Familyname;
             if (dFamilyname == null || dFamilyname.Trim().Equals("") || Util.EqualsIgnoreCase(dFamilyname.Trim(), "unknown"))
             {
                 dFamilyname = _fontName;
             }
 
-            float dSize = font.Size;
+            var dSize = font.Size;
             if (dSize.ApproxEquals(UNDEFINED))
             {
                 dSize = Size;
             }
 
-            int dStyle = UNDEFINED;
+            var dStyle = UNDEFINED;
             if (Style != UNDEFINED && font.Style != UNDEFINED)
             {
                 dStyle = Style | font.Style;
@@ -402,13 +402,13 @@ namespace iTextSharp.text.rtf.style
                 dStyle = font.Style;
             }
 
-            BaseColor dColor = font.Color;
+            var dColor = font.Color;
             if (dColor == null)
             {
                 dColor = Color;
             }
 
-            int dCharset = _charset;
+            var dCharset = _charset;
             if (font is RtfFont)
             {
                 dCharset = ((RtfFont)font).GetCharset();
@@ -429,8 +429,8 @@ namespace iTextSharp.text.rtf.style
             {
                 return false;
             }
-            RtfFont font = (RtfFont)obj;
-            bool result = true;
+            var font = (RtfFont)obj;
+            var result = true;
             result = result & _fontName.Equals(font.GetFontName());
             return result;
         }
@@ -677,6 +677,7 @@ namespace iTextSharp.text.rtf.style
             result.Write(RtfElement.Delimiter, 0, RtfElement.Delimiter.Length);
             Document.FilterSpecialChar(result, _fontName, true, false);
         }
+
         /// <summary>
         /// Write the font end
         /// </summary>
@@ -737,6 +738,7 @@ namespace iTextSharp.text.rtf.style
                 }
             }
         }
+
         /// <summary>
         /// Transforms an integer into its String representation and then returns the bytes
         /// of that string.
@@ -759,19 +761,24 @@ namespace iTextSharp.text.rtf.style
                 case COURIER:
                     _fontName = "Courier";
                     break;
+
                 case HELVETICA:
                     _fontName = "Arial";
                     break;
+
                 case SYMBOL:
                     _fontName = "Symbol";
                     _charset = 2;
                     break;
+
                 case TIMES_ROMAN:
                     _fontName = "Times New Roman";
                     break;
+
                 case ZAPFDINGBATS:
                     _fontName = "Windings";
                     break;
+
                 default:
                     _fontName = familyname;
                     break;

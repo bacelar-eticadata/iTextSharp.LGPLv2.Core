@@ -31,8 +31,11 @@ namespace iTextSharp.text.pdf
         public override bool Equals(object obj)
         {
             if (!(obj is CmykColor))
+            {
                 return false;
-            CmykColor c2 = (CmykColor)obj;
+            }
+
+            var c2 = (CmykColor)obj;
             return (Cyan.ApproxEquals(c2.Cyan) && Magenta.ApproxEquals(c2.Magenta) && Yellow.ApproxEquals(c2.Yellow) && Black.ApproxEquals(c2.Black));
         }
 

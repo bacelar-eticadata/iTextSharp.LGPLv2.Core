@@ -1,5 +1,5 @@
-using System.IO;
 using System.Collections;
+using System.IO;
 using System.util;
 
 namespace iTextSharp.text.pdf
@@ -16,7 +16,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfArray : PdfObject
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -45,8 +44,10 @@ namespace iTextSharp.text.pdf
         /// <param name="obj">a  PdfObject  that has to be added to the array</param>
         public PdfArray(PdfObject obj) : base(ARRAY)
         {
-            arrayList = new ArrayList();
-            arrayList.Add(obj);
+            arrayList = new ArrayList
+            {
+                obj
+            };
         }
 
         public PdfArray(float[] values) : base(ARRAY)
@@ -71,7 +72,9 @@ namespace iTextSharp.text.pdf
         public PdfArray(ArrayList l) : this()
         {
             foreach (PdfObject o in l)
+            {
                 Add(o);
+            }
         }
 
         /// <summary>
@@ -93,21 +96,9 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>an array of  byte s</returns>
 
-        public ArrayList ArrayList
-        {
-            get
-            {
-                return arrayList;
-            }
-        }
+        public ArrayList ArrayList => arrayList;
 
-        public int Size
-        {
-            get
-            {
-                return arrayList.Count;
-            }
-        }
+        public int Size => arrayList.Count;
 
         /// <summary>
         /// Overwrites a specified location of the array.
@@ -117,14 +108,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the previous value</returns>
         public PdfObject this[int idx]
         {
-            get
-            {
-                return (PdfObject)arrayList[idx];
-            }
-            set
-            {
-                arrayList[idx] = value;
-            }
+            get => (PdfObject)arrayList[idx];
+            set => arrayList[idx] = value;
         }
 
         public virtual bool Add(PdfObject obj)
@@ -139,15 +124,21 @@ namespace iTextSharp.text.pdf
         /// <returns> true </returns>
         public virtual bool Add(float[] values)
         {
-            for (int k = 0; k < values.Length; ++k)
+            for (var k = 0; k < values.Length; ++k)
+            {
                 arrayList.Add(new PdfNumber(values[k]));
+            }
+
             return true;
         }
 
         public virtual bool Add(int[] values)
         {
-            for (int k = 0; k < values.Length; ++k)
+            for (var k = 0; k < values.Length; ++k)
+            {
                 arrayList.Add(new PdfNumber(values[k]));
+            }
+
             return true;
         }
 
@@ -186,18 +177,24 @@ namespace iTextSharp.text.pdf
         public PdfArray GetAsArray(int idx)
         {
             PdfArray array = null;
-            PdfObject orig = GetDirectObject(idx);
+            var orig = GetDirectObject(idx);
             if (orig != null && orig.IsArray())
+            {
                 array = (PdfArray)orig;
+            }
+
             return array;
         }
 
         public PdfBoolean GetAsBoolean(int idx)
         {
             PdfBoolean b = null;
-            PdfObject orig = GetDirectObject(idx);
+            var orig = GetDirectObject(idx);
             if (orig != null && orig.IsBoolean())
+            {
                 b = (PdfBoolean)orig;
+            }
+
             return b;
         }
 
@@ -207,54 +204,72 @@ namespace iTextSharp.text.pdf
         public PdfDictionary GetAsDict(int idx)
         {
             PdfDictionary dict = null;
-            PdfObject orig = GetDirectObject(idx);
+            var orig = GetDirectObject(idx);
             if (orig != null && orig.IsDictionary())
+            {
                 dict = (PdfDictionary)orig;
+            }
+
             return dict;
         }
 
         public PdfIndirectReference GetAsIndirectObject(int idx)
         {
             PdfIndirectReference refi = null;
-            PdfObject orig = this[idx]; // not getDirect this time.
+            var orig = this[idx]; // not getDirect this time.
             if (orig != null && orig.IsIndirect())
+            {
                 refi = (PdfIndirectReference)orig;
+            }
+
             return refi;
         }
 
         public PdfName GetAsName(int idx)
         {
             PdfName name = null;
-            PdfObject orig = GetDirectObject(idx);
+            var orig = GetDirectObject(idx);
             if (orig != null && orig.IsName())
+            {
                 name = (PdfName)orig;
+            }
+
             return name;
         }
 
         public PdfNumber GetAsNumber(int idx)
         {
             PdfNumber number = null;
-            PdfObject orig = GetDirectObject(idx);
+            var orig = GetDirectObject(idx);
             if (orig != null && orig.IsNumber())
+            {
                 number = (PdfNumber)orig;
+            }
+
             return number;
         }
 
         public PdfStream GetAsStream(int idx)
         {
             PdfStream stream = null;
-            PdfObject orig = GetDirectObject(idx);
+            var orig = GetDirectObject(idx);
             if (orig != null && orig.IsStream())
+            {
                 stream = (PdfStream)orig;
+            }
+
             return stream;
         }
 
         public PdfString GetAsString(int idx)
         {
             PdfString str = null;
-            PdfObject orig = GetDirectObject(idx);
+            var orig = GetDirectObject(idx);
             if (orig != null && orig.IsString())
+            {
                 str = (PdfString)orig;
+            }
+
             return str;
         }
 
@@ -303,7 +318,7 @@ namespace iTextSharp.text.pdf
         /// <param name="idx">The index of the element to be removed.</param>
         public PdfObject Remove(int idx)
         {
-            PdfObject tmp = (PdfObject)arrayList[idx];
+            var tmp = (PdfObject)arrayList[idx];
             arrayList.RemoveAt(idx);
             return tmp;
         }
@@ -311,14 +326,17 @@ namespace iTextSharp.text.pdf
         public override void ToPdf(PdfWriter writer, Stream os)
         {
             os.WriteByte((byte)'[');
-            bool first = true;
+            var first = true;
             PdfObject obj = null;
             foreach (PdfObject obja in arrayList)
             {
                 obj = (obja == null) ? PdfNull.Pdfnull : obja;
                 type = obj.Type;
                 if (!first && type != ARRAY && type != DICTIONARY && type != NAME && type != STRING)
+                {
                     os.WriteByte((byte)' ');
+                }
+
                 first = false;
                 obj.ToPdf(writer, os);
             }

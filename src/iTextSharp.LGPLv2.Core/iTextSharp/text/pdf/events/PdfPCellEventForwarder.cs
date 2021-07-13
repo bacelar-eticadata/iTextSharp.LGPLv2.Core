@@ -2,7 +2,6 @@ using System.Collections;
 
 namespace iTextSharp.text.pdf.events
 {
-
     /// <summary>
     /// If you want to add more than one event to a cell,
     /// you have to construct a PdfPCellEventForwarder, add the
@@ -11,7 +10,6 @@ namespace iTextSharp.text.pdf.events
     /// </summary>
     public class PdfPCellEventForwarder : IPdfPCellEvent
     {
-
         /// <summary>
         /// ArrayList containing all the PageEvents that have to be executed.
         /// </summary>

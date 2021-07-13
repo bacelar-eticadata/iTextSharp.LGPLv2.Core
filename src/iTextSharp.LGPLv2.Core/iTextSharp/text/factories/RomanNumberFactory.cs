@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 namespace iTextSharp.text.factories
@@ -38,7 +37,7 @@ namespace iTextSharp.text.factories
         /// <returns>the roman number (lower case)</returns>
         public static string GetString(int index)
         {
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
 
             // lower than 0 ? Add minus
             if (index < 0)
@@ -58,11 +57,11 @@ namespace iTextSharp.text.factories
             }
 
             // number between 1 and 3000
-            int pos = 0;
+            var pos = 0;
             while (true)
             {
                 // loop over the array with values for m-d-c-l-x-v-i
-                RomanDigit dig = _roman[pos];
+                var dig = _roman[pos];
                 // adding as many digits as we can
                 while (index >= dig.Value)
                 {
@@ -75,8 +74,11 @@ namespace iTextSharp.text.factories
                     break;
                 }
                 // look for the next digit that can be used in a special way
-                int j = pos;
-                while (!_roman[++j].Pre) ;
+                var j = pos;
+                while (!_roman[++j].Pre)
+                {
+                    ;
+                }
 
                 // does the special notation apply?
                 if (index + _roman[j].Value >= dig.Value)
@@ -122,7 +124,6 @@ namespace iTextSharp.text.factories
         /// </summary>
         internal class RomanDigit
         {
-
             /// <summary>
             /// part of a roman number
             /// </summary>
@@ -137,6 +138,7 @@ namespace iTextSharp.text.factories
             /// value of the roman digit
             /// </summary>
             public int Value;
+
             /// <summary>
             /// Constructs a roman digit
             /// </summary>

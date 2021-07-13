@@ -16,7 +16,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class BarcodeEansupp : Barcode
     {
-
         /// <summary>
         /// The barcode with the EAN/UPC.
         /// </summary>
@@ -48,7 +47,7 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                Rectangle rect = Ean.BarcodeSize;
+                var rect = Ean.BarcodeSize;
                 rect.Right = rect.Width + Supp.BarcodeSize.Width + n;
                 return rect;
             }
@@ -99,10 +98,15 @@ namespace iTextSharp.text.pdf
         public override Rectangle PlaceBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
         {
             if (Supp.Font != null)
+            {
                 Supp.BarHeight = Ean.BarHeight + Supp.Baseline - Supp.Font.GetFontDescriptor(BaseFont.CAPHEIGHT, Supp.Size);
+            }
             else
+            {
                 Supp.BarHeight = Ean.BarHeight;
-            Rectangle eanR = Ean.BarcodeSize;
+            }
+
+            var eanR = Ean.BarcodeSize;
             cb.SaveState();
             Ean.PlaceBarcode(cb, barColor, textColor);
             cb.RestoreState();

@@ -1,11 +1,10 @@
+using iTextSharp.text.pdf.draw;
 using System;
 using System.Collections;
 using System.util;
-using iTextSharp.text.pdf.draw;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Formats text in a columnwise form. The text is bound
     /// on the left and on the right by a sequence of lines. This allows the column
@@ -100,7 +99,9 @@ namespace iTextSharp.text.pdf
         /// Eliminate the arabic vowels
         /// </summary>
         public int ArNovowel = ArabicLigaturizer.ar_novowel;
+
         protected internal ArrayList CompositeElements;
+
         /// <summary>
         /// The line cannot fit this column position.
         /// </summary>
@@ -137,12 +138,14 @@ namespace iTextSharp.text.pdf
         protected PdfContentByte[] canvases;
         protected bool Composite;
         protected ColumnText CompositeColumn;
+
         /// <summary>
         /// The leading for the current line.
         /// </summary>
         protected float CurrentLeading = 16;
 
         protected float descender;
+
         /// <summary>
         /// The extra space between paragraphs.
         /// </summary>
@@ -169,12 +172,14 @@ namespace iTextSharp.text.pdf
         protected ArrayList LeftWall;
 
         protected float LeftX;
+
         /// <summary>
         /// The line status when trying to fit a line to a column.
         /// </summary>
         protected int LineStatus;
 
         protected int ListIdx;
+
         /// <summary>
         /// Upper bound of the column.
         /// </summary>
@@ -191,6 +196,7 @@ namespace iTextSharp.text.pdf
         protected float multipliedLeading;
 
         protected bool RectangularMode;
+
         /// <summary>
         /// The width of the line when the column is defined as a simple rectangle.
         /// </summary>
@@ -214,6 +220,7 @@ namespace iTextSharp.text.pdf
         /// The current y line location. Text will be written at this line minus the leading.
         /// </summary>
         protected float yLine;
+
         /// <summary>
         /// Holds value of property arabicOptions.
         /// </summary>
@@ -239,7 +246,9 @@ namespace iTextSharp.text.pdf
         /// Holds value of property spaceCharRatio.
         /// </summary>
         private float _spaceCharRatio = GlobalSpaceCharRatio;
+
         private bool _splittedRow;
+
         /// <summary>
         /// if true, first line height is adjusted so that the max ascender touches the top
         /// </summary>
@@ -269,15 +278,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the alignment</returns>
         public int Alignment
         {
-            get
-            {
-                return alignment;
-            }
+            get => alignment;
 
-            set
-            {
-                alignment = value;
-            }
+            set => alignment = value;
         }
 
         /// <summary>
@@ -286,14 +289,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int ArabicOptions
         {
-            set
-            {
-                _arabicOptions = value;
-            }
-            get
-            {
-                return _arabicOptions;
-            }
+            set => _arabicOptions = value;
+            get => _arabicOptions;
         }
 
         /// <summary>
@@ -306,12 +303,11 @@ namespace iTextSharp.text.pdf
                 canvas = value;
                 canvases = null;
                 if (CompositeColumn != null)
+                {
                     CompositeColumn.Canvas = value;
+                }
             }
-            get
-            {
-                return canvas;
-            }
+            get => canvas;
         }
 
         /// <summary>
@@ -324,25 +320,18 @@ namespace iTextSharp.text.pdf
                 canvases = value;
                 canvas = canvases[PdfPTable.TEXTCANVAS];
                 if (CompositeColumn != null)
+                {
                     CompositeColumn.Canvases = canvases;
+                }
             }
-            get
-            {
-                return canvases;
-            }
+            get => canvases;
         }
 
         /// <summary>
         /// Gets the biggest descender value of the last line written.
         /// </summary>
         /// <returns>the biggest descender value of the last line written</returns>
-        public float Descender
-        {
-            get
-            {
-                return descender;
-            }
-        }
+        public float Descender => descender;
 
         /// <summary>
         /// Sets the extra space between paragraphs.
@@ -350,15 +339,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the extra space between paragraphs</returns>
         public float ExtraParagraphSpace
         {
-            get
-            {
-                return extraParagraphSpace;
-            }
+            get => extraParagraphSpace;
 
-            set
-            {
-                extraParagraphSpace = value;
-            }
+            set => extraParagraphSpace = value;
         }
 
         /// <summary>
@@ -367,14 +350,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float FilledWidth
         {
-            set
-            {
-                _filledWidth = value;
-            }
-            get
-            {
-                return _filledWidth;
-            }
+            set => _filledWidth = value;
+            get => _filledWidth;
         }
 
         /// <summary>
@@ -383,10 +360,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the indent</returns>
         public float FollowingIndent
         {
-            get
-            {
-                return followingIndent;
-            }
+            get => followingIndent;
 
             set
             {
@@ -401,10 +375,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the indent</returns>
         public float Indent
         {
-            get
-            {
-                return indent;
-            }
+            get => indent;
 
             set
             {
@@ -419,10 +390,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the leading</returns>
         public float Leading
         {
-            get
-            {
-                return FixedLeading;
-            }
+            get => FixedLeading;
 
             set
             {
@@ -435,25 +403,13 @@ namespace iTextSharp.text.pdf
         /// Gets the number of lines written.
         /// </summary>
         /// <returns>the number of lines written</returns>
-        public int LinesWritten
-        {
-            get
-            {
-                return _linesWritten;
-            }
-        }
+        public int LinesWritten => _linesWritten;
 
         /// <summary>
         /// Gets the variable leading
         /// </summary>
         /// <returns>the leading</returns>
-        public float MultipliedLeading
-        {
-            get
-            {
-                return multipliedLeading;
-            }
-        }
+        public float MultipliedLeading => multipliedLeading;
 
         /// <summary>
         /// Gets the right paragraph lines indent.
@@ -461,10 +417,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the indent</returns>
         public float RightIndent
         {
-            get
-            {
-                return rightIndent;
-            }
+            get => rightIndent;
 
             set
             {
@@ -479,15 +432,15 @@ namespace iTextSharp.text.pdf
         /// <returns>the run direction</returns>
         public int RunDirection
         {
-            get
-            {
-                return runDirection;
-            }
+            get => runDirection;
 
             set
             {
                 if (value < PdfWriter.RUN_DIRECTION_DEFAULT || value > PdfWriter.RUN_DIRECTION_RTL)
+                {
                     throw new Exception("Invalid run direction: " + value);
+                }
+
                 runDirection = value;
             }
         }
@@ -499,15 +452,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the space/character extra spacing ratio</returns>
         public float SpaceCharRatio
         {
-            get
-            {
-                return _spaceCharRatio;
-            }
+            get => _spaceCharRatio;
 
-            set
-            {
-                _spaceCharRatio = value;
-            }
+            set => _spaceCharRatio = value;
         }
 
         /// <summary>
@@ -515,14 +462,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool UseAscender
         {
-            set
-            {
-                _useAscender = value;
-            }
-            get
-            {
-                return _useAscender;
-            }
+            set => _useAscender = value;
+            get => _useAscender;
         }
 
         /// <summary>
@@ -531,15 +472,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the yLine</returns>
         public float YLine
         {
-            get
-            {
-                return yLine;
-            }
+            get => yLine;
 
-            set
-            {
-                yLine = value;
-            }
+            set => yLine = value;
         }
 
         /// <summary>
@@ -549,7 +484,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the duplicated</returns>
         public static ColumnText Duplicate(ColumnText org)
         {
-            ColumnText ct = new ColumnText(null);
+            var ct = new ColumnText(null);
             ct.SetACopy(org);
             return ct;
         }
@@ -564,14 +499,18 @@ namespace iTextSharp.text.pdf
         /// <returns>the width of the line</returns>
         public static float GetWidth(Phrase phrase, int runDirection, int arabicOptions)
         {
-            ColumnText ct = new ColumnText(null);
+            var ct = new ColumnText(null);
             ct.AddText(phrase);
             ct.addWaitingPhrase();
-            PdfLine line = ct.BidiLine.ProcessLine(0, 20000, Element.ALIGN_LEFT, runDirection, arabicOptions);
+            var line = ct.BidiLine.ProcessLine(0, 20000, Element.ALIGN_LEFT, runDirection, arabicOptions);
             if (line == null)
+            {
                 return 0;
+            }
             else
+            {
                 return 20000 - line.WidthLeft;
+            }
         }
 
         /// <summary>
@@ -608,9 +547,12 @@ namespace iTextSharp.text.pdf
         {
             if (alignment != Element.ALIGN_LEFT && alignment != Element.ALIGN_CENTER
                 && alignment != Element.ALIGN_RIGHT)
+            {
                 alignment = Element.ALIGN_LEFT;
+            }
+
             canvas.SaveState();
-            ColumnText ct = new ColumnText(canvas);
+            var ct = new ColumnText(canvas);
             float lly = -1;
             float ury = 2;
             float llx;
@@ -621,10 +563,12 @@ namespace iTextSharp.text.pdf
                     llx = 0;
                     urx = 20000;
                     break;
+
                 case Element.ALIGN_RIGHT:
                     llx = -20000;
                     urx = 0;
                     break;
+
                 default:
                     llx = -20000;
                     urx = 20000;
@@ -639,18 +583,22 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                double alpha = rotation * Math.PI / 180.0;
-                float cos = (float)Math.Cos(alpha);
-                float sin = (float)Math.Sin(alpha);
+                var alpha = rotation * Math.PI / 180.0;
+                var cos = (float)Math.Cos(alpha);
+                var sin = (float)Math.Sin(alpha);
                 canvas.ConcatCtm(cos, sin, -sin, cos, x, y);
             }
             ct.SetSimpleColumn(phrase, llx, lly, urx, ury, 2, alignment);
             if (runDirection == PdfWriter.RUN_DIRECTION_RTL)
             {
                 if (alignment == Element.ALIGN_LEFT)
+                {
                     alignment = Element.ALIGN_RIGHT;
+                }
                 else if (alignment == Element.ALIGN_RIGHT)
+                {
                     alignment = Element.ALIGN_LEFT;
+                }
             }
             ct.Alignment = alignment;
             ct.ArabicOptions = arabicOptions;
@@ -684,19 +632,25 @@ namespace iTextSharp.text.pdf
         public void AddElement(IElement element)
         {
             if (element == null)
+            {
                 return;
+            }
+
             if (element is Image)
             {
-                Image img = (Image)element;
-                PdfPTable t = new PdfPTable(1);
-                float w = img.WidthPercentage;
+                var img = (Image)element;
+                var t = new PdfPTable(1);
+                var w = img.WidthPercentage;
                 if (w.ApproxEquals(0))
                 {
                     t.TotalWidth = img.ScaledWidth;
                     t.LockedWidth = true;
                 }
                 else
+                {
                     t.WidthPercentage = w;
+                }
+
                 t.SpacingAfter = img.SpacingAfter;
                 t.SpacingBefore = img.SpacingBefore;
                 switch (img.Alignment)
@@ -704,19 +658,23 @@ namespace iTextSharp.text.pdf
                     case Image.LEFT_ALIGN:
                         t.HorizontalAlignment = Element.ALIGN_LEFT;
                         break;
+
                     case Image.RIGHT_ALIGN:
                         t.HorizontalAlignment = Element.ALIGN_RIGHT;
                         break;
+
                     default:
                         t.HorizontalAlignment = Element.ALIGN_CENTER;
                         break;
                 }
-                PdfPCell c = new PdfPCell(img, true);
-                c.Padding = 0;
-                c.Border = img.Border;
-                c.BorderColor = img.BorderColor;
-                c.BorderWidth = img.BorderWidth;
-                c.BackgroundColor = img.BackgroundColor;
+                var c = new PdfPCell(img, true)
+                {
+                    Padding = 0,
+                    Border = img.Border,
+                    BorderColor = img.BorderColor,
+                    BorderWidth = img.BorderWidth,
+                    BackgroundColor = img.BackgroundColor
+                };
                 t.AddCell(c);
                 element = t;
             }
@@ -740,7 +698,10 @@ namespace iTextSharp.text.pdf
                 }
             }
             else if (element.Type != Element.PARAGRAPH && element.Type != Element.LIST && element.Type != Element.PTABLE && element.Type != Element.YMARK)
+            {
                 throw new ArgumentException("Element not allowed.");
+            }
+
             if (!Composite)
             {
                 Composite = true;
@@ -758,7 +719,10 @@ namespace iTextSharp.text.pdf
         public void AddText(Phrase phrase)
         {
             if (phrase == null || Composite)
+            {
                 return;
+            }
+
             addWaitingPhrase();
             if (BidiLine == null)
             {
@@ -779,7 +743,10 @@ namespace iTextSharp.text.pdf
         public void AddText(Chunk chunk)
         {
             if (chunk == null || Composite)
+            {
                 return;
+            }
+
             AddText(new Phrase(chunk));
         }
 
@@ -790,7 +757,9 @@ namespace iTextSharp.text.pdf
         public void ClearChunks()
         {
             if (BidiLine != null)
+            {
                 BidiLine.ClearChunks();
+            }
         }
 
         /// <summary>
@@ -814,25 +783,34 @@ namespace iTextSharp.text.pdf
         public int Go(bool simulate)
         {
             if (Composite)
+            {
                 return GoComposite(simulate);
+            }
+
             addWaitingPhrase();
             if (BidiLine == null)
+            {
                 return NO_MORE_TEXT;
+            }
+
             descender = 0;
             _linesWritten = 0;
-            bool dirty = false;
-            float ratio = _spaceCharRatio;
-            object[] currentValues = new object[2];
+            var dirty = false;
+            var ratio = _spaceCharRatio;
+            var currentValues = new object[2];
             PdfFont currentFont = null;
-            float lastBaseFactor = 0F;
+            var lastBaseFactor = 0F;
             currentValues[1] = lastBaseFactor;
             PdfDocument pdf = null;
             PdfContentByte graphics = null;
             PdfContentByte text = null;
             _firstLineY = float.NaN;
-            int localRunDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
+            var localRunDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
             if (runDirection != PdfWriter.RUN_DIRECTION_DEFAULT)
+            {
                 localRunDirection = runDirection;
+            }
+
             if (canvas != null)
             {
                 graphics = canvas;
@@ -840,18 +818,25 @@ namespace iTextSharp.text.pdf
                 text = canvas.Duplicate;
             }
             else if (!simulate)
+            {
                 throw new Exception("ColumnText.go with simulate==false and text==null.");
+            }
+
             if (!simulate)
             {
                 if (ratio.ApproxEquals(GlobalSpaceCharRatio))
+                {
                     ratio = text.PdfWriter.SpaceCharRatio;
+                }
                 else if (ratio < 0.001f)
+                {
                     ratio = 0.001f;
+                }
             }
             float firstIndent = 0;
             PdfLine line;
             float x1;
-            int status = 0;
+            var status = 0;
             while (true)
             {
                 firstIndent = (_lastWasNewline ? indent : followingIndent); //
@@ -861,7 +846,10 @@ namespace iTextSharp.text.pdf
                     {
                         status = NO_MORE_COLUMN;
                         if (BidiLine.IsEmpty())
+                        {
                             status |= NO_MORE_TEXT;
+                        }
+
                         break;
                     }
                     if (BidiLine.IsEmpty())
@@ -875,11 +863,16 @@ namespace iTextSharp.text.pdf
                         status = NO_MORE_TEXT;
                         break;
                     }
-                    float[] maxSize = line.GetMaxSize();
+                    var maxSize = line.GetMaxSize();
                     if (UseAscender && float.IsNaN(_firstLineY))
+                    {
                         CurrentLeading = line.Ascender;
+                    }
                     else
+                    {
                         CurrentLeading = Math.Max(FixedLeading + maxSize[0] * multipliedLeading, maxSize[1]);
+                    }
+
                     if (yLine > MaxY || yLine - CurrentLeading < MinY)
                     {
                         status = NO_MORE_COLUMN;
@@ -893,19 +886,25 @@ namespace iTextSharp.text.pdf
                         dirty = true;
                     }
                     if (float.IsNaN(_firstLineY))
+                    {
                         _firstLineY = yLine;
+                    }
+
                     UpdateFilledWidth(RectangularWidth - line.WidthLeft);
                     x1 = LeftX;
                 }
                 else
                 {
-                    float yTemp = yLine;
-                    float[] xx = FindLimitsTwoLines();
+                    var yTemp = yLine;
+                    var xx = FindLimitsTwoLines();
                     if (xx == null)
                     {
                         status = NO_MORE_COLUMN;
                         if (BidiLine.IsEmpty())
+                        {
                             status |= NO_MORE_TEXT;
+                        }
+
                         yLine = yTemp;
                         break;
                     }
@@ -916,9 +915,12 @@ namespace iTextSharp.text.pdf
                         break;
                     }
                     x1 = Math.Max(xx[0], xx[2]);
-                    float x2 = Math.Min(xx[1], xx[3]);
+                    var x2 = Math.Min(xx[1], xx[3]);
                     if (x2 - x1 <= firstIndent + rightIndent)
+                    {
                         continue;
+                    }
+
                     if (!simulate && !dirty)
                     {
                         text.BeginText();
@@ -961,7 +963,10 @@ namespace iTextSharp.text.pdf
         {
             SetSimpleVars(org);
             if (org.BidiLine != null)
+            {
                 BidiLine = new BidiLine(org.BidiLine);
+            }
+
             return this;
         }
 
@@ -1044,7 +1049,10 @@ namespace iTextSharp.text.pdf
             yLine = MaxY;
             RectangularWidth = RightX - LeftX;
             if (RectangularWidth < 0)
+            {
                 RectangularWidth = 0;
+            }
+
             RectangularMode = true;
         }
 
@@ -1071,7 +1079,9 @@ namespace iTextSharp.text.pdf
         public void UpdateFilledWidth(float w)
         {
             if (w > _filledWidth)
+            {
                 _filledWidth = w;
+            }
         }
 
         /// <summary>
@@ -1091,10 +1101,16 @@ namespace iTextSharp.text.pdf
             alignment = org.alignment;
             LeftWall = null;
             if (org.LeftWall != null)
+            {
                 LeftWall = new ArrayList(org.LeftWall);
+            }
+
             RightWall = null;
             if (org.RightWall != null)
+            {
                 RightWall = new ArrayList(org.RightWall);
+            }
+
             yLine = org.yLine;
             CurrentLeading = org.CurrentLeading;
             FixedLeading = org.FixedLeading;
@@ -1121,11 +1137,13 @@ namespace iTextSharp.text.pdf
                 CompositeElements = new ArrayList(org.CompositeElements);
                 if (_splittedRow)
                 {
-                    PdfPTable table = (PdfPTable)CompositeElements[0];
+                    var table = (PdfPTable)CompositeElements[0];
                     CompositeElements[0] = new PdfPTable(table);
                 }
                 if (org.CompositeColumn != null)
+                {
                     CompositeColumn = Duplicate(org.CompositeColumn);
+                }
             }
             ListIdx = org.ListIdx;
             _firstLineY = org._firstLineY;
@@ -1150,20 +1168,25 @@ namespace iTextSharp.text.pdf
         protected ArrayList ConvertColumn(float[] cLine)
         {
             if (cLine.Length < 4)
-                throw new Exception("No valid column line found.");
-            ArrayList cc = new ArrayList();
-            for (int k = 0; k < cLine.Length - 2; k += 2)
             {
-                float x1 = cLine[k];
-                float y1 = cLine[k + 1];
-                float x2 = cLine[k + 2];
-                float y2 = cLine[k + 3];
+                throw new Exception("No valid column line found.");
+            }
+
+            var cc = new ArrayList();
+            for (var k = 0; k < cLine.Length - 2; k += 2)
+            {
+                var x1 = cLine[k];
+                var y1 = cLine[k + 1];
+                var x2 = cLine[k + 2];
+                var y2 = cLine[k + 3];
                 if (y1.ApproxEquals(y2))
+                {
                     continue;
+                }
                 // x = ay + b
-                float a = (x1 - x2) / (y1 - y2);
-                float b = x1 - a * y1;
-                float[] r = new float[4];
+                var a = (x1 - x2) / (y1 - y2);
+                var b = x1 - a * y1;
+                var r = new float[4];
                 r[0] = Math.Min(y1, y2);
                 r[1] = Math.Max(y1, y2);
                 r[2] = a;
@@ -1173,7 +1196,10 @@ namespace iTextSharp.text.pdf
                 MinY = Math.Min(MinY, r[0]);
             }
             if (cc.Count == 0)
+            {
                 throw new Exception("No valid column line found.");
+            }
+
             return cc;
         }
 
@@ -1184,12 +1210,18 @@ namespace iTextSharp.text.pdf
         /// <returns>a  float[2] with the x coordinates of the intersection</returns>
         protected float[] FindLimitsOneLine()
         {
-            float x1 = FindLimitsPoint(LeftWall);
+            var x1 = FindLimitsPoint(LeftWall);
             if (LineStatus == LINE_STATUS_OFFLIMITS || LineStatus == LINE_STATUS_NOLINE)
+            {
                 return null;
-            float x2 = FindLimitsPoint(RightWall);
+            }
+
+            var x2 = FindLimitsPoint(RightWall);
             if (LineStatus == LINE_STATUS_NOLINE)
+            {
                 return null;
+            }
+
             return new[] { x1, x2 };
         }
 
@@ -1207,11 +1239,14 @@ namespace iTextSharp.text.pdf
                 LineStatus = LINE_STATUS_OFFLIMITS;
                 return 0;
             }
-            for (int k = 0; k < wall.Count; ++k)
+            for (var k = 0; k < wall.Count; ++k)
             {
-                float[] r = (float[])wall[k];
+                var r = (float[])wall[k];
                 if (yLine < r[0] || yLine > r[1])
+                {
                     continue;
+                }
+
                 return r[2] * yLine + r[3];
             }
             LineStatus = LINE_STATUS_NOLINE;
@@ -1226,30 +1261,42 @@ namespace iTextSharp.text.pdf
         /// <returns>a  float[4] with the x coordinates of the intersection</returns>
         protected float[] FindLimitsTwoLines()
         {
-            bool repeat = false;
-            for (;;)
+            var repeat = false;
+            for (; ; )
             {
                 if (repeat && CurrentLeading.ApproxEquals(0))
+                {
                     return null;
+                }
+
                 repeat = true;
-                float[] x1 = FindLimitsOneLine();
+                var x1 = FindLimitsOneLine();
                 if (LineStatus == LINE_STATUS_OFFLIMITS)
+                {
                     return null;
+                }
+
                 yLine -= CurrentLeading;
                 if (LineStatus == LINE_STATUS_NOLINE)
                 {
                     continue;
                 }
-                float[] x2 = FindLimitsOneLine();
+                var x2 = FindLimitsOneLine();
                 if (LineStatus == LINE_STATUS_OFFLIMITS)
+                {
                     return null;
+                }
+
                 if (LineStatus == LINE_STATUS_NOLINE)
                 {
                     yLine -= CurrentLeading;
                     continue;
                 }
                 if (x1[0] >= x2[1] || x2[0] >= x1[1])
+                {
                     continue;
+                }
+
                 return new[] { x1[0], x1[1], x2[0], x2[1] };
             }
         }
@@ -1257,33 +1304,41 @@ namespace iTextSharp.text.pdf
         protected int GoComposite(bool simulate)
         {
             if (!RectangularMode)
+            {
                 throw new DocumentException("Irregular columns are not supported in composite mode.");
+            }
+
             _linesWritten = 0;
             descender = 0;
-            bool firstPass = AdjustFirstLine;
-            main_loop:
+            var firstPass = AdjustFirstLine;
+        main_loop:
             while (true)
             {
                 if (CompositeElements.Count == 0)
+                {
                     return NO_MORE_TEXT;
-                IElement element = (IElement)CompositeElements[0];
+                }
+
+                var element = (IElement)CompositeElements[0];
                 if (element.Type == Element.PARAGRAPH)
                 {
-                    Paragraph para = (Paragraph)element;
-                    int status = 0;
-                    for (int keep = 0; keep < 2; ++keep)
+                    var para = (Paragraph)element;
+                    var status = 0;
+                    for (var keep = 0; keep < 2; ++keep)
                     {
-                        float lastY = yLine;
-                        bool createHere = false;
+                        var lastY = yLine;
+                        var createHere = false;
                         if (CompositeColumn == null)
                         {
-                            CompositeColumn = new ColumnText(canvas);
-                            CompositeColumn.UseAscender = (firstPass ? _useAscender : false);
-                            CompositeColumn.Alignment = para.Alignment;
-                            CompositeColumn.Indent = para.IndentationLeft + para.FirstLineIndent;
-                            CompositeColumn.ExtraParagraphSpace = para.ExtraParagraphSpace;
-                            CompositeColumn.FollowingIndent = para.IndentationLeft;
-                            CompositeColumn.RightIndent = para.IndentationRight;
+                            CompositeColumn = new ColumnText(canvas)
+                            {
+                                UseAscender = (firstPass ? _useAscender : false),
+                                Alignment = para.Alignment,
+                                Indent = para.IndentationLeft + para.FirstLineIndent,
+                                ExtraParagraphSpace = para.ExtraParagraphSpace,
+                                FollowingIndent = para.IndentationLeft,
+                                RightIndent = para.IndentationRight
+                            };
                             CompositeColumn.SetLeading(para.Leading, para.MultipliedLeading);
                             CompositeColumn.RunDirection = runDirection;
                             CompositeColumn.ArabicOptions = _arabicOptions;
@@ -1302,7 +1357,7 @@ namespace iTextSharp.text.pdf
                         CompositeColumn.RectangularMode = RectangularMode;
                         CompositeColumn.MinY = MinY;
                         CompositeColumn.MaxY = MaxY;
-                        bool keepCandidate = (para.KeepTogether && createHere && !firstPass);
+                        var keepCandidate = (para.KeepTogether && createHere && !firstPass);
                         status = CompositeColumn.Go(simulate || (keepCandidate && keep == 0));
                         UpdateFilledWidth(CompositeColumn._filledWidth);
                         if ((status & NO_MORE_TEXT) == 0 && keepCandidate)
@@ -1312,7 +1367,10 @@ namespace iTextSharp.text.pdf
                             return NO_MORE_COLUMN;
                         }
                         if (simulate || !keepCandidate)
+                        {
                             break;
+                        }
+
                         if (keep == 0)
                         {
                             CompositeColumn = null;
@@ -1336,15 +1394,15 @@ namespace iTextSharp.text.pdf
                 }
                 else if (element.Type == Element.LIST)
                 {
-                    List list = (List)element;
-                    ArrayList items = list.Items;
+                    var list = (List)element;
+                    var items = list.Items;
                     ListItem item = null;
-                    float listIndentation = list.IndentationLeft;
-                    int count = 0;
-                    Stack stack = new Stack();
-                    for (int k = 0; k < items.Count; ++k)
+                    var listIndentation = list.IndentationLeft;
+                    var count = 0;
+                    var stack = new Stack();
+                    for (var k = 0; k < items.Count; ++k)
                     {
-                        object obj = items[k];
+                        var obj = items[k];
                         if (obj is ListItem)
                         {
                             if (count == ListIdx)
@@ -1352,7 +1410,10 @@ namespace iTextSharp.text.pdf
                                 item = (ListItem)obj;
                                 break;
                             }
-                            else ++count;
+                            else
+                            {
+                                ++count;
+                            }
                         }
                         else if (obj is List)
                         {
@@ -1367,7 +1428,7 @@ namespace iTextSharp.text.pdf
                         {
                             if (stack.Count > 0)
                             {
-                                object[] objs = (object[])stack.Pop();
+                                var objs = (object[])stack.Pop();
                                 list = (List)objs[0];
                                 items = list.Items;
                                 k = (int)objs[1];
@@ -1375,11 +1436,11 @@ namespace iTextSharp.text.pdf
                             }
                         }
                     }
-                    int status = 0;
-                    for (int keep = 0; keep < 2; ++keep)
+                    var status = 0;
+                    for (var keep = 0; keep < 2; ++keep)
                     {
-                        float lastY = yLine;
-                        bool createHere = false;
+                        var lastY = yLine;
+                        var createHere = false;
                         if (CompositeColumn == null)
                         {
                             if (item == null)
@@ -1388,12 +1449,13 @@ namespace iTextSharp.text.pdf
                                 CompositeElements.RemoveAt(0);
                                 goto main_loop;
                             }
-                            CompositeColumn = new ColumnText(canvas);
-
-                            CompositeColumn.UseAscender = (firstPass ? _useAscender : false);
-                            CompositeColumn.Alignment = item.Alignment;
-                            CompositeColumn.Indent = item.IndentationLeft + listIndentation + item.FirstLineIndent;
-                            CompositeColumn.ExtraParagraphSpace = item.ExtraParagraphSpace;
+                            CompositeColumn = new ColumnText(canvas)
+                            {
+                                UseAscender = (firstPass ? _useAscender : false),
+                                Alignment = item.Alignment,
+                                Indent = item.IndentationLeft + listIndentation + item.FirstLineIndent,
+                                ExtraParagraphSpace = item.ExtraParagraphSpace
+                            };
                             CompositeColumn.FollowingIndent = CompositeColumn.Indent;
                             CompositeColumn.RightIndent = item.IndentationRight + list.IndentationRight;
                             CompositeColumn.SetLeading(item.Leading, item.MultipliedLeading);
@@ -1414,7 +1476,7 @@ namespace iTextSharp.text.pdf
                         CompositeColumn.RectangularMode = RectangularMode;
                         CompositeColumn.MinY = MinY;
                         CompositeColumn.MaxY = MaxY;
-                        bool keepCandidate = (item.KeepTogether && createHere && !firstPass);
+                        var keepCandidate = (item.KeepTogether && createHere && !firstPass);
                         status = CompositeColumn.Go(simulate || (keepCandidate && keep == 0));
                         UpdateFilledWidth(CompositeColumn._filledWidth);
                         if ((status & NO_MORE_TEXT) == 0 && keepCandidate)
@@ -1424,7 +1486,10 @@ namespace iTextSharp.text.pdf
                             return NO_MORE_COLUMN;
                         }
                         if (simulate || !keepCandidate)
+                        {
                             break;
+                        }
+
                         if (keep == 0)
                         {
                             CompositeColumn = null;
@@ -1438,7 +1503,10 @@ namespace iTextSharp.text.pdf
                     if (!float.IsNaN(CompositeColumn._firstLineY) && !CompositeColumn._firstLineYDone)
                     {
                         if (!simulate)
+                        {
                             ShowTextAligned(canvas, Element.ALIGN_LEFT, new Phrase(item.ListSymbol), CompositeColumn.LeftX + listIndentation, CompositeColumn._firstLineY, 0);
+                        }
+
                         CompositeColumn._firstLineYDone = true;
                     }
                     if ((status & NO_MORE_TEXT) != 0)
@@ -1456,10 +1524,12 @@ namespace iTextSharp.text.pdf
                 {
                     // don't write anything in the current column if there's no more space available
                     if (yLine < MinY || yLine > MaxY)
+                    {
                         return NO_MORE_COLUMN;
+                    }
 
                     // get the PdfPTable element
-                    PdfPTable table = (PdfPTable)element;
+                    var table = (PdfPTable)element;
 
                     // we ignore tables without a body
                     if (table.Size <= table.HeaderRows)
@@ -1469,12 +1539,12 @@ namespace iTextSharp.text.pdf
                     }
 
                     // offsets
-                    float yTemp = yLine;
+                    var yTemp = yLine;
                     if (!firstPass && ListIdx == 0)
                     {
                         yTemp -= table.SpacingBefore;
                     }
-                    float yLineWrite = yTemp;
+                    var yLineWrite = yTemp;
 
                     // don't write anything in the current column if there's no more space available
                     if (yTemp < MinY || yTemp > MaxY)
@@ -1484,7 +1554,7 @@ namespace iTextSharp.text.pdf
 
                     // coordinates
                     CurrentLeading = 0;
-                    float x1 = LeftX;
+                    var x1 = LeftX;
                     float tableWidth;
                     if (table.LockedWidth)
                     {
@@ -1498,16 +1568,19 @@ namespace iTextSharp.text.pdf
                     }
 
                     // how many header rows are real header rows; how many are footer rows?
-                    int headerRows = table.HeaderRows;
-                    int footerRows = table.FooterRows;
+                    var headerRows = table.HeaderRows;
+                    var footerRows = table.FooterRows;
                     if (footerRows > headerRows)
+                    {
                         footerRows = headerRows;
-                    int realHeaderRows = headerRows - footerRows;
-                    float headerHeight = table.HeaderHeight;
-                    float footerHeight = table.FooterHeight;
+                    }
+
+                    var realHeaderRows = headerRows - footerRows;
+                    var headerHeight = table.HeaderHeight;
+                    var footerHeight = table.FooterHeight;
 
                     // make sure the header and footer fit on the page
-                    bool skipHeader =  table.SkipFirstHeader && ListIdx <= realHeaderRows && (table.ElementComplete || ListIdx != realHeaderRows);
+                    var skipHeader = table.SkipFirstHeader && ListIdx <= realHeaderRows && (table.ElementComplete || ListIdx != realHeaderRows);
                     if (!skipHeader)
                     {
                         yTemp -= headerHeight;
@@ -1534,9 +1607,12 @@ namespace iTextSharp.text.pdf
                     }
                     for (k = ListIdx; k < table.Size; ++k)
                     {
-                        float rowHeight = table.GetRowHeight(k);
+                        var rowHeight = table.GetRowHeight(k);
                         if (yTemp - rowHeight < MinY)
+                        {
                             break;
+                        }
+
                         yTemp -= rowHeight;
                     }
                     if (!table.ElementComplete)
@@ -1553,12 +1629,14 @@ namespace iTextSharp.text.pdf
                                 _splittedRow = true;
                                 table = new PdfPTable(table);
                                 CompositeElements[0] = table;
-                                ArrayList rows = table.Rows;
-                                for (int i = headerRows; i < ListIdx; ++i)
+                                var rows = table.Rows;
+                                for (var i = headerRows; i < ListIdx; ++i)
+                                {
                                     rows[i] = null;
+                                }
                             }
-                            float h = yTemp - MinY;
-                            PdfPRow newRow = table.GetRow(k).SplitRow(table, k, h);
+                            var h = yTemp - MinY;
+                            var newRow = table.GetRow(k).SplitRow(table, k, h);
                             if (newRow == null)
                             {
                                 if (k == ListIdx)
@@ -1593,23 +1671,25 @@ namespace iTextSharp.text.pdf
                         {
                             case Element.ALIGN_LEFT:
                                 break;
+
                             case Element.ALIGN_RIGHT:
                                 x1 += RectangularWidth - tableWidth;
                                 break;
+
                             default:
                                 x1 += (RectangularWidth - tableWidth) / 2f;
                                 break;
                         }
                         // copy the rows that fit on the page in a new table nt
-                        PdfPTable nt = PdfPTable.ShallowCopy(table);
-                        ArrayList sub = nt.Rows;
+                        var nt = PdfPTable.ShallowCopy(table);
+                        var sub = nt.Rows;
 
                         // first we add the real header rows (if necessary)
                         if (!skipHeader)
                         {
-                            for (int j = 0; j < realHeaderRows; ++j)
+                            for (var j = 0; j < realHeaderRows; ++j)
                             {
-                                PdfPRow headerRow = table.GetRow(j);
+                                var headerRow = table.GetRow(j);
                                 sub.Add(headerRow);
                             }
                         }
@@ -1621,21 +1701,21 @@ namespace iTextSharp.text.pdf
                         sub.AddRange(table.GetRows(ListIdx, k));
                         // if k < table.size(), we must indicate that the new table is complete;
                         // otherwise no footers will be added (because iText thinks the table continues on the same page)
-                        bool showFooter = !table.SkipLastFooter;
+                        var showFooter = !table.SkipLastFooter;
                         if (k < table.Size)
                         {
                             nt.ElementComplete = true;
                             showFooter = true;
                         }
                         // we add the footer rows if necessary (not for incomplete tables)
-                        for (int j = 0; j < footerRows && nt.ElementComplete && showFooter; ++j)
+                        for (var j = 0; j < footerRows && nt.ElementComplete && showFooter; ++j)
                         {
                             sub.Add(table.GetRow(j + realHeaderRows));
                         }
 
                         // we need a correction if the last row needs to be extended
                         float rowHeight = 0;
-                        PdfPRow last = (PdfPRow)sub[sub.Count - 1 - footerRows];
+                        var last = (PdfPRow)sub[sub.Count - 1 - footerRows];
                         if (table.ExtendLastRow)
                         {
                             rowHeight = last.MaxHeights;
@@ -1645,9 +1725,14 @@ namespace iTextSharp.text.pdf
 
                         // now we render the rows of the new table
                         if (canvases != null)
+                        {
                             nt.WriteSelectedRows(0, -1, x1, yLineWrite, canvases);
+                        }
                         else
+                        {
                             nt.WriteSelectedRows(0, -1, x1, yLineWrite, canvas);
+                        }
+
                         if (table.ExtendLastRow)
                         {
                             last.MaxHeights = rowHeight;
@@ -1673,9 +1758,11 @@ namespace iTextSharp.text.pdf
                     {
                         if (_splittedRow)
                         {
-                            ArrayList rows = table.Rows;
-                            for (int i = ListIdx; i < k; ++i)
+                            var rows = table.Rows;
+                            for (var i = ListIdx; i < k; ++i)
+                            {
                                 rows[i] = null;
+                            }
                         }
                         ListIdx = k;
                         return NO_MORE_COLUMN;
@@ -1685,13 +1772,15 @@ namespace iTextSharp.text.pdf
                 {
                     if (!simulate)
                     {
-                        IDrawInterface zh = (IDrawInterface)element;
+                        var zh = (IDrawInterface)element;
                         zh.Draw(canvas, LeftX, MinY, RightX, MaxY, yLine);
                     }
                     CompositeElements.RemoveAt(0);
                 }
                 else
+                {
                     CompositeElements.RemoveAt(0);
+                }
             }
         }
 

@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Helps the use of  PdfPageEvent  by implementing all the interface methods.
     /// A class can extend  PdfPageEventHelper  and only implement the
@@ -9,7 +8,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfPageEventHelper : IPdfPageEvent
     {
-
         /// <summary>
         /// Called when a Chapter is written.
         ///

@@ -47,8 +47,8 @@ namespace iTextSharp.text
         {
             if (o is ListItem)
             {
-                ListItem item = (ListItem)o;
-                Chunk chunk = new Chunk(preSymbol, symbol.Font);
+                var item = (ListItem)o;
+                var chunk = new Chunk(preSymbol, symbol.Font);
                 chunk.Append(RomanNumberFactory.GetString(first + list.Count, lowercase));
                 chunk.Append(postSymbol);
                 item.ListSymbol = chunk;
@@ -59,7 +59,7 @@ namespace iTextSharp.text
             }
             else if (o is List)
             {
-                List nested = (List)o;
+                var nested = (List)o;
                 nested.IndentationLeft = nested.IndentationLeft + symbolIndent;
                 first--;
                 list.Add(nested);

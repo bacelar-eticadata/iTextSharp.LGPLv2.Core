@@ -33,8 +33,10 @@ namespace iTextSharp.text
 
         public Chapter(int number) : base(null, 1)
         {
-            Numbers = new ArrayList();
-            Numbers.Add(number);
+            Numbers = new ArrayList
+            {
+                number
+            };
             triggerNewPage = true;
         }
 
@@ -48,8 +50,10 @@ namespace iTextSharp.text
         /// </overoads>
         public Chapter(Paragraph title, int number) : base(title, 1)
         {
-            Numbers = new ArrayList();
-            Numbers.Add(number);
+            Numbers = new ArrayList
+            {
+                number
+            };
             triggerNewPage = true;
         }
 

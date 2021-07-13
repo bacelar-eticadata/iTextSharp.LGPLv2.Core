@@ -13,8 +13,7 @@ namespace iTextSharp.text.pdf
 
         public static byte[] Get(string key)
         {
-            byte[] ret;
-            _cache.TryGetValue(key, out ret);
+            _cache.TryGetValue(key, out var ret);
             return ret;
         }
 

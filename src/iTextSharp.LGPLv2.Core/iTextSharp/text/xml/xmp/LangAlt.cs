@@ -39,10 +39,13 @@ namespace iTextSharp.text.xml.xmp
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("<rdf:Alt>");
             foreach (string s in Keys)
+            {
                 Process(sb, s);
+            }
+
             sb.Append("</rdf:Alt>");
             return sb.ToString();
         }

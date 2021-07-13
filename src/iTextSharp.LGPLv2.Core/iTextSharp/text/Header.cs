@@ -43,12 +43,6 @@ namespace iTextSharp.text
         /// Returns the name of the meta information.
         /// </summary>
         /// <value>a string</value>
-        public override string Name
-        {
-            get
-            {
-                return _name.ToString();
-            }
-        }
+        public override string Name => _name.ToString();
     }
 }

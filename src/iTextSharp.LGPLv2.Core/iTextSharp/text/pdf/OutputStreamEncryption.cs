@@ -1,6 +1,6 @@
+using iTextSharp.text.pdf.crypto;
 using System;
 using System.IO;
-using iTextSharp.text.pdf.crypto;
 
 namespace iTextSharp.text.pdf
 {
@@ -20,8 +20,8 @@ namespace iTextSharp.text.pdf
             _aes = revision == Aes128;
             if (_aes)
             {
-                byte[] iv = IvGenerator.GetIv();
-                byte[] nkey = new byte[len];
+                var iv = IvGenerator.GetIv();
+                var nkey = new byte[len];
                 Array.Copy(key, off, nkey, 0, len);
                 Cipher = new AesCipher(true, nkey, iv);
                 Write(iv, 0, iv.Length);
@@ -37,53 +37,24 @@ namespace iTextSharp.text.pdf
         {
         }
 
-        public override bool CanRead
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanRead => false;
 
-        public override bool CanSeek
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanWrite => true;
 
-        public override long Length
-        {
-            get
-            {
-                throw new NotSupportedException();
-            }
-        }
+        public override long Length => throw new NotSupportedException();
 
         public override long Position
         {
-            get
-            {
-                throw new NotSupportedException();
-            }
-            set
-            {
-                throw new NotSupportedException();
-            }
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
         }
 
 #if NETSTANDARD1_3
         public void Close()
 #else
+
         public override void Close()
 #endif
         {
@@ -97,7 +68,7 @@ namespace iTextSharp.text.pdf
                 _finished = true;
                 if (_aes)
                 {
-                    byte[] b = Cipher.DoFinal();
+                    var b = Cipher.DoFinal();
                     Outc.Write(b, 0, b.Length);
                 }
             }
@@ -127,17 +98,20 @@ namespace iTextSharp.text.pdf
         {
             if (_aes)
             {
-                byte[] b2 = Cipher.Update(b, off, len);
+                var b2 = Cipher.Update(b, off, len);
                 if (b2 == null || b2.Length == 0)
+                {
                     return;
+                }
+
                 Outc.Write(b2, 0, b2.Length);
             }
             else
             {
-                byte[] b2 = new byte[Math.Min(len, 4192)];
+                var b2 = new byte[Math.Min(len, 4192)];
                 while (len > 0)
                 {
-                    int sz = Math.Min(len, b2.Length);
+                    var sz = Math.Min(len, b2.Length);
                     Arcfour.EncryptArcfour(b, off, sz, b2, 0);
                     Outc.Write(b2, 0, sz);
                     len -= sz;
@@ -145,6 +119,7 @@ namespace iTextSharp.text.pdf
                 }
             }
         }
+
         public override void WriteByte(byte value)
         {
             _buf[0] = value;

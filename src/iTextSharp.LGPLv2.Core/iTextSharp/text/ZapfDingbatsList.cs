@@ -19,7 +19,7 @@ namespace iTextSharp.text
         public ZapfDingbatsList(int zn) : base(true)
         {
             Zn = zn;
-            float fontsize = symbol.Font.Size;
+            var fontsize = symbol.Font.Size;
             symbol.Font = FontFactory.GetFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL);
             postSymbol = " ";
         }
@@ -32,7 +32,7 @@ namespace iTextSharp.text
         public ZapfDingbatsList(int zn, int symbolIndent) : base(true, symbolIndent)
         {
             Zn = zn;
-            float fontsize = symbol.Font.Size;
+            var fontsize = symbol.Font.Size;
             symbol.Font = FontFactory.GetFont(FontFactory.ZAPFDINGBATS, fontsize, Font.NORMAL);
             postSymbol = " ";
         }
@@ -42,14 +42,8 @@ namespace iTextSharp.text
         /// </summary>
         public int CharNumber
         {
-            set
-            {
-                Zn = value;
-            }
-            get
-            {
-                return Zn;
-            }
+            set => Zn = value;
+            get => Zn;
         }
 
         /// <summary>
@@ -61,8 +55,8 @@ namespace iTextSharp.text
         {
             if (o is ListItem)
             {
-                ListItem item = (ListItem)o;
-                Chunk chunk = new Chunk(preSymbol, symbol.Font);
+                var item = (ListItem)o;
+                var chunk = new Chunk(preSymbol, symbol.Font);
                 chunk.Append(((char)Zn).ToString());
                 chunk.Append(postSymbol);
                 item.ListSymbol = chunk;
@@ -73,7 +67,7 @@ namespace iTextSharp.text
             }
             else if (o is List)
             {
-                List nested = (List)o;
+                var nested = (List)o;
                 nested.IndentationLeft = nested.IndentationLeft + symbolIndent;
                 first--;
                 list.Add(nested);

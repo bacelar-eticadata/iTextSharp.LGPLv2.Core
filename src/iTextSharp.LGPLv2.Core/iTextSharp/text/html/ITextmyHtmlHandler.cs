@@ -1,19 +1,16 @@
-using System;
+using iTextSharp.text.pdf;
+using iTextSharp.text.xml;
 using System.Collections;
 using System.Globalization;
 using System.util;
-using iTextSharp.text.xml;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text.html
 {
-
     /// <summary>
     /// The  Tags -class maps several XHTML-tags to iText-objects.
     /// </summary>
     public class TextmyHtmlHandler : TextHandler
     {
-
         /// <summary>
         /// These are the properties of the body section.
         /// </summary>
@@ -58,7 +55,7 @@ namespace iTextSharp.text.html
         public override void EndElement(string uri, string lname, string name)
         {
             //System.err.Println("End: " + name);
-            name = name.ToLower(CultureInfo.InvariantCulture);
+            name = name.ToLowerInvariant();
             if (ElementTags.PARAGRAPH.Equals(name))
             {
                 Document.Add((IElement)Stack.Pop());
@@ -94,7 +91,7 @@ namespace iTextSharp.text.html
             }
             if (MyTags.ContainsKey(name))
             {
-                XmlPeer peer = (XmlPeer)MyTags[name];
+                var peer = (XmlPeer)MyTags[name];
                 if (ElementTags.TABLE.Equals(peer.Tag))
                 {
                     _tableBorder = false;
@@ -113,7 +110,7 @@ namespace iTextSharp.text.html
 
             // super.handleStartingTags is replaced with handleStartingTags
             // suggestion by Vu Ngoc Tan/Hop
-            name = name.ToLower(CultureInfo.InvariantCulture);
+            name = name.ToLowerInvariant();
             if (HtmlTagMap.IsHtml(name))
             {
                 // we do nothing
@@ -139,9 +136,13 @@ namespace iTextSharp.text.html
                     foreach (string attribute in attrs.Keys)
                     {
                         if (Util.EqualsIgnoreCase(attribute, HtmlTags.CONTENT))
+                        {
                             content = (string)attrs[attribute];
+                        }
                         else if (Util.EqualsIgnoreCase(attribute, HtmlTags.NAME))
+                        {
                             meta = (string)attrs[attribute];
+                        }
                     }
                 }
                 if (meta != null && content != null)
@@ -159,7 +160,7 @@ namespace iTextSharp.text.html
             {
                 // maybe we could extract some info about the document: color, margins,...
                 // but that's for a later version...
-                XmlPeer peer = new XmlPeer(ElementTags.ITEXT, name);
+                var peer = new XmlPeer(ElementTags.ITEXT, name);
                 peer.AddAlias(ElementTags.TOP, HtmlTags.TOPMARGIN);
                 peer.AddAlias(ElementTags.BOTTOM, HtmlTags.BOTTOMMARGIN);
                 peer.AddAlias(ElementTags.RIGHT, HtmlTags.RIGHTMARGIN);
@@ -170,10 +171,10 @@ namespace iTextSharp.text.html
             }
             if (MyTags.ContainsKey(name))
             {
-                XmlPeer peer = (XmlPeer)MyTags[name];
+                var peer = (XmlPeer)MyTags[name];
                 if (ElementTags.TABLE.Equals(peer.Tag) || ElementTags.CELL.Equals(peer.Tag))
                 {
-                    Properties p = peer.GetAttributes(attrs);
+                    var p = peer.GetAttributes(attrs);
                     string value;
                     if (ElementTags.TABLE.Equals(peer.Tag) && (value = p[ElementTags.BORDERWIDTH]) != null)
                     {
@@ -195,12 +196,12 @@ namespace iTextSharp.text.html
                 HandleStartingTags(peer.Tag, peer.GetAttributes(attrs));
                 return;
             }
-            Properties attributes = new Properties();
+            var attributes = new Properties();
             if (attrs != null)
             {
                 foreach (string attribute in attrs.Keys)
                 {
-                    attributes.Add(attribute.ToLower(CultureInfo.InvariantCulture), ((string)attrs[attribute]).ToLower(CultureInfo.InvariantCulture));
+                    attributes.Add(attribute.ToLowerInvariant(), ((string)attrs[attribute]).ToLowerInvariant());
                 }
             }
             HandleStartingTags(name, attributes);

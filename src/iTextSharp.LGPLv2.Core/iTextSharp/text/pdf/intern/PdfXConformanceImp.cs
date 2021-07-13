@@ -1,5 +1,5 @@
-using System.util;
 using iTextSharp.text.pdf.interfaces;
+using System.util;
 
 namespace iTextSharp.text.pdf.intern
 {
@@ -17,6 +17,7 @@ namespace iTextSharp.text.pdf.intern
         /// A key for an aspect that can be checked for PDF/X Conformance.
         /// </summary>
         public const int PDFXKEY_COLOR = 1;
+
         /// <summary>
         /// A key for an aspect that can be checked for PDF/X Conformance.
         /// </summary>
@@ -41,6 +42,7 @@ namespace iTextSharp.text.pdf.intern
         /// A key for an aspect that can be checked for PDF/X Conformance.
         /// </summary>
         public const int PDFXKEY_RGB = 3;
+
         /// <summary>
         /// The value indicating if the PDF has to be in conformance with PDF/X.
         /// </summary>
@@ -55,8 +57,11 @@ namespace iTextSharp.text.pdf.intern
         public static void CheckPdfxConformance(PdfWriter writer, int key, object obj1)
         {
             if (writer == null || !writer.IsPdfX())
+            {
                 return;
-            int conf = writer.PdfxConformance;
+            }
+
+            var conf = writer.PdfxConformance;
             switch (key)
             {
                 case PDFXKEY_COLOR:
@@ -65,80 +70,117 @@ namespace iTextSharp.text.pdf.intern
                         case PdfWriter.PDFX1A2001:
                             if (obj1 is ExtendedColor)
                             {
-                                ExtendedColor ec = (ExtendedColor)obj1;
+                                var ec = (ExtendedColor)obj1;
                                 switch (ec.Type)
                                 {
                                     case ExtendedColor.TYPE_CMYK:
                                     case ExtendedColor.TYPE_GRAY:
                                         return;
+
                                     case ExtendedColor.TYPE_RGB:
                                         throw new PdfXConformanceException("Colorspace RGB is not allowed.");
                                     case ExtendedColor.TYPE_SEPARATION:
-                                        SpotColor sc = (SpotColor)ec;
+                                        var sc = (SpotColor)ec;
                                         CheckPdfxConformance(writer, PDFXKEY_COLOR, sc.PdfSpotColor.AlternativeCs);
                                         break;
+
                                     case ExtendedColor.TYPE_SHADING:
-                                        ShadingColor xc = (ShadingColor)ec;
+                                        var xc = (ShadingColor)ec;
                                         CheckPdfxConformance(writer, PDFXKEY_COLOR, xc.PdfShadingPattern.Shading.ColorSpace);
                                         break;
+
                                     case ExtendedColor.TYPE_PATTERN:
-                                        PatternColor pc = (PatternColor)ec;
+                                        var pc = (PatternColor)ec;
                                         CheckPdfxConformance(writer, PDFXKEY_COLOR, pc.Painter.DefaultColor);
                                         break;
                                 }
                             }
                             else if (obj1 is BaseColor)
+                            {
                                 throw new PdfXConformanceException("Colorspace RGB is not allowed.");
+                            }
+
                             break;
                     }
                     break;
+
                 case PDFXKEY_CMYK:
                     break;
+
                 case PDFXKEY_RGB:
                     if (conf == PdfWriter.PDFX1A2001)
+                    {
                         throw new PdfXConformanceException("Colorspace RGB is not allowed.");
+                    }
+
                     break;
+
                 case PDFXKEY_FONT:
                     if (!((BaseFont)obj1).IsEmbedded())
+                    {
                         throw new PdfXConformanceException("All the fonts must be embedded. This one isn't: " + ((BaseFont)obj1).PostscriptFontName);
+                    }
+
                     break;
+
                 case PDFXKEY_IMAGE:
-                    PdfImage image = (PdfImage)obj1;
+                    var image = (PdfImage)obj1;
                     if (image.Get(PdfName.Smask) != null)
+                    {
                         throw new PdfXConformanceException("The /SMask key is not allowed in images.");
+                    }
+
                     switch (conf)
                     {
                         case PdfWriter.PDFX1A2001:
-                            PdfObject cs = image.Get(PdfName.Colorspace);
+                            var cs = image.Get(PdfName.Colorspace);
                             if (cs == null)
+                            {
                                 return;
+                            }
+
                             if (cs.IsName())
                             {
                                 if (PdfName.Devicergb.Equals(cs))
+                                {
                                     throw new PdfXConformanceException("Colorspace RGB is not allowed.");
+                                }
                             }
                             else if (cs.IsArray())
                             {
                                 if (PdfName.Calrgb.Equals(((PdfArray)cs)[0]))
+                                {
                                     throw new PdfXConformanceException("Colorspace CalRGB is not allowed.");
+                                }
                             }
                             break;
                     }
                     break;
+
                 case PDFXKEY_GSTATE:
-                    PdfDictionary gs = (PdfDictionary)obj1;
-                    PdfObject obj = gs.Get(PdfName.Bm);
+                    var gs = (PdfDictionary)obj1;
+                    var obj = gs.Get(PdfName.Bm);
                     if (obj != null && !PdfGState.BmNormal.Equals(obj) && !PdfGState.BmCompatible.Equals(obj))
+                    {
                         throw new PdfXConformanceException("Blend mode " + obj + " not allowed.");
+                    }
+
                     obj = gs.Get(PdfName.CA);
-                    double v = 0.0;
+                    var v = 0.0;
                     if (obj != null && (v = ((PdfNumber)obj).DoubleValue).ApproxNotEqual(1.0))
+                    {
                         throw new PdfXConformanceException("Transparency is not allowed: /CA = " + v);
+                    }
+
                     obj = gs.Get(PdfName.CA_);
                     v = 0.0;
                     if (obj != null && (v = ((PdfNumber)obj).DoubleValue).ApproxNotEqual(1.0))
+                    {
                         throw new PdfXConformanceException("Transparency is not allowed: /ca = " + v);
+                    }
+
                     break;
+
                 case PDFXKEY_LAYER:
                     throw new PdfXConformanceException("Layers are not allowed.");
             }
@@ -150,7 +192,7 @@ namespace iTextSharp.text.pdf.intern
             {
                 if (extraCatalog.Get(PdfName.Outputintents) == null)
                 {
-                    PdfDictionary outp = new PdfDictionary(PdfName.Outputintent);
+                    var outp = new PdfDictionary(PdfName.Outputintent);
                     outp.Put(PdfName.Outputcondition, new PdfString("SWOP CGATS TR 001-1995"));
                     outp.Put(PdfName.Outputconditionidentifier, new PdfString("CGATS TR 001"));
                     outp.Put(PdfName.Registryname, new PdfString("http://www.color.org"));
@@ -173,7 +215,9 @@ namespace iTextSharp.text.pdf.intern
                         info.Put(new PdfName("GTS_PDFXConformance"), new PdfString("PDF/X-1a:2001"));
                     }
                     else if (IsPdfX32002())
+                    {
                         info.Put(PdfName.GtsPdfxversion, new PdfString("PDF/X-3:2002"));
+                    }
                 }
                 if (info.Get(PdfName.Title) == null)
                 {
@@ -216,6 +260,7 @@ namespace iTextSharp.text.pdf.intern
         {
             return PdfxConformance != PdfWriter.PDFXNONE;
         }
+
         /// <summary>
         /// Checks if the PDF has to be in conformance with PDF/X-1a:2001
         /// </summary>
@@ -224,6 +269,7 @@ namespace iTextSharp.text.pdf.intern
         {
             return PdfxConformance == PdfWriter.PDFX1A2001;
         }
+
         /// <summary>
         /// Checks if the PDF has to be in conformance with PDF/X-3:2002
         /// </summary>

@@ -1,12 +1,10 @@
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
-
     public class PrIndirectReference : PdfIndirectReference
     {
-
         protected PdfReader reader;
         /// <summary>
         /// membervariables
@@ -41,13 +39,7 @@ namespace iTextSharp.text.pdf
         /// methods
         /// </summary>
 
-        public PdfReader Reader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public PdfReader Reader => reader;
 
         public void SetNumber(int number, int generation)
         {
@@ -57,8 +49,8 @@ namespace iTextSharp.text.pdf
 
         public override void ToPdf(PdfWriter writer, Stream os)
         {
-            int n = writer.GetNewObjectNumber(reader, number, generation);
-            byte[] b = PdfEncodings.ConvertToBytes(new StringBuilder().Append(n).Append(" 0 R").ToString(), null);
+            var n = writer.GetNewObjectNumber(reader, number, generation);
+            var b = PdfEncodings.ConvertToBytes(new StringBuilder().Append(n).Append(" 0 R").ToString(), null);
             os.Write(b, 0, b.Length);
         }
     }

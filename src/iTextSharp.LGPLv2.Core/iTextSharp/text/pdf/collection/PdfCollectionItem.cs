@@ -22,8 +22,8 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public void AddItem(string key, string value)
         {
-            PdfName fieldname = new PdfName(key);
-            PdfCollectionField field = (PdfCollectionField)Schema.Get(fieldname);
+            var fieldname = new PdfName(key);
+            var field = (PdfCollectionField)Schema.Get(fieldname);
             Put(fieldname, field.GetValue(value));
         }
 
@@ -32,8 +32,8 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public void AddItem(string key, PdfString value)
         {
-            PdfName fieldname = new PdfName(key);
-            PdfCollectionField field = (PdfCollectionField)Schema.Get(fieldname);
+            var fieldname = new PdfName(key);
+            var field = (PdfCollectionField)Schema.Get(fieldname);
             if (field.FieldType == PdfCollectionField.TEXT)
             {
                 Put(fieldname, value);
@@ -45,8 +45,8 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public void AddItem(string key, PdfDate d)
         {
-            PdfName fieldname = new PdfName(key);
-            PdfCollectionField field = (PdfCollectionField)Schema.Get(fieldname);
+            var fieldname = new PdfName(key);
+            var field = (PdfCollectionField)Schema.Get(fieldname);
             if (field.FieldType == PdfCollectionField.DATE)
             {
                 Put(fieldname, d);
@@ -58,8 +58,8 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public void AddItem(string key, PdfNumber n)
         {
-            PdfName fieldname = new PdfName(key);
-            PdfCollectionField field = (PdfCollectionField)Schema.Get(fieldname);
+            var fieldname = new PdfName(key);
+            var field = (PdfCollectionField)Schema.Get(fieldname);
             if (field.FieldType == PdfCollectionField.NUMBER)
             {
                 Put(fieldname, n);
@@ -104,11 +104,14 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public void SetPrefix(string key, string prefix)
         {
-            PdfName fieldname = new PdfName(key);
-            PdfObject o = Get(fieldname);
+            var fieldname = new PdfName(key);
+            var o = Get(fieldname);
             if (o == null)
+            {
                 throw new InvalidOperationException("You must set a value before adding a prefix.");
-            PdfDictionary dict = new PdfDictionary(PdfName.Collectionsubitem);
+            }
+
+            var dict = new PdfDictionary(PdfName.Collectionsubitem);
             dict.Put(PdfName.D, o);
             dict.Put(PdfName.P, new PdfString(prefix, TEXT_UNICODE));
             Put(fieldname, dict);

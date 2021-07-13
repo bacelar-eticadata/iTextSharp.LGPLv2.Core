@@ -2,7 +2,6 @@ using System.IO;
 
 namespace iTextSharp.text.rtf.document.output
 {
-
     /// <summary>
     /// The RtfDataCache interface must be implemented by classes wishing to
     /// act as caches for the rtf document data.
@@ -33,10 +32,12 @@ namespace iTextSharp.text.rtf.document.output
         /// Constant for caching efficently into memory.
         /// </summary>
         public const int CACHE_MEMORY_EFFICIENT = 3;
+
         /// <summary>
         /// Constant for caching into memory.
         /// </summary>
         public const int CACHE_MEMORY = 2;
+
         /// <summary>
         /// Constant for caching to the disk.
         /// </summary>

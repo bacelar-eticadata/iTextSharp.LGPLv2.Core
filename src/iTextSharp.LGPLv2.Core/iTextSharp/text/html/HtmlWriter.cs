@@ -1,10 +1,9 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.IO;
+using System.Text;
 using System.util;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.text.html
 {
@@ -37,7 +36,6 @@ namespace iTextSharp.text.html
     /// </summary>
     public class HtmlWriter : DocWriter
     {
-
         /// <summary>
         /// static membervariables (tags)
         /// </summary>
@@ -56,6 +54,7 @@ namespace iTextSharp.text.html
         /// This is a possible HTML-tag.
         /// </summary>
         public static byte[] Endcomment = GetIsoBytes(" -->");
+
         /// <summary>
         /// membervariables
         /// </summary>
@@ -94,6 +93,7 @@ namespace iTextSharp.text.html
         /// This is the standard font of the HTML.
         /// </summary>
         protected Font Standardfont = new Font();
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -106,11 +106,10 @@ namespace iTextSharp.text.html
 
         protected HtmlWriter(Document doc, Stream os) : base(doc, os)
         {
-
             Document.AddDocListener(this);
             PageN = Document.PageNumber;
             os.WriteByte(LT);
-            byte[] tmp = GetIsoBytes(HtmlTags.HTML);
+            var tmp = GetIsoBytes(HtmlTags.HTML);
             os.Write(tmp, 0, tmp.Length);
             os.WriteByte(GT);
             os.WriteByte(NEWLINE);
@@ -162,7 +161,7 @@ namespace iTextSharp.text.html
                 case Element.HEADER:
                     try
                     {
-                        Header h = (Header)element;
+                        var h = (Header)element;
                         if (HtmlTags.STYLESHEET.Equals(h.Name))
                         {
                             WriteLink(h);
@@ -180,12 +179,14 @@ namespace iTextSharp.text.html
                     {
                     }
                     return true;
+
                 case Element.SUBJECT:
                 case Element.KEYWORDS:
                 case Element.AUTHOR:
-                    Meta meta = (Meta)element;
+                    var meta = (Meta)element;
                     WriteHeader(meta);
                     return true;
+
                 case Element.TITLE:
                     AddTabs(2);
                     WriteStart(HtmlTags.TITLE);
@@ -195,24 +196,28 @@ namespace iTextSharp.text.html
                     AddTabs(2);
                     WriteEnd(HtmlTags.TITLE);
                     return true;
+
                 case Element.CREATOR:
                     WriteComment("Creator: " + HtmlEncoder.Encode(((Meta)element).Content));
                     return true;
+
                 case Element.PRODUCER:
                     WriteComment("Producer: " + HtmlEncoder.Encode(((Meta)element).Content));
                     return true;
+
                 case Element.CREATIONDATE:
                     WriteComment("Creationdate: " + HtmlEncoder.Encode(((Meta)element).Content));
                     return true;
+
                 case Element.MARKED:
                     if (element is MarkedSection)
                     {
-                        MarkedSection ms = (MarkedSection)element;
+                        var ms = (MarkedSection)element;
                         AddTabs(1);
                         WriteStart(HtmlTags.DIV);
                         WriteMarkupAttributes(ms.MarkupAttributes);
                         Os.WriteByte(GT);
-                        MarkedObject mo = ((MarkedSection)element).Title;
+                        var mo = ((MarkedSection)element).Title;
                         if (mo != null)
                         {
                             Markup = mo.MarkupAttributes;
@@ -224,7 +229,7 @@ namespace iTextSharp.text.html
                     }
                     else
                     {
-                        MarkedObject mo = (MarkedObject)element;
+                        var mo = (MarkedObject)element;
                         Markup = mo.MarkupAttributes;
                         return mo.Process(this);
                     }
@@ -258,13 +263,21 @@ namespace iTextSharp.text.html
         {
             try
             {
-                Font cFont = (Font)Currentfont.Peek();
-                if (cFont.CompareTo(font) == 0) return false;
+                var cFont = (Font)Currentfont.Peek();
+                if (cFont.CompareTo(font) == 0)
+                {
+                    return false;
+                }
+
                 return true;
             }
             catch (InvalidOperationException)
             {
-                if (Standardfont.CompareTo(font) == 0) return false;
+                if (Standardfont.CompareTo(font) == 0)
+                {
+                    return false;
+                }
+
                 return true;
             }
         }
@@ -423,22 +436,26 @@ namespace iTextSharp.text.html
                     }
                 case Element.CHUNK:
                     {
-                        Chunk chunk = (Chunk)element;
+                        var chunk = (Chunk)element;
                         // if the chunk contains an image, return the image representation
-                        Image image = chunk.GetImage();
+                        var image = chunk.GetImage();
                         if (image != null)
                         {
                             Write(image, indent);
                             return;
                         }
 
-                        if (chunk.IsEmpty()) return;
-                        Hashtable attributes = chunk.Attributes;
+                        if (chunk.IsEmpty())
+                        {
+                            return;
+                        }
+
+                        var attributes = chunk.Attributes;
                         if (attributes != null && attributes[Chunk.NEWPAGE] != null)
                         {
                             return;
                         }
-                        bool tag = IsOtherFont(chunk.Font) || Markup.Count > 0;
+                        var tag = IsOtherFont(chunk.Font) || Markup.Count > 0;
                         if (tag)
                         {
                             // start span tag
@@ -490,9 +507,12 @@ namespace iTextSharp.text.html
                     }
                 case Element.PHRASE:
                     {
-                        Phrase phrase = (Phrase)element;
+                        var phrase = (Phrase)element;
                         styleAttributes = new Properties();
-                        if (phrase.HasLeading()) styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = phrase.Leading + "pt";
+                        if (phrase.HasLeading())
+                        {
+                            styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = phrase.Leading + "pt";
+                        }
 
                         // start tag
                         AddTabs(indent);
@@ -514,9 +534,12 @@ namespace iTextSharp.text.html
                     }
                 case Element.ANCHOR:
                     {
-                        Anchor anchor = (Anchor)element;
+                        var anchor = (Anchor)element;
                         styleAttributes = new Properties();
-                        if (anchor.HasLeading()) styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = anchor.Leading + "pt";
+                        if (anchor.HasLeading())
+                        {
+                            styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = anchor.Leading + "pt";
+                        }
 
                         // start tag
                         AddTabs(indent);
@@ -546,15 +569,18 @@ namespace iTextSharp.text.html
                     }
                 case Element.PARAGRAPH:
                     {
-                        Paragraph paragraph = (Paragraph)element;
+                        var paragraph = (Paragraph)element;
                         styleAttributes = new Properties();
-                        if (paragraph.HasLeading()) styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = paragraph.TotalLeading + "pt";
+                        if (paragraph.HasLeading())
+                        {
+                            styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = paragraph.TotalLeading + "pt";
+                        }
 
                         // start tag
                         AddTabs(indent);
                         WriteStart(HtmlTags.DIV);
                         WriteMarkupAttributes(Markup);
-                        string alignment = HtmlEncoder.GetAlignment(paragraph.Alignment);
+                        var alignment = HtmlEncoder.GetAlignment(paragraph.Alignment);
                         if (!"".Equals(alignment))
                         {
                             Write(HtmlTags.ALIGN, alignment);
@@ -582,7 +608,7 @@ namespace iTextSharp.text.html
                     }
                 case Element.LIST:
                     {
-                        List list = (List)element;
+                        var list = (List)element;
                         // start tag
                         AddTabs(indent);
                         if (list.Numbered)
@@ -614,9 +640,12 @@ namespace iTextSharp.text.html
                     }
                 case Element.LISTITEM:
                     {
-                        ListItem listItem = (ListItem)element;
+                        var listItem = (ListItem)element;
                         styleAttributes = new Properties();
-                        if (listItem.HasLeading()) styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = listItem.TotalLeading + "pt";
+                        if (listItem.HasLeading())
+                        {
+                            styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = listItem.TotalLeading + "pt";
+                        }
 
                         // start tag
                         AddTabs(indent);
@@ -638,7 +667,7 @@ namespace iTextSharp.text.html
                     }
                 case Element.CELL:
                     {
-                        Cell cell = (Cell)element;
+                        var cell = (Cell)element;
 
                         // start tag
                         AddTabs(indent);
@@ -663,7 +692,7 @@ namespace iTextSharp.text.html
                         {
                             Write(HtmlTags.BACKGROUNDCOLOR, HtmlEncoder.Encode(cell.BackgroundColor));
                         }
-                        string alignment = HtmlEncoder.GetAlignment(cell.HorizontalAlignment);
+                        var alignment = HtmlEncoder.GetAlignment(cell.HorizontalAlignment);
                         if (!"".Equals(alignment))
                         {
                             Write(HtmlTags.HORIZONTALALIGN, alignment);
@@ -716,7 +745,7 @@ namespace iTextSharp.text.html
                     }
                 case Element.ROW:
                     {
-                        Row row = (Row)element;
+                        var row = (Row)element;
 
                         // start tag
                         AddTabs(indent);
@@ -725,7 +754,7 @@ namespace iTextSharp.text.html
                         Os.WriteByte(GT);
                         // contents
                         IElement cell;
-                        for (int i = 0; i < row.Columns; i++)
+                        for (var i = 0; i < row.Columns; i++)
                         {
                             if ((cell = (IElement)row.GetCell(i)) != null)
                             {
@@ -763,7 +792,7 @@ namespace iTextSharp.text.html
                             Write("%");
                         }
                         Os.WriteByte(QUOTE);
-                        string alignment = HtmlEncoder.GetAlignment(table.Alignment);
+                        var alignment = HtmlEncoder.GetAlignment(table.Alignment);
                         if (!"".Equals(alignment))
                         {
                             Write(HtmlTags.ALIGN, alignment);
@@ -795,7 +824,7 @@ namespace iTextSharp.text.html
                     }
                 case Element.ANNOTATION:
                     {
-                        Annotation annotation = (Annotation)element;
+                        var annotation = (Annotation)element;
                         WriteComment(annotation.Title + ": " + annotation.Content);
                         return;
                     }
@@ -804,7 +833,7 @@ namespace iTextSharp.text.html
                 case Element.JPEG2000:
                 case Element.IMGTEMPLATE:
                     {
-                        Image image = (Image)element;
+                        var image = (Image)element;
                         if (image.Url == null)
                         {
                             return;
@@ -813,7 +842,7 @@ namespace iTextSharp.text.html
                         // start tag
                         AddTabs(indent);
                         WriteStart(HtmlTags.IMAGE);
-                        string path = image.Url.ToString();
+                        var path = image.Url.ToString();
                         if (Imagepath != null)
                         {
                             if (path.IndexOf("/", StringComparison.Ordinal) > 0)
@@ -856,7 +885,11 @@ namespace iTextSharp.text.html
 
         protected void Write(Font font, Properties styleAttributes)
         {
-            if (font == null || !IsOtherFont(font) /*|| styleAttributes == null*/) return;
+            if (font == null || !IsOtherFont(font) /*|| styleAttributes == null*/)
+            {
+                return;
+            }
+
             Write(" ");
             Write(HtmlTags.STYLE);
             Write("=\"");
@@ -880,21 +913,27 @@ namespace iTextSharp.text.html
                     WriteCssProperty(html.Markup.CSS_KEY_COLOR, HtmlEncoder.Encode(font.Color));
                 }
 
-                int fontstyle = font.Style;
-                BaseFont bf = font.BaseFont;
+                var fontstyle = font.Style;
+                var bf = font.BaseFont;
                 if (bf != null)
                 {
-                    string ps = bf.PostscriptFontName.ToLower(CultureInfo.InvariantCulture);
+                    var ps = bf.PostscriptFontName.ToLowerInvariant();
                     if (ps.IndexOf("bold", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         if (fontstyle == Font.UNDEFINED)
+                        {
                             fontstyle = 0;
+                        }
+
                         fontstyle |= Font.BOLD;
                     }
                     if (ps.IndexOf("italic", StringComparison.OrdinalIgnoreCase) >= 0 || ps.IndexOf("oblique", StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         if (fontstyle == Font.UNDEFINED)
+                        {
                             fontstyle = 0;
+                        }
+
                         fontstyle |= Font.ITALIC;
                     }
                 }
@@ -905,9 +944,11 @@ namespace iTextSharp.text.html
                         case Font.BOLD:
                             WriteCssProperty(html.Markup.CSS_KEY_FONTWEIGHT, html.Markup.CSS_VALUE_BOLD);
                             break;
+
                         case Font.ITALIC:
                             WriteCssProperty(html.Markup.CSS_KEY_FONTSTYLE, html.Markup.CSS_VALUE_ITALIC);
                             break;
+
                         case Font.BOLDITALIC:
                             WriteCssProperty(html.Markup.CSS_KEY_FONTWEIGHT, html.Markup.CSS_VALUE_BOLD);
                             WriteCssProperty(html.Markup.CSS_KEY_FONTSTYLE, html.Markup.CSS_VALUE_ITALIC);
@@ -954,12 +995,15 @@ namespace iTextSharp.text.html
                 case Element.HEADER:
                     Write(HtmlTags.NAME, ((Header)meta).Name);
                     break;
+
                 case Element.SUBJECT:
                     Write(HtmlTags.NAME, HtmlTags.SUBJECT);
                     break;
+
                 case Element.KEYWORDS:
                     Write(HtmlTags.NAME, HtmlTags.KEYWORDS);
                     break;
+
                 case Element.AUTHOR:
                     Write(HtmlTags.NAME, HtmlTags.AUTHOR);
                     break;
@@ -1021,7 +1065,6 @@ namespace iTextSharp.text.html
             WriteEnd();
         }
 
-
         /// <summary>
         /// Writes the HTML representation of a section.
         /// </summary>
@@ -1031,18 +1074,21 @@ namespace iTextSharp.text.html
         {
             if (section.Title != null)
             {
-                int depth = section.Depth - 1;
+                var depth = section.Depth - 1;
                 if (depth > 5)
                 {
                     depth = 5;
                 }
-                Properties styleAttributes = new Properties();
-                if (section.Title.HasLeading()) styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = section.Title.TotalLeading + "pt";
+                var styleAttributes = new Properties();
+                if (section.Title.HasLeading())
+                {
+                    styleAttributes[html.Markup.CSS_KEY_LINEHEIGHT] = section.Title.TotalLeading + "pt";
+                }
                 // start tag
                 AddTabs(indent);
                 WriteStart(HtmlTags.H[depth]);
                 Write(section.Title.Font, styleAttributes);
-                string alignment = HtmlEncoder.GetAlignment(section.Title.Alignment);
+                var alignment = HtmlEncoder.GetAlignment(section.Title.Alignment);
                 if (!"".Equals(alignment))
                 {
                     Write(HtmlTags.ALIGN, alignment);

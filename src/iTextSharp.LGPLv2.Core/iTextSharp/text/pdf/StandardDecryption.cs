@@ -41,7 +41,9 @@ namespace iTextSharp.text.pdf.crypto
                 return Cipher.DoFinal();
             }
             else
+            {
                 return null;
+            }
         }
 
         public byte[] Update(byte[] b, int off, int len)
@@ -49,10 +51,12 @@ namespace iTextSharp.text.pdf.crypto
             if (_aes)
             {
                 if (_initiated)
+                {
                     return Cipher.Update(b, off, len);
+                }
                 else
                 {
-                    int left = Math.Min(_iv.Length - _ivptr, len);
+                    var left = Math.Min(_iv.Length - _ivptr, len);
                     Array.Copy(b, off, _iv, _ivptr, left);
                     off += left;
                     len -= left;
@@ -62,14 +66,16 @@ namespace iTextSharp.text.pdf.crypto
                         Cipher = new AesCipher(false, _key, _iv);
                         _initiated = true;
                         if (len > 0)
+                        {
                             return Cipher.Update(b, off, len);
+                        }
                     }
                     return null;
                 }
             }
             else
             {
-                byte[] b2 = new byte[len];
+                var b2 = new byte[len];
                 Arcfour.EncryptArcfour(b, off, len, b2, 0);
                 return b2;
             }

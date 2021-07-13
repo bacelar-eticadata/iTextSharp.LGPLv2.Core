@@ -28,49 +28,27 @@ namespace System.util.zlib
             Z.AvailIn = 0;
         }
 
-        public override bool CanRead
-        {
-            get
-            {
+        public override bool CanRead =>
                 // TODO:  Add DeflaterOutputStream.CanRead getter implementation
-                return true;
-            }
-        }
+                true;
 
-        public override bool CanSeek
-        {
-            get
-            {
+        public override bool CanSeek =>
                 // TODO:  Add DeflaterOutputStream.CanSeek getter implementation
-                return false;
-            }
-        }
+                false;
 
-        public override bool CanWrite
-        {
-            get
-            {
+        public override bool CanWrite =>
                 // TODO:  Add DeflaterOutputStream.CanWrite getter implementation
-                return false;
-            }
-        }
+                false;
 
-        public override long Length
-        {
-            get
-            {
+        public override long Length =>
                 // TODO:  Add DeflaterOutputStream.Length getter implementation
-                return 0;
-            }
-        }
+                0;
 
         public override long Position
         {
-            get
-            {
+            get =>
                 // TODO:  Add DeflaterOutputStream.Position getter implementation
-                return 0;
-            }
+                0;
             set
             {
                 // TODO:  Add DeflaterOutputStream.Position setter implementation
@@ -85,7 +63,10 @@ namespace System.util.zlib
         public override int Read(byte[] b, int off, int len)
         {
             if (len == 0)
+            {
                 return (0);
+            }
+
             int err;
             Z.NextOut = b;
             Z.NextOutIndex = off;
@@ -104,11 +85,19 @@ namespace System.util.zlib
                 }
                 err = Z.Inflate(FlushLevel);
                 if (_nomoreinput && (err == JZlib.Z_BUF_ERROR))
+                {
                     return (-1);
+                }
+
                 if (err != JZlib.Z_OK && err != JZlib.Z_STREAM_END)
+                {
                     throw new IOException("inflating: " + Z.Msg);
+                }
+
                 if ((_nomoreinput || err == JZlib.Z_STREAM_END) && (Z.AvailOut == len))
+                {
                     return (0);
+                }
             }
             while (Z.AvailOut == len && err == JZlib.Z_OK);
             //System.err.print("("+(len-z.avail_out)+")");
@@ -118,7 +107,10 @@ namespace System.util.zlib
         public override int ReadByte()
         {
             if (Read(_buf1, 0, 1) <= 0)
+            {
                 return -1;
+            }
+
             return (_buf1[0] & 0xFF);
         }
 

@@ -20,7 +20,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class BarcodeCodabar : Barcode
     {
-
         /// <summary>
         /// The index chars to  BARS .
         /// </summary>
@@ -53,6 +52,7 @@ namespace iTextSharp.text.pdf
             new byte[]{0,0,0,1,0,1,1}, // c
             new byte[]{0,0,0,1,1,1,0}  // d
         };
+
         /// <summary>
         /// Creates a new BarcodeCodabar.
         /// </summary>
@@ -82,32 +82,46 @@ namespace iTextSharp.text.pdf
             {
                 float fontX = 0;
                 float fontY = 0;
-                string text = code;
+                var text = code;
                 if (generateChecksum && checksumText)
+                {
                     text = CalculateChecksum(code);
+                }
+
                 if (!startStopText)
+                {
                     text = text.Substring(1, text.Length - 2);
+                }
+
                 if (font != null)
                 {
                     if (baseline > 0)
+                    {
                         fontY = baseline - font.GetFontDescriptor(BaseFont.DESCENT, size);
+                    }
                     else
+                    {
                         fontY = -baseline + size;
+                    }
+
                     fontX = font.GetWidthPoint(altText != null ? altText : text, size);
                 }
                 text = code;
                 if (generateChecksum)
+                {
                     text = CalculateChecksum(code);
-                byte[] bars = GetBarsCodabar(text);
-                int wide = 0;
-                for (int k = 0; k < bars.Length; ++k)
+                }
+
+                var bars = GetBarsCodabar(text);
+                var wide = 0;
+                for (var k = 0; k < bars.Length; ++k)
                 {
                     wide += bars[k];
                 }
-                int narrow = bars.Length - wide;
-                float fullWidth = x * (narrow + wide * n);
+                var narrow = bars.Length - wide;
+                var fullWidth = x * (narrow + wide * n);
                 fullWidth = Math.Max(fullWidth, fontX);
-                float fullHeight = barHeight + fontY;
+                var fullHeight = barHeight + fontY;
                 return new Rectangle(fullWidth, fullHeight);
             }
         }
@@ -115,12 +129,18 @@ namespace iTextSharp.text.pdf
         public static string CalculateChecksum(string code)
         {
             if (code.Length < 2)
+            {
                 return code;
-            string text = code.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            int sum = 0;
-            int len = text.Length;
-            for (int k = 0; k < len; ++k)
+            }
+
+            var text = code.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
+            var sum = 0;
+            var len = text.Length;
+            for (var k = 0; k < len; ++k)
+            {
                 sum += Chars.IndexOf(text[k].ToString(), StringComparison.Ordinal);
+            }
+
             sum = (sum + 15) / 16 * 16 - sum;
             return code.Substring(0, len - 1) + Chars[sum] + code.Substring(len - 1);
         }
@@ -133,19 +153,31 @@ namespace iTextSharp.text.pdf
         public static byte[] GetBarsCodabar(string text)
         {
             text = text.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            int len = text.Length;
+            var len = text.Length;
             if (len < 2)
-                throw new ArgumentException("Codabar must have at least a start and stop character.");
-            if (Chars.IndexOf(text[0].ToString(), StringComparison.Ordinal) < StartStopIdx || Chars.IndexOf(text[len - 1].ToString(), StringComparison.Ordinal) < StartStopIdx)
-                throw new ArgumentException("Codabar must have one of 'ABCD' as start/stop character.");
-            byte[] bars = new byte[text.Length * 8 - 1];
-            for (int k = 0; k < len; ++k)
             {
-                int idx = Chars.IndexOf(text[k].ToString(), StringComparison.Ordinal);
+                throw new ArgumentException("Codabar must have at least a start and stop character.");
+            }
+
+            if (Chars.IndexOf(text[0].ToString(), StringComparison.Ordinal) < StartStopIdx || Chars.IndexOf(text[len - 1].ToString(), StringComparison.Ordinal) < StartStopIdx)
+            {
+                throw new ArgumentException("Codabar must have one of 'ABCD' as start/stop character.");
+            }
+
+            var bars = new byte[text.Length * 8 - 1];
+            for (var k = 0; k < len; ++k)
+            {
+                var idx = Chars.IndexOf(text[k].ToString(), StringComparison.Ordinal);
                 if (idx >= StartStopIdx && k > 0 && k < len - 1)
+                {
                     throw new ArgumentException("In codabar, start/stop characters are only allowed at the extremes.");
+                }
+
                 if (idx < 0)
+                {
                     throw new ArgumentException("The character '" + text[k] + "' is illegal in codabar.");
+                }
+
                 Array.Copy(_bars[idx], 0, bars, k * 8, 7);
             }
             return bars;
@@ -153,34 +185,45 @@ namespace iTextSharp.text.pdf
 
         public override System.Drawing.Image CreateDrawingImage(System.Drawing.Color foreground, System.Drawing.Color background)
         {
-            string fullCode = code;
+            var fullCode = code;
             if (generateChecksum && checksumText)
+            {
                 fullCode = CalculateChecksum(code);
+            }
+
             if (!startStopText)
+            {
                 fullCode = fullCode.Substring(1, fullCode.Length - 2);
-            byte[] bars = GetBarsCodabar(generateChecksum ? CalculateChecksum(code) : code);
-            int wide = 0;
-            for (int k = 0; k < bars.Length; ++k)
+            }
+
+            var bars = GetBarsCodabar(generateChecksum ? CalculateChecksum(code) : code);
+            var wide = 0;
+            for (var k = 0; k < bars.Length; ++k)
             {
                 wide += bars[k];
             }
-            int narrow = bars.Length - wide;
-            int fullWidth = narrow + wide * (int)n;
-            int height = (int)barHeight;
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(fullWidth, height);
-            for (int h = 0; h < height; ++h)
+            var narrow = bars.Length - wide;
+            var fullWidth = narrow + wide * (int)n;
+            var height = (int)barHeight;
+            var bmp = new System.Drawing.Bitmap(fullWidth, height);
+            for (var h = 0; h < height; ++h)
             {
-                bool print = true;
-                int ptr = 0;
-                for (int k = 0; k < bars.Length; ++k)
+                var print = true;
+                var ptr = 0;
+                for (var k = 0; k < bars.Length; ++k)
                 {
-                    int w = (bars[k] == 0 ? 1 : (int)n);
-                    System.Drawing.Color c = background;
+                    var w = (bars[k] == 0 ? 1 : (int)n);
+                    var c = background;
                     if (print)
+                    {
                         c = foreground;
+                    }
+
                     print = !print;
-                    for (int j = 0; j < w; ++j)
+                    for (var j = 0; j < w; ++j)
+                    {
                         bmp.SetPixel(ptr++, h, c);
+                    }
                 }
             }
             return bmp;
@@ -225,41 +268,59 @@ namespace iTextSharp.text.pdf
         /// <returns>the dimensions the barcode occupies</returns>
         public override Rectangle PlaceBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
         {
-            string fullCode = code;
+            var fullCode = code;
             if (generateChecksum && checksumText)
+            {
                 fullCode = CalculateChecksum(code);
+            }
+
             if (!startStopText)
+            {
                 fullCode = fullCode.Substring(1, fullCode.Length - 2);
+            }
+
             float fontX = 0;
             if (font != null)
             {
                 fontX = font.GetWidthPoint(fullCode = altText != null ? altText : fullCode, size);
             }
-            byte[] bars = GetBarsCodabar(generateChecksum ? CalculateChecksum(code) : code);
-            int wide = 0;
-            for (int k = 0; k < bars.Length; ++k)
+            var bars = GetBarsCodabar(generateChecksum ? CalculateChecksum(code) : code);
+            var wide = 0;
+            for (var k = 0; k < bars.Length; ++k)
             {
                 wide += bars[k];
             }
-            int narrow = bars.Length - wide;
-            float fullWidth = x * (narrow + wide * n);
+            var narrow = bars.Length - wide;
+            var fullWidth = x * (narrow + wide * n);
             float barStartX = 0;
             float textStartX = 0;
             switch (textAlignment)
             {
                 case Element.ALIGN_LEFT:
                     break;
+
                 case Element.ALIGN_RIGHT:
                     if (fontX > fullWidth)
+                    {
                         barStartX = fontX - fullWidth;
+                    }
                     else
+                    {
                         textStartX = fullWidth - fontX;
+                    }
+
                     break;
+
                 default:
                     if (fontX > fullWidth)
+                    {
                         barStartX = (fontX - fullWidth) / 2;
+                    }
                     else
+                    {
                         textStartX = (fullWidth - fontX) / 2;
+                    }
+
                     break;
             }
             float barStartY = 0;
@@ -267,21 +328,29 @@ namespace iTextSharp.text.pdf
             if (font != null)
             {
                 if (baseline <= 0)
+                {
                     textStartY = barHeight - baseline;
+                }
                 else
                 {
                     textStartY = -font.GetFontDescriptor(BaseFont.DESCENT, size);
                     barStartY = textStartY + baseline;
                 }
             }
-            bool print = true;
+            var print = true;
             if (barColor != null)
-                cb.SetColorFill(barColor);
-            for (int k = 0; k < bars.Length; ++k)
             {
-                float w = (bars[k] == 0 ? x : x * n);
+                cb.SetColorFill(barColor);
+            }
+
+            for (var k = 0; k < bars.Length; ++k)
+            {
+                var w = (bars[k] == 0 ? x : x * n);
                 if (print)
+                {
                     cb.Rectangle(barStartX, barStartY, w - inkSpreading, barHeight);
+                }
+
                 print = !print;
                 barStartX += w;
             }
@@ -289,7 +358,10 @@ namespace iTextSharp.text.pdf
             if (font != null)
             {
                 if (textColor != null)
+                {
                     cb.SetColorFill(textColor);
+                }
+
                 cb.BeginText();
                 cb.SetFontAndSize(font, size);
                 cb.SetTextMatrix(textStartX, textStartY);

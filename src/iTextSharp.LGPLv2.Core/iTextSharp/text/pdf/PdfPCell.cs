@@ -1,6 +1,6 @@
+using iTextSharp.text.pdf.events;
 using System;
 using System.Collections;
-using iTextSharp.text.pdf.events;
 
 namespace iTextSharp.text.pdf
 {
@@ -95,6 +95,7 @@ namespace iTextSharp.text.pdf
         /// Holds value of property verticalAlignment.
         /// </summary>
         private int _verticalAlignment = ALIGN_TOP;
+
         /// <summary>
         /// Constructs an empty  PdfPCell .
         /// The default padding is 2.
@@ -218,7 +219,10 @@ namespace iTextSharp.text.pdf
             _colspan = cell._colspan;
             _rowspan = cell._rowspan;
             if (cell._table != null)
+            {
                 _table = new PdfPTable(cell._table);
+            }
+
             _image = Image.GetInstance(cell._image);
             _cellEvent = cell._cellEvent;
             _useDescender = cell._useDescender;
@@ -233,14 +237,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the arabic shaping options</returns>
         public int ArabicOptions
         {
-            get
-            {
-                return Column.ArabicOptions;
-            }
-            set
-            {
-                Column.ArabicOptions = value;
-            }
+            get => Column.ArabicOptions;
+            set => Column.ArabicOptions = value;
         }
 
         /// <summary>
@@ -249,18 +247,24 @@ namespace iTextSharp.text.pdf
         /// <returns>the cell event</returns>
         public IPdfPCellEvent CellEvent
         {
-            get
-            {
-                return _cellEvent;
-            }
+            get => _cellEvent;
             set
             {
-                if (value == null) _cellEvent = null;
-                else if (_cellEvent == null) _cellEvent = value;
-                else if (_cellEvent is PdfPCellEventForwarder) ((PdfPCellEventForwarder)_cellEvent).AddCellEvent(value);
+                if (value == null)
+                {
+                    _cellEvent = null;
+                }
+                else if (_cellEvent == null)
+                {
+                    _cellEvent = value;
+                }
+                else if (_cellEvent is PdfPCellEventForwarder)
+                {
+                    ((PdfPCellEventForwarder)_cellEvent).AddCellEvent(value);
+                }
                 else
                 {
-                    PdfPCellEventForwarder forward = new PdfPCellEventForwarder();
+                    var forward = new PdfPCellEventForwarder();
                     forward.AddCellEvent(_cellEvent);
                     forward.AddCellEvent(value);
                     _cellEvent = forward;
@@ -274,14 +278,8 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property colspan.</returns>
         public int Colspan
         {
-            get
-            {
-                return _colspan;
-            }
-            set
-            {
-                _colspan = value;
-            }
+            get => _colspan;
+            set => _colspan = value;
         }
 
         /// <summary>
@@ -295,13 +293,7 @@ namespace iTextSharp.text.pdf
         /// @since    2.1.1
         /// </summary>
         /// <returns>a List object.</returns>
-        public ArrayList CompositeElements
-        {
-            get
-            {
-                return Column.CompositeElements;
-            }
-        }
+        public ArrayList CompositeElements => Column.CompositeElements;
 
         /// <summary>
         /// /** Gets the effective bottom padding.  This will include
@@ -314,7 +306,7 @@ namespace iTextSharp.text.pdf
             {
                 if (UseBorderPadding)
                 {
-                    float localBorder = BorderWidthBottom / (UseVariableBorders ? 1f : 2f);
+                    var localBorder = BorderWidthBottom / (UseVariableBorders ? 1f : 2f);
                     return _paddingBottom + localBorder;
                 }
                 return _paddingBottom;
@@ -332,7 +324,7 @@ namespace iTextSharp.text.pdf
             {
                 if (UseBorderPadding)
                 {
-                    float localBorder = BorderWidthLeft / (UseVariableBorders ? 1f : 2f);
+                    var localBorder = BorderWidthLeft / (UseVariableBorders ? 1f : 2f);
                     return _paddingLeft + localBorder;
                 }
                 return _paddingLeft;
@@ -350,7 +342,7 @@ namespace iTextSharp.text.pdf
             {
                 if (UseBorderPadding)
                 {
-                    float localBorder = BorderWidthRight / (UseVariableBorders ? 1f : 2f);
+                    var localBorder = BorderWidthRight / (UseVariableBorders ? 1f : 2f);
                     return _paddingRight + localBorder;
                 }
                 return _paddingRight;
@@ -368,7 +360,7 @@ namespace iTextSharp.text.pdf
             {
                 if (UseBorderPadding)
                 {
-                    float localBorder = BorderWidthTop / (UseVariableBorders ? 1f : 2f);
+                    var localBorder = BorderWidthTop / (UseVariableBorders ? 1f : 2f);
                     return _paddingTop + localBorder;
                 }
                 return _paddingTop;
@@ -381,14 +373,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the extra space between paragraphs</returns>
         public float ExtraParagraphSpace
         {
-            get
-            {
-                return Column.ExtraParagraphSpace;
-            }
-            set
-            {
-                Column.ExtraParagraphSpace = value;
-            }
+            get => Column.ExtraParagraphSpace;
+            set => Column.ExtraParagraphSpace = value;
         }
 
         /// <summary>
@@ -397,10 +383,7 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property fixedHeight.</returns>
         public float FixedHeight
         {
-            get
-            {
-                return _fixedHeight;
-            }
+            get => _fixedHeight;
             set
             {
                 _fixedHeight = value;
@@ -414,14 +397,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the indent</returns>
         public float FollowingIndent
         {
-            get
-            {
-                return Column.FollowingIndent;
-            }
-            set
-            {
-                Column.FollowingIndent = value;
-            }
+            get => Column.FollowingIndent;
+            set => Column.FollowingIndent = value;
         }
 
         /// <summary>
@@ -430,14 +407,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the horizontal alignment for the cell</returns>
         public int HorizontalAlignment
         {
-            get
-            {
-                return Column.Alignment;
-            }
-            set
-            {
-                Column.Alignment = value;
-            }
+            get => Column.Alignment;
+            set => Column.Alignment = value;
         }
 
         /// <summary>
@@ -446,10 +417,7 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property image.</returns>
         public Image Image
         {
-            get
-            {
-                return _image;
-            }
+            get => _image;
             set
             {
                 Column.SetText(null);
@@ -464,27 +432,15 @@ namespace iTextSharp.text.pdf
         /// <returns>the indent</returns>
         public float Indent
         {
-            get
-            {
-                return Column.Indent;
-            }
-            set
-            {
-                Column.Indent = value;
-            }
+            get => Column.Indent;
+            set => Column.Indent = value;
         }
 
         /// <summary>
         /// Gets the fixed leading
         /// </summary>
         /// <returns>the leading</returns>
-        public float Leading
-        {
-            get
-            {
-                return Column.Leading;
-            }
-        }
+        public float Leading => Column.Leading;
 
         /// <summary>
         /// Getter for property minimumHeight.
@@ -492,10 +448,7 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property minimumHeight.</returns>
         public float MinimumHeight
         {
-            get
-            {
-                return _minimumHeight;
-            }
+            get => _minimumHeight;
             set
             {
                 _minimumHeight = value;
@@ -507,27 +460,15 @@ namespace iTextSharp.text.pdf
         /// Gets the variable leading
         /// </summary>
         /// <returns>the leading</returns>
-        public float MultipliedLeading
-        {
-            get
-            {
-                return Column.MultipliedLeading;
-            }
-        }
+        public float MultipliedLeading => Column.MultipliedLeading;
 
         /// <summary>
         /// Setter for property noWrap.
         /// </summary>
         public bool NoWrap
         {
-            set
-            {
-                _noWrap = value;
-            }
-            get
-            {
-                return _noWrap;
-            }
+            set => _noWrap = value;
+            get => _noWrap;
         }
 
         /// <summary>
@@ -550,14 +491,8 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property paddingBottom.</returns>
         public float PaddingBottom
         {
-            get
-            {
-                return _paddingBottom;
-            }
-            set
-            {
-                _paddingBottom = value;
-            }
+            get => _paddingBottom;
+            set => _paddingBottom = value;
         }
 
         /// <summary>
@@ -565,14 +500,8 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property paddingLeft.</returns>
         public float PaddingLeft
         {
-            get
-            {
-                return _paddingLeft;
-            }
-            set
-            {
-                _paddingLeft = value;
-            }
+            get => _paddingLeft;
+            set => _paddingLeft = value;
         }
 
         /// <summary>
@@ -581,14 +510,8 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property paddingRight.</returns>
         public float PaddingRight
         {
-            get
-            {
-                return _paddingRight;
-            }
-            set
-            {
-                _paddingRight = value;
-            }
+            get => _paddingRight;
+            set => _paddingRight = value;
         }
 
         /// <summary>
@@ -597,14 +520,8 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property paddingTop.</returns>
         public float PaddingTop
         {
-            get
-            {
-                return _paddingTop;
-            }
-            set
-            {
-                _paddingTop = value;
-            }
+            get => _paddingTop;
+            set => _paddingTop = value;
         }
 
         /// <summary>
@@ -613,10 +530,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the  Phrase </returns>
         public Phrase Phrase
         {
-            get
-            {
-                return phrase;
-            }
+            get => phrase;
             set
             {
                 _table = null;
@@ -631,14 +545,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the indent</returns>
         public float RightIndent
         {
-            get
-            {
-                return Column.RightIndent;
-            }
-            set
-            {
-                Column.RightIndent = value;
-            }
+            get => Column.RightIndent;
+            set => Column.RightIndent = value;
         }
 
         /// <summary>
@@ -649,17 +557,20 @@ namespace iTextSharp.text.pdf
         {
             set
             {
-                int rot = value % 360;
+                var rot = value % 360;
                 if (rot < 0)
+                {
                     rot += 360;
+                }
+
                 if ((rot % 90) != 0)
+                {
                     throw new ArgumentException("Rotation must be a multiple of 90.");
+                }
+
                 _rotation = rot;
             }
-            get
-            {
-                return _rotation;
-            }
+            get => _rotation;
         }
 
         /// <summary>
@@ -668,14 +579,8 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property rowspan.</returns>
         public int Rowspan
         {
-            get
-            {
-                return _rowspan;
-            }
-            set
-            {
-                _rowspan = value;
-            }
+            get => _rowspan;
+            set => _rowspan = value;
         }
 
         /// <summary>
@@ -684,14 +589,8 @@ namespace iTextSharp.text.pdf
         /// <returns>One of the following values: PdfWriter.RUN_DIRECTION_DEFAULT, PdfWriter.RUN_DIRECTION_NO_BIDI, PdfWriter.RUN_DIRECTION_LTR or PdfWriter.RUN_DIRECTION_RTL.</returns>
         public int RunDirection
         {
-            get
-            {
-                return Column.RunDirection;
-            }
-            set
-            {
-                Column.RunDirection = value;
-            }
+            get => Column.RunDirection;
+            set => Column.RunDirection = value;
         }
 
         /// <summary>
@@ -701,14 +600,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the space/character extra spacing ratio</returns>
         public float SpaceCharRatio
         {
-            get
-            {
-                return Column.SpaceCharRatio;
-            }
-            set
-            {
-                Column.SpaceCharRatio = value;
-            }
+            get => Column.SpaceCharRatio;
+            set => Column.SpaceCharRatio = value;
         }
 
         /// <summary>
@@ -717,10 +610,7 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property table.</returns>
         public PdfPTable Table
         {
-            get
-            {
-                return _table;
-            }
+            get => _table;
             set
             {
                 _table = value;
@@ -741,14 +631,8 @@ namespace iTextSharp.text.pdf
         /// <returns>true if an ascender is to be used.</returns>
         public bool UseAscender
         {
-            get
-            {
-                return Column.UseAscender;
-            }
-            set
-            {
-                Column.UseAscender = value;
-            }
+            get => Column.UseAscender;
+            set => Column.UseAscender = value;
         }
 
         /// <summary>
@@ -756,14 +640,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool UseBorderPadding
         {
-            set
-            {
-                _useBorderPadding = value;
-            }
-            get
-            {
-                return _useBorderPadding;
-            }
+            set => _useBorderPadding = value;
+            get => _useBorderPadding;
         }
 
         /// <summary>
@@ -772,14 +650,8 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property useDescender.</returns>
         public bool UseDescender
         {
-            get
-            {
-                return _useDescender;
-            }
-            set
-            {
-                _useDescender = value;
-            }
+            get => _useDescender;
+            set => _useDescender = value;
         }
 
         /// <summary>
@@ -788,15 +660,14 @@ namespace iTextSharp.text.pdf
         /// <returns>the vertical alignment for the cell</returns>
         public int VerticalAlignment
         {
-            get
-            {
-                return _verticalAlignment;
-            }
+            get => _verticalAlignment;
             set
             {
                 _verticalAlignment = value;
                 if (_table != null)
+                {
                     _table.ExtendLastRow = (_verticalAlignment == ALIGN_TOP);
+                }
             }
         }
 
@@ -813,6 +684,7 @@ namespace iTextSharp.text.pdf
             }
             Column.AddElement(element);
         }
+
         /// <summary>
         /// Returns the height of the cell.
         /// @since   3.0.0
@@ -820,25 +692,27 @@ namespace iTextSharp.text.pdf
         /// <returns>the height of the cell</returns>
         public float GetMaxHeight()
         {
-            bool pivoted = (Rotation == 90 || Rotation == 270);
-            Image img = Image;
+            var pivoted = (Rotation == 90 || Rotation == 270);
+            var img = Image;
             if (img != null)
             {
                 img.ScalePercent(100);
-                float refWidth = pivoted ? img.ScaledHeight : img.ScaledWidth;
-                float scale = (Right - EffectivePaddingRight
+                var refWidth = pivoted ? img.ScaledHeight : img.ScaledWidth;
+                var scale = (Right - EffectivePaddingRight
                         - EffectivePaddingLeft - Left) / refWidth;
                 img.ScalePercent(scale * 100);
-                float refHeight = pivoted ? img.ScaledWidth : img.ScaledHeight;
+                var refHeight = pivoted ? img.ScaledWidth : img.ScaledHeight;
                 Bottom = Top - EffectivePaddingTop - EffectivePaddingBottom - refHeight;
             }
             else
             {
                 if (pivoted && HasFixedHeight())
+                {
                     Bottom = Top - FixedHeight;
+                }
                 else
                 {
-                    ColumnText ct = ColumnText.Duplicate(Column);
+                    var ct = ColumnText.Duplicate(Column);
                     float right, top, left, bottom;
                     if (pivoted)
                     {
@@ -857,21 +731,31 @@ namespace iTextSharp.text.pdf
                     PdfPRow.SetColumn(ct, left, bottom, right, top);
                     ct.Go(true);
                     if (pivoted)
+                    {
                         Bottom = Top - EffectivePaddingTop - EffectivePaddingBottom - ct.FilledWidth;
+                    }
                     else
                     {
-                        float yLine = ct.YLine;
+                        var yLine = ct.YLine;
                         if (UseDescender)
+                        {
                             yLine += ct.Descender;
+                        }
+
                         Bottom = yLine - EffectivePaddingBottom;
                     }
                 }
             }
-            float height = Height;
+            var height = Height;
             if (height < FixedHeight)
+            {
                 height = FixedHeight;
+            }
             else if (height < MinimumHeight)
+            {
                 height = MinimumHeight;
+            }
+
             return height;
         }
 
@@ -906,6 +790,7 @@ namespace iTextSharp.text.pdf
         {
             Column.SetLeading(fixedLeading, multipliedLeading);
         }
+
         /// <summary>
         /// Consumes part of the content of the cell.
         /// @since   2.1.6
@@ -913,9 +798,9 @@ namespace iTextSharp.text.pdf
         /// <param name="height">the hight of the part that has to be consumed</param>
         internal void ConsumeHeight(float height)
         {
-            float rightLimit = Right - EffectivePaddingRight;
-            float leftLimit = Left + EffectivePaddingLeft;
-            float bry = height - EffectivePaddingTop - EffectivePaddingBottom;
+            var rightLimit = Right - EffectivePaddingRight;
+            var leftLimit = Left + EffectivePaddingLeft;
+            var bry = height - EffectivePaddingTop - EffectivePaddingBottom;
             if (Rotation != 90 && Rotation != 270)
             {
                 Column.SetSimpleColumn(leftLimit, bry + 0.001f, rightLimit, 0);

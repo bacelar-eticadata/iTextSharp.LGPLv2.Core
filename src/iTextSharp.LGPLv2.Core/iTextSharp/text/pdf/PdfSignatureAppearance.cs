@@ -1,20 +1,18 @@
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.X509;
 using System;
 using System.Collections;
-using System.Text;
 using System.IO;
+using System.Text;
 using System.util;
-using Org.BouncyCastle.X509;
-using Org.BouncyCastle.Crypto;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// This class takes care of the cryptographic options and appearances that form a signature.
     /// </summary>
     public class PdfSignatureAppearance
     {
-
         public const int CERTIFIED_FORM_FILLING = 2;
 
         public const int CERTIFIED_FORM_FILLING_AND_ANNOTATIONS = 3;
@@ -183,6 +181,7 @@ namespace iTextSharp.text.pdf
             NameAndDescription,
             GraphicAndDescription
         }
+
         /// <summary>
         /// An interface to retrieve the signature dictionary for modification.
         /// </summary>
@@ -200,14 +199,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool Acro6Layers
         {
-            get
-            {
-                return _acro6Layers;
-            }
-            set
-            {
-                _acro6Layers = value;
-            }
+            get => _acro6Layers;
+            set => _acro6Layers = value;
         }
 
         /// <summary>
@@ -227,14 +220,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string Contact
         {
-            get
-            {
-                return _contact;
-            }
-            set
-            {
-                _contact = value;
-            }
+            get => _contact;
+            set => _contact = value;
         }
 
         /// <summary>
@@ -266,14 +253,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public Image Image
         {
-            get
-            {
-                return _image;
-            }
-            set
-            {
-                _image = value;
-            }
+            get => _image;
+            set => _image = value;
         }
 
         /// <summary>
@@ -284,14 +265,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float ImageScale
         {
-            get
-            {
-                return _imageScale;
-            }
-            set
-            {
-                _imageScale = value;
-            }
+            get => _imageScale;
+            set => _imageScale = value;
         }
 
         /// <summary>
@@ -299,14 +274,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public Font Layer2Font
         {
-            get
-            {
-                return _layer2Font;
-            }
-            set
-            {
-                _layer2Font = value;
-            }
+            get => _layer2Font;
+            set => _layer2Font = value;
         }
 
         /// <summary>
@@ -321,14 +290,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string Layer4Text
         {
-            get
-            {
-                return _layer4Text;
-            }
-            set
-            {
-                _layer4Text = value;
-            }
+            get => _layer4Text;
+            set => _layer4Text = value;
         }
 
         /// <summary>
@@ -360,13 +323,7 @@ namespace iTextSharp.text.pdf
         ///
         /// </summary>
         /// <returns>the document bytes that are hashable</returns>
-        public Stream RangeStream
-        {
-            get
-            {
-                return new FRangeStream(_raf, _bout, _range);
-            }
-        }
+        public Stream RangeStream => new FRangeStream(_raf, _bout, _range);
 
         /// <summary>
         /// Sets the signing reason.
@@ -382,15 +339,10 @@ namespace iTextSharp.text.pdf
 
         public SignatureRender Render
         {
-            get
-            {
-                return _render;
-            }
-            set
-            {
-                _render = value;
-            }
+            get => _render;
+            set => _render = value;
         }
+
         /// <summary>
         /// Sets the run direction in the n2 and n4 layer.
         /// </summary>
@@ -399,13 +351,13 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value < PdfWriter.RUN_DIRECTION_DEFAULT || value > PdfWriter.RUN_DIRECTION_RTL)
+                {
                     throw new ArgumentException("Invalid run direction: " + _runDirection);
+                }
+
                 _runDirection = value;
             }
-            get
-            {
-                return _runDirection;
-            }
+            get => _runDirection;
         }
 
         /// <summary>
@@ -413,27 +365,16 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public ISignatureEvent SignatureEvent
         {
-            get
-            {
-                return _signatureEvent;
-            }
-            set
-            {
-                _signatureEvent = value;
-            }
+            get => _signatureEvent;
+            set => _signatureEvent = value;
         }
 
         public Image SignatureGraphic
         {
-            get
-            {
-                return _signatureGraphic;
-            }
-            set
-            {
-                _signatureGraphic = value;
-            }
+            get => _signatureGraphic;
+            set => _signatureGraphic = value;
         }
+
         /// <summary>
         /// Gets the signature date.
         /// </summary>
@@ -477,35 +418,42 @@ namespace iTextSharp.text.pdf
         public static float FitText(Font font, string text, Rectangle rect, float maxFontSize, int runDirection)
         {
             ColumnText ct = null;
-            int status = 0;
+            var status = 0;
             if (maxFontSize <= 0)
             {
-                int cr = 0;
-                int lf = 0;
-                char[] t = text.ToCharArray();
-                for (int k = 0; k < t.Length; ++k)
+                var cr = 0;
+                var lf = 0;
+                var t = text.ToCharArray();
+                for (var k = 0; k < t.Length; ++k)
                 {
                     if (t[k] == '\n')
+                    {
                         ++lf;
+                    }
                     else if (t[k] == '\r')
+                    {
                         ++cr;
+                    }
                 }
-                int minLines = Math.Max(cr, lf) + 1;
+                var minLines = Math.Max(cr, lf) + 1;
                 maxFontSize = Math.Abs(rect.Height) / minLines - 0.001f;
             }
             font.Size = maxFontSize;
-            Phrase ph = new Phrase(text, font);
+            var ph = new Phrase(text, font);
             ct = new ColumnText(null);
             ct.SetSimpleColumn(ph, rect.Left, rect.Bottom, rect.Right, rect.Top, maxFontSize, Element.ALIGN_LEFT);
             ct.RunDirection = runDirection;
             status = ct.Go(true);
             if ((status & ColumnText.NO_MORE_TEXT) != 0)
+            {
                 return maxFontSize;
-            float precision = 0.1f;
+            }
+
+            var precision = 0.1f;
             float min = 0;
-            float max = maxFontSize;
-            float size = maxFontSize;
-            for (int k = 0; k < 50; ++k)
+            var max = maxFontSize;
+            var size = maxFontSize;
+            for (var k = 0; k < 50; ++k)
             { //just in case it doesn't converge
                 size = (min + max) / 2;
                 ct = new ColumnText(null);
@@ -516,11 +464,16 @@ namespace iTextSharp.text.pdf
                 if ((status & ColumnText.NO_MORE_TEXT) != 0)
                 {
                     if (max - min < size * precision)
+                    {
                         return size;
+                    }
+
                     min = size;
                 }
                 else
+                {
                     max = size;
+                }
             }
             return size;
         }
@@ -541,20 +494,31 @@ namespace iTextSharp.text.pdf
             try
             {
                 if (!_preClosed)
+                {
                     throw new DocumentException("preClose() must be called first.");
-                ByteBuffer bf = new ByteBuffer();
+                }
+
+                var bf = new ByteBuffer();
                 foreach (PdfName key in update.Keys)
                 {
-                    PdfObject obj = update.Get(key);
-                    PdfLiteral lit = (PdfLiteral)_exclusionLocations[key];
+                    var obj = update.Get(key);
+                    var lit = (PdfLiteral)_exclusionLocations[key];
                     if (lit == null)
+                    {
                         throw new ArgumentException("The key " + key + " didn't reserve space in PreClose().");
+                    }
+
                     bf.Reset();
                     obj.ToPdf(null, bf);
                     if (bf.Size > lit.PosLength)
+                    {
                         throw new ArgumentException("The key " + key + " is too big. Is " + bf.Size + ", reserved " + lit.PosLength);
+                    }
+
                     if (TempFile == null)
+                    {
                         Array.Copy(bf.Buffer, 0, _bout, lit.Position, bf.Size);
+                    }
                     else
                     {
                         _raf.Seek(lit.Position, SeekOrigin.Begin);
@@ -562,7 +526,10 @@ namespace iTextSharp.text.pdf
                     }
                 }
                 if (update.Size != _exclusionLocations.Count)
+                {
                     throw new ArgumentException("The update dictionary has less keys than required.");
+                }
+
                 if (TempFile == null)
                 {
                     Originalout.Write(_bout, 0, _boutLen);
@@ -572,13 +539,16 @@ namespace iTextSharp.text.pdf
                     if (Originalout != null)
                     {
                         _raf.Seek(0, SeekOrigin.Begin);
-                        int length = (int)_raf.Length;
-                        byte[] buf = new byte[8192];
+                        var length = (int)_raf.Length;
+                        var buf = new byte[8192];
                         while (length > 0)
                         {
-                            int r = _raf.Read(buf, 0, Math.Min(buf.Length, length));
+                            var r = _raf.Read(buf, 0, Math.Min(buf.Length, length));
                             if (r < 0)
+                            {
                                 throw new EndOfStreamException("Unexpected EOF");
+                            }
+
                             Originalout.Write(buf, 0, r);
                             length -= r;
                         }
@@ -591,7 +561,9 @@ namespace iTextSharp.text.pdf
                 {
                     try { _raf.Dispose(); } catch { }
                     if (Originalout != null)
+                    {
                         try { File.Delete(TempFile); } catch { }
+                    }
                 }
 
                 Originalout?.Seek(0, SeekOrigin.Begin);
@@ -611,21 +583,23 @@ namespace iTextSharp.text.pdf
         {
             if (IsInvisible())
             {
-                PdfTemplate t = new PdfTemplate(_writer);
-                t.BoundingBox = new Rectangle(0, 0);
+                var t = new PdfTemplate(_writer)
+                {
+                    BoundingBox = new Rectangle(0, 0)
+                };
                 _writer.AddDirectTemplateSimple(t, null);
                 return t;
             }
             if (_app[0] == null)
             {
-                PdfTemplate t = _app[0] = new PdfTemplate(_writer);
+                var t = _app[0] = new PdfTemplate(_writer);
                 t.BoundingBox = new Rectangle(100, 100);
                 _writer.AddDirectTemplateSimple(t, new PdfName("n0"));
                 t.SetLiteral("% DSBlank\n");
             }
             if (_app[1] == null && !_acro6Layers)
             {
-                PdfTemplate t = _app[1] = new PdfTemplate(_writer);
+                var t = _app[1] = new PdfTemplate(_writer);
                 t.BoundingBox = new Rectangle(100, 100);
                 _writer.AddDirectTemplateSimple(t, new PdfName("n1"));
                 t.SetLiteral(questionMark);
@@ -635,18 +609,27 @@ namespace iTextSharp.text.pdf
                 string text;
                 if (Layer2Text == null)
                 {
-                    StringBuilder buf = new StringBuilder();
+                    var buf = new StringBuilder();
                     buf.Append("Digitally signed by ").Append(PdfPkcs7.GetSubjectFields(CertChain[0]).GetField("CN")).Append('\n');
                     buf.Append("Date: ").Append(SignDate.ToString("yyyy.MM.dd HH:mm:ss zzz"));
                     if (Reason != null)
+                    {
                         buf.Append('\n').Append("Reason: ").Append(Reason);
+                    }
+
                     if (Location != null)
+                    {
                         buf.Append('\n').Append("Location: ").Append(Location);
+                    }
+
                     text = buf.ToString();
                 }
                 else
+                {
                     text = Layer2Text;
-                PdfTemplate t = _app[2] = new PdfTemplate(_writer);
+                }
+
+                var t = _app[2] = new PdfTemplate(_writer);
                 t.BoundingBox = Rect;
                 _writer.AddDirectTemplateSimple(t, new PdfName("n2"));
                 if (_image != null)
@@ -657,22 +640,30 @@ namespace iTextSharp.text.pdf
                     }
                     else
                     {
-                        float usableScale = _imageScale;
+                        var usableScale = _imageScale;
                         if (_imageScale < 0)
+                        {
                             usableScale = Math.Min(Rect.Width / _image.Width, Rect.Height / _image.Height);
-                        float w = _image.Width * usableScale;
-                        float h = _image.Height * usableScale;
-                        float x = (Rect.Width - w) / 2;
-                        float y = (Rect.Height - h) / 2;
+                        }
+
+                        var w = _image.Width * usableScale;
+                        var h = _image.Height * usableScale;
+                        var x = (Rect.Width - w) / 2;
+                        var y = (Rect.Height - h) / 2;
                         t.AddImage(_image, w, 0, 0, h, x, y);
                     }
                 }
                 Font font;
                 if (_layer2Font == null)
+                {
                     font = new Font();
+                }
                 else
+                {
                     font = new Font(_layer2Font);
-                float size = font.Size;
+                }
+
+                var size = font.Size;
 
                 Rectangle dataRect = null;
                 Rectangle signatureRect = null;
@@ -717,31 +708,35 @@ namespace iTextSharp.text.pdf
 
                 if (Render == SignatureRender.NameAndDescription)
                 {
-                    string signedBy = iTextSharp.text.pdf.PdfPkcs7.GetSubjectFields(CertChain[0]).GetField("CN");
-                    Rectangle sr2 = new Rectangle(signatureRect.Width - Margin, signatureRect.Height - Margin);
-                    float signedSize = FitText(font, signedBy, sr2, -1, _runDirection);
+                    var signedBy = iTextSharp.text.pdf.PdfPkcs7.GetSubjectFields(CertChain[0]).GetField("CN");
+                    var sr2 = new Rectangle(signatureRect.Width - Margin, signatureRect.Height - Margin);
+                    var signedSize = FitText(font, signedBy, sr2, -1, _runDirection);
 
-                    ColumnText ct2 = new ColumnText(t);
-                    ct2.RunDirection = _runDirection;
+                    var ct2 = new ColumnText(t)
+                    {
+                        RunDirection = _runDirection
+                    };
                     ct2.SetSimpleColumn(new Phrase(signedBy, font), signatureRect.Left, signatureRect.Bottom, signatureRect.Right, signatureRect.Top, signedSize, Element.ALIGN_LEFT);
 
                     ct2.Go();
                 }
                 else if (Render == SignatureRender.GraphicAndDescription)
                 {
-                    ColumnText ct2 = new ColumnText(t);
-                    ct2.RunDirection = _runDirection;
+                    var ct2 = new ColumnText(t)
+                    {
+                        RunDirection = _runDirection
+                    };
                     ct2.SetSimpleColumn(signatureRect.Left, signatureRect.Bottom, signatureRect.Right, signatureRect.Top, 0, Element.ALIGN_RIGHT);
 
-                    Image im = Image.GetInstance(SignatureGraphic);
+                    var im = Image.GetInstance(SignatureGraphic);
                     im.ScaleToFit(signatureRect.Width, signatureRect.Height);
 
-                    Paragraph p = new Paragraph();
+                    var p = new Paragraph();
                     // must calculate the point to draw from to make image appear in middle of column
                     float x = 0;
                     // experimentation found this magic number to counteract Adobe's signature graphic, which
                     // offsets the y co-ordinate by 15 units
-                    float y = -im.ScaledHeight + 15;
+                    var y = -im.ScaledHeight + 15;
 
                     x = x + (signatureRect.Width - im.ScaledWidth) / 2;
                     y = y - (signatureRect.Height - im.ScaledHeight) / 2;
@@ -752,46 +747,57 @@ namespace iTextSharp.text.pdf
 
                 if (size <= 0)
                 {
-                    Rectangle sr = new Rectangle(dataRect.Width, dataRect.Height);
+                    var sr = new Rectangle(dataRect.Width, dataRect.Height);
                     size = FitText(font, text, sr, 12, _runDirection);
                 }
-                ColumnText ct = new ColumnText(t);
-                ct.RunDirection = _runDirection;
+                var ct = new ColumnText(t)
+                {
+                    RunDirection = _runDirection
+                };
                 ct.SetSimpleColumn(new Phrase(text, font), dataRect.Left, dataRect.Bottom, dataRect.Right, dataRect.Top, size, Element.ALIGN_LEFT);
                 ct.Go();
-
             }
             if (_app[3] == null && !_acro6Layers)
             {
-                PdfTemplate t = _app[3] = new PdfTemplate(_writer);
+                var t = _app[3] = new PdfTemplate(_writer);
                 t.BoundingBox = new Rectangle(100, 100);
                 _writer.AddDirectTemplateSimple(t, new PdfName("n3"));
                 t.SetLiteral("% DSBlank\n");
             }
             if (_app[4] == null && !_acro6Layers)
             {
-                PdfTemplate t = _app[4] = new PdfTemplate(_writer);
+                var t = _app[4] = new PdfTemplate(_writer);
                 t.BoundingBox = new Rectangle(0, Rect.Height * (1 - TopSection), Rect.Right, Rect.Top);
                 _writer.AddDirectTemplateSimple(t, new PdfName("n4"));
                 Font font;
                 if (_layer2Font == null)
+                {
                     font = new Font();
+                }
                 else
+                {
                     font = new Font(_layer2Font);
-                float size = font.Size;
-                string text = "Signature Not Verified";
+                }
+
+                var size = font.Size;
+                var text = "Signature Not Verified";
                 if (_layer4Text != null)
+                {
                     text = _layer4Text;
-                Rectangle sr = new Rectangle(Rect.Width - 2 * Margin, Rect.Height * TopSection - 2 * Margin);
+                }
+
+                var sr = new Rectangle(Rect.Width - 2 * Margin, Rect.Height * TopSection - 2 * Margin);
                 size = FitText(font, text, sr, 15, _runDirection);
-                ColumnText ct = new ColumnText(t);
-                ct.RunDirection = _runDirection;
+                var ct = new ColumnText(t)
+                {
+                    RunDirection = _runDirection
+                };
                 ct.SetSimpleColumn(new Phrase(text, font), Margin, 0, Rect.Width - Margin, Rect.Height - Margin, size, Element.ALIGN_LEFT);
                 ct.Go();
             }
-            int rotation = _writer.Reader.GetPageRotation(Page);
-            Rectangle rotated = new Rectangle(Rect);
-            int n = rotation;
+            var rotation = _writer.Reader.GetPageRotation(Page);
+            var rotated = new Rectangle(Rect);
+            var n = rotation;
             while (n > 0)
             {
                 rotated = rotated.Rotate();
@@ -799,22 +805,34 @@ namespace iTextSharp.text.pdf
             }
             if (_frm == null)
             {
-                _frm = new PdfTemplate(_writer);
-                _frm.BoundingBox = rotated;
+                _frm = new PdfTemplate(_writer)
+                {
+                    BoundingBox = rotated
+                };
                 _writer.AddDirectTemplateSimple(_frm, new PdfName("FRM"));
-                float scale = Math.Min(Rect.Width, Rect.Height) * 0.9f;
-                float x = (Rect.Width - scale) / 2;
-                float y = (Rect.Height - scale) / 2;
+                var scale = Math.Min(Rect.Width, Rect.Height) * 0.9f;
+                var x = (Rect.Width - scale) / 2;
+                var y = (Rect.Height - scale) / 2;
                 scale /= 100;
                 if (rotation == 90)
+                {
                     _frm.ConcatCtm(0, 1, -1, 0, Rect.Height, 0);
+                }
                 else if (rotation == 180)
+                {
                     _frm.ConcatCtm(-1, 0, 0, -1, Rect.Width, Rect.Height);
+                }
                 else if (rotation == 270)
+                {
                     _frm.ConcatCtm(0, -1, 1, 0, 0, Rect.Width);
+                }
+
                 _frm.AddTemplate(_app[0], 0, 0);
                 if (!_acro6Layers)
+                {
                     _frm.AddTemplate(_app[1], scale, 0, 0, scale, x, y);
+                }
+
                 _frm.AddTemplate(_app[2], 0, 0);
                 if (!_acro6Layers)
                 {
@@ -822,8 +840,10 @@ namespace iTextSharp.text.pdf
                     _frm.AddTemplate(_app[4], 0, 0);
                 }
             }
-            PdfTemplate napp = new PdfTemplate(_writer);
-            napp.BoundingBox = rotated;
+            var napp = new PdfTemplate(_writer)
+            {
+                BoundingBox = rotated
+            };
             _writer.AddDirectTemplateSimple(napp, null);
             napp.AddTemplate(_frm, 0, 0);
             return napp;
@@ -849,8 +869,11 @@ namespace iTextSharp.text.pdf
         public PdfTemplate GetLayer(int layer)
         {
             if (layer < 0 || layer >= _app.Length)
+            {
                 return null;
-            PdfTemplate t = _app[layer];
+            }
+
+            var t = _app[layer];
             if (t == null)
             {
                 t = _app[layer] = new PdfTemplate(_writer);
@@ -866,16 +889,19 @@ namespace iTextSharp.text.pdf
         /// <returns>a new signature fied name</returns>
         public string GetNewSigName()
         {
-            AcroFields af = _writer.AcroFields;
-            string name = "Signature";
-            int step = 0;
-            bool found = false;
+            var af = _writer.AcroFields;
+            var name = "Signature";
+            var step = 0;
+            var found = false;
             while (!found)
             {
                 ++step;
-                string n1 = name + step;
+                var n1 = name + step;
                 if (af.GetFieldItem(n1) != null)
+                {
                     continue;
+                }
+
                 n1 += ".";
                 found = true;
                 foreach (string fn in af.Fields.Keys)
@@ -902,8 +928,10 @@ namespace iTextSharp.text.pdf
         {
             if (_frm == null)
             {
-                _frm = new PdfTemplate(_writer);
-                _frm.BoundingBox = Rect;
+                _frm = new PdfTemplate(_writer)
+                {
+                    BoundingBox = Rect
+                };
                 _writer.AddDirectTemplateSimple(_frm, new PdfName("FRM"));
             }
             return _frm;
@@ -972,41 +1000,52 @@ namespace iTextSharp.text.pdf
         public void PreClose(Hashtable exclusionSizes)
         {
             if (_preClosed)
+            {
                 throw new DocumentException("Document already pre closed.");
+            }
+
             _preClosed = true;
-            AcroFields af = _writer.AcroFields;
-            string name = FieldName;
-            bool fieldExists = !(IsInvisible() || IsNewField());
-            PdfIndirectReference refSig = _writer.PdfIndirectReference;
+            var af = _writer.AcroFields;
+            var name = FieldName;
+            var fieldExists = !(IsInvisible() || IsNewField());
+            var refSig = _writer.PdfIndirectReference;
             _writer.SigFlags = 3;
             if (fieldExists)
             {
-                PdfDictionary widget = af.GetFieldItem(name).GetWidget(0);
+                var widget = af.GetFieldItem(name).GetWidget(0);
                 _writer.MarkUsed(widget);
                 widget.Put(PdfName.P, _writer.GetPageReference(Page));
                 widget.Put(PdfName.V, refSig);
-                PdfObject obj = PdfReader.GetPdfObjectRelease(widget.Get(PdfName.F));
-                int flags = 0;
+                var obj = PdfReader.GetPdfObjectRelease(widget.Get(PdfName.F));
+                var flags = 0;
                 if (obj != null && obj.IsNumber())
+                {
                     flags = ((PdfNumber)obj).IntValue;
+                }
+
                 flags |= PdfAnnotation.FLAGS_LOCKED;
                 widget.Put(PdfName.F, new PdfNumber(flags));
-                PdfDictionary ap = new PdfDictionary();
+                var ap = new PdfDictionary();
                 ap.Put(PdfName.N, GetAppearance().IndirectReference);
                 widget.Put(PdfName.Ap, ap);
             }
             else
             {
-                PdfFormField sigField = PdfFormField.CreateSignature(_writer);
+                var sigField = PdfFormField.CreateSignature(_writer);
                 sigField.FieldName = name;
                 sigField.Put(PdfName.V, refSig);
                 sigField.Flags = PdfAnnotation.FLAGS_PRINT | PdfAnnotation.FLAGS_LOCKED;
 
-                int pagen = Page;
+                var pagen = Page;
                 if (!IsInvisible())
+                {
                     sigField.SetWidget(PageRect, null);
+                }
                 else
+                {
                     sigField.SetWidget(new Rectangle(0, 0), null);
+                }
+
                 sigField.SetAppearance(PdfAnnotation.AppearanceNormal, GetAppearance());
                 sigField.Page = pagen;
                 _writer.AddAnnotation(sigField, pagen);
@@ -1016,86 +1055,121 @@ namespace iTextSharp.text.pdf
             if (CryptoDictionary == null)
             {
                 if (PdfName.AdobePpklite.Equals(Filter))
+                {
                     SigStandard = new PdfSigGenericPkcs.PpkLite();
+                }
                 else if (PdfName.AdobePpkms.Equals(Filter))
+                {
                     SigStandard = new PdfSigGenericPkcs.Ppkms();
+                }
                 else if (PdfName.VerisignPpkvs.Equals(Filter))
+                {
                     SigStandard = new PdfSigGenericPkcs.VeriSign();
+                }
                 else
+                {
                     throw new ArgumentException("Unknown filter: " + Filter);
+                }
+
                 SigStandard.SetExternalDigest(_externalDigest, _externalRsAdata, _digestEncryptionAlgorithm);
                 if (Reason != null)
+                {
                     SigStandard.Reason = Reason;
+                }
+
                 if (Location != null)
+                {
                     SigStandard.Location = Location;
+                }
+
                 if (Contact != null)
+                {
                     SigStandard.Contact = Contact;
+                }
+
                 SigStandard.Put(PdfName.M, new PdfDate(SignDate));
                 SigStandard.SetSignInfo(PrivKey, CertChain, CrlList);
-                PdfString contents = (PdfString)SigStandard.Get(PdfName.Contents);
-                PdfLiteral lit = new PdfLiteral((contents.ToString().Length + (PdfName.AdobePpklite.Equals(Filter) ? 0 : 64)) * 2 + 2);
+                var contents = (PdfString)SigStandard.Get(PdfName.Contents);
+                var lit = new PdfLiteral((contents.ToString().Length + (PdfName.AdobePpklite.Equals(Filter) ? 0 : 64)) * 2 + 2);
                 _exclusionLocations[PdfName.Contents] = lit;
                 SigStandard.Put(PdfName.Contents, lit);
                 lit = new PdfLiteral(80);
                 _exclusionLocations[PdfName.Byterange] = lit;
                 SigStandard.Put(PdfName.Byterange, lit);
                 if (CertificationLevel > 0)
+                {
                     addDocMdp(SigStandard);
+                }
+
                 if (_signatureEvent != null)
+                {
                     _signatureEvent.GetSignatureDictionary(SigStandard);
+                }
+
                 _writer.AddToBody(SigStandard, refSig, false);
             }
             else
             {
-                PdfLiteral lit = new PdfLiteral(80);
+                var lit = new PdfLiteral(80);
                 _exclusionLocations[PdfName.Byterange] = lit;
                 CryptoDictionary.Put(PdfName.Byterange, lit);
                 foreach (DictionaryEntry entry in exclusionSizes)
                 {
-                    PdfName key = (PdfName)entry.Key;
-                    int v = (int)entry.Value;
+                    var key = (PdfName)entry.Key;
+                    var v = (int)entry.Value;
                     lit = new PdfLiteral(v);
                     _exclusionLocations[key] = lit;
                     CryptoDictionary.Put(key, lit);
                 }
                 if (CertificationLevel > 0)
+                {
                     addDocMdp(CryptoDictionary);
+                }
+
                 if (_signatureEvent != null)
+                {
                     _signatureEvent.GetSignatureDictionary(CryptoDictionary);
+                }
+
                 _writer.AddToBody(CryptoDictionary, refSig, false);
             }
             if (CertificationLevel > 0)
             {
                 // add DocMDP entry to root
-                PdfDictionary docmdp = new PdfDictionary();
+                var docmdp = new PdfDictionary();
                 docmdp.Put(new PdfName("DocMDP"), refSig);
                 _writer.Reader.Catalog.Put(new PdfName("Perms"), docmdp);
             }
             _writer.Close(Stamper.MoreInfo);
 
             _range = new int[_exclusionLocations.Count * 2];
-            int byteRangePosition = ((PdfLiteral)_exclusionLocations[PdfName.Byterange]).Position;
+            var byteRangePosition = ((PdfLiteral)_exclusionLocations[PdfName.Byterange]).Position;
             _exclusionLocations.Remove(PdfName.Byterange);
-            int idx = 1;
+            var idx = 1;
             foreach (PdfLiteral lit in _exclusionLocations.Values)
             {
-                int n = lit.Position;
+                var n = lit.Position;
                 _range[idx++] = n;
                 _range[idx++] = lit.PosLength + n;
             }
             Array.Sort(_range, 1, _range.Length - 2);
-            for (int k = 3; k < _range.Length - 2; k += 2)
+            for (var k = 3; k < _range.Length - 2; k += 2)
+            {
                 _range[k] -= _range[k - 1];
+            }
 
             if (TempFile == null)
             {
                 _bout = Sigout.Buffer;
                 _boutLen = Sigout.Size;
                 _range[_range.Length - 1] = _boutLen - _range[_range.Length - 2];
-                ByteBuffer bf = new ByteBuffer();
+                var bf = new ByteBuffer();
                 bf.Append('[');
-                for (int k = 0; k < _range.Length; ++k)
+                for (var k = 0; k < _range.Length; ++k)
+                {
                     bf.Append(_range[k]).Append(' ');
+                }
+
                 bf.Append(']');
                 Array.Copy(bf.Buffer, 0, _bout, byteRangePosition, bf.Size);
             }
@@ -1104,12 +1178,15 @@ namespace iTextSharp.text.pdf
                 try
                 {
                     _raf = new FileStream(TempFile, FileMode.Open, FileAccess.ReadWrite);
-                    int boutLen = (int)_raf.Length;
+                    var boutLen = (int)_raf.Length;
                     _range[_range.Length - 1] = boutLen - _range[_range.Length - 2];
-                    ByteBuffer bf = new ByteBuffer();
+                    var bf = new ByteBuffer();
                     bf.Append('[');
-                    for (int k = 0; k < _range.Length; ++k)
+                    for (var k = 0; k < _range.Length; ++k)
+                    {
                         bf.Append(_range[k]).Append(' ');
+                    }
+
                     bf.Append(']');
                     _raf.Seek(byteRangePosition, SeekOrigin.Begin);
                     _raf.Write(bf.Buffer, 0, bf.Size);
@@ -1164,15 +1241,24 @@ namespace iTextSharp.text.pdf
             if (fieldName != null)
             {
                 if (fieldName.IndexOf(".", StringComparison.Ordinal) >= 0)
+                {
                     throw new ArgumentException("Field names cannot contain a dot.");
-                AcroFields af = _writer.AcroFields;
-                AcroFields.Item item = af.GetFieldItem(fieldName);
+                }
+
+                var af = _writer.AcroFields;
+                var item = af.GetFieldItem(fieldName);
                 if (item != null)
+                {
                     throw new ArgumentException("The field " + fieldName + " already exists.");
+                }
+
                 FieldName = fieldName;
             }
             if (page < 1 || page > _writer.Reader.NumberOfPages)
+            {
                 throw new ArgumentException("Invalid page number: " + page);
+            }
+
             PageRect = new Rectangle(pageRect);
             PageRect.Normalize();
             Rect = new Rectangle(PageRect.Width, PageRect.Height);
@@ -1186,24 +1272,30 @@ namespace iTextSharp.text.pdf
         /// <param name="fieldName">the existing empty signature field name</param>
         public void SetVisibleSignature(string fieldName)
         {
-            AcroFields af = _writer.AcroFields;
-            AcroFields.Item item = af.GetFieldItem(fieldName);
+            var af = _writer.AcroFields;
+            var item = af.GetFieldItem(fieldName);
             if (item == null)
+            {
                 throw new ArgumentException("The field " + fieldName + " does not exist.");
-            PdfDictionary merged = item.GetMerged(0);
+            }
+
+            var merged = item.GetMerged(0);
             if (!PdfName.Sig.Equals(PdfReader.GetPdfObject(merged.Get(PdfName.Ft))))
+            {
                 throw new ArgumentException("The field " + fieldName + " is not a signature field.");
+            }
+
             FieldName = fieldName;
-            PdfArray r = merged.GetAsArray(PdfName.Rect);
-            float llx = r.GetAsNumber(0).FloatValue;
-            float lly = r.GetAsNumber(1).FloatValue;
-            float urx = r.GetAsNumber(2).FloatValue;
-            float ury = r.GetAsNumber(3).FloatValue;
+            var r = merged.GetAsArray(PdfName.Rect);
+            var llx = r.GetAsNumber(0).FloatValue;
+            var lly = r.GetAsNumber(1).FloatValue;
+            var urx = r.GetAsNumber(2).FloatValue;
+            var ury = r.GetAsNumber(3).FloatValue;
             PageRect = new Rectangle(llx, lly, urx, ury);
             PageRect.Normalize();
             Page = item.GetPage(0);
-            int rotation = _writer.Reader.GetPageRotation(Page);
-            Rectangle pageSize = _writer.Reader.GetPageSizeWithRotation(Page);
+            var rotation = _writer.Reader.GetPageRotation(Page);
+            var pageSize = _writer.Reader.GetPageSizeWithRotation(Page);
             switch (rotation)
             {
                 case 90:
@@ -1213,6 +1305,7 @@ namespace iTextSharp.text.pdf
                     PageRect.Top,
                     pageSize.Top - PageRect.Right);
                     break;
+
                 case 180:
                     PageRect = new Rectangle(
                     pageSize.Right - PageRect.Left,
@@ -1220,6 +1313,7 @@ namespace iTextSharp.text.pdf
                     pageSize.Right - PageRect.Right,
                     pageSize.Top - PageRect.Top);
                     break;
+
                 case 270:
                     PageRect = new Rectangle(
                     pageSize.Right - PageRect.Bottom,
@@ -1229,9 +1323,13 @@ namespace iTextSharp.text.pdf
                     break;
             }
             if (rotation != 0)
+            {
                 PageRect.Normalize();
+            }
+
             Rect = new Rectangle(PageRect.Width, PageRect.Height);
         }
+
         internal void SetStamper(PdfStamper stamper)
         {
             Stamper = stamper;
@@ -1241,10 +1339,11 @@ namespace iTextSharp.text.pdf
         {
             TempFile = tempFile;
         }
+
         private void addDocMdp(PdfDictionary crypto)
         {
-            PdfDictionary reference = new PdfDictionary();
-            PdfDictionary transformParams = new PdfDictionary();
+            var reference = new PdfDictionary();
+            var transformParams = new PdfDictionary();
             transformParams.Put(PdfName.P, new PdfNumber(CertificationLevel));
             transformParams.Put(PdfName.V, new PdfName("1.2"));
             transformParams.Put(PdfName.TYPE, PdfName.Transformparams);
@@ -1252,16 +1351,17 @@ namespace iTextSharp.text.pdf
             reference.Put(PdfName.TYPE, PdfName.Sigref);
             reference.Put(PdfName.Transformparams, transformParams);
             reference.Put(new PdfName("DigestValue"), new PdfString("aa"));
-            PdfArray loc = new PdfArray();
+            var loc = new PdfArray();
             loc.Add(new PdfNumber(0));
             loc.Add(new PdfNumber(0));
             reference.Put(new PdfName("DigestLocation"), loc);
             reference.Put(new PdfName("DigestMethod"), new PdfName("MD5"));
             reference.Put(PdfName.Data, _writer.Reader.Trailer.Get(PdfName.Root));
-            PdfArray types = new PdfArray();
+            var types = new PdfArray();
             types.Add(reference);
             crypto.Put(PdfName.Reference, types);
         }
+
         /// <summary>
         /// </summary>
         public class FRangeStream : Stream
@@ -1279,44 +1379,17 @@ namespace iTextSharp.text.pdf
                 _range = range;
             }
 
-            public override bool CanRead
-            {
-                get
-                {
-                    return true;
-                }
-            }
+            public override bool CanRead => true;
 
-            public override bool CanSeek
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool CanSeek => false;
 
-            public override bool CanWrite
-            {
-                get
-                {
-                    return false;
-                }
-            }
+            public override bool CanWrite => false;
 
-            public override long Length
-            {
-                get
-                {
-                    return 0;
-                }
-            }
+            public override long Length => 0;
 
             public override long Position
             {
-                get
-                {
-                    return 0;
-                }
+                get => 0;
                 set
                 {
                 }
@@ -1348,17 +1421,22 @@ namespace iTextSharp.text.pdf
                 {
                     return -1;
                 }
-                for (int k = 0; k < _range.Length; k += 2)
+                for (var k = 0; k < _range.Length; k += 2)
                 {
-                    int start = _range[k];
-                    int end = start + _range[k + 1];
+                    var start = _range[k];
+                    var end = start + _range[k + 1];
                     if (_rangePosition < start)
+                    {
                         _rangePosition = start;
+                    }
+
                     if (_rangePosition >= start && _rangePosition < end)
                     {
-                        int lenf = Math.Min(len, end - _rangePosition);
+                        var lenf = Math.Min(len, end - _rangePosition);
                         if (_raf == null)
+                        {
                             Array.Copy(_bout, _rangePosition, b, off, lenf);
+                        }
                         else
                         {
                             _raf.Seek(_rangePosition, SeekOrigin.Begin);
@@ -1376,11 +1454,15 @@ namespace iTextSharp.text.pdf
             /// </summary>
             public override int ReadByte()
             {
-                int n = Read(_b, 0, 1);
+                var n = Read(_b, 0, 1);
                 if (n != 1)
+                {
                     return -1;
+                }
+
                 return _b[0] & 0xff;
             }
+
             public override long Seek(long offset, SeekOrigin origin)
             {
                 return 0;
@@ -1402,9 +1484,12 @@ namespace iTextSharp.text.pdf
             {
                 while (count > 0)
                 {
-                    int n = _raf.Read(b, offset, count);
+                    var n = _raf.Read(b, offset, count);
                     if (n <= 0)
+                    {
                         throw new IOException("Insufficient data.");
+                    }
+
                     count -= n;
                     offset += n;
                 }

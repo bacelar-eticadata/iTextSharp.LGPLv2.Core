@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
-using System.Collections;
 using System.util;
 
 namespace iTextSharp.text.pdf
@@ -16,6 +16,7 @@ namespace iTextSharp.text.pdf
         /// The encoding used in the PDF document for CJK fonts
         /// </summary>
         internal const string CJK_ENCODING = "UNICODEBIGUNMARKED";
+
         internal static Hashtable AllCMaps = Hashtable.Synchronized(new Hashtable());
         internal static Hashtable AllFonts = Hashtable.Synchronized(new Hashtable());
         internal static Properties CjkEncodings = new Properties();
@@ -53,6 +54,7 @@ namespace iTextSharp.text.pdf
         /// The font name
         /// </summary>
         private string _fontName;
+
         /// <summary>
         /// Creates a CJK font.
         /// @throws DocumentException on error
@@ -65,9 +67,12 @@ namespace iTextSharp.text.pdf
         {
             loadProperties();
             FontType = FONT_TYPE_CJK;
-            string nameBase = GetBaseName(fontName);
+            var nameBase = GetBaseName(fontName);
             if (!IsCjkFont(nameBase, enc))
+            {
                 throw new DocumentException("Font '" + fontName + "' with '" + enc + "' encoding is not a CJK font.");
+            }
+
             if (nameBase.Length < fontName.Length)
             {
                 _style = fontName.Substring(nameBase.Length);
@@ -80,14 +85,17 @@ namespace iTextSharp.text.pdf
             if (enc.StartsWith("Identity-"))
             {
                 _cidDirect = true;
-                string s = CjkFonts[fontName];
+                var s = CjkFonts[fontName];
                 s = s.Substring(0, s.IndexOf("_", StringComparison.Ordinal));
-                char[] c = (char[])AllCMaps[s];
+                var c = (char[])AllCMaps[s];
                 if (c == null)
                 {
                     c = ReadCMap(s);
                     if (c == null)
+                    {
                         throw new DocumentException("The cmap " + s + " does not exist as a resource.");
+                    }
+
                     c[CID_NEWLINE] = '\n';
                     AllCMaps.Add(s, c);
                 }
@@ -95,14 +103,17 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                char[] c = (char[])AllCMaps[enc];
+                var c = (char[])AllCMaps[enc];
                 if (c == null)
                 {
-                    string s = CjkEncodings[enc];
+                    var s = CjkEncodings[enc];
                     if (s == null)
+                    {
                         throw new DocumentException("The resource cjkencodings.properties does not contain the encoding " + enc);
-                    StringTokenizer tk = new StringTokenizer(s);
-                    string nt = tk.NextToken();
+                    }
+
+                    var tk = new StringTokenizer(s);
+                    var nt = tk.NextToken();
                     c = (char[])AllCMaps[nt];
                     if (c == null)
                     {
@@ -111,12 +122,14 @@ namespace iTextSharp.text.pdf
                     }
                     if (tk.HasMoreTokens())
                     {
-                        string nt2 = tk.NextToken();
-                        char[] m2 = ReadCMap(nt2);
-                        for (int k = 0; k < 0x10000; ++k)
+                        var nt2 = tk.NextToken();
+                        var m2 = ReadCMap(nt2);
+                        for (var k = 0; k < 0x10000; ++k)
                         {
                             if (m2[k] == 0)
+                            {
                                 m2[k] = c[k];
+                            }
                         }
                         AllCMaps.Add(enc, m2);
                         c = m2;
@@ -143,13 +156,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the full name of the font</returns>
-        public override string[][] AllNameEntries
-        {
-            get
-            {
-                return new[] { new[] { "4", "", "", "", _fontName } };
-            }
-        }
+        public override string[][] AllNameEntries => new[] { new[] { "4", "", "", "", _fontName } };
 
         /// <summary>
         /// Gets the family name of the font. If it is a True Type font
@@ -160,13 +167,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the family name of the font</returns>
-        public override string[][] FamilyFontName
-        {
-            get
-            {
-                return FullFontName;
-            }
-        }
+        public override string[][] FamilyFontName => FullFontName;
 
         /// <summary>
         /// Gets the full name of the font. If it is a True Type font
@@ -177,24 +178,12 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the full name of the font</returns>
-        public override string[][] FullFontName
-        {
-            get
-            {
-                return new[] { new[] { "", "", "", _fontName } };
-            }
-        }
+        public override string[][] FullFontName => new[] { new[] { "", "", "", _fontName } };
 
         public override string PostscriptFontName
         {
-            get
-            {
-                return _fontName;
-            }
-            set
-            {
-                _fontName = value;
-            }
+            get => _fontName;
+            set => _fontName = value;
         }
 
         /// <summary>
@@ -206,7 +195,7 @@ namespace iTextSharp.text.pdf
         public static bool IsCjkFont(string fontName, string enc)
         {
             loadProperties();
-            string encodings = CjkFonts[fontName];
+            var encodings = CjkFonts[fontName];
             return (encodings != null && (enc.Equals("Identity-H") || enc.Equals("Identity-V") || encodings.IndexOf($"_{enc}_", StringComparison.OrdinalIgnoreCase) >= 0));
         }
 
@@ -223,7 +212,10 @@ namespace iTextSharp.text.pdf
         public override int GetCidCode(int c)
         {
             if (_cidDirect)
+            {
                 return c;
+            }
+
             return _translationMap[c];
         }
 
@@ -242,23 +234,32 @@ namespace iTextSharp.text.pdf
                 case AWT_ASCENT:
                 case ASCENT:
                     return getDescNumber("Ascent") * fontSize / 1000;
+
                 case CAPHEIGHT:
                     return getDescNumber("CapHeight") * fontSize / 1000;
+
                 case AWT_DESCENT:
                 case DESCENT:
                     return getDescNumber("Descent") * fontSize / 1000;
+
                 case ITALICANGLE:
                     return getDescNumber("ItalicAngle");
+
                 case BBOXLLX:
                     return fontSize * getBBox(0) / 1000;
+
                 case BBOXLLY:
                     return fontSize * getBBox(1) / 1000;
+
                 case BBOXURX:
                     return fontSize * getBBox(2) / 1000;
+
                 case BBOXURY:
                     return fontSize * getBBox(3) / 1000;
+
                 case AWT_LEADING:
                     return 0;
+
                 case AWT_MAXADVANCE:
                     return fontSize * (getBBox(2) - getBBox(0)) / 1000;
             }
@@ -284,7 +285,10 @@ namespace iTextSharp.text.pdf
         public override int GetUnicodeEquivalent(int c)
         {
             if (_cidDirect)
+            {
                 return _translationMap[c];
+            }
+
             return c;
         }
 
@@ -295,37 +299,61 @@ namespace iTextSharp.text.pdf
         /// <returns>the width in normalized 1000 units</returns>
         public override int GetWidth(int char1)
         {
-            int c = char1;
+            var c = char1;
             if (!_cidDirect)
+            {
                 c = _translationMap[c];
+            }
+
             int v;
             if (_vertical)
+            {
                 v = _vMetrics[c];
+            }
             else
+            {
                 v = _hMetrics[c];
+            }
+
             if (v > 0)
+            {
                 return v;
+            }
             else
+            {
                 return 1000;
+            }
         }
 
         public override int GetWidth(string text)
         {
-            int total = 0;
-            for (int k = 0; k < text.Length; ++k)
+            var total = 0;
+            for (var k = 0; k < text.Length; ++k)
             {
                 int c = text[k];
                 if (!_cidDirect)
+                {
                     c = _translationMap[c];
+                }
+
                 int v;
                 if (_vertical)
+                {
                     v = _vMetrics[c];
+                }
                 else
+                {
                     v = _hMetrics[c];
+                }
+
                 if (v > 0)
+                {
                     total += v;
+                }
                 else
+                {
                     total += 1000;
+                }
             }
             return total;
         }
@@ -348,9 +376,12 @@ namespace iTextSharp.text.pdf
         internal static string ConvertToHcidMetrics(int[] keys, IntHashtable h)
         {
             if (keys.Length == 0)
+            {
                 return null;
-            int lastCid = 0;
-            int lastValue = 0;
+            }
+
+            var lastCid = 0;
+            var lastValue = 0;
             int start;
             for (start = 0; start < keys.Length; ++start)
             {
@@ -363,17 +394,23 @@ namespace iTextSharp.text.pdf
                 }
             }
             if (lastValue == 0)
+            {
                 return null;
-            StringBuilder buf = new StringBuilder();
+            }
+
+            var buf = new StringBuilder();
             buf.Append('[');
             buf.Append(lastCid);
-            int state = First;
-            for (int k = start; k < keys.Length; ++k)
+            var state = First;
+            for (var k = start; k < keys.Length; ++k)
             {
-                int cid = keys[k];
-                int value = h[cid];
+                var cid = keys[k];
+                var value = h[cid];
                 if (value == 0)
+                {
                     continue;
+                }
+
                 switch (state)
                 {
                     case First:
@@ -448,10 +485,13 @@ namespace iTextSharp.text.pdf
         internal static string ConvertToVcidMetrics(int[] keys, IntHashtable v, IntHashtable h)
         {
             if (keys.Length == 0)
+            {
                 return null;
-            int lastCid = 0;
-            int lastValue = 0;
-            int lastHValue = 0;
+            }
+
+            var lastCid = 0;
+            var lastValue = 0;
+            var lastHValue = 0;
             int start;
             for (start = 0; start < keys.Length; ++start)
             {
@@ -463,25 +503,39 @@ namespace iTextSharp.text.pdf
                     break;
                 }
                 else
+                {
                     lastHValue = h[lastCid];
+                }
             }
             if (lastValue == 0)
+            {
                 return null;
+            }
+
             if (lastHValue == 0)
+            {
                 lastHValue = 1000;
-            StringBuilder buf = new StringBuilder();
+            }
+
+            var buf = new StringBuilder();
             buf.Append('[');
             buf.Append(lastCid);
-            int state = First;
-            for (int k = start; k < keys.Length; ++k)
+            var state = First;
+            for (var k = start; k < keys.Length; ++k)
             {
-                int cid = keys[k];
-                int value = v[cid];
+                var cid = keys[k];
+                var value = v[cid];
                 if (value == 0)
+                {
                     continue;
-                int hValue = h[lastCid];
+                }
+
+                var hValue = h[lastCid];
                 if (hValue == 0)
+                {
                     hValue = 1000;
+                }
+
                 switch (state)
                 {
                     case First:
@@ -516,11 +570,11 @@ namespace iTextSharp.text.pdf
 
         internal static IntHashtable CreateMetric(string s)
         {
-            IntHashtable h = new IntHashtable();
-            StringTokenizer tk = new StringTokenizer(s);
+            var h = new IntHashtable();
+            var tk = new StringTokenizer(s);
             while (tk.HasMoreTokens())
             {
-                int n1 = int.Parse(tk.NextToken());
+                var n1 = int.Parse(tk.NextToken());
                 h[n1] = int.Parse(tk.NextToken());
             }
             return h;
@@ -533,9 +587,12 @@ namespace iTextSharp.text.pdf
             {
                 name = name + ".cmap";
                 istr = GetResourceStream(RESOURCE_PATH + name);
-                char[] c = new char[0x10000];
-                for (int k = 0; k < 0x10000; ++k)
+                var c = new char[0x10000];
+                for (var k = 0; k < 0x10000; ++k)
+                {
                     c[k] = (char)((istr.ReadByte() << 8) + istr.ReadByte());
+                }
+
                 return c;
             }
             catch
@@ -553,20 +610,20 @@ namespace iTextSharp.text.pdf
         internal static Hashtable ReadFontProperties(string name)
         {
             name += ".properties";
-            Stream isp = GetResourceStream(RESOURCE_PATH + name);
+            var isp = GetResourceStream(RESOURCE_PATH + name);
             if (isp == null)
             {
                 return null;
             }
 
-            Properties p = new Properties();
+            var p = new Properties();
             p.Load(isp);
             isp.Dispose();
-            IntHashtable w = CreateMetric(p["W"]);
+            var w = CreateMetric(p["W"]);
             p.Remove("W");
-            IntHashtable w2 = CreateMetric(p["W2"]);
+            var w2 = CreateMetric(p["W2"]);
             p.Remove("W2");
-            Hashtable map = new Hashtable();
+            var map = new Hashtable();
             foreach (string key in p.Keys)
             {
                 map[key] = p[key];
@@ -583,7 +640,7 @@ namespace iTextSharp.text.pdf
 
         internal override void WriteFont(PdfWriter writer, PdfIndirectReference piref, object[] parms)
         {
-            IntHashtable cjkTag = (IntHashtable)parms[0];
+            var cjkTag = (IntHashtable)parms[0];
             PdfIndirectReference indFont = null;
             PdfObject pobj = null;
             PdfIndirectObject obj = null;
@@ -611,12 +668,18 @@ namespace iTextSharp.text.pdf
         private static void loadProperties()
         {
             if (_propertiesLoaded)
+            {
                 return;
+            }
+
             lock (AllFonts)
             {
                 if (_propertiesLoaded)
+                {
                     return;
-                Stream isp = GetResourceStream(RESOURCE_PATH + "cjkfonts.properties");
+                }
+
+                var isp = GetResourceStream(RESOURCE_PATH + "cjkfonts.properties");
                 if (isp != null)
                 {
                     CjkFonts.Load(isp);
@@ -635,33 +698,44 @@ namespace iTextSharp.text.pdf
 
         private float getBBox(int idx)
         {
-            string s = (string)_fontDesc["FontBBox"];
-            StringTokenizer tk = new StringTokenizer(s, " []\r\n\t\f");
-            string ret = tk.NextToken();
-            for (int k = 0; k < idx; ++k)
+            var s = (string)_fontDesc["FontBBox"];
+            var tk = new StringTokenizer(s, " []\r\n\t\f");
+            var ret = tk.NextToken();
+            for (var k = 0; k < idx; ++k)
+            {
                 ret = tk.NextToken();
+            }
+
             return int.Parse(ret);
         }
 
         private PdfDictionary getCidFont(PdfIndirectReference fontDescriptor, IntHashtable cjkTag)
         {
-            PdfDictionary dic = new PdfDictionary(PdfName.Font);
+            var dic = new PdfDictionary(PdfName.Font);
             dic.Put(PdfName.Subtype, PdfName.Cidfonttype0);
             dic.Put(PdfName.Basefont, new PdfName(_fontName + _style));
             dic.Put(PdfName.Fontdescriptor, fontDescriptor);
-            int[] keys = cjkTag.ToOrderedKeys();
-            string w = ConvertToHcidMetrics(keys, _hMetrics);
+            var keys = cjkTag.ToOrderedKeys();
+            var w = ConvertToHcidMetrics(keys, _hMetrics);
             if (w != null)
+            {
                 dic.Put(PdfName.W, new PdfLiteral(w));
+            }
+
             if (_vertical)
             {
                 w = ConvertToVcidMetrics(keys, _vMetrics, _hMetrics);
                 if (w != null)
+                {
                     dic.Put(PdfName.W2, new PdfLiteral(w));
+                }
             }
             else
+            {
                 dic.Put(PdfName.Dw, new PdfNumber(1000));
-            PdfDictionary cdic = new PdfDictionary();
+            }
+
+            var cdic = new PdfDictionary();
             cdic.Put(PdfName.Registry, new PdfString((string)_fontDesc["Registry"], null));
             cdic.Put(PdfName.Ordering, new PdfString((string)_fontDesc["Ordering"], null));
             cdic.Put(PdfName.Supplement, new PdfLiteral((string)_fontDesc["Supplement"]));
@@ -676,11 +750,14 @@ namespace iTextSharp.text.pdf
 
         private PdfDictionary getFontBaseType(PdfIndirectReference cidFont)
         {
-            PdfDictionary dic = new PdfDictionary(PdfName.Font);
+            var dic = new PdfDictionary(PdfName.Font);
             dic.Put(PdfName.Subtype, PdfName.Type0);
-            string name = _fontName;
+            var name = _fontName;
             if (_style.Length > 0)
+            {
                 name += "-" + _style.Substring(1);
+            }
+
             name += "-" + _cMap;
             dic.Put(PdfName.Basefont, new PdfName(name));
             dic.Put(PdfName.Encoding, new PdfName(_cMap));
@@ -690,7 +767,7 @@ namespace iTextSharp.text.pdf
 
         private PdfDictionary getFontDescriptor()
         {
-            PdfDictionary dic = new PdfDictionary(PdfName.Fontdescriptor);
+            var dic = new PdfDictionary(PdfName.Fontdescriptor);
             dic.Put(PdfName.Ascent, new PdfLiteral((string)_fontDesc["Ascent"]));
             dic.Put(PdfName.Capheight, new PdfLiteral((string)_fontDesc["CapHeight"]));
             dic.Put(PdfName.Descent, new PdfLiteral((string)_fontDesc["Descent"]));
@@ -699,7 +776,7 @@ namespace iTextSharp.text.pdf
             dic.Put(PdfName.Fontname, new PdfName(_fontName + _style));
             dic.Put(PdfName.Italicangle, new PdfLiteral((string)_fontDesc["ItalicAngle"]));
             dic.Put(PdfName.Stemv, new PdfLiteral((string)_fontDesc["StemV"]));
-            PdfDictionary pdic = new PdfDictionary();
+            var pdic = new PdfDictionary();
             pdic.Put(PdfName.Panose, new PdfString((string)_fontDesc["Panose"], null));
             dic.Put(PdfName.Style, pdic);
             return dic;

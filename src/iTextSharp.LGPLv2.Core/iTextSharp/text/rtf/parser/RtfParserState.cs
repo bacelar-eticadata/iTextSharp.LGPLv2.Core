@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Text;
 using iTextSharp.text.rtf.parser.destinations;
 using iTextSharp.text.rtf.parser.properties;
+using System.Collections;
+using System.Text;
 
 namespace iTextSharp.text.rtf.parser
 {

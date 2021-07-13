@@ -7,7 +7,7 @@ namespace iTextSharp.text.pdf.codec.wmf
     /// </summary>
     public class InputMeta
     {
-        readonly Stream _sr;
+        private readonly Stream _sr;
 
         public InputMeta(Stream istr)
         {
@@ -24,9 +24,9 @@ namespace iTextSharp.text.pdf.codec.wmf
 
         public BaseColor ReadColor()
         {
-            int red = ReadByte();
-            int green = ReadByte();
-            int blue = ReadByte();
+            var red = ReadByte();
+            var green = ReadByte();
+            var blue = ReadByte();
             ReadByte();
             return new BaseColor(red, green, blue);
         }
@@ -34,28 +34,37 @@ namespace iTextSharp.text.pdf.codec.wmf
         public int ReadInt()
         {
             Length += 4;
-            int k1 = _sr.ReadByte();
+            var k1 = _sr.ReadByte();
             if (k1 < 0)
+            {
                 return 0;
-            int k2 = _sr.ReadByte() << 8;
-            int k3 = _sr.ReadByte() << 16;
+            }
+
+            var k2 = _sr.ReadByte() << 8;
+            var k3 = _sr.ReadByte() << 16;
             return k1 + k2 + k3 + (_sr.ReadByte() << 24);
         }
 
         public int ReadShort()
         {
-            int k = ReadWord();
+            var k = ReadWord();
             if (k > 0x7fff)
+            {
                 k -= 0x10000;
+            }
+
             return k;
         }
 
         public int ReadWord()
         {
             Length += 2;
-            int k1 = _sr.ReadByte();
+            var k1 = _sr.ReadByte();
             if (k1 < 0)
+            {
                 return 0;
+            }
+
             return (k1 + (_sr.ReadByte() << 8)) & 0xffff;
         }
 

@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
 {
@@ -25,9 +25,11 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.Issues
 
             var ct = new ColumnText(writer.DirectContent);
 
-            var text = new Phrase("TEST paragraph\nAfter Newline");
-            text.Add(new Chunk("\u00A0Test Test\u00A0"));
-            text.Add(new Chunk("\nNew line"));
+            var text = new Phrase("TEST paragraph\nAfter Newline")
+            {
+                new Chunk("\u00A0Test Test\u00A0"),
+                new Chunk("\nNew line")
+            };
 
             ct.SetSimpleColumn(
                phrase: text,

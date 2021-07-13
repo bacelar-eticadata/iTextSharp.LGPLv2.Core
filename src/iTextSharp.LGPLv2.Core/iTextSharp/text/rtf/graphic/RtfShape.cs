@@ -1,5 +1,5 @@
-using System.IO;
 using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.graphic
 {
@@ -70,6 +70,7 @@ namespace iTextSharp.text.rtf.graphic
         /// RtfShapeProperty with the name PROPERTY_VERTICIES.
         /// </summary>
         public const int SHAPE_FREEFORM = 0;
+
         /// <summary>
         /// Constant for a hexagon.
         /// </summary>
@@ -104,11 +105,13 @@ namespace iTextSharp.text.rtf.graphic
         /// Constant for a rectangle.
         /// </summary>
         public const int SHAPE_RECTANGLE = 1;
+
         /// <summary>
         /// Constant for a rounded rectangle. The roundness is
         /// set via a RtfShapeProperty with the name PROPERTY_ADJUST_VALUE.
         /// </summary>
         public const int SHAPE_ROUND_RECTANGLE = 2;
+
         /// <summary>
         /// Constant for a seal shape.
         /// </summary>
@@ -128,10 +131,12 @@ namespace iTextSharp.text.rtf.graphic
         /// Constant for a isoscelle triangle.
         /// </summary>
         public const int SHAPE_TRIANGLE_ISOSCELES = 5;
+
         /// <summary>
         /// Constant for a right triangle.
         /// </summary>
         public const int SHAPE_TRIANGLE_RIGHT = 6;
+
         /// <summary>
         /// Text is wrapped on the left and right side.
         /// </summary>
@@ -151,6 +156,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Text is not wrapped around the shape.
         /// </summary>
         public const int SHAPE_WRAP_NONE = 0;
+
         /// <summary>
         /// Text is wrapped on the right side.
         /// </summary>
@@ -185,6 +191,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Text is wrapped to the top and bottom.
         /// </summary>
         public const int SHAPE_WRAP_TOP_BOTTOM = 1;
+
         /// <summary>
         /// The RtfShapePosition that defines position settings for this RtfShape.
         /// </summary>
@@ -204,6 +211,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The shape nr is a random unique id.
         /// </summary>
         private int _shapeNr;
+
         /// <summary>
         /// Text that is contained in the shape.
         /// </summary>
@@ -213,6 +221,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The wrapping mode. Defaults to SHAPE_WRAP_NONE;
         /// </summary>
         private int _wrapping = SHAPE_WRAP_NONE;
+
         /// <summary>
         /// Constructs a new RtfShape of a given shape at the given RtfShapePosition.
         /// </summary>
@@ -290,44 +299,55 @@ namespace iTextSharp.text.rtf.graphic
                 case SHAPE_WRAP_NONE:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr3"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_TOP_BOTTOM:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr1"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_BOTH:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr2"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk0"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_LEFT:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr2"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk1"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_RIGHT:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr2"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk2"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_LARGEST:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr2"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk3"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_TIGHT_BOTH:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr4"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk0"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_TIGHT_LEFT:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr4"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk1"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_TIGHT_RIGHT:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr4"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk2"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_TIGHT_LARGEST:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr4"), 0, t.Length);
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwrk3"), 0, t.Length);
                     break;
+
                 case SHAPE_WRAP_THROUGH:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr5"), 0, t.Length);
                     break;
+
                 default:
                     result.Write(t = DocWriter.GetIsoBytes("\\shpwr3"), 0, t.Length);
                     break;

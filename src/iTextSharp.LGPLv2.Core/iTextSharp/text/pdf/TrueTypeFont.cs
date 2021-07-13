@@ -1,19 +1,17 @@
+using iTextSharp.LGPLv2.Core.System.Encodings;
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
-using System.Collections;
-using iTextSharp.LGPLv2.Core.System.Encodings;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Reads a Truetype font
     /// @author Paulo Soares (psoares@consiste.pt)
     /// </summary>
     internal class TrueTypeFont : BaseFont
     {
-
         /// <summary>
         /// The code pages possible for a True Type font.
         /// </summary>
@@ -92,6 +90,7 @@ namespace iTextSharp.text.pdf
         protected bool Cff;
         protected int CffLength;
         protected int CffOffset;
+
         /// <summary>
         /// The map containing the code information for the table 'cmap', encoding 1.0.
         /// The key is the code and the value is an  int[2]  where position 0
@@ -175,6 +174,7 @@ namespace iTextSharp.text.pdf
         protected double ItalicAngle;
 
         protected bool JustNames;
+
         /// <summary>
         /// The map containing the kerning information. It represents the content of
         /// table 'kern'. The key is an  Integer  where the top 16 bits
@@ -206,11 +206,13 @@ namespace iTextSharp.text.pdf
         /// of the table.
         /// </summary>
         protected Hashtable Tables;
+
         /// <summary>
         /// The index for the TTC font. It is an empty  string  for a
         /// TTF file.
         /// </summary>
         protected string TtcIndex;
+
         protected int UnderlinePosition;
 
         protected int UnderlineThickness;
@@ -230,8 +232,8 @@ namespace iTextSharp.text.pdf
         internal TrueTypeFont(string ttFile, string enc, bool emb, byte[] ttfAfm, bool justNames, bool forceRead)
         {
             JustNames = justNames;
-            string nameBase = GetBaseName(ttFile);
-            string ttcName = GetTtcName(nameBase);
+            var nameBase = GetBaseName(ttFile);
+            var ttcName = GetTtcName(nameBase);
             if (nameBase.Length < ttFile.Length)
             {
                 Style = ttFile.Substring(nameBase.Length);
@@ -242,17 +244,28 @@ namespace iTextSharp.text.pdf
             FontType = FONT_TYPE_TT;
             TtcIndex = "";
             if (ttcName.Length < nameBase.Length)
+            {
                 TtcIndex = nameBase.Substring(ttcName.Length + 1);
-            if (FileName.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith(".ttf") || FileName.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith(".otf") || FileName.ToLower(System.Globalization.CultureInfo.InvariantCulture).EndsWith(".ttc"))
+            }
+
+            if (FileName.ToLowerInvariant().EndsWith(".ttf") || FileName.ToLowerInvariant().EndsWith(".otf") || FileName.ToLowerInvariant().EndsWith(".ttc"))
             {
                 Process(ttfAfm, forceRead);
                 if (!justNames && Embedded && Os2.FsType == 2)
+                {
                     throw new DocumentException(FileName + Style + " cannot be embedded due to licensing restrictions.");
+                }
             }
             else
+            {
                 throw new DocumentException(FileName + Style + " is not a TTF, OTF or TTC font file.");
+            }
+
             if (!encoding.StartsWith("#"))
+            {
                 PdfEncodings.ConvertToBytes(" ", enc); // check if the encoding exists
+            }
+
             CreateEncoding();
         }
 
@@ -272,13 +285,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the full name of the font</returns>
-        public override string[][] AllNameEntries
-        {
-            get
-            {
-                return allNameEntries;
-            }
-        }
+        public override string[][] AllNameEntries => allNameEntries;
 
         /// <summary>
         /// Gets the code pages supported by the font.
@@ -288,22 +295,28 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                long cp = (((long)Os2.UlCodePageRange2) << 32) + (Os2.UlCodePageRange1 & 0xffffffffL);
-                int count = 0;
+                var cp = (((long)Os2.UlCodePageRange2) << 32) + (Os2.UlCodePageRange1 & 0xffffffffL);
+                var count = 0;
                 long bit = 1;
-                for (int k = 0; k < 64; ++k)
+                for (var k = 0; k < 64; ++k)
                 {
                     if ((cp & bit) != 0 && CodePages[k] != null)
+                    {
                         ++count;
+                    }
+
                     bit <<= 1;
                 }
-                string[] ret = new string[count];
+                var ret = new string[count];
                 count = 0;
                 bit = 1;
-                for (int k = 0; k < 64; ++k)
+                for (var k = 0; k < 64; ++k)
                 {
                     if ((cp & bit) != 0 && CodePages[k] != null)
+                    {
                         ret[count++] = CodePages[k];
+                    }
+
                     bit <<= 1;
                 }
                 return ret;
@@ -319,13 +332,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the family name of the font</returns>
-        public override string[][] FamilyFontName
-        {
-            get
-            {
-                return FamilyName;
-            }
-        }
+        public override string[][] FamilyFontName => FamilyName;
 
         /// <summary>
         /// Gets the full name of the font. If it is a True Type font
@@ -336,13 +343,7 @@ namespace iTextSharp.text.pdf
         /// font name}.
         /// </summary>
         /// <returns>the full name of the font</returns>
-        public override string[][] FullFontName
-        {
-            get
-            {
-                return FullName;
-            }
-        }
+        public override string[][] FullFontName => FullName;
 
         /// <summary>
         /// Gets the postscript font name.
@@ -350,14 +351,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the postscript font name</returns>
         public override string PostscriptFontName
         {
-            get
-            {
-                return FontName;
-            }
-            set
-            {
-                FontName = value;
-            }
+            get => FontName;
+            set => FontName = value;
         }
 
         /// <summary>
@@ -373,28 +368,35 @@ namespace iTextSharp.text.pdf
                 int[] tableLocation;
                 tableLocation = (int[])Tables["name"];
                 if (tableLocation == null)
-                    throw new DocumentException("Table 'name' does not exist in " + FileName + Style);
-                Rf.Seek(tableLocation[0] + 2);
-                int numRecords = Rf.ReadUnsignedShort();
-                int startOfStorage = Rf.ReadUnsignedShort();
-                for (int k = 0; k < numRecords; ++k)
                 {
-                    int platformId = Rf.ReadUnsignedShort();
-                    int platformEncodingId = Rf.ReadUnsignedShort();
-                    int languageId = Rf.ReadUnsignedShort();
-                    int nameId = Rf.ReadUnsignedShort();
-                    int length = Rf.ReadUnsignedShort();
-                    int offset = Rf.ReadUnsignedShort();
+                    throw new DocumentException("Table 'name' does not exist in " + FileName + Style);
+                }
+
+                Rf.Seek(tableLocation[0] + 2);
+                var numRecords = Rf.ReadUnsignedShort();
+                var startOfStorage = Rf.ReadUnsignedShort();
+                for (var k = 0; k < numRecords; ++k)
+                {
+                    var platformId = Rf.ReadUnsignedShort();
+                    var platformEncodingId = Rf.ReadUnsignedShort();
+                    var languageId = Rf.ReadUnsignedShort();
+                    var nameId = Rf.ReadUnsignedShort();
+                    var length = Rf.ReadUnsignedShort();
+                    var offset = Rf.ReadUnsignedShort();
                     if (nameId == 6)
                     {
                         Rf.Seek(tableLocation[0] + startOfStorage + offset);
                         if (platformId == 0 || platformId == 3)
+                        {
                             return ReadUnicodeString(length);
+                        }
                         else
+                        {
                             return ReadStandardString(length);
+                        }
                     }
                 }
-                FileInfo file = new FileInfo(FileName);
+                var file = new FileInfo(FileName);
                 return file.Name.Replace(' ', '-');
             }
         }
@@ -413,42 +415,61 @@ namespace iTextSharp.text.pdf
             {
                 case ASCENT:
                     return Os2.STypoAscender * fontSize / Head.UnitsPerEm;
+
                 case CAPHEIGHT:
                     return Os2.SCapHeight * fontSize / Head.UnitsPerEm;
+
                 case DESCENT:
                     return Os2.STypoDescender * fontSize / Head.UnitsPerEm;
+
                 case ITALICANGLE:
                     return (float)ItalicAngle;
+
                 case BBOXLLX:
                     return fontSize * Head.XMin / Head.UnitsPerEm;
+
                 case BBOXLLY:
                     return fontSize * Head.YMin / Head.UnitsPerEm;
+
                 case BBOXURX:
                     return fontSize * Head.XMax / Head.UnitsPerEm;
+
                 case BBOXURY:
                     return fontSize * Head.YMax / Head.UnitsPerEm;
+
                 case AWT_ASCENT:
                     return fontSize * Hhea.Ascender / Head.UnitsPerEm;
+
                 case AWT_DESCENT:
                     return fontSize * Hhea.Descender / Head.UnitsPerEm;
+
                 case AWT_LEADING:
                     return fontSize * Hhea.LineGap / Head.UnitsPerEm;
+
                 case AWT_MAXADVANCE:
                     return fontSize * Hhea.AdvanceWidthMax / Head.UnitsPerEm;
+
                 case UNDERLINE_POSITION:
                     return (UnderlinePosition - UnderlineThickness / 2) * fontSize / Head.UnitsPerEm;
+
                 case UNDERLINE_THICKNESS:
                     return UnderlineThickness * fontSize / Head.UnitsPerEm;
+
                 case STRIKETHROUGH_POSITION:
                     return Os2.YStrikeoutPosition * fontSize / Head.UnitsPerEm;
+
                 case STRIKETHROUGH_THICKNESS:
                     return Os2.YStrikeoutSize * fontSize / Head.UnitsPerEm;
+
                 case SUBSCRIPT_SIZE:
                     return Os2.YSubscriptYSize * fontSize / Head.UnitsPerEm;
+
                 case SUBSCRIPT_OFFSET:
                     return -Os2.YSubscriptYOffset * fontSize / Head.UnitsPerEm;
+
                 case SUPERSCRIPT_SIZE:
                     return Os2.YSuperscriptYSize * fontSize / Head.UnitsPerEm;
+
                 case SUPERSCRIPT_OFFSET:
                     return Os2.YSuperscriptYOffset * fontSize / Head.UnitsPerEm;
             }
@@ -468,7 +489,7 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                byte[] b = GetFullFont();
+                var b = GetFullFont();
                 int[] lengths = { b.Length };
                 return new StreamFont(b, lengths, compressionLevel);
             }
@@ -482,14 +503,20 @@ namespace iTextSharp.text.pdf
         /// <returns>the kerning to be applied</returns>
         public override int GetKerning(int char1, int char2)
         {
-            int[] metrics = GetMetricsTt(char1);
+            var metrics = GetMetricsTt(char1);
             if (metrics == null)
+            {
                 return 0;
-            int c1 = metrics[0];
+            }
+
+            var c1 = metrics[0];
             metrics = GetMetricsTt(char2);
             if (metrics == null)
+            {
                 return 0;
-            int c2 = metrics[0];
+            }
+
+            var c2 = metrics[0];
             return Kerning[(c1 << 16) + c2];
         }
 
@@ -501,15 +528,30 @@ namespace iTextSharp.text.pdf
         public virtual int[] GetMetricsTt(int c)
         {
             if (CmapExt != null)
+            {
                 return (int[])CmapExt[c];
+            }
+
             if (!FontSpecific && Cmap31 != null)
+            {
                 return (int[])Cmap31[c];
+            }
+
             if (FontSpecific && Cmap10 != null)
+            {
                 return (int[])Cmap10[c];
+            }
+
             if (Cmap31 != null)
+            {
                 return (int[])Cmap31[c];
+            }
+
             if (Cmap10 != null)
+            {
                 return (int[])Cmap10[c];
+            }
+
             return null;
         }
 
@@ -531,14 +573,20 @@ namespace iTextSharp.text.pdf
         /// <returns> true  if the kerning was applied,  false  otherwise</returns>
         public override bool SetKerning(int char1, int char2, int kern)
         {
-            int[] metrics = GetMetricsTt(char1);
+            var metrics = GetMetricsTt(char1);
             if (metrics == null)
+            {
                 return false;
-            int c1 = metrics[0];
+            }
+
+            var c1 = metrics[0];
             metrics = GetMetricsTt(char2);
             if (metrics == null)
+            {
                 return false;
-            int c2 = metrics[0];
+            }
+
+            var c2 = metrics[0];
             Kerning[(c1 << 16) + c2] = kern;
             return true;
         }
@@ -565,7 +613,10 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])Tables["head"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'head' does not exist in " + FileName + Style);
+            }
+
             Rf.Seek(tableLocation[0] + 16);
             Head.Flags = Rf.ReadUnsignedShort();
             Head.UnitsPerEm = Rf.ReadUnsignedShort();
@@ -578,7 +629,10 @@ namespace iTextSharp.text.pdf
 
             tableLocation = (int[])Tables["hhea"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'hhea' does not exist " + FileName + Style);
+            }
+
             Rf.Seek(tableLocation[0] + 4);
             Hhea.Ascender = Rf.ReadShort();
             Hhea.Descender = Rf.ReadShort();
@@ -594,9 +648,12 @@ namespace iTextSharp.text.pdf
 
             tableLocation = (int[])Tables["OS/2"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'OS/2' does not exist in " + FileName + Style);
+            }
+
             Rf.Seek(tableLocation[0]);
-            int version = Rf.ReadUnsignedShort();
+            var version = Rf.ReadUnsignedShort();
             Os2.XAvgCharWidth = Rf.ReadShort();
             Os2.UsWeightClass = Rf.ReadUnsignedShort();
             Os2.UsWidthClass = Rf.ReadUnsignedShort();
@@ -621,7 +678,10 @@ namespace iTextSharp.text.pdf
             Os2.STypoAscender = Rf.ReadShort();
             Os2.STypoDescender = Rf.ReadShort();
             if (Os2.STypoDescender > 0)
+            {
                 Os2.STypoDescender = (short)(-Os2.STypoDescender);
+            }
+
             Os2.STypoLineGap = Rf.ReadShort();
             Os2.UsWinAscent = Rf.ReadUnsignedShort();
             Os2.UsWinDescent = Rf.ReadUnsignedShort();
@@ -638,7 +698,9 @@ namespace iTextSharp.text.pdf
                 Os2.SCapHeight = Rf.ReadShort();
             }
             else
+            {
                 Os2.SCapHeight = (int)(0.7 * Head.UnitsPerEm);
+            }
 
             tableLocation = (int[])Tables["post"];
             if (tableLocation == null)
@@ -647,8 +709,8 @@ namespace iTextSharp.text.pdf
                 return;
             }
             Rf.Seek(tableLocation[0] + 4);
-            short mantissa = Rf.ReadShort();
-            int fraction = Rf.ReadUnsignedShort();
+            var mantissa = Rf.ReadShort();
+            var fraction = Rf.ReadUnsignedShort();
             ItalicAngle = mantissa + fraction / 16384.0;
             UnderlinePosition = Rf.ReadShort();
             UnderlineThickness = Rf.ReadShort();
@@ -665,20 +727,23 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])Tables["name"];
             if (tableLocation == null)
-                throw new DocumentException("Table 'name' does not exist in " + FileName + Style);
-            Rf.Seek(tableLocation[0] + 2);
-            int numRecords = Rf.ReadUnsignedShort();
-            int startOfStorage = Rf.ReadUnsignedShort();
-            ArrayList names = new ArrayList();
-            for (int k = 0; k < numRecords; ++k)
             {
-                int platformId = Rf.ReadUnsignedShort();
-                int platformEncodingId = Rf.ReadUnsignedShort();
-                int languageId = Rf.ReadUnsignedShort();
-                int nameId = Rf.ReadUnsignedShort();
-                int length = Rf.ReadUnsignedShort();
-                int offset = Rf.ReadUnsignedShort();
-                int pos = Rf.FilePointer;
+                throw new DocumentException("Table 'name' does not exist in " + FileName + Style);
+            }
+
+            Rf.Seek(tableLocation[0] + 2);
+            var numRecords = Rf.ReadUnsignedShort();
+            var startOfStorage = Rf.ReadUnsignedShort();
+            var names = new ArrayList();
+            for (var k = 0; k < numRecords; ++k)
+            {
+                var platformId = Rf.ReadUnsignedShort();
+                var platformEncodingId = Rf.ReadUnsignedShort();
+                var languageId = Rf.ReadUnsignedShort();
+                var nameId = Rf.ReadUnsignedShort();
+                var length = Rf.ReadUnsignedShort();
+                var offset = Rf.ReadUnsignedShort();
+                var pos = Rf.FilePointer;
                 Rf.Seek(tableLocation[0] + startOfStorage + offset);
                 string name;
                 if (platformId == 0 || platformId == 3 || (platformId == 2 && platformEncodingId == 1))
@@ -693,9 +758,12 @@ namespace iTextSharp.text.pdf
                     platformEncodingId.ToString(), languageId.ToString(), name});
                 Rf.Seek(pos);
             }
-            string[][] thisName = new string[names.Count][];
-            for (int k = 0; k < names.Count; ++k)
+            var thisName = new string[names.Count][];
+            for (var k = 0; k < names.Count; ++k)
+            {
                 thisName[k] = (string[])names[k];
+            }
+
             return thisName;
         }
 
@@ -710,22 +778,25 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])Tables["name"];
             if (tableLocation == null)
-                throw new DocumentException("Table 'name' does not exist in " + FileName + Style);
-            Rf.Seek(tableLocation[0] + 2);
-            int numRecords = Rf.ReadUnsignedShort();
-            int startOfStorage = Rf.ReadUnsignedShort();
-            ArrayList names = new ArrayList();
-            for (int k = 0; k < numRecords; ++k)
             {
-                int platformId = Rf.ReadUnsignedShort();
-                int platformEncodingId = Rf.ReadUnsignedShort();
-                int languageId = Rf.ReadUnsignedShort();
-                int nameId = Rf.ReadUnsignedShort();
-                int length = Rf.ReadUnsignedShort();
-                int offset = Rf.ReadUnsignedShort();
+                throw new DocumentException("Table 'name' does not exist in " + FileName + Style);
+            }
+
+            Rf.Seek(tableLocation[0] + 2);
+            var numRecords = Rf.ReadUnsignedShort();
+            var startOfStorage = Rf.ReadUnsignedShort();
+            var names = new ArrayList();
+            for (var k = 0; k < numRecords; ++k)
+            {
+                var platformId = Rf.ReadUnsignedShort();
+                var platformEncodingId = Rf.ReadUnsignedShort();
+                var languageId = Rf.ReadUnsignedShort();
+                var nameId = Rf.ReadUnsignedShort();
+                var length = Rf.ReadUnsignedShort();
+                var offset = Rf.ReadUnsignedShort();
                 if (nameId == id)
                 {
-                    int pos = Rf.FilePointer;
+                    var pos = Rf.FilePointer;
                     Rf.Seek(tableLocation[0] + startOfStorage + offset);
                     string name;
                     if (platformId == 0 || platformId == 3 || (platformId == 2 && platformEncodingId == 1))
@@ -741,9 +812,12 @@ namespace iTextSharp.text.pdf
                     Rf.Seek(pos);
                 }
             }
-            string[][] thisName = new string[names.Count][];
-            for (int k = 0; k < names.Count; ++k)
+            var thisName = new string[names.Count][];
+            for (var k = 0; k < names.Count; ++k)
+            {
                 thisName[k] = (string[])names[k];
+            }
+
             return thisName;
         }
 
@@ -756,9 +830,12 @@ namespace iTextSharp.text.pdf
         /// <returns>the width of the char</returns>
         internal override int GetRawWidth(int c, string name)
         {
-            int[] metric = GetMetricsTt(c);
+            var metric = GetMetricsTt(c);
             if (metric == null)
+            {
                 return 0;
+            }
+
             return metric[1];
         }
 
@@ -776,35 +853,52 @@ namespace iTextSharp.text.pdf
             try
             {
                 if (ttfAfm == null)
+                {
                     Rf = new RandomAccessFileOrArray(FileName, preload);
+                }
                 else
+                {
                     Rf = new RandomAccessFileOrArray(ttfAfm);
+                }
+
                 if (TtcIndex.Length > 0)
                 {
-                    int dirIdx = int.Parse(TtcIndex);
+                    var dirIdx = int.Parse(TtcIndex);
                     if (dirIdx < 0)
+                    {
                         throw new DocumentException("The font index for " + FileName + " must be positive.");
-                    string mainTag = ReadStandardString(4);
+                    }
+
+                    var mainTag = ReadStandardString(4);
                     if (!mainTag.Equals("ttcf"))
+                    {
                         throw new DocumentException(FileName + " is not a valid TTC file.");
+                    }
+
                     Rf.SkipBytes(4);
-                    int dirCount = Rf.ReadInt();
+                    var dirCount = Rf.ReadInt();
                     if (dirIdx >= dirCount)
+                    {
                         throw new DocumentException("The font index for " + FileName + " must be between 0 and " + (dirCount - 1) + ". It was " + dirIdx + ".");
+                    }
+
                     Rf.SkipBytes(dirIdx * 4);
                     DirectoryOffset = Rf.ReadInt();
                 }
                 Rf.Seek(DirectoryOffset);
-                int ttId = Rf.ReadInt();
+                var ttId = Rf.ReadInt();
                 if (ttId != 0x00010000 && ttId != 0x4F54544F)
-                    throw new DocumentException(FileName + " is not a valid TTF or OTF file.");
-                int numTables = Rf.ReadUnsignedShort();
-                Rf.SkipBytes(6);
-                for (int k = 0; k < numTables; ++k)
                 {
-                    string tag = ReadStandardString(4);
+                    throw new DocumentException(FileName + " is not a valid TTF or OTF file.");
+                }
+
+                var numTables = Rf.ReadUnsignedShort();
+                Rf.SkipBytes(6);
+                for (var k = 0; k < numTables; ++k)
+                {
+                    var tag = ReadStandardString(4);
                     Rf.SkipBytes(4);
-                    int[] tableLocation = new int[2];
+                    var tableLocation = new int[2];
                     tableLocation[0] = Rf.ReadInt();
                     tableLocation[1] = Rf.ReadInt();
                     Tables[tag] = tableLocation;
@@ -830,7 +924,9 @@ namespace iTextSharp.text.pdf
                 {
                     Rf.Close();
                     if (!Embedded)
+                    {
                         Rf = null;
+                    }
                 }
             }
         }
@@ -846,23 +942,26 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])Tables["cmap"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'cmap' does not exist in " + FileName + Style);
+            }
+
             Rf.Seek(tableLocation[0]);
             Rf.SkipBytes(2);
-            int numTables = Rf.ReadUnsignedShort();
+            var numTables = Rf.ReadUnsignedShort();
             FontSpecific = false;
-            int map10 = 0;
-            int map31 = 0;
-            int map30 = 0;
+            var map10 = 0;
+            var map31 = 0;
+            var map30 = 0;
 
             //add by james for cmap Ext.b
-            int mapExt = 0;
+            var mapExt = 0;
 
-            for (int k = 0; k < numTables; ++k)
+            for (var k = 0; k < numTables; ++k)
             {
-                int platId = Rf.ReadUnsignedShort();
-                int platSpecId = Rf.ReadUnsignedShort();
-                int offset = Rf.ReadInt();
+                var platId = Rf.ReadUnsignedShort();
+                var platSpecId = Rf.ReadUnsignedShort();
+                var offset = Rf.ReadInt();
                 if (platId == 3 && platSpecId == 0)
                 {
                     FontSpecific = true;
@@ -881,21 +980,21 @@ namespace iTextSharp.text.pdf
                 {
                     map10 = offset;
                 }
-
-
             }
             if (map10 > 0)
             {
                 Rf.Seek(tableLocation[0] + map10);
-                int format = Rf.ReadUnsignedShort();
+                var format = Rf.ReadUnsignedShort();
                 switch (format)
                 {
                     case 0:
                         Cmap10 = ReadFormat0();
                         break;
+
                     case 4:
                         Cmap10 = ReadFormat4();
                         break;
+
                     case 6:
                         Cmap10 = ReadFormat6();
                         break;
@@ -904,7 +1003,7 @@ namespace iTextSharp.text.pdf
             if (map31 > 0)
             {
                 Rf.Seek(tableLocation[0] + map31);
-                int format = Rf.ReadUnsignedShort();
+                var format = Rf.ReadUnsignedShort();
                 if (format == 4)
                 {
                     Cmap31 = ReadFormat4();
@@ -913,7 +1012,7 @@ namespace iTextSharp.text.pdf
             if (map30 > 0)
             {
                 Rf.Seek(tableLocation[0] + map30);
-                int format = Rf.ReadUnsignedShort();
+                var format = Rf.ReadUnsignedShort();
                 if (format == 4)
                 {
                     Cmap10 = ReadFormat4();
@@ -922,18 +1021,21 @@ namespace iTextSharp.text.pdf
             if (mapExt > 0)
             {
                 Rf.Seek(tableLocation[0] + mapExt);
-                int format = Rf.ReadUnsignedShort();
+                var format = Rf.ReadUnsignedShort();
                 switch (format)
                 {
                     case 0:
                         CmapExt = ReadFormat0();
                         break;
+
                     case 4:
                         CmapExt = ReadFormat4();
                         break;
+
                     case 6:
                         CmapExt = ReadFormat6();
                         break;
+
                     case 12:
                         CmapExt = ReadFormat12();
                         break;
@@ -949,11 +1051,11 @@ namespace iTextSharp.text.pdf
         /// <returns>a  Hashtable  representing this map</returns>
         internal Hashtable ReadFormat0()
         {
-            Hashtable h = new Hashtable();
+            var h = new Hashtable();
             Rf.SkipBytes(4);
-            for (int k = 0; k < 256; ++k)
+            for (var k = 0; k < 256; ++k)
             {
-                int[] r = new int[2];
+                var r = new int[2];
                 r[0] = Rf.ReadUnsignedByte();
                 r[1] = GetGlyphWidth(r[0]);
                 h[k] = r;
@@ -963,19 +1065,19 @@ namespace iTextSharp.text.pdf
 
         internal Hashtable ReadFormat12()
         {
-            Hashtable h = new Hashtable();
+            var h = new Hashtable();
             Rf.SkipBytes(2);
-            int tableLenght = Rf.ReadInt();
+            var tableLenght = Rf.ReadInt();
             Rf.SkipBytes(4);
-            int nGroups = Rf.ReadInt();
-            for (int k = 0; k < nGroups; k++)
+            var nGroups = Rf.ReadInt();
+            for (var k = 0; k < nGroups; k++)
             {
-                int startCharCode = Rf.ReadInt();
-                int endCharCode = Rf.ReadInt();
-                int startGlyphId = Rf.ReadInt();
-                for (int i = startCharCode; i <= endCharCode; i++)
+                var startCharCode = Rf.ReadInt();
+                var endCharCode = Rf.ReadInt();
+                var startGlyphId = Rf.ReadInt();
+                for (var i = startCharCode; i <= endCharCode; i++)
                 {
-                    int[] r = new int[2];
+                    var r = new int[2];
                     r[0] = startGlyphId;
                     r[1] = GetGlyphWidth(r[0]);
                     h[i] = r;
@@ -993,41 +1095,41 @@ namespace iTextSharp.text.pdf
         /// <returns>a  Hashtable  representing this map</returns>
         internal Hashtable ReadFormat4()
         {
-            Hashtable h = new Hashtable();
-            int tableLenght = Rf.ReadUnsignedShort();
+            var h = new Hashtable();
+            var tableLenght = Rf.ReadUnsignedShort();
             Rf.SkipBytes(2);
-            int segCount = Rf.ReadUnsignedShort() / 2;
+            var segCount = Rf.ReadUnsignedShort() / 2;
             Rf.SkipBytes(6);
-            int[] endCount = new int[segCount];
-            for (int k = 0; k < segCount; ++k)
+            var endCount = new int[segCount];
+            for (var k = 0; k < segCount; ++k)
             {
                 endCount[k] = Rf.ReadUnsignedShort();
             }
             Rf.SkipBytes(2);
-            int[] startCount = new int[segCount];
-            for (int k = 0; k < segCount; ++k)
+            var startCount = new int[segCount];
+            for (var k = 0; k < segCount; ++k)
             {
                 startCount[k] = Rf.ReadUnsignedShort();
             }
-            int[] idDelta = new int[segCount];
-            for (int k = 0; k < segCount; ++k)
+            var idDelta = new int[segCount];
+            for (var k = 0; k < segCount; ++k)
             {
                 idDelta[k] = Rf.ReadUnsignedShort();
             }
-            int[] idRo = new int[segCount];
-            for (int k = 0; k < segCount; ++k)
+            var idRo = new int[segCount];
+            for (var k = 0; k < segCount; ++k)
             {
                 idRo[k] = Rf.ReadUnsignedShort();
             }
-            int[] glyphId = new int[tableLenght / 2 - 8 - segCount * 4];
-            for (int k = 0; k < glyphId.Length; ++k)
+            var glyphId = new int[tableLenght / 2 - 8 - segCount * 4];
+            for (var k = 0; k < glyphId.Length; ++k)
             {
                 glyphId[k] = Rf.ReadUnsignedShort();
             }
-            for (int k = 0; k < segCount; ++k)
+            for (var k = 0; k < segCount; ++k)
             {
                 int glyph;
-                for (int j = startCount[k]; j <= endCount[k] && j != 0xFFFF; ++j)
+                for (var j = startCount[k]; j <= endCount[k] && j != 0xFFFF; ++j)
                 {
                     if (idRo[k] == 0)
                     {
@@ -1035,12 +1137,15 @@ namespace iTextSharp.text.pdf
                     }
                     else
                     {
-                        int idx = k + idRo[k] / 2 - segCount + j - startCount[k];
+                        var idx = k + idRo[k] / 2 - segCount + j - startCount[k];
                         if (idx >= glyphId.Length)
+                        {
                             continue;
+                        }
+
                         glyph = (glyphId[idx] + idDelta[k]) & 0xFFFF;
                     }
-                    int[] r = new int[2];
+                    var r = new int[2];
                     r[0] = glyph;
                     r[1] = GetGlyphWidth(r[0]);
                     h[FontSpecific ? ((j & 0xff00) == 0xf000 ? j & 0xff : j) : j] = r;
@@ -1058,13 +1163,13 @@ namespace iTextSharp.text.pdf
         /// <returns>a  Hashtable  representing this map</returns>
         internal Hashtable ReadFormat6()
         {
-            Hashtable h = new Hashtable();
+            var h = new Hashtable();
             Rf.SkipBytes(4);
-            int startCode = Rf.ReadUnsignedShort();
-            int codeCount = Rf.ReadUnsignedShort();
-            for (int k = 0; k < codeCount; ++k)
+            var startCode = Rf.ReadUnsignedShort();
+            var codeCount = Rf.ReadUnsignedShort();
+            for (var k = 0; k < codeCount; ++k)
             {
-                int[] r = new int[2];
+                var r = new int[2];
                 r[0] = Rf.ReadUnsignedShort();
                 r[1] = GetGlyphWidth(r[0]);
                 h[k + startCode] = r;
@@ -1081,26 +1186,29 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])Tables["kern"];
             if (tableLocation == null)
+            {
                 return;
+            }
+
             Rf.Seek(tableLocation[0] + 2);
-            int nTables = Rf.ReadUnsignedShort();
-            int checkpoint = tableLocation[0] + 4;
-            int length = 0;
-            for (int k = 0; k < nTables; ++k)
+            var nTables = Rf.ReadUnsignedShort();
+            var checkpoint = tableLocation[0] + 4;
+            var length = 0;
+            for (var k = 0; k < nTables; ++k)
             {
                 checkpoint += length;
                 Rf.Seek(checkpoint);
                 Rf.SkipBytes(2);
                 length = Rf.ReadUnsignedShort();
-                int coverage = Rf.ReadUnsignedShort();
+                var coverage = Rf.ReadUnsignedShort();
                 if ((coverage & 0xfff7) == 0x0001)
                 {
-                    int nPairs = Rf.ReadUnsignedShort();
+                    var nPairs = Rf.ReadUnsignedShort();
                     Rf.SkipBytes(6);
-                    for (int j = 0; j < nPairs; ++j)
+                    for (var j = 0; j < nPairs; ++j)
                     {
-                        int pair = Rf.ReadInt();
-                        int value = (Rf.ReadShort() * 1000) / Head.UnitsPerEm;
+                        var pair = Rf.ReadInt();
+                        var value = (Rf.ReadShort() * 1000) / Head.UnitsPerEm;
                         Kerning[pair] = value;
                     }
                 }
@@ -1117,21 +1225,23 @@ namespace iTextSharp.text.pdf
         /// <param name="parms">several parameters that depend on the font type</param>
         internal override void WriteFont(PdfWriter writer, PdfIndirectReference piref, object[] parms)
         {
-            int firstChar = (int)parms[0];
-            int lastChar = (int)parms[1];
-            byte[] shortTag = (byte[])parms[2];
-            bool subsetp = (bool)parms[3] && subset;
+            var firstChar = (int)parms[0];
+            var lastChar = (int)parms[1];
+            var shortTag = (byte[])parms[2];
+            var subsetp = (bool)parms[3] && subset;
             if (!subsetp)
             {
                 firstChar = 0;
                 lastChar = shortTag.Length - 1;
-                for (int k = 0; k < shortTag.Length; ++k)
+                for (var k = 0; k < shortTag.Length; ++k)
+                {
                     shortTag[k] = 1;
+                }
             }
             PdfIndirectReference indFont = null;
             PdfObject pobj = null;
             PdfIndirectObject obj = null;
-            string subsetPrefix = "";
+            var subsetPrefix = "";
             if (Embedded)
             {
                 if (Cff)
@@ -1143,35 +1253,46 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     if (subsetp)
+                    {
                         subsetPrefix = CreateSubsetPrefix();
-                    Hashtable glyphs = new Hashtable();
-                    for (int k = firstChar; k <= lastChar; ++k)
+                    }
+
+                    var glyphs = new Hashtable();
+                    for (var k = firstChar; k <= lastChar; ++k)
                     {
                         if (shortTag[k] != 0)
                         {
                             int[] metrics = null;
                             if (SpecialMap != null)
                             {
-                                int[] cd = GlyphList.NameToUnicode(differences[k]);
+                                var cd = GlyphList.NameToUnicode(differences[k]);
                                 if (cd != null)
+                                {
                                     metrics = GetMetricsTt(cd[0]);
+                                }
                             }
                             else
                             {
                                 if (FontSpecific)
+                                {
                                     metrics = GetMetricsTt(k);
+                                }
                                 else
+                                {
                                     metrics = GetMetricsTt(unicodeDifferences[k]);
+                                }
                             }
                             if (metrics != null)
+                            {
                                 glyphs[metrics[0]] = null;
+                            }
                         }
                     }
                     AddRangeUni(glyphs, false, subsetp);
                     byte[] b = null;
                     if (subsetp || DirectoryOffset != 0 || SubsetRanges != null)
                     {
-                        TrueTypeFontSubSet sb = new TrueTypeFontSubSet(FileName, new RandomAccessFileOrArray(Rf), glyphs, DirectoryOffset, true, !subsetp);
+                        var sb = new TrueTypeFontSubSet(FileName, new RandomAccessFileOrArray(Rf), glyphs, DirectoryOffset, true, !subsetp);
                         b = sb.Process();
                     }
                     else
@@ -1203,8 +1324,8 @@ namespace iTextSharp.text.pdf
         /// <returns>a byte array</returns>
         protected internal byte[] ReadCffFont()
         {
-            RandomAccessFileOrArray rf2 = new RandomAccessFileOrArray(Rf);
-            byte[] b = new byte[CffLength];
+            var rf2 = new RandomAccessFileOrArray(Rf);
+            var b = new byte[CffLength];
             try
             {
                 rf2.ReOpen();
@@ -1227,21 +1348,21 @@ namespace iTextSharp.text.pdf
 
         protected static int[] CompactRanges(ArrayList ranges)
         {
-            ArrayList simp = new ArrayList();
-            for (int k = 0; k < ranges.Count; ++k)
+            var simp = new ArrayList();
+            for (var k = 0; k < ranges.Count; ++k)
             {
-                int[] r = (int[])ranges[k];
-                for (int j = 0; j < r.Length; j += 2)
+                var r = (int[])ranges[k];
+                for (var j = 0; j < r.Length; j += 2)
                 {
                     simp.Add(new[] { Math.Max(0, Math.Min(r[j], r[j + 1])), Math.Min(0xffff, Math.Max(r[j], r[j + 1])) });
                 }
             }
-            for (int k1 = 0; k1 < simp.Count - 1; ++k1)
+            for (var k1 = 0; k1 < simp.Count - 1; ++k1)
             {
-                for (int k2 = k1 + 1; k2 < simp.Count; ++k2)
+                for (var k2 = k1 + 1; k2 < simp.Count; ++k2)
                 {
-                    int[] r1 = (int[])simp[k1];
-                    int[] r2 = (int[])simp[k2];
+                    var r1 = (int[])simp[k1];
+                    var r2 = (int[])simp[k2];
                     if ((r1[0] >= r2[0] && r1[0] <= r2[1]) || (r1[1] >= r2[0] && r1[0] <= r2[1]))
                     {
                         r1[0] = Math.Min(r1[0], r2[0]);
@@ -1251,10 +1372,10 @@ namespace iTextSharp.text.pdf
                     }
                 }
             }
-            int[] s = new int[simp.Count * 2];
-            for (int k = 0; k < simp.Count; ++k)
+            var s = new int[simp.Count * 2];
+            for (var k = 0; k < simp.Count; ++k)
             {
-                int[] r = (int[])simp[k];
+                var r = (int[])simp[k];
                 s[k * 2] = r[0];
                 s[k * 2 + 1] = r[1];
             }
@@ -1270,36 +1391,52 @@ namespace iTextSharp.text.pdf
         /// <returns>the simple file name</returns>
         protected static string GetTtcName(string name)
         {
-            int idx = name.IndexOf(".ttc,", StringComparison.OrdinalIgnoreCase);
+            var idx = name.IndexOf(".ttc,", StringComparison.OrdinalIgnoreCase);
             if (idx < 0)
+            {
                 return name;
+            }
             else
+            {
                 return name.Substring(0, idx + 4);
+            }
         }
 
         protected void AddRangeUni(Hashtable longTag, bool includeMetrics, bool subsetp)
         {
             if (!subsetp && (SubsetRanges != null || DirectoryOffset > 0))
             {
-                int[] rg = (SubsetRanges == null && DirectoryOffset > 0) ? new[] { 0, 0xffff } : CompactRanges(SubsetRanges);
+                var rg = (SubsetRanges == null && DirectoryOffset > 0) ? new[] { 0, 0xffff } : CompactRanges(SubsetRanges);
                 Hashtable usemap;
                 if (!FontSpecific && Cmap31 != null)
+                {
                     usemap = Cmap31;
+                }
                 else if (FontSpecific && Cmap10 != null)
+                {
                     usemap = Cmap10;
+                }
                 else if (Cmap31 != null)
+                {
                     usemap = Cmap31;
+                }
                 else
+                {
                     usemap = Cmap10;
+                }
+
                 foreach (DictionaryEntry e in usemap)
                 {
-                    int[] v = (int[])e.Value;
-                    int gi = v[0];
+                    var v = (int[])e.Value;
+                    var gi = v[0];
                     if (longTag.ContainsKey(gi))
+                    {
                         continue;
-                    int c = (int)e.Key;
-                    bool skip = true;
-                    for (int k = 0; k < rg.Length; k += 2)
+                    }
+
+                    var c = (int)e.Key;
+                    var skip = true;
+                    for (var k = 0; k < rg.Length; k += 2)
                     {
                         if (c >= rg[k] && c <= rg[k + 1])
                         {
@@ -1308,7 +1445,9 @@ namespace iTextSharp.text.pdf
                         }
                     }
                     if (!skip)
+                    {
                         longTag[gi] = includeMetrics ? new[] { v[0], v[1], c } : null;
+                    }
                 }
             }
         }
@@ -1325,7 +1464,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the PdfDictionary containing the font dictionary</returns>
         protected PdfDictionary GetFontBaseType(PdfIndirectReference fontDescriptor, string subsetPrefix, int firstChar, int lastChar, byte[] shortTag)
         {
-            PdfDictionary dic = new PdfDictionary(PdfName.Font);
+            var dic = new PdfDictionary(PdfName.Font);
             if (Cff)
             {
                 dic.Put(PdfName.Subtype, PdfName.Type1);
@@ -1339,7 +1478,7 @@ namespace iTextSharp.text.pdf
             dic.Put(PdfName.Basefont, new PdfName(subsetPrefix + FontName + Style));
             if (!FontSpecific)
             {
-                for (int k = firstChar; k <= lastChar; ++k)
+                for (var k = firstChar; k <= lastChar; ++k)
                 {
                     if (!differences[k].Equals(notdef))
                     {
@@ -1348,13 +1487,15 @@ namespace iTextSharp.text.pdf
                     }
                 }
                 if (encoding.Equals(CP1252) || encoding.Equals(MACROMAN))
+                {
                     dic.Put(PdfName.Encoding, encoding.Equals(CP1252) ? PdfName.WinAnsiEncoding : PdfName.MacRomanEncoding);
+                }
                 else
                 {
-                    PdfDictionary enc = new PdfDictionary(PdfName.Encoding);
-                    PdfArray dif = new PdfArray();
-                    bool gap = true;
-                    for (int k = firstChar; k <= lastChar; ++k)
+                    var enc = new PdfDictionary(PdfName.Encoding);
+                    var dif = new PdfArray();
+                    var gap = true;
+                    for (var k = firstChar; k <= lastChar; ++k)
                     {
                         if (shortTag[k] != 0)
                         {
@@ -1366,7 +1507,9 @@ namespace iTextSharp.text.pdf
                             dif.Add(new PdfName(differences[k]));
                         }
                         else
+                        {
                             gap = true;
+                        }
                     }
                     enc.Put(PdfName.Differences, dif);
                     dic.Put(PdfName.Encoding, enc);
@@ -1374,17 +1517,24 @@ namespace iTextSharp.text.pdf
             }
             dic.Put(PdfName.Firstchar, new PdfNumber(firstChar));
             dic.Put(PdfName.Lastchar, new PdfNumber(lastChar));
-            PdfArray wd = new PdfArray();
-            for (int k = firstChar; k <= lastChar; ++k)
+            var wd = new PdfArray();
+            for (var k = firstChar; k <= lastChar; ++k)
             {
                 if (shortTag[k] == 0)
+                {
                     wd.Add(new PdfNumber(0));
+                }
                 else
+                {
                     wd.Add(new PdfNumber(widths[k]));
+                }
             }
             dic.Put(PdfName.Widths, wd);
             if (fontDescriptor != null)
+            {
                 dic.Put(PdfName.Fontdescriptor, fontDescriptor);
+            }
+
             return dic;
         }
 
@@ -1398,7 +1548,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the PdfDictionary containing the font descriptor or  null </returns>
         protected PdfDictionary GetFontDescriptor(PdfIndirectReference fontStream, string subsetPrefix, PdfIndirectReference cidset)
         {
-            PdfDictionary dic = new PdfDictionary(PdfName.Fontdescriptor);
+            var dic = new PdfDictionary(PdfName.Fontdescriptor);
             dic.Put(PdfName.Ascent, new PdfNumber(Os2.STypoAscender * 1000 / Head.UnitsPerEm));
             dic.Put(PdfName.Capheight, new PdfNumber(Os2.SCapHeight * 1000 / Head.UnitsPerEm));
             dic.Put(PdfName.Descent, new PdfNumber(Os2.STypoDescender * 1000 / Head.UnitsPerEm));
@@ -1408,33 +1558,56 @@ namespace iTextSharp.text.pdf
             Head.XMax * 1000 / Head.UnitsPerEm,
             Head.YMax * 1000 / Head.UnitsPerEm));
             if (cidset != null)
+            {
                 dic.Put(PdfName.Cidset, cidset);
+            }
+
             if (Cff)
             {
                 if (encoding.StartsWith("Identity-"))
+                {
                     dic.Put(PdfName.Fontname, new PdfName(subsetPrefix + FontName + "-" + encoding));
+                }
                 else
+                {
                     dic.Put(PdfName.Fontname, new PdfName(subsetPrefix + FontName + Style));
+                }
             }
             else
+            {
                 dic.Put(PdfName.Fontname, new PdfName(subsetPrefix + FontName + Style));
+            }
+
             dic.Put(PdfName.Italicangle, new PdfNumber(ItalicAngle));
             dic.Put(PdfName.Stemv, new PdfNumber(80));
             if (fontStream != null)
             {
                 if (Cff)
+                {
                     dic.Put(PdfName.Fontfile3, fontStream);
+                }
                 else
+                {
                     dic.Put(PdfName.Fontfile2, fontStream);
+                }
             }
-            int flags = 0;
+            var flags = 0;
             if (IsFixedPitch)
+            {
                 flags |= 1;
+            }
+
             flags |= FontSpecific ? 4 : 32;
             if ((Head.MacStyle & 2) != 0)
+            {
                 flags |= 64;
+            }
+
             if ((Head.MacStyle & 1) != 0)
+            {
                 flags |= 262144;
+            }
+
             dic.Put(PdfName.Flags, new PdfNumber(flags));
 
             return dic;
@@ -1447,13 +1620,13 @@ namespace iTextSharp.text.pdf
             {
                 rf2 = new RandomAccessFileOrArray(Rf);
                 rf2.ReOpen();
-                byte[] b = new byte[rf2.Length];
+                var b = new byte[rf2.Length];
                 rf2.ReadFully(b);
                 return b;
             }
             finally
             {
-                try { if (rf2 != null) rf2.Close(); } catch { }
+                try { if (rf2 != null) { rf2.Close(); } } catch { }
             }
         }
 
@@ -1465,7 +1638,10 @@ namespace iTextSharp.text.pdf
         protected int GetGlyphWidth(int glyph)
         {
             if (glyph >= GlyphWidths.Length)
+            {
                 glyph = GlyphWidths.Length - 1;
+            }
+
             return GlyphWidths[glyph];
         }
 
@@ -1473,14 +1649,25 @@ namespace iTextSharp.text.pdf
         {
             Hashtable map = null;
             if (name == null || Cmap31 == null)
+            {
                 map = Cmap10;
+            }
             else
+            {
                 map = Cmap31;
+            }
+
             if (map == null)
+            {
                 return null;
-            int[] metric = (int[])map[c];
+            }
+
+            var metric = (int[])map[c];
             if (metric == null || Bboxes == null)
+            {
                 return null;
+            }
+
             return Bboxes[metric[0]];
         }
 
@@ -1495,10 +1682,13 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])Tables["hmtx"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'hmtx' does not exist in " + FileName + Style);
+            }
+
             Rf.Seek(tableLocation[0]);
             GlyphWidths = new int[Hhea.NumberOfHMetrics];
-            for (int k = 0; k < Hhea.NumberOfHMetrics; ++k)
+            for (var k = 0; k < Hhea.NumberOfHMetrics; ++k)
             {
                 GlyphWidths[k] = (Rf.ReadUnsignedShort() * 1000) / Head.UnitsPerEm;
                 Rf.ReadUnsignedShort();
@@ -1514,7 +1704,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the  string  read</returns>
         protected string ReadStandardString(int length)
         {
-            byte[] buf = new byte[length];
+            var buf = new byte[length];
             Rf.ReadFully(buf);
             return EncodingsRegistry.Instance.GetEncoding(1252).GetString(buf);
         }
@@ -1529,9 +1719,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the  string  read</returns>
         protected string ReadUnicodeString(int length)
         {
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
             length /= 2;
-            for (int k = 0; k < length; ++k)
+            for (var k = 0; k < length; ++k)
             {
                 buf.Append(Rf.ReadChar());
             }
@@ -1543,36 +1733,49 @@ namespace iTextSharp.text.pdf
             int[] tableLocation;
             tableLocation = (int[])Tables["head"];
             if (tableLocation == null)
+            {
                 throw new DocumentException("Table 'head' does not exist in " + FileName + Style);
+            }
+
             Rf.Seek(tableLocation[0] + TrueTypeFontSubSet.HeadLocaFormatOffset);
-            bool locaShortTable = (Rf.ReadUnsignedShort() == 0);
+            var locaShortTable = (Rf.ReadUnsignedShort() == 0);
             tableLocation = (int[])Tables["loca"];
             if (tableLocation == null)
+            {
                 return;
+            }
+
             Rf.Seek(tableLocation[0]);
             int[] locaTable;
             if (locaShortTable)
             {
-                int entries = tableLocation[1] / 2;
+                var entries = tableLocation[1] / 2;
                 locaTable = new int[entries];
-                for (int k = 0; k < entries; ++k)
+                for (var k = 0; k < entries; ++k)
+                {
                     locaTable[k] = Rf.ReadUnsignedShort() * 2;
+                }
             }
             else
             {
-                int entries = tableLocation[1] / 4;
+                var entries = tableLocation[1] / 4;
                 locaTable = new int[entries];
-                for (int k = 0; k < entries; ++k)
+                for (var k = 0; k < entries; ++k)
+                {
                     locaTable[k] = Rf.ReadInt();
+                }
             }
             tableLocation = (int[])Tables["glyf"];
             if (tableLocation == null)
-                throw new DocumentException("Table 'glyf' does not exist in " + FileName + Style);
-            int tableGlyphOffset = tableLocation[0];
-            Bboxes = new int[locaTable.Length - 1][];
-            for (int glyph = 0; glyph < locaTable.Length - 1; ++glyph)
             {
-                int start = locaTable[glyph];
+                throw new DocumentException("Table 'glyf' does not exist in " + FileName + Style);
+            }
+
+            var tableGlyphOffset = tableLocation[0];
+            Bboxes = new int[locaTable.Length - 1][];
+            for (var glyph = 0; glyph < locaTable.Length - 1; ++glyph)
+            {
+                var start = locaTable[glyph];
                 if (start != locaTable[glyph + 1])
                 {
                     Rf.Seek(tableGlyphOffset + start + 2);
@@ -1594,6 +1797,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal int Flags;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1603,6 +1807,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal int UnitsPerEm;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1612,6 +1817,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal short XMin;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1637,6 +1843,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal short Ascender;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1651,18 +1858,22 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal short Descender;
+
             /// <summary>
             /// A variable.
             /// </summary>
             internal short LineGap;
+
             /// <summary>
             /// A variable.
             /// </summary>
             internal short MinLeftSideBearing;
+
             /// <summary>
             /// A variable.
             /// </summary>
             internal short MinRightSideBearing;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1768,6 +1979,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal short XAvgCharWidth;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1787,6 +1999,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal short YSubscriptXSize;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1796,6 +2009,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal short YSubscriptYSize;
+
             /// <summary>
             /// A variable.
             /// </summary>
@@ -1805,6 +2019,7 @@ namespace iTextSharp.text.pdf
             /// A variable.
             /// </summary>
             internal short YSuperscriptXSize;
+
             /// <summary>
             /// A variable.
             /// </summary>

@@ -68,24 +68,12 @@ namespace iTextSharp.text
         /// Getter for the JBIG2 global data.
         /// </summary>
         /// <returns>an array of bytes</returns>
-        public byte[] GlobalBytes
-        {
-            get
-            {
-                return _global;
-            }
-        }
+        public byte[] GlobalBytes => _global;
 
         /// <summary>
         /// Getter for the unique hash.
         /// </summary>
         /// <returns>an array of bytes</returns>
-        public byte[] GlobalHash
-        {
-            get
-            {
-                return _globalHash;
-            }
-        }
+        public byte[] GlobalHash => _globalHash;
     }
 }

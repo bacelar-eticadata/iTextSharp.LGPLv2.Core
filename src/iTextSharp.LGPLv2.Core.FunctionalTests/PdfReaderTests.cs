@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests
 {
@@ -119,8 +118,8 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
 
             pdfDoc.Add(new Paragraph("Test"));
 
-            PdfContentByte cb = pdfWriter.DirectContent;
-            BaseFont bf = BaseFont.CreateFont();
+            var cb = pdfWriter.DirectContent;
+            var bf = BaseFont.CreateFont();
             cb.BeginText();
             cb.SetFontAndSize(bf, 12);
             cb.MoveText(88.66f, 367);
@@ -133,7 +132,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
             cb.ShowText("He");
             cb.EndText();
 
-            PdfTemplate tmp = cb.CreateTemplate(250, 25);
+            var tmp = cb.CreateTemplate(250, 25);
             tmp.BeginText();
             tmp.SetFontAndSize(bf, 12);
             tmp.MoveText(0, 7);

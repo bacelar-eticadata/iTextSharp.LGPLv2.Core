@@ -15,17 +15,17 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var stream = new FileStream(pdfFilePath, FileMode.Create);
 
             // step 1
-            Rectangle rect = new Rectangle(-1192, -1685, 1192, 1685);
+            var rect = new Rectangle(-1192, -1685, 1192, 1685);
             var document = new Document(rect);
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfContentByte content = writer.DirectContent;
-            PdfTemplate template = createTemplate(content, rect, 4);
+            var content = writer.DirectContent;
+            var template = createTemplate(content, rect, 4);
             content.AddTemplate(template, -1192, -1685);
             content.MoveTo(-595, 0);
             content.LineTo(595, 0);
@@ -49,7 +49,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document();
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
@@ -72,7 +72,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static PdfTemplate createTemplate(PdfContentByte content, Rectangle rect, int factor)
         {
-            PdfTemplate template = content.CreateTemplate(rect.Width, rect.Height);
+            var template = content.CreateTemplate(rect.Width, rect.Height);
             template.ConcatCtm(factor, 0, 0, factor, 0, 0);
 
             var hero = TestUtils.GetTxtPath("hero.txt");

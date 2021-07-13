@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -18,12 +18,12 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document();
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfContentByte canvas = writer.DirectContent;
+            var canvas = writer.DirectContent;
             // draw squares
             createSquares(canvas, 50, 720, 80, 20);
             ColumnText.ShowTextAligned(
@@ -59,7 +59,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             canvas.RoundRectangle(370, 270, 80, 60, 20);
             canvas.FillStroke();
             canvas.RestoreState();
-            Rectangle rect = new Rectangle(470, 270, 550, 330)
+            var rect = new Rectangle(470, 270, 550, 330)
             {
                 BorderWidthBottom = 10,
                 BorderColorBottom = new GrayColor(0f),
@@ -79,9 +79,9 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             TestUtils.VerifyPdfFileIsReadable(pdfFilePath);
         }
 
-        static void createCircle(PdfContentByte canvas, float x, float y, float r, bool clockwise)
+        private static void createCircle(PdfContentByte canvas, float x, float y, float r, bool clockwise)
         {
-            float b = 0.5523f;
+            var b = 0.5523f;
             if (clockwise)
             {
                 canvas.MoveTo(x + r, y);
@@ -100,7 +100,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             }
         }
 
-        static void createStar(PdfContentByte canvas, float x, float y)
+        private static void createStar(PdfContentByte canvas, float x, float y)
         {
             canvas.MoveTo(x + 10, y);
             canvas.LineTo(x + 80, y + 60);
@@ -110,7 +110,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             canvas.ClosePath();
         }
 
-        static void createStarsAndCircles(PdfContentByte canvas, float x, float y, float radius, float gutter)
+        private static void createStarsAndCircles(PdfContentByte canvas, float x, float y, float radius, float gutter)
         {
             canvas.SaveState();
             canvas.SetColorStroke(new GrayColor(0.2f));
@@ -142,7 +142,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             canvas.RestoreState();
         }
 
-        void createBezierCurves(PdfContentByte cb, float x0, float y0,
+        private void createBezierCurves(PdfContentByte cb, float x0, float y0,
                 float x1, float y1, float x2, float y2, float x3,
                 float y3, float distance)
         {
@@ -171,7 +171,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             cb.Stroke();
         }
 
-        void createSquares(PdfContentByte canvas,
+        private void createSquares(PdfContentByte canvas,
                                   float x, float y, float side, float gutter)
         {
             canvas.SaveState();

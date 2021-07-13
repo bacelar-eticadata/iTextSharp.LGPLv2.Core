@@ -3,7 +3,6 @@ using System.Collections;
 
 namespace iTextSharp.text.rtf.parser.ctrlwords
 {
-
     /// <summary>
     ///  RtfCtrlWordMgr  handles the dispatching of control words from
     /// the table of known control words.
@@ -16,13 +15,14 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         public static bool DebugFound = false;
         public static bool DebugNotFound = true;
         private readonly RtfCtrlWordMap _ctrlWordMap;
+
         /// <summary>
         /// The  RtfCtrlWordListener .
         /// </summary>
         private readonly ArrayList _listeners = new ArrayList();
 
-        private PushbackStream _reader;
-        private RtfParser _rtfParser;
+        private readonly PushbackStream _reader;
+        private readonly RtfParser _rtfParser;
         /// <summary>
         /// // TIMING DEBUG INFO
         /// </summary>
@@ -90,7 +90,7 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         public int HandleKeyword(RtfCtrlWordData ctrlWordData, int groupLevel)
         {
             //TODO: May be used for event handling.
-            int result = RtfParser.errOK;
+            var result = RtfParser.errOK;
 
             // Call before handler event here
             beforeCtrlWord(ctrlWordData);
@@ -142,10 +142,10 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// <returns>errOK if ok, otherwise an error code.</returns>
         private int dispatchKeyword(RtfCtrlWordData ctrlWordData, int groupLevel)
         {
-            int result = RtfParser.errOK;
+            var result = RtfParser.errOK;
             if (ctrlWordData != null)
             {
-                RtfCtrlWordHandler ctrlWord = _ctrlWordMap.GetCtrlWordHandler(ctrlWordData.CtrlWord);
+                var ctrlWord = _ctrlWordMap.GetCtrlWordHandler(ctrlWordData.CtrlWord);
                 if (ctrlWord != null)
                 {
                     ctrlWord.HandleControlword(ctrlWordData);
@@ -172,6 +172,7 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
             }
             return result;
         }
+
         private bool onCtrlWord(RtfCtrlWordData ctrlWordData)
         {
             foreach (IRtfCtrlWordListener listener in _listeners)

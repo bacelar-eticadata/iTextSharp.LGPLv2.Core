@@ -1,8 +1,8 @@
-using System;
-using System.Text;
-using System.Collections;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.draw;
+using System;
+using System.Collections;
+using System.Text;
 
 namespace iTextSharp.text
 {
@@ -204,7 +204,7 @@ namespace iTextSharp.text
         /// <param name="offsetY">the image offset in the y direction</param>
         public Chunk(Image image, float offsetX, float offsetY) : this(OBJECT_REPLACEMENT_CHARACTER, new Font())
         {
-            Image copyImage = Image.GetInstance(image);
+            var copyImage = Image.GetInstance(image);
             copyImage.SetAbsolutePosition(float.NaN, float.NaN);
             setAttribute(IMAGE, new object[] { copyImage, offsetX, offsetY, false });
         }
@@ -282,14 +282,8 @@ namespace iTextSharp.text
         /// <value>a Hashtable</value>
         public Hashtable Attributes
         {
-            get
-            {
-                return attributes;
-            }
-            set
-            {
-                attributes = value;
-            }
+            get => attributes;
+            set => attributes = value;
         }
 
         /// <summary>
@@ -300,8 +294,10 @@ namespace iTextSharp.text
         {
             get
             {
-                ArrayList tmp = new ArrayList();
-                tmp.Add(this);
+                var tmp = new ArrayList
+                {
+                    this
+                };
                 return tmp;
             }
         }
@@ -310,13 +306,7 @@ namespace iTextSharp.text
         /// Returns the content of this Chunk.
         /// </summary>
         /// <value>a string</value>
-        public virtual string Content
-        {
-            get
-            {
-                return content.ToString();
-            }
-        }
+        public virtual string Content => content.ToString();
 
         /// <summary>
         /// Get/set the font of this Chunk.
@@ -324,15 +314,9 @@ namespace iTextSharp.text
         /// <value>a Font</value>
         public virtual Font Font
         {
-            get
-            {
-                return font;
-            }
+            get => font;
 
-            set
-            {
-                font = value;
-            }
+            set => font = value;
         }
 
         /// <summary>
@@ -343,9 +327,17 @@ namespace iTextSharp.text
         {
             get
             {
-                if (attributes == null) return 1f;
-                object f = attributes[HSCALE];
-                if (f == null) return 1f;
+                if (attributes == null)
+                {
+                    return 1f;
+                }
+
+                var f = attributes[HSCALE];
+                if (f == null)
+                {
+                    return 1f;
+                }
+
                 return (float)f;
             }
         }
@@ -354,13 +346,7 @@ namespace iTextSharp.text
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public int Type
-        {
-            get
-            {
-                return Element.CHUNK;
-            }
-        }
+        public int Type => Element.CHUNK;
 
         /// <summary>
         /// Checks if a given tag corresponds with this object.
@@ -388,7 +374,11 @@ namespace iTextSharp.text
         /// </summary>
         public IHyphenationEvent GetHyphenation()
         {
-            if (attributes == null) return null;
+            if (attributes == null)
+            {
+                return null;
+            }
+
             return (IHyphenationEvent)attributes[HYPHENATION];
         }
 
@@ -398,10 +388,16 @@ namespace iTextSharp.text
         /// <value>an Image</value>
         public Image GetImage()
         {
-            if (attributes == null) return null;
-            object[] obj = (object[])attributes[IMAGE];
-            if (obj == null)
+            if (attributes == null)
+            {
                 return null;
+            }
+
+            var obj = (object[])attributes[IMAGE];
+            if (obj == null)
+            {
+                return null;
+            }
             else
             {
                 return (Image)obj[0];
@@ -722,9 +718,12 @@ namespace iTextSharp.text
         public Chunk SetUnderline(BaseColor color, float thickness, float thicknessMul, float yPosition, float yPositionMul, int cap)
         {
             if (attributes == null)
+            {
                 attributes = new Hashtable();
+            }
+
             object[] obj = { color, new[] { thickness, thicknessMul, yPosition, yPositionMul, cap } };
-            object[][] unders = Utilities.AddToArray((object[][])attributes[UNDERLINE], obj);
+            var unders = Utilities.AddToArray((object[][])attributes[UNDERLINE], obj);
             return setAttribute(UNDERLINE, unders);
         }
 
@@ -747,7 +746,10 @@ namespace iTextSharp.text
         private Chunk setAttribute(string name, object obj)
         {
             if (attributes == null)
+            {
                 attributes = new Hashtable();
+            }
+
             attributes[name] = obj;
             return this;
         }

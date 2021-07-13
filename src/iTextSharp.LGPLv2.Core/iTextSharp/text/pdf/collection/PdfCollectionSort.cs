@@ -7,7 +7,6 @@ namespace iTextSharp.text.pdf.collection
     /// </summary>
     public class PdfCollectionSort : PdfDictionary
     {
-
         /// <summary>
         /// Constructs a PDF Collection Sort Dictionary.
         /// </summary>
@@ -23,8 +22,8 @@ namespace iTextSharp.text.pdf.collection
         /// <param name="keys">the keys of the fields that will be used to sort entries</param>
         public PdfCollectionSort(string[] keys) : base(PdfName.Collectionsort)
         {
-            PdfArray array = new PdfArray();
-            for (int i = 0; i < keys.Length; i++)
+            var array = new PdfArray();
+            for (var i = 0; i < keys.Length; i++)
             {
                 array.Add(new PdfName(keys[i]));
             }
@@ -37,7 +36,7 @@ namespace iTextSharp.text.pdf.collection
         /// <param name="ascending">true is the default, use false for descending order</param>
         public void SetSortOrder(bool ascending)
         {
-            PdfObject o = Get(PdfName.S);
+            var o = Get(PdfName.S);
             if (o is PdfName)
             {
                 Put(PdfName.A, new PdfBoolean(ascending));
@@ -54,15 +53,15 @@ namespace iTextSharp.text.pdf.collection
         /// <param name="ascending">an array with every element corresponding with a name of a field.</param>
         public void SetSortOrder(bool[] ascending)
         {
-            PdfObject o = Get(PdfName.S);
+            var o = Get(PdfName.S);
             if (o is PdfArray)
             {
                 if (((PdfArray)o).Size != ascending.Length)
                 {
                     throw new InvalidOperationException("The number of booleans in this array doesn't correspond with the number of fields.");
                 }
-                PdfArray array = new PdfArray();
-                for (int i = 0; i < ascending.Length; i++)
+                var array = new PdfArray();
+                for (var i = 0; i < ascending.Length; i++)
                 {
                     array.Add(new PdfBoolean(ascending[i]));
                 }

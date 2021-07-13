@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+
 /*
  * Copyright 2007 ZXing authors
  *
@@ -16,8 +17,8 @@ using System.Text;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
-
+namespace iTextSharp.text.pdf.qrcode
+{
     /**
      * <p>Represents a 2D matrix of bits. In function arguments below, and throughout the common
      * module, x is the column position, and y is the row position. The ordering is always x, y.
@@ -33,26 +34,30 @@ namespace iTextSharp.text.pdf.qrcode {
      * @author Sean Owen
      * @author dswitkin@google.com (Daniel Switkin)
      */
-    public sealed class BitMatrix {
 
-        // TODO: Just like BitArray, these need to be public so ProGuard can inline them.
-        public int width;
-        public int height;
-        public int rowSize;
-        public int[] bits;
+    public sealed class BitMatrix
+    {
+        private readonly int width;
+        private readonly int height;
+        private readonly int rowSize;
+        private readonly int[] bits;
 
         // A helper to construct a square matrix.
-        public BitMatrix(int dimension) : this(dimension, dimension) {
+        public BitMatrix(int dimension) : this(dimension, dimension)
+        {
         }
 
-        public BitMatrix(int width, int height) {
-            if (width < 1 || height < 1) {
+        public BitMatrix(int width, int height)
+        {
+            if (width < 1 || height < 1)
+            {
                 throw new ArgumentException("Both dimensions must be greater than 0");
             }
             this.width = width;
             this.height = height;
-            int rowSize = width >> 5;
-            if ((width & 0x1f) != 0) {
+            var rowSize = width >> 5;
+            if ((width & 0x1f) != 0)
+            {
                 rowSize++;
             }
             this.rowSize = rowSize;
@@ -66,8 +71,10 @@ namespace iTextSharp.text.pdf.qrcode {
          * @param y The vertical component (i.e. which row)
          * @return value of given bit in matrix
          */
-        public bool Get(int x, int y) {
-            int offset = y * rowSize + (x >> 5);
+
+        public bool Get(int x, int y)
+        {
+            var offset = y * rowSize + (x >> 5);
             return ((bits[offset] >> (x & 0x1f)) & 1) != 0;
         }
 
@@ -77,8 +84,10 @@ namespace iTextSharp.text.pdf.qrcode {
          * @param x The horizontal component (i.e. which column)
          * @param y The vertical component (i.e. which row)
          */
-        public void Set(int x, int y) {
-            int offset = y * rowSize + (x >> 5);
+
+        public void Set(int x, int y)
+        {
+            var offset = y * rowSize + (x >> 5);
             bits[offset] |= 1 << (x & 0x1f);
         }
 
@@ -88,17 +97,22 @@ namespace iTextSharp.text.pdf.qrcode {
          * @param x The horizontal component (i.e. which column)
          * @param y The vertical component (i.e. which row)
          */
-        public void Flip(int x, int y) {
-            int offset = y * rowSize + (x >> 5);
+
+        public void Flip(int x, int y)
+        {
+            var offset = y * rowSize + (x >> 5);
             bits[offset] ^= 1 << (x & 0x1f);
         }
 
         /**
          * Clears all bits (sets to false).
          */
-        public void Clear() {
-            int max = bits.Length;
-            for (int i = 0; i < max; i++) {
+
+        public void Clear()
+        {
+            var max = bits.Length;
+            for (var i = 0; i < max; i++)
+            {
                 bits[i] = 0;
             }
         }
@@ -111,21 +125,28 @@ namespace iTextSharp.text.pdf.qrcode {
          * @param width The width of the region
          * @param height The height of the region
          */
-        public void SetRegion(int left, int top, int width, int height) {
-            if (top < 0 || left < 0) {
+
+        public void SetRegion(int left, int top, int width, int height)
+        {
+            if (top < 0 || left < 0)
+            {
                 throw new ArgumentException("Left and top must be nonnegative");
             }
-            if (height < 1 || width < 1) {
+            if (height < 1 || width < 1)
+            {
                 throw new ArgumentException("Height and width must be at least 1");
             }
-            int right = left + width;
-            int bottom = top + height;
-            if (bottom > this.height || right > this.width) {
+            var right = left + width;
+            var bottom = top + height;
+            if (bottom > this.height || right > this.width)
+            {
                 throw new ArgumentException("The region must fit inside the matrix");
             }
-            for (int y = top; y < bottom; y++) {
-                int offset = y * rowSize;
-                for (int x = left; x < right; x++) {
+            for (var y = top; y < bottom; y++)
+            {
+                var offset = y * rowSize;
+                for (var x = left; x < right; x++)
+                {
                     bits[offset + (x >> 5)] |= 1 << (x & 0x1f);
                 }
             }
@@ -139,12 +160,16 @@ namespace iTextSharp.text.pdf.qrcode {
          * @return The resulting BitArray - this reference should always be used even when passing
          *         your own row
          */
-        public BitArray GetRow(int y, BitArray row) {
-            if (row == null || row.GetSize() < width) {
+
+        public BitArray GetRow(int y, BitArray row)
+        {
+            if (row == null || row.GetSize() < width)
+            {
                 row = new BitArray(width);
             }
-            int offset = y * rowSize;
-            for (int x = 0; x < rowSize; x++) {
+            var offset = y * rowSize;
+            for (var x = 0; x < rowSize; x++)
+            {
                 row.SetBulk(x << 5, bits[offset + x]);
             }
             return row;
@@ -153,14 +178,18 @@ namespace iTextSharp.text.pdf.qrcode {
         /**
          * @return The width of the matrix
          */
-        public int GetWidth() {
+
+        public int GetWidth()
+        {
             return width;
         }
 
         /**
          * @return The height of the matrix
          */
-        public int GetHeight() {
+
+        public int GetHeight()
+        {
             return height;
         }
 
@@ -170,23 +199,28 @@ namespace iTextSharp.text.pdf.qrcode {
          *
          * @return row/column dimension of this matrix
          */
-        public int GetDimension() {
-            if (width != height) {
+
+        public int GetDimension()
+        {
+            if (width != height)
+            {
                 throw new InvalidOperationException("Can't call GetDimension() on a non-square matrix");
             }
             return width;
         }
 
-        public override String ToString() {
-            StringBuilder result = new StringBuilder(height * (width + 1));
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
+        public override string ToString()
+        {
+            var result = new StringBuilder(height * (width + 1));
+            for (var y = 0; y < height; y++)
+            {
+                for (var x = 0; x < width; x++)
+                {
                     result.Append(Get(x, y) ? "X " : "  ");
                 }
                 result.Append('\n');
             }
             return result.ToString();
         }
-
     }
 }

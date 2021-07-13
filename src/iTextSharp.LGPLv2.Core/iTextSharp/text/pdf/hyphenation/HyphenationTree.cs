@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
-using System.Collections;
 
 namespace iTextSharp.text.pdf.hyphenation
 {
@@ -53,13 +53,13 @@ namespace iTextSharp.text.pdf.hyphenation
         protected int PackValues(string values)
         {
             int i, n = values.Length;
-            int m = (n & 1) == 1 ? (n >> 1) + 2 : (n >> 1) + 1;
-            int offset = Vspace.Alloc(m);
-            byte[] va = Vspace.Arr;
+            var m = (n & 1) == 1 ? (n >> 1) + 2 : (n >> 1) + 1;
+            var offset = Vspace.Alloc(m);
+            var va = Vspace.Arr;
             for (i = 0; i < n; i++)
             {
-                int j = i >> 1;
-                byte v = (byte)((values[i] - '0' + 1) & 0x0f);
+                var j = i >> 1;
+                var v = (byte)((values[i] - '0' + 1) & 0x0f);
                 if ((i & 1) == 1)
                 {
                     va[j + offset] = (byte)(va[j + offset] | v);
@@ -75,11 +75,11 @@ namespace iTextSharp.text.pdf.hyphenation
 
         protected string UnpackValues(int k)
         {
-            StringBuilder buf = new StringBuilder();
-            byte v = Vspace[k++];
+            var buf = new StringBuilder();
+            var v = Vspace[k++];
             while (v != 0)
             {
-                char c = (char)((v >> 4) - 1 + '0');
+                var c = (char)((v >> 4) - 1 + '0');
                 buf.Append(c);
                 c = (char)(v & 0x0f);
                 if (c == 0)
@@ -95,7 +95,7 @@ namespace iTextSharp.text.pdf.hyphenation
 
         public void LoadSimplePatterns(Stream stream)
         {
-            SimplePatternParser pp = new SimplePatternParser();
+            var pp = new SimplePatternParser();
             _ivalues = new TernaryTree();
 
             pp.Parse(stream, this);
@@ -110,10 +110,9 @@ namespace iTextSharp.text.pdf.hyphenation
             _ivalues = null;
         }
 
-
         public string FindPattern(string pat)
         {
-            int k = Find(pat);
+            var k = Find(pat);
             if (k >= 0)
             {
                 return UnpackValues(k);
@@ -143,11 +142,11 @@ namespace iTextSharp.text.pdf.hyphenation
 
         protected byte[] GetValues(int k)
         {
-            StringBuilder buf = new StringBuilder();
-            byte v = Vspace[k++];
+            var buf = new StringBuilder();
+            var v = Vspace[k++];
             while (v != 0)
             {
-                char c = (char)((v >> 4) - 1);
+                var c = (char)((v >> 4) - 1);
                 buf.Append(c);
                 c = (char)(v & 0x0f);
                 if (c == 0)
@@ -158,8 +157,8 @@ namespace iTextSharp.text.pdf.hyphenation
                 buf.Append(c);
                 v = Vspace[k++];
             }
-            byte[] res = new byte[buf.Length];
-            for (int i = 0; i < res.Length; i++)
+            var res = new byte[buf.Length];
+            for (var i = 0; i < res.Length; i++)
             {
                 res[i] = (byte)buf[i];
             }
@@ -186,9 +185,9 @@ namespace iTextSharp.text.pdf.hyphenation
         protected void SearchPatterns(char[] word, int index, byte[] il)
         {
             byte[] values;
-            int i = index;
+            var i = index;
             char p, q;
-            char sp = word[i];
+            var sp = word[i];
             p = Root;
 
             while (p > 0 && p < Sc.Length)
@@ -198,8 +197,8 @@ namespace iTextSharp.text.pdf.hyphenation
                     if (Hstrcmp(word, i, Kv.Arr, Lo[p]) == 0)
                     {
                         values = GetValues(Eq[p]);    // data pointer is in eq[]
-                        int j = index;
-                        for (int k = 0; k < values.Length; k++)
+                        var j = index;
+                        for (var k = 0; k < values.Length; k++)
                         {
                             if (j < il.Length && values[k] > il[j])
                             {
@@ -210,7 +209,7 @@ namespace iTextSharp.text.pdf.hyphenation
                     }
                     return;
                 }
-                int d = sp - Sc[p];
+                var d = sp - Sc[p];
                 if (d == 0)
                 {
                     if (sp == 0)
@@ -232,8 +231,8 @@ namespace iTextSharp.text.pdf.hyphenation
                         if (Sc[q] == 0)
                         {
                             values = GetValues(Eq[q]);
-                            int j = index;
-                            for (int k = 0; k < values.Length; k++)
+                            var j = index;
+                            for (var k = 0; k < values.Length; k++)
                             {
                                 if (j < il.Length && values[k] > il[j])
                                 {
@@ -275,7 +274,7 @@ namespace iTextSharp.text.pdf.hyphenation
         public Hyphenation Hyphenate(string word, int remainCharCount,
                                     int pushCharCount)
         {
-            char[] w = word.ToCharArray();
+            var w = word.ToCharArray();
             return Hyphenate(w, 0, w.Length, remainCharCount, pushCharCount);
         }
 
@@ -318,17 +317,17 @@ namespace iTextSharp.text.pdf.hyphenation
                                     int remainCharCount, int pushCharCount)
         {
             int i;
-            char[] word = new char[len + 3];
+            var word = new char[len + 3];
 
             // normalize word
-            char[] c = new char[2];
-            int iIgnoreAtBeginning = 0;
-            int iLength = len;
-            bool bEndOfLetters = false;
+            var c = new char[2];
+            var iIgnoreAtBeginning = 0;
+            var iLength = len;
+            var bEndOfLetters = false;
             for (i = 1; i <= len; i++)
             {
                 c[0] = w[offset + i - 1];
-                int nc = Classmap.Find(c, 0);
+                var nc = Classmap.Find(c, 0);
                 if (nc < 0)
                 {    // found a non-letter character ...
                     if (i == (1 + iIgnoreAtBeginning))
@@ -361,19 +360,19 @@ namespace iTextSharp.text.pdf.hyphenation
                 // word is too short to be hyphenated
                 return null;
             }
-            int[] result = new int[len + 1];
-            int k = 0;
+            var result = new int[len + 1];
+            var k = 0;
 
             // check exception list first
-            string sw = new string(word, 1, len);
+            var sw = new string(word, 1, len);
             if (Stoplist.ContainsKey(sw))
             {
                 // assume only simple hyphens (Hyphen.pre="-", Hyphen.post = Hyphen.no = null)
-                ArrayList hw = (ArrayList)Stoplist[sw];
-                int j = 0;
+                var hw = (ArrayList)Stoplist[sw];
+                var j = 0;
                 for (i = 0; i < hw.Count; i++)
                 {
-                    object o = hw[i];
+                    var o = hw[i];
                     // j = Index(sw) = Letterindex(word)?
                     // result[k] = corresponding Index(w)
                     if (o is string)
@@ -392,7 +391,7 @@ namespace iTextSharp.text.pdf.hyphenation
                 word[0] = '.';                    // word start marker
                 word[len + 1] = '.';              // word end marker
                 word[len + 2] = (char)0;                // null terminated
-                byte[] il = new byte[len + 3];    // initialized to zero
+                var il = new byte[len + 3];    // initialized to zero
                 for (i = 0; i < len + 1; i++)
                 {
                     SearchPatterns(word, i, il);
@@ -412,11 +411,10 @@ namespace iTextSharp.text.pdf.hyphenation
                 }
             }
 
-
             if (k > 0)
             {
                 // trim result array
-                int[] res = new int[k];
+                var res = new int[k];
                 Array.Copy(result, 0, res, 0, k);
                 return new Hyphenation(new string(w, offset, len), res);
             }
@@ -442,10 +440,10 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             if (chargroup.Length > 0)
             {
-                char equivChar = chargroup[0];
-                char[] key = new char[2];
+                var equivChar = chargroup[0];
+                var key = new char[2];
                 key[1] = (char)0;
-                for (int i = 0; i < chargroup.Length; i++)
+                for (var i = 0; i < chargroup.Length; i++)
                 {
                     key[0] = chargroup[i];
                     Classmap.Insert(key, 0, equivChar);
@@ -478,7 +476,7 @@ namespace iTextSharp.text.pdf.hyphenation
         /// <param name="ivalue">interletter weight values indicating the</param>
         public void AddPattern(string pattern, string ivalue)
         {
-            int k = _ivalues.Find(ivalue);
+            var k = _ivalues.Find(ivalue);
             if (k <= 0)
             {
                 k = PackValues(ivalue);

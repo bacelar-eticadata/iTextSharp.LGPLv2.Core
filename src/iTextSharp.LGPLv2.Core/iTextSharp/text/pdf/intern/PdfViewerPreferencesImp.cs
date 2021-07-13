@@ -62,6 +62,7 @@ namespace iTextSharp.text.pdf.intern
                 PdfName.Printpagerange,         // 15
                 PdfName.Numcopies               // 16
             };
+
         /// <summary>
         /// The mask to decide if a ViewerPreferences dictionary is needed
         /// </summary>
@@ -80,13 +81,7 @@ namespace iTextSharp.text.pdf.intern
         /// <summary>
         /// Returns the page layout and page mode value.
         /// </summary>
-        public int PageLayoutAndMode
-        {
-            get
-            {
-                return _pageLayoutAndMode;
-            }
-        }
+        public int PageLayoutAndMode => _pageLayoutAndMode;
 
         /// <summary>
         /// Sets the viewer preferences as the sum of several constants.
@@ -97,7 +92,7 @@ namespace iTextSharp.text.pdf.intern
         {
             set
             {
-                int preferences = value;
+                var preferences = value;
                 _pageLayoutAndMode |= preferences;
                 // for backwards compatibility, it is also possible
                 // to set the following viewer preferences with this method:
@@ -105,60 +100,103 @@ namespace iTextSharp.text.pdf.intern
                 {
                     _pageLayoutAndMode = ~ViewerPreferencesMask & _pageLayoutAndMode;
                     if ((preferences & PdfWriter.HideToolbar) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Hidetoolbar, PdfBoolean.Pdftrue);
+                    }
+
                     if ((preferences & PdfWriter.HideMenubar) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Hidemenubar, PdfBoolean.Pdftrue);
+                    }
+
                     if ((preferences & PdfWriter.HideWindowUI) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Hidewindowui, PdfBoolean.Pdftrue);
+                    }
+
                     if ((preferences & PdfWriter.FitWindow) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Fitwindow, PdfBoolean.Pdftrue);
+                    }
+
                     if ((preferences & PdfWriter.CenterWindow) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Centerwindow, PdfBoolean.Pdftrue);
+                    }
+
                     if ((preferences & PdfWriter.DisplayDocTitle) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Displaydoctitle, PdfBoolean.Pdftrue);
+                    }
 
                     if ((preferences & PdfWriter.NonFullScreenPageModeUseNone) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Nonfullscreenpagemode, PdfName.Usenone);
+                    }
                     else if ((preferences & PdfWriter.NonFullScreenPageModeUseOutlines) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Nonfullscreenpagemode, PdfName.Useoutlines);
+                    }
                     else if ((preferences & PdfWriter.NonFullScreenPageModeUseThumbs) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Nonfullscreenpagemode, PdfName.Usethumbs);
+                    }
                     else if ((preferences & PdfWriter.NonFullScreenPageModeUseOC) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Nonfullscreenpagemode, PdfName.Useoc);
+                    }
 
                     if ((preferences & PdfWriter.DirectionL2R) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Direction, PdfName.L2R);
+                    }
                     else if ((preferences & PdfWriter.DirectionR2L) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Direction, PdfName.R2L);
+                    }
 
                     if ((preferences & PdfWriter.PrintScalingNone) != 0)
+                    {
                         _viewerPreferences.Put(PdfName.Printscaling, PdfName.None);
+                    }
                 }
             }
         }
 
         public static PdfViewerPreferencesImp GetViewerPreferences(PdfDictionary catalog)
         {
-            PdfViewerPreferencesImp preferences = new PdfViewerPreferencesImp();
-            int prefs = 0;
+            var preferences = new PdfViewerPreferencesImp();
+            var prefs = 0;
             PdfName name = null;
             // page layout
-            PdfObject obj = PdfReader.GetPdfObjectRelease(catalog.Get(PdfName.Pagelayout));
+            var obj = PdfReader.GetPdfObjectRelease(catalog.Get(PdfName.Pagelayout));
             if (obj != null && obj.IsName())
             {
                 name = (PdfName)obj;
                 if (name.Equals(PdfName.Singlepage))
+                {
                     prefs |= PdfWriter.PageLayoutSinglePage;
+                }
                 else if (name.Equals(PdfName.Onecolumn))
+                {
                     prefs |= PdfWriter.PageLayoutOneColumn;
+                }
                 else if (name.Equals(PdfName.Twocolumnleft))
+                {
                     prefs |= PdfWriter.PageLayoutTwoColumnLeft;
+                }
                 else if (name.Equals(PdfName.Twocolumnright))
+                {
                     prefs |= PdfWriter.PageLayoutTwoColumnRight;
+                }
                 else if (name.Equals(PdfName.Twopageleft))
+                {
                     prefs |= PdfWriter.PageLayoutTwoPageLeft;
+                }
                 else if (name.Equals(PdfName.Twopageright))
+                {
                     prefs |= PdfWriter.PageLayoutTwoPageRight;
+                }
             }
             // page mode
             obj = PdfReader.GetPdfObjectRelease(catalog.Get(PdfName.Pagemode));
@@ -166,17 +204,29 @@ namespace iTextSharp.text.pdf.intern
             {
                 name = (PdfName)obj;
                 if (name.Equals(PdfName.Usenone))
+                {
                     prefs |= PdfWriter.PageModeUseNone;
+                }
                 else if (name.Equals(PdfName.Useoutlines))
+                {
                     prefs |= PdfWriter.PageModeUseOutlines;
+                }
                 else if (name.Equals(PdfName.Usethumbs))
+                {
                     prefs |= PdfWriter.PageModeUseThumbs;
+                }
                 else if (name.Equals(PdfName.Fullscreen))
+                {
                     prefs |= PdfWriter.PageModeFullScreen;
+                }
                 else if (name.Equals(PdfName.Useoc))
+                {
                     prefs |= PdfWriter.PageModeUseOC;
+                }
                 else if (name.Equals(PdfName.Useattachments))
+                {
                     prefs |= PdfWriter.PageModeUseAttachments;
+                }
             }
             // set page layout and page mode preferences
             preferences.ViewerPreferences = prefs;
@@ -185,8 +235,8 @@ namespace iTextSharp.text.pdf.intern
                     .Get(PdfName.Viewerpreferences));
             if (obj != null && obj.IsDictionary())
             {
-                PdfDictionary vp = (PdfDictionary)obj;
-                for (int i = 0; i < VIEWER_PREFERENCES.Length; i++)
+                var vp = (PdfDictionary)obj;
+                for (var i = 0; i < VIEWER_PREFERENCES.Length; i++)
                 {
                     obj = PdfReader.GetPdfObjectRelease(vp.Get(VIEWER_PREFERENCES[i]));
                     preferences.AddViewerPreference(VIEWER_PREFERENCES[i], obj);
@@ -205,32 +255,56 @@ namespace iTextSharp.text.pdf.intern
             // Page Layout
             catalog.Remove(PdfName.Pagelayout);
             if ((_pageLayoutAndMode & PdfWriter.PageLayoutSinglePage) != 0)
+            {
                 catalog.Put(PdfName.Pagelayout, PdfName.Singlepage);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageLayoutOneColumn) != 0)
+            {
                 catalog.Put(PdfName.Pagelayout, PdfName.Onecolumn);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoColumnLeft) != 0)
+            {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twocolumnleft);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoColumnRight) != 0)
+            {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twocolumnright);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoPageLeft) != 0)
+            {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twopageleft);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoPageRight) != 0)
+            {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twopageright);
+            }
 
             // Page Mode
             catalog.Remove(PdfName.Pagemode);
             if ((_pageLayoutAndMode & PdfWriter.PageModeUseNone) != 0)
+            {
                 catalog.Put(PdfName.Pagemode, PdfName.Usenone);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageModeUseOutlines) != 0)
+            {
                 catalog.Put(PdfName.Pagemode, PdfName.Useoutlines);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageModeUseThumbs) != 0)
+            {
                 catalog.Put(PdfName.Pagemode, PdfName.Usethumbs);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageModeFullScreen) != 0)
+            {
                 catalog.Put(PdfName.Pagemode, PdfName.Fullscreen);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageModeUseOC) != 0)
+            {
                 catalog.Put(PdfName.Pagemode, PdfName.Useoc);
+            }
             else if ((_pageLayoutAndMode & PdfWriter.PageModeUseAttachments) != 0)
+            {
                 catalog.Put(PdfName.Pagemode, PdfName.Useattachments);
+            }
 
             // viewer preferences (Table 8.1 of the PDF Reference)
             catalog.Remove(PdfName.Viewerpreferences);
@@ -259,6 +333,7 @@ namespace iTextSharp.text.pdf.intern
                         _viewerPreferences.Put(key, value);
                     }
                     break;
+
                 case 6: // NONFULLSCREENPAGEMODE
                     if (value is PdfName
                             && isPossibleValue((PdfName)value, NonfullscreenpagemodePreferences))
@@ -266,6 +341,7 @@ namespace iTextSharp.text.pdf.intern
                         _viewerPreferences.Put(key, value);
                     }
                     break;
+
                 case 7: // DIRECTION
                     if (value is PdfName
                             && isPossibleValue((PdfName)value, DirectionPreferences))
@@ -273,6 +349,7 @@ namespace iTextSharp.text.pdf.intern
                         _viewerPreferences.Put(key, value);
                     }
                     break;
+
                 case 8:  // VIEWAREA
                 case 9:  // VIEWCLIP
                 case 10: // PRINTAREA
@@ -283,6 +360,7 @@ namespace iTextSharp.text.pdf.intern
                         _viewerPreferences.Put(key, value);
                     }
                     break;
+
                 case 12: // PRINTSCALING
                     if (value is PdfName
                             && isPossibleValue((PdfName)value, PrintscalingPreferences))
@@ -290,6 +368,7 @@ namespace iTextSharp.text.pdf.intern
                         _viewerPreferences.Put(key, value);
                     }
                     break;
+
                 case 13: // DUPLEX
                     if (value is PdfName
                             && isPossibleValue((PdfName)value, DuplexPreferences))
@@ -297,12 +376,14 @@ namespace iTextSharp.text.pdf.intern
                         _viewerPreferences.Put(key, value);
                     }
                     break;
+
                 case 15: // PRINTPAGERANGE
                     if (value is PdfArray)
                     {
                         _viewerPreferences.Put(key, value);
                     }
                     break;
+
                 case 16: // NUMCOPIES
                     if (value is PdfNumber)
                     {
@@ -319,6 +400,7 @@ namespace iTextSharp.text.pdf.intern
         {
             return _viewerPreferences;
         }
+
         /// <summary>
         /// Given a key for a viewer preference (a PdfName object),
         /// this method returns the index in the VIEWER_PREFERENCES array.
@@ -327,10 +409,12 @@ namespace iTextSharp.text.pdf.intern
         /// <returns>an index in the VIEWER_PREFERENCES array</returns>
         private int getIndex(PdfName key)
         {
-            for (int i = 0; i < VIEWER_PREFERENCES.Length; i++)
+            for (var i = 0; i < VIEWER_PREFERENCES.Length; i++)
             {
                 if (VIEWER_PREFERENCES[i].Equals(key))
+                {
                     return i;
+                }
             }
             return -1;
         }
@@ -340,7 +424,7 @@ namespace iTextSharp.text.pdf.intern
         /// </summary>
         private bool isPossibleValue(PdfName value, PdfName[] accepted)
         {
-            for (int i = 0; i < accepted.Length; i++)
+            for (var i = 0; i < accepted.Length; i++)
             {
                 if (accepted[i].Equals(value))
                 {

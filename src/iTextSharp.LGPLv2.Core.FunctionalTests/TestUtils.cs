@@ -1,17 +1,17 @@
-﻿using System;
+﻿using iTextSharp.text;
+using iTextSharp.text.exceptions;
+using iTextSharp.text.pdf;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using iTextSharp.text;
-using iTextSharp.text.exceptions;
-using iTextSharp.text.pdf;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests
 {
     public static class TestUtils
     {
-        const string ITextExamplesFolder = "iTextExamples";
-        const string ResourcesFolder = "resources";
+        private const string ITextExamplesFolder = "iTextExamples";
+        private const string ResourcesFolder = "resources";
 
         public static string Author => "VahidN";
 
@@ -25,7 +25,6 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
 
         public static string GetImagePath(string fileName)
         {
-
             return Path.Combine(GetBaseDir(), ITextExamplesFolder, ResourcesFolder, "img", fileName);
         }
 
@@ -67,12 +66,12 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests
 
         public static string GetSimSunFontPath()
         {
-            return GetFontPath("simsun.ttf");
+            return GetFontPath("SimSun.ttf");
         }
 
         public static string GetThaiFontPath()
         {
-            return GetFontPath("thsarabunnew.ttf");
+            return GetFontPath("THSarabunNew.ttf");
         }
 
         public static string GetTxtPath(string fileName)

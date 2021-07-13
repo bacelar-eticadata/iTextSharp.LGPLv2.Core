@@ -74,8 +74,8 @@ namespace iTextSharp.text.rtf.parser.destinations
 
         public override bool HandleControlWord(RtfCtrlWordData ctrlWordData)
         {
-            bool result = true;
-            bool skipCtrlWord = false;
+            var result = true;
+            var skipCtrlWord = false;
 
             if (RtfParser.IsImport())
             {

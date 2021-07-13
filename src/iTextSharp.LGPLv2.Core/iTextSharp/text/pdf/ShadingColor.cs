@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Implements a shading pattern as a  Color .
     /// @author Paulo Soares (psoares@consiste.pt)

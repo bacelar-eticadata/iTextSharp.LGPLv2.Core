@@ -24,6 +24,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Constant for horizontal positioning relative to the page.
         /// </summary>
         public const int POSITION_X_RELATIVE_PAGE = 0;
+
         /// <summary>
         /// Constant for vertical positioning relative to the margin.
         /// </summary>
@@ -33,6 +34,7 @@ namespace iTextSharp.text.rtf.graphic
         /// Constant for vertical positioning relative to the page.
         /// </summary>
         public const int POSITION_Y_RELATIVE_PAGE = 0;
+
         /// <summary>
         /// Constant for vertical positioning relative to the paragraph.
         /// </summary>
@@ -57,6 +59,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The top coordinate of this RtfShapePosition.
         /// </summary>
         private readonly int _top;
+
         /// <summary>
         /// Whether to ignore the horizontal relative position.
         /// </summary>
@@ -86,6 +89,7 @@ namespace iTextSharp.text.rtf.graphic
         /// The z order of this RtfShapePosition.
         /// </summary>
         private int _zOrder;
+
         /// <summary>
         /// Constructs a new RtfShapePosition with the four bounding coordinates.
         /// </summary>

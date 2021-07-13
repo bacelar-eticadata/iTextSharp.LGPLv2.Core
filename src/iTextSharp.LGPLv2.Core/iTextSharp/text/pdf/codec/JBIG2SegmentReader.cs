@@ -16,9 +16,9 @@ namespace iTextSharp.text.pdf.codec
     /// </summary>
     public class Jbig2SegmentReader
     {
-
         public const int END_OF_FILE = 51;
         public const int END_OF_PAGE = 49;
+
         //see 7.4.9.
         public const int END_OF_STRIPE = 50;
 
@@ -26,6 +26,7 @@ namespace iTextSharp.text.pdf.codec
         public const int IMMEDIATE_GENERIC_REFINEMENT_REGION = 42;
         public const int IMMEDIATE_GENERIC_REGION = 38;
         public const int IMMEDIATE_HALFTONE_REGION = 22;
+
         //see 7.4.7.
         public const int IMMEDIATE_LOSSLESS_GENERIC_REFINEMENT_REGION = 43;
 
@@ -37,6 +38,7 @@ namespace iTextSharp.text.pdf.codec
 
         public const int IMMEDIATE_LOSSLESS_TEXT_REGION = 7;
         public const int IMMEDIATE_TEXT_REGION = 6;
+
         //see 7.4.6.
         public const int INTERMEDIATE_GENERIC_REFINEMENT_REGION = 40;
 
@@ -46,6 +48,7 @@ namespace iTextSharp.text.pdf.codec
         public const int INTERMEDIATE_HALFTONE_REGION = 20;
         public const int INTERMEDIATE_TEXT_REGION = 4;
         public const int PAGE_INFORMATION = 48;
+
         //see 7.4.3.
         //see 7.4.3.
         //see 7.4.3.
@@ -66,7 +69,8 @@ namespace iTextSharp.text.pdf.codec
 
         //see 7.4.12.
         public const int TABLES = 53; //see 7.4.13.
-                                      //see 7.4.14.
+
+        //see 7.4.14.
 
         private readonly OrderedTree _globals = new OrderedTree();
         private readonly OrderedTree _pages = new OrderedTree();
@@ -77,7 +81,6 @@ namespace iTextSharp.text.pdf.codec
         private bool _read;
         private bool _sequential;
 
-
         public Jbig2SegmentReader(RandomAccessFileOrArray ra)
         {
             _ra = ra;
@@ -85,14 +88,14 @@ namespace iTextSharp.text.pdf.codec
 
         public static byte[] CopyByteArray(byte[] b)
         {
-            byte[] bc = new byte[b.Length];
+            var bc = new byte[b.Length];
             Array.Copy(b, 0, bc, 0, b.Length);
             return bc;
         }
 
         public byte[] GetGlobal(bool forEmbedding)
         {
-            MemoryStream os = new MemoryStream();
+            var os = new MemoryStream();
             try
             {
                 foreach (Jbig2Segment s in _globals.Keys)
@@ -151,7 +154,7 @@ namespace iTextSharp.text.pdf.codec
                 // D.1
                 do
                 {
-                    Jbig2Segment tmp = readHeader();
+                    var tmp = readHeader();
                     readSegment(tmp);
                     _segments[tmp.SegmentNumber] = tmp;
                 } while (_ra.FilePointer < _ra.Length);
@@ -184,15 +187,15 @@ namespace iTextSharp.text.pdf.codec
             }
         }
 
-        void readFileHeader()
+        private void readFileHeader()
         {
             _ra.Seek(0);
-            byte[] idstring = new byte[8];
+            var idstring = new byte[8];
             _ra.Read(idstring);
 
             byte[] refidstring = { 0x97, 0x4A, 0x42, 0x32, 0x0D, 0x0A, 0x1A, 0x0A };
 
-            for (int i = 0; i < idstring.Length; i++)
+            for (var i = 0; i < idstring.Length; i++)
             {
                 if (idstring[i] != refidstring[i])
                 {
@@ -200,7 +203,7 @@ namespace iTextSharp.text.pdf.codec
                 }
             }
 
-            int fileheaderflags = _ra.Read();
+            var fileheaderflags = _ra.Read();
 
             _sequential = ((fileheaderflags & 0x1) == 0x1);
             _numberOfPagesKnown = ((fileheaderflags & 0x2) == 0x0);
@@ -216,24 +219,24 @@ namespace iTextSharp.text.pdf.codec
             }
         }
 
-        Jbig2Segment readHeader()
+        private Jbig2Segment readHeader()
         {
-            int ptr = _ra.FilePointer;
+            var ptr = _ra.FilePointer;
             // 7.2.1
-            int segmentNumber = _ra.ReadInt();
-            Jbig2Segment s = new Jbig2Segment(segmentNumber);
+            var segmentNumber = _ra.ReadInt();
+            var s = new Jbig2Segment(segmentNumber);
 
             // 7.2.3
-            int segmentHeaderFlags = _ra.Read();
-            bool deferredNonRetain = ((segmentHeaderFlags & 0x80) == 0x80);
+            var segmentHeaderFlags = _ra.Read();
+            var deferredNonRetain = ((segmentHeaderFlags & 0x80) == 0x80);
             s.DeferredNonRetain = deferredNonRetain;
-            bool pageAssociationSize = ((segmentHeaderFlags & 0x40) == 0x40);
-            int segmentType = (segmentHeaderFlags & 0x3f);
+            var pageAssociationSize = ((segmentHeaderFlags & 0x40) == 0x40);
+            var segmentType = (segmentHeaderFlags & 0x3f);
             s.Type = segmentType;
 
             //7.2.4
-            int referredToByte0 = _ra.Read();
-            int countOfReferredToSegments = (referredToByte0 & 0xE0) >> 5;
+            var referredToByte0 = _ra.Read();
+            var countOfReferredToSegments = (referredToByte0 & 0xE0) >> 5;
             int[] referredToSegmentNumbers;
             bool[] segmentRetentionFlags = null;
 
@@ -243,11 +246,11 @@ namespace iTextSharp.text.pdf.codec
                 _ra.Seek(_ra.FilePointer - 1);
                 countOfReferredToSegments = (_ra.ReadInt() & 0x1fffffff);
                 segmentRetentionFlags = new bool[countOfReferredToSegments + 1];
-                int i = 0;
-                int referredToCurrentByte = 0;
+                var i = 0;
+                var referredToCurrentByte = 0;
                 do
                 {
-                    int j = i % 8;
+                    var j = i % 8;
                     if (j == 0)
                     {
                         referredToCurrentByte = _ra.Read();
@@ -255,18 +258,16 @@ namespace iTextSharp.text.pdf.codec
                     segmentRetentionFlags[i] = ((((0x1 << j) & referredToCurrentByte) >> j) == 0x1);
                     i++;
                 } while (i <= countOfReferredToSegments);
-
             }
             else if (countOfReferredToSegments <= 4)
             {
                 // only one byte
                 segmentRetentionFlags = new bool[countOfReferredToSegments + 1];
                 referredToByte0 &= 0x1f;
-                for (int i = 0; i <= countOfReferredToSegments; i++)
+                for (var i = 0; i <= countOfReferredToSegments; i++)
                 {
                     segmentRetentionFlags[i] = ((((0x1 << i) & referredToByte0) >> i) == 0x1);
                 }
-
             }
             else if (countOfReferredToSegments == 5 || countOfReferredToSegments == 6)
             {
@@ -277,7 +278,7 @@ namespace iTextSharp.text.pdf.codec
 
             // 7.2.5
             referredToSegmentNumbers = new int[countOfReferredToSegments + 1];
-            for (int i = 1; i <= countOfReferredToSegments; i++)
+            for (var i = 1; i <= countOfReferredToSegments; i++)
             {
                 if (segmentNumber <= 256)
                 {
@@ -296,7 +297,7 @@ namespace iTextSharp.text.pdf.codec
 
             // 7.2.6
             int segmentPageAssociation;
-            int pageAssociationOffset = _ra.FilePointer - ptr;
+            var pageAssociationOffset = _ra.FilePointer - ptr;
             if (pageAssociationSize)
             {
                 segmentPageAssociation = _ra.ReadInt();
@@ -328,22 +329,22 @@ namespace iTextSharp.text.pdf.codec
             }
 
             // 7.2.7
-            long segmentDataLength = _ra.ReadUnsignedInt();
+            var segmentDataLength = _ra.ReadUnsignedInt();
             // TODO the 0xffffffff value that might be here, and how to understand those afflicted segments
             s.DataLength = segmentDataLength;
 
-            int endPtr = _ra.FilePointer;
+            var endPtr = _ra.FilePointer;
             _ra.Seek(ptr);
-            byte[] headerData = new byte[endPtr - ptr];
+            var headerData = new byte[endPtr - ptr];
             _ra.Read(headerData);
             s.HeaderData = headerData;
 
             return s;
         }
 
-        void readSegment(Jbig2Segment s)
+        private void readSegment(Jbig2Segment s)
         {
-            int ptr = _ra.FilePointer;
+            var ptr = _ra.FilePointer;
 
             if (s.DataLength == 0xffffffffL)
             {
@@ -351,18 +352,18 @@ namespace iTextSharp.text.pdf.codec
                 return;
             }
 
-            byte[] data = new byte[(int)s.DataLength];
+            var data = new byte[(int)s.DataLength];
             _ra.Read(data);
             s.Data = data;
 
             if (s.Type == PAGE_INFORMATION)
             {
-                int last = _ra.FilePointer;
+                var last = _ra.FilePointer;
                 _ra.Seek(ptr);
-                int pageBitmapWidth = _ra.ReadInt();
-                int pageBitmapHeight = _ra.ReadInt();
+                var pageBitmapWidth = _ra.ReadInt();
+                var pageBitmapHeight = _ra.ReadInt();
                 _ra.Seek(last);
-                Jbig2Page p = (Jbig2Page)_pages[s.Page];
+                var p = (Jbig2Page)_pages[s.Page];
                 if (p == null)
                 {
                     throw new InvalidOperationException("referring to widht/height of page we havent seen yet? " + s.Page);
@@ -383,12 +384,14 @@ namespace iTextSharp.text.pdf.codec
             public int PageBitmapHeight = -1;
             public int PageBitmapWidth = -1;
             private readonly OrderedTree _segs = new OrderedTree();
-            private Jbig2SegmentReader _sr;
+            private readonly Jbig2SegmentReader _sr;
+
             public Jbig2Page(int page, Jbig2SegmentReader sr)
             {
                 Page = page;
                 _sr = sr;
             }
+
             public void AddSegment(Jbig2Segment s)
             {
                 _segs[s.SegmentNumber] = s;
@@ -404,10 +407,10 @@ namespace iTextSharp.text.pdf.codec
             /// <returns>a byte array</returns>
             public byte[] GetData(bool forEmbedding)
             {
-                MemoryStream os = new MemoryStream();
+                var os = new MemoryStream();
                 foreach (int sn in _segs.Keys)
                 {
-                    Jbig2Segment s = (Jbig2Segment)_segs[sn];
+                    var s = (Jbig2Segment)_segs[sn];
 
                     // pdf reference 1.4, section 3.3.6 JBIG2Decode Filter
                     // D.3 Embedded organisation
@@ -420,7 +423,7 @@ namespace iTextSharp.text.pdf.codec
                     if (forEmbedding)
                     {
                         // change the page association to page 1
-                        byte[] headerDataEmb = CopyByteArray(s.HeaderData);
+                        var headerDataEmb = CopyByteArray(s.HeaderData);
                         if (s.PageAssociationSize)
                         {
                             headerDataEmb[s.PageAssociationOffset] = 0x0;
@@ -451,7 +454,6 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public class Jbig2Segment : IComparable
         {
-
             public int CountOfReferredToSegments = -1;
             public byte[] Data;
             public long DataLength = -1;
@@ -464,6 +466,7 @@ namespace iTextSharp.text.pdf.codec
             public int SegmentNumber;
             public bool[] SegmentRetentionFlags;
             public int Type = -1;
+
             public Jbig2Segment(int segment_number)
             {
                 SegmentNumber = segment_number;

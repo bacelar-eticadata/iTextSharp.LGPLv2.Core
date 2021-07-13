@@ -28,9 +28,15 @@ namespace iTextSharp.text
             scaledWidth = width;
             Right = scaledWidth;
             if (components != 1 && components != 3 && components != 4)
+            {
                 throw new BadElementException("Components must be 1, 3, or 4.");
+            }
+
             if (bpc != 1 && bpc != 2 && bpc != 4 && bpc != 8)
+            {
                 throw new BadElementException("Bits-per-component must be 1, 2, 4, or 8.");
+            }
+
             colorspace = components;
             this.bpc = bpc;
             rawData = data;

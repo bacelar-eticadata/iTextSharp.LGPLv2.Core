@@ -18,6 +18,7 @@ namespace iTextSharp.text.pdf
         internal PdfReader reader;
         internal Hashtable Visited = new Hashtable();
         internal PdfWriter Writer;
+
         internal PdfReaderInstance(PdfReader reader, PdfWriter writer)
         {
             this.reader = reader;
@@ -26,21 +27,9 @@ namespace iTextSharp.text.pdf
             MyXref = new int[reader.XrefSize];
         }
 
-        internal PdfReader Reader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        internal PdfReader Reader => reader;
 
-        internal RandomAccessFileOrArray ReaderFile
-        {
-            get
-            {
-                return File;
-            }
-        }
+        internal RandomAccessFileOrArray ReaderFile => File;
 
         /// <summary>
         /// Gets the content stream of a page as a PdfStream object.
@@ -51,29 +40,41 @@ namespace iTextSharp.text.pdf
         /// <returns>a PdfStream object</returns>
         internal PdfStream GetFormXObject(int pageNumber, int compressionLevel)
         {
-            PdfDictionary page = reader.GetPageNRelease(pageNumber);
-            PdfObject contents = PdfReader.GetPdfObjectRelease(page.Get(PdfName.Contents));
-            PdfDictionary dic = new PdfDictionary();
+            var page = reader.GetPageNRelease(pageNumber);
+            var contents = PdfReader.GetPdfObjectRelease(page.Get(PdfName.Contents));
+            var dic = new PdfDictionary();
             byte[] bout = null;
             if (contents != null)
             {
                 if (contents.IsStream())
+                {
                     dic.Merge((PrStream)contents);
+                }
                 else
+                {
                     bout = reader.GetPageContent(pageNumber, File);
+                }
             }
             else
+            {
                 bout = new byte[0];
+            }
+
             dic.Put(PdfName.Resources, PdfReader.GetPdfObjectRelease(page.Get(PdfName.Resources)));
             dic.Put(PdfName.TYPE, PdfName.Xobject);
             dic.Put(PdfName.Subtype, PdfName.Form);
-            PdfImportedPage impPage = (PdfImportedPage)ImportedPages[pageNumber];
+            var impPage = (PdfImportedPage)ImportedPages[pageNumber];
             dic.Put(PdfName.Bbox, new PdfRectangle(impPage.BoundingBox));
-            PdfArray matrix = impPage.Matrix;
+            var matrix = impPage.Matrix;
             if (matrix == null)
+            {
                 dic.Put(PdfName.Matrix, Identitymatrix);
+            }
             else
+            {
                 dic.Put(PdfName.Matrix, matrix);
+            }
+
             dic.Put(PdfName.Formtype, One);
             PrStream stream;
             if (bout == null)
@@ -91,10 +92,16 @@ namespace iTextSharp.text.pdf
         internal PdfImportedPage GetImportedPage(int pageNumber)
         {
             if (!reader.IsOpenedWithFullPermissions)
+            {
                 throw new ArgumentException("PdfReader not opened with owner password");
+            }
+
             if (pageNumber < 1 || pageNumber > reader.NumberOfPages)
+            {
                 throw new ArgumentException("Invalid page number: " + pageNumber);
-            PdfImportedPage pageT = (PdfImportedPage)ImportedPages[pageNumber];
+            }
+
+            var pageT = (PdfImportedPage)ImportedPages[pageNumber];
             if (pageT == null)
             {
                 pageT = new PdfImportedPage(this, Writer, pageNumber);
@@ -112,11 +119,13 @@ namespace iTextSharp.text.pdf
             }
             return MyXref[number];
         }
+
         internal PdfObject GetResources(int pageNumber)
         {
-            PdfObject obj = PdfReader.GetPdfObjectRelease(reader.GetPageNRelease(pageNumber).Get(PdfName.Resources));
+            var obj = PdfReader.GetPdfObjectRelease(reader.GetPageNRelease(pageNumber).Get(PdfName.Resources));
             return obj;
         }
+
         internal void WriteAllPages()
         {
             try
@@ -146,11 +155,11 @@ namespace iTextSharp.text.pdf
         {
             while (NextRound.Count > 0)
             {
-                ArrayList vec = NextRound;
+                var vec = NextRound;
                 NextRound = new ArrayList();
-                for (int k = 0; k < vec.Count; ++k)
+                for (var k = 0; k < vec.Count; ++k)
                 {
-                    int i = (int)vec[k];
+                    var i = (int)vec[k];
                     if (!Visited.ContainsKey(i))
                     {
                         Visited[i] = null;

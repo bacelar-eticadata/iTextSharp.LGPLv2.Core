@@ -1,6 +1,5 @@
 namespace iTextSharp.text.rtf.parser.ctrlwords
 {
-
     /// <summary>
     /// The control word and parameter information as parsed by the parser.
     /// Contains the control word,
@@ -18,6 +17,7 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         public string CtrlWord = "";
 
         public int CtrlWordType = RtfCtrlWordType.UNIDENTIFIED;
+
         /// <summary>
         /// Flag indicating if this keyword has a parameter.
         /// </summary>
@@ -46,6 +46,7 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         public string Prefix = "";
         public string SpecialHandler = "";
         public string Suffix = "";
+
         /// <summary>
         /// Return the parameter value as an integer (int) value.
         /// Returns the parameter value as an int vlaue.
@@ -55,7 +56,11 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         {
             int value;
             value = int.Parse(Param);
-            if (IsNeg) value = (-value);
+            if (IsNeg)
+            {
+                value = (-value);
+            }
+
             return value;
         }
 
@@ -68,17 +73,25 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         {
             long value;
             value = long.Parse(Param);
-            if (IsNeg) value = (-value);
+            if (IsNeg)
+            {
+                value = (-value);
+            }
+
             return value;
         }
 
         public override string ToString()
         {
-            string outp = "";
+            var outp = "";
             outp = Prefix + CtrlWord;
             if (HasParam)
             {
-                if (IsNeg) outp += "-";
+                if (IsNeg)
+                {
+                    outp += "-";
+                }
+
                 outp += Param;
             }
             outp += Suffix;

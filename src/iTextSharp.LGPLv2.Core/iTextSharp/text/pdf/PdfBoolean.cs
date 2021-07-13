@@ -10,7 +10,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfBoolean : PdfObject
     {
-
         /// <summary>
         /// A possible value of  PdfBoolean
         /// </summary>
@@ -27,6 +26,7 @@ namespace iTextSharp.text.pdf
         /// static membervariables (possible values of a bool object)
         /// </summary>
         public static readonly PdfBoolean Pdftrue = new PdfBoolean(true);
+
         /// <summary>
         /// membervariables
         /// </summary>
@@ -88,13 +88,7 @@ namespace iTextSharp.text.pdf
         /// Returns the primitive value of the  PdfBoolean -object.
         /// </summary>
         /// <returns>the actual value of the object.</returns>
-        public bool BooleanValue
-        {
-            get
-            {
-                return _value;
-            }
-        }
+        public bool BooleanValue => _value;
 
         public override string ToString()
         {

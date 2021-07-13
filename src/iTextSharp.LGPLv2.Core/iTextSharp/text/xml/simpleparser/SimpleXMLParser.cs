@@ -1,9 +1,9 @@
+using iTextSharp.LGPLv2.Core.System.Encodings;
 using System;
-using System.IO;
-using System.Text;
 using System.Collections;
 using System.Globalization;
-using iTextSharp.LGPLv2.Core.System.Encodings;
+using System.IO;
+using System.Text;
 
 namespace iTextSharp.text.xml.simpleparser
 {
@@ -51,6 +51,7 @@ namespace iTextSharp.text.xml.simpleparser
         /// the column where the current character occurs
         /// </summary>
         internal int Columns;
+
         /// <summary>
         /// The handler to which we are going to forward comments.
         /// </summary>
@@ -60,6 +61,7 @@ namespace iTextSharp.text.xml.simpleparser
         /// The handler to which we are going to forward document content
         /// </summary>
         internal ISimpleXmlDocHandler Doc;
+
         /// <summary>
         /// current entity
         /// </summary>
@@ -117,6 +119,7 @@ namespace iTextSharp.text.xml.simpleparser
         /// current tagname
         /// </summary>
         internal string Tag;
+
         /// <summary>
         /// current text (whatever is encountered between tags)
         /// </summary>
@@ -150,6 +153,7 @@ namespace iTextSharp.text.xml.simpleparser
         /// possible states
         /// </summary>
         private const int Unknown = 0;
+
         /// <summary>
         /// Creates a Simple XML parser object.
         /// Call Go(BufferedReader) immediately after creation.
@@ -171,10 +175,10 @@ namespace iTextSharp.text.xml.simpleparser
         /// <returns>the escaped string</returns>
         public static string EscapeXml(string s, bool onlyAscii)
         {
-            char[] cc = s.ToCharArray();
-            int len = cc.Length;
-            StringBuilder sb = new StringBuilder();
-            for (int k = 0; k < len; ++k)
+            var cc = s.ToCharArray();
+            var len = cc.Length;
+            var sb = new StringBuilder();
+            for (var k = 0; k < len; ++k)
             {
                 int c = cc[k];
                 switch (c)
@@ -182,18 +186,23 @@ namespace iTextSharp.text.xml.simpleparser
                     case '<':
                         sb.Append("&lt;");
                         break;
+
                     case '>':
                         sb.Append("&gt;");
                         break;
+
                     case '&':
                         sb.Append("&amp;");
                         break;
+
                     case '"':
                         sb.Append("&quot;");
                         break;
+
                     case '\'':
                         sb.Append("&apos;");
                         break;
+
                     default:
                         if ((c == 0x9) || (c == 0xA) || (c == 0xD)
                             || ((c >= 0x20) && (c <= 0xD7FF))
@@ -201,9 +210,13 @@ namespace iTextSharp.text.xml.simpleparser
                             || ((c >= 0x10000) && (c <= 0x10FFFF)))
                         {
                             if (onlyAscii && c > 127)
+                            {
                                 sb.Append("&#").Append(c).Append(';');
+                            }
                             else
+                            {
                                 sb.Append((char)c);
+                            }
                         }
                         break;
                 }
@@ -221,7 +234,7 @@ namespace iTextSharp.text.xml.simpleparser
         /// <param name="html"></param>
         public static void Parse(ISimpleXmlDocHandler doc, ISimpleXmlDocHandlerComment comment, TextReader r, bool html)
         {
-            SimpleXmlParser parser = new SimpleXmlParser(doc, comment, html);
+            var parser = new SimpleXmlParser(doc, comment, html);
             parser.go(r);
         }
 
@@ -233,32 +246,41 @@ namespace iTextSharp.text.xml.simpleparser
         /// <param name="inp">the document. The encoding is deduced from the stream. The stream is not closed</param>
         public static void Parse(ISimpleXmlDocHandler doc, Stream inp)
         {
-            byte[] b4 = new byte[4];
-            int count = inp.Read(b4, 0, b4.Length);
+            var b4 = new byte[4];
+            var count = inp.Read(b4, 0, b4.Length);
             if (count != 4)
+            {
                 throw new IOException("Insufficient length.");
-            string encoding = getEncodingName(b4);
+            }
+
+            var encoding = getEncodingName(b4);
             string decl = null;
             if (encoding.Equals("UTF-8"))
             {
-                StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
                 int c;
                 while ((c = inp.ReadByte()) != -1)
                 {
                     if (c == '>')
+                    {
                         break;
+                    }
+
                     sb.Append((char)c);
                 }
                 decl = sb.ToString();
             }
             else if (encoding.Equals("CP037"))
             {
-                MemoryStream bi = new MemoryStream();
+                var bi = new MemoryStream();
                 int c;
                 while ((c = inp.ReadByte()) != -1)
                 {
                     if (c == 0x6e) // that's '>' in ebcdic
+                    {
                         break;
+                    }
+
                     bi.WriteByte((byte)c);
                 }
                 decl = EncodingsRegistry.Instance.GetEncoding(37).GetString(bi.ToArray());//cp037 ebcdic
@@ -267,7 +289,9 @@ namespace iTextSharp.text.xml.simpleparser
             {
                 decl = getDeclaredEncoding(decl);
                 if (decl != null)
+                {
                     encoding = decl;
+                }
             }
             Parse(doc, new StreamReader(inp, IanaEncodings.GetEncodingEncoding(encoding)));
         }
@@ -280,26 +304,41 @@ namespace iTextSharp.text.xml.simpleparser
         private static string getDeclaredEncoding(string decl)
         {
             if (decl == null)
+            {
                 return null;
-            int idx = decl.IndexOf("encoding", StringComparison.OrdinalIgnoreCase);
+            }
+
+            var idx = decl.IndexOf("encoding", StringComparison.OrdinalIgnoreCase);
             if (idx < 0)
+            {
                 return null;
-            int idx1 = decl.IndexOf("\"", idx, StringComparison.Ordinal);
-            int idx2 = decl.IndexOf("'", idx, StringComparison.Ordinal);
+            }
+
+            var idx1 = decl.IndexOf("\"", idx, StringComparison.Ordinal);
+            var idx2 = decl.IndexOf("'", idx, StringComparison.Ordinal);
             if (idx1 == idx2)
+            {
                 return null;
+            }
+
             if ((idx1 < 0 && idx2 > 0) || (idx2 > 0 && idx2 < idx1))
             {
-                int idx3 = decl.IndexOf("'", idx2 + 1, StringComparison.Ordinal);
+                var idx3 = decl.IndexOf("'", idx2 + 1, StringComparison.Ordinal);
                 if (idx3 < 0)
+                {
                     return null;
+                }
+
                 return decl.Substring(idx2 + 1, idx3 - (idx2 + 1));
             }
             if ((idx2 < 0 && idx1 > 0) || (idx1 > 0 && idx1 < idx2))
             {
-                int idx3 = decl.IndexOf("\"", idx1 + 1, StringComparison.Ordinal);
+                var idx3 = decl.IndexOf("\"", idx1 + 1, StringComparison.Ordinal);
                 if (idx3 < 0)
+                {
                     return null;
+                }
+
                 return decl.Substring(idx1 + 1, idx3 - (idx1 + 1));
             }
             return null;
@@ -317,8 +356,8 @@ namespace iTextSharp.text.xml.simpleparser
         private static string getEncodingName(byte[] b4)
         {
             // UTF-16, with BOM
-            int b0 = b4[0] & 0xFF;
-            int b1 = b4[1] & 0xFF;
+            var b0 = b4[0] & 0xFF;
+            var b1 = b4[1] & 0xFF;
             if (b0 == 0xFE && b1 == 0xFF)
             {
                 // UTF-16, big-endian
@@ -331,14 +370,14 @@ namespace iTextSharp.text.xml.simpleparser
             }
 
             // UTF-8 with a BOM
-            int b2 = b4[2] & 0xFF;
+            var b2 = b4[2] & 0xFF;
             if (b0 == 0xEF && b1 == 0xBB && b2 == 0xBF)
             {
                 return "UTF-8";
             }
 
             // other encodings
-            int b3 = b4[3] & 0xFF;
+            var b3 = b4[3] & 0xFF;
             if (b0 == 0x00 && b1 == 0x00 && b2 == 0x00 && b3 == 0x3C)
             {
                 // UCS-4, big endian (1234)
@@ -391,9 +430,15 @@ namespace iTextSharp.text.xml.simpleparser
         private void doTag()
         {
             if (Tag == null)
+            {
                 Tag = text.ToString();
+            }
+
             if (Html)
-                Tag = Tag.ToLower(CultureInfo.InvariantCulture);
+            {
+                Tag = Tag.ToLowerInvariant();
+            }
+
             text.Length = 0;
         }
 
@@ -413,22 +458,29 @@ namespace iTextSharp.text.xml.simpleparser
                         Doc.Text(text.ToString());
                     }
                     break;
+
                 case Comment:
                     if (comment != null)
                     {
                         comment.Comment(text.ToString());
                     }
                     break;
+
                 case AttributeKey:
                     Attributekey = text.ToString();
                     if (Html)
-                        Attributekey = Attributekey.ToLower(CultureInfo.InvariantCulture);
+                    {
+                        Attributekey = Attributekey.ToLowerInvariant();
+                    }
+
                     break;
+
                 case Quote:
                 case AttributeValue:
                     Attributevalue = text.ToString();
                     Attributes[Attributekey] = Attributevalue;
                     break;
+
                 default:
                     // do nothing
                     break;
@@ -463,7 +515,10 @@ namespace iTextSharp.text.xml.simpleparser
                     if (Html)
                     {
                         if (Html && State == Text)
+                        {
                             flush();
+                        }
+
                         Doc.EndDocument();
                     }
                     else
@@ -527,7 +582,10 @@ namespace iTextSharp.text.xml.simpleparser
                         else if (char.IsWhiteSpace((char)Character))
                         {
                             if (Nowhite)
+                            {
                                 text.Append((char)Character);
+                            }
+
                             Nowhite = false;
                         }
                         else
@@ -623,13 +681,19 @@ namespace iTextSharp.text.xml.simpleparser
                         {
                             doTag();
                             processTag(false);
-                            if (!Html && Nested == 0) return;
+                            if (!Html && Nested == 0)
+                            {
+                                return;
+                            }
+
                             State = restoreState();
                         }
                         else
                         {
                             if (!char.IsWhiteSpace((char)Character))
+                            {
                                 text.Append((char)Character);
+                            }
                         }
                         break;
 
@@ -637,7 +701,10 @@ namespace iTextSharp.text.xml.simpleparser
                     // and are looking for the final >.
                     case SingleTag:
                         if (Character != '>')
+                        {
                             throwException($"Expected > for tag: <{Tag}/>");
+                        }
+
                         doTag();
                         processTag(true);
                         processTag(false);
@@ -660,7 +727,10 @@ namespace iTextSharp.text.xml.simpleparser
                             State = restoreState();
                         }
                         else
+                        {
                             text.Append((char)Character);
+                        }
+
                         break;
 
                     // we are processing a comment.  We are inside
@@ -674,7 +744,10 @@ namespace iTextSharp.text.xml.simpleparser
                             State = restoreState();
                         }
                         else
+                        {
                             text.Append((char)Character);
+                        }
+
                         break;
 
                     // We are inside one of these <? ... ?> or one of these <!DOCTYPE ... >
@@ -682,7 +755,10 @@ namespace iTextSharp.text.xml.simpleparser
                         if (Character == '>')
                         {
                             State = restoreState();
-                            if (State == Text) State = Unknown;
+                            if (State == Text)
+                            {
+                                State = Unknown;
+                            }
                         }
                         break;
 
@@ -691,13 +767,17 @@ namespace iTextSharp.text.xml.simpleparser
                         if (Character == ';')
                         {
                             State = restoreState();
-                            string cent = entity.ToString();
+                            var cent = entity.ToString();
                             entity.Length = 0;
-                            char ce = EntitiesToUnicode.DecodeEntity(cent);
+                            var ce = EntitiesToUnicode.DecodeEntity(cent);
                             if (ce == '\0')
+                            {
                                 text.Append('&').Append(cent).Append(';');
+                            }
                             else
+                            {
                                 text.Append(ce);
+                            }
                         }
                         else if ((Character != '#' && (Character < '0' || Character > '9') && (Character < 'a' || Character > 'z')
                           && (Character < 'A' || Character > 'Z')) || entity.Length >= 7)
@@ -874,10 +954,15 @@ namespace iTextSharp.text.xml.simpleparser
         private int restoreState()
         {
             if (Stack.Count != 0)
+            {
                 return (int)Stack.Pop();
+            }
             else
+            {
                 return Unknown;
+            }
         }
+
         /// <summary>
         /// Adds a state to the stack.
         /// </summary>
@@ -886,6 +971,7 @@ namespace iTextSharp.text.xml.simpleparser
         {
             Stack.Push(s);
         }
+
         /// <summary>
         /// Throws an exception
         /// </summary>

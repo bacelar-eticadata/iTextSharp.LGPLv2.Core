@@ -73,21 +73,27 @@ namespace iTextSharp.text.rtf.document
                 case Element.AUTHOR:
                     result.Write(_infoAuthor, 0, _infoAuthor.Length);
                     break;
+
                 case Element.SUBJECT:
                     result.Write(_infoSubject, 0, _infoSubject.Length);
                     break;
+
                 case Element.KEYWORDS:
                     result.Write(_infoKeywords, 0, _infoKeywords.Length);
                     break;
+
                 case Element.TITLE:
                     result.Write(_infoTitle, 0, _infoTitle.Length);
                     break;
+
                 case Element.PRODUCER:
                     result.Write(_infoProducer, 0, _infoProducer.Length);
                     break;
+
                 case Element.CREATIONDATE:
                     result.Write(_infoCreationDate, 0, _infoCreationDate.Length);
                     break;
+
                 default:
                     result.Write(_infoAuthor, 0, _infoAuthor.Length);
                     break;

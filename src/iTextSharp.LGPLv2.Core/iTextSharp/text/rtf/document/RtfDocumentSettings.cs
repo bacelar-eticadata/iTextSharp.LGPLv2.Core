@@ -1,5 +1,5 @@
-using iTextSharp.text.rtf.style;
 using iTextSharp.text.rtf.document.output;
+using iTextSharp.text.rtf.style;
 
 namespace iTextSharp.text.rtf.document
 {
@@ -12,7 +12,6 @@ namespace iTextSharp.text.rtf.document
     /// </summary>
     public class RtfDocumentSettings
     {
-
         /// <summary>
         /// The RtfDocument this RtfDocumentSettings belongs to.
         /// </summary>
@@ -54,6 +53,7 @@ namespace iTextSharp.text.rtf.document
         /// Whether to also output the table row definition after the cell content.
         /// </summary>
         private bool _outputTableRowDefinitionAfter = true;
+
         /// <summary>
         /// Document protection level password hash.
         /// @since 2.1.1
@@ -284,9 +284,11 @@ namespace iTextSharp.text.rtf.document
                 case RtfDataCache.CACHE_MEMORY_EFFICIENT:
                     _dataCacheStyle = RtfDataCache.CACHE_MEMORY_EFFICIENT;
                     break;
+
                 case RtfDataCache.CACHE_DISK:
                     _dataCacheStyle = RtfDataCache.CACHE_DISK;
                     break;
+
                 default:
                     //case RtfDataCache.CACHE_MEMORY:
                     _dataCacheStyle = RtfDataCache.CACHE_MEMORY;
@@ -326,7 +328,7 @@ namespace iTextSharp.text.rtf.document
         /// <returns>true if password set, false if password not set</returns>
         public bool SetNewPassword(string oldPwd, string newPwd)
         {
-            bool result = false;
+            var result = false;
             if (_protectionHash.Equals(RtfProtection.GenerateHash(oldPwd)))
             {
                 _protectionHash = RtfProtection.GenerateHash(newPwd);
@@ -383,6 +385,7 @@ namespace iTextSharp.text.rtf.document
         {
             _outputDebugLineBreaks = outputDebugLineBreaks;
         }
+
         /// <summary>
         /// Sets whether the table row definition should also be written after the cell content.
         /// This is recommended to be set to  true  if you need Word2000 compatiblity and
@@ -394,6 +397,7 @@ namespace iTextSharp.text.rtf.document
         {
             _outputTableRowDefinitionAfter = outputTableRowDefinitionAfter;
         }
+
         /// <summary>
         /// This function is not intended for general use. Please see 'public bool SetProtection(int level, String pwd)'
         /// @since 2.1.1
@@ -402,7 +406,11 @@ namespace iTextSharp.text.rtf.document
         /// <param name="pwd">Password HASH to set the document password hash to.</param>
         public void SetPasswordHash(string pwd)
         {
-            if (pwd != null && pwd.Length != 8) return;
+            if (pwd != null && pwd.Length != 8)
+            {
+                return;
+            }
+
             _protectionHash = pwd;
         }
 
@@ -414,7 +422,7 @@ namespace iTextSharp.text.rtf.document
         /// <param name="pwd">Document password - clear text</param>
         public bool SetProtection(int level, string pwd)
         {
-            bool result = false;
+            var result = false;
             if (_protectionHash == null)
             {
                 if (!SetProtectionLevel(level))
@@ -452,7 +460,7 @@ namespace iTextSharp.text.rtf.document
         /// <param name="level">Document protection level</param>
         public bool SetProtectionLevel(int level)
         {
-            bool result = false;
+            var result = false;
             switch (level)
             {
                 case RtfProtection.LEVEL_NONE:
@@ -492,6 +500,7 @@ namespace iTextSharp.text.rtf.document
         {
             _writeImageScalingInformation = writeImageScalingInformation;
         }
+
         /// <summary>
         /// @since 2.1.1
         /// @author Howard Shank (hgshank@yahoo.com)
@@ -500,7 +509,7 @@ namespace iTextSharp.text.rtf.document
         /// <returns>true if document unprotected, false if protection is not removed.</returns>
         public bool UnprotectDocument(string pwd)
         {
-            bool result = false;
+            var result = false;
             if (_protectionHash.Equals(RtfProtection.GenerateHash(pwd)))
             {
                 _protectionLevel = RtfProtection.LEVEL_NONE;
@@ -509,6 +518,7 @@ namespace iTextSharp.text.rtf.document
             }
             return result;
         }
+
         /// <summary>
         /// Converts protection level from internal bitmap value to protlevel output value
         /// 0 = Revision protection
@@ -522,26 +532,29 @@ namespace iTextSharp.text.rtf.document
         /// <returns> </returns>
         private int convertProtectionLevel()
         {
-            int level = 0;
+            var level = 0;
             switch (_protectionLevel)
             {
                 case RtfProtection.LEVEL_NONE:
                     break;
+
                 case RtfProtection.LEVEL_REVPROT:
                     level = 0;
                     break;
+
                 case RtfProtection.LEVEL_ANNOTPROT:
                     level = 1;
                     break;
+
                 case RtfProtection.LEVEL_FORMPROT:
                     level = 2;
                     break;
+
                 case RtfProtection.LEVEL_READPROT:
                     level = 3;
                     break;
             }
             return level;
-
         }
     }
 }

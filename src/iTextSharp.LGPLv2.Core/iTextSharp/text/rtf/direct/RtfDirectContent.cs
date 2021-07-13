@@ -41,7 +41,7 @@ namespace iTextSharp.text.rtf.direct
         /// </summary>
         public override void WriteContent(Stream outp)
         {
-            byte[] contentBytes = DocWriter.GetIsoBytes(_directContent);
+            var contentBytes = DocWriter.GetIsoBytes(_directContent);
             outp.Write(contentBytes, 0, contentBytes.Length);
         }
     }

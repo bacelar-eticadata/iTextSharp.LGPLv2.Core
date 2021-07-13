@@ -2,7 +2,6 @@ using System.Text;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     ///  PdfIndirectReference  contains a reference to a  PdfIndirectObject .
     ///
@@ -17,7 +16,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfIndirectReference : PdfObject
     {
-
         /// <summary>
         /// membervariables
         /// </summary>
@@ -31,6 +29,7 @@ namespace iTextSharp.text.pdf
         /// the object number
         /// </summary>
         protected int number;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -41,28 +40,17 @@ namespace iTextSharp.text.pdf
             this.generation = generation;
         }
 
-        internal PdfIndirectReference(int type, int number) : this(type, number, 0) { }
+        internal PdfIndirectReference(int type, int number) : this(type, number, 0)
+        {
+        }
 
         protected PdfIndirectReference() : base(0)
         {
         }
 
+        public int Generation => generation;
 
-        public int Generation
-        {
-            get
-            {
-                return generation;
-            }
-        }
-
-        public int Number
-        {
-            get
-            {
-                return number;
-            }
-        }
+        public int Number => number;
 
         /// <summary>
         /// Returns the generation of the object.

@@ -47,13 +47,7 @@ namespace iTextSharp.text.pdf
         /// Gets the children layers.
         /// </summary>
         /// <returns>the children layers or  null  if the layer has no children</returns>
-        public ArrayList Children
-        {
-            get
-            {
-                return children;
-            }
-        }
+        public ArrayList Children => children;
 
         /// <summary>
         /// Specifies the recommended state for content in this
@@ -65,8 +59,8 @@ namespace iTextSharp.text.pdf
         {
             set
             {
-                PdfDictionary usage = Usage;
-                PdfDictionary dic = new PdfDictionary();
+                var usage = Usage;
+                var dic = new PdfDictionary();
                 dic.Put(PdfName.Exportstate, value ? PdfName.On : PdfName.OFF);
                 usage.Put(PdfName.Export, dic);
             }
@@ -77,10 +71,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string Name
         {
-            set
-            {
-                Put(PdfName.Name, new PdfString(value, TEXT_UNICODE));
-            }
+            set => Put(PdfName.Name, new PdfString(value, TEXT_UNICODE));
         }
 
         /// <summary>
@@ -89,14 +80,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the initial visibility of the layer</returns>
         public bool On
         {
-            get
-            {
-                return _on;
-            }
-            set
-            {
-                _on = value;
-            }
+            get => _on;
+            set => _on = value;
         }
 
         /// <summary>
@@ -107,39 +92,21 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool OnPanel
         {
-            get
-            {
-                return _onPanel;
-            }
-            set
-            {
-                _onPanel = value;
-            }
+            get => _onPanel;
+            set => _onPanel = value;
         }
 
         /// <summary>
         /// Gets the parent layer.
         /// </summary>
         /// <returns>the parent layer or  null  if the layer has no parent</returns>
-        public PdfLayer Parent
-        {
-            get
-            {
-                return parent;
-            }
-        }
+        public PdfLayer Parent => parent;
 
         /// <summary>
         /// Gets the dictionary representing the layer. It just returns  this .
         /// </summary>
         /// <returns>the dictionary representing the layer</returns>
-        public PdfObject PdfObject
-        {
-            get
-            {
-                return this;
-            }
-        }
+        public PdfObject PdfObject => this;
 
         /// <summary>
         /// Gets the  PdfIndirectReference  that represents this layer.
@@ -147,14 +114,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the  PdfIndirectReference  that represents this layer</returns>
         public PdfIndirectReference Ref
         {
-            get
-            {
-                return Refi;
-            }
-            set
-            {
-                Refi = value;
-            }
+            get => Refi;
+            set => Refi = value;
         }
 
         /// <summary>
@@ -165,26 +126,20 @@ namespace iTextSharp.text.pdf
         {
             set
             {
-                PdfDictionary usage = Usage;
-                PdfDictionary dic = new PdfDictionary();
+                var usage = Usage;
+                var dic = new PdfDictionary();
                 dic.Put(PdfName.Viewstate, value ? PdfName.On : PdfName.OFF);
                 usage.Put(PdfName.View, dic);
             }
         }
 
-        internal string Title
-        {
-            get
-            {
-                return title;
-            }
-        }
+        internal string Title => title;
 
         private PdfDictionary Usage
         {
             get
             {
-                PdfDictionary usage = (PdfDictionary)Get(PdfName.Usage);
+                var usage = (PdfDictionary)Get(PdfName.Usage);
                 if (usage == null)
                 {
                     usage = new PdfDictionary();
@@ -204,11 +159,15 @@ namespace iTextSharp.text.pdf
         public static PdfLayer CreateTitle(string title, PdfWriter writer)
         {
             if (title == null)
+            {
                 throw new ArgumentNullException("Title cannot be null.");
-            PdfLayer layer = new PdfLayer(title);
+            }
+
+            var layer = new PdfLayer(title);
             writer.RegisterLayer(layer);
             return layer;
         }
+
         /// <summary>
         /// Adds a child layer. Nested layers can only have one parent.
         /// </summary>
@@ -216,12 +175,19 @@ namespace iTextSharp.text.pdf
         public void AddChild(PdfLayer child)
         {
             if (child.parent != null)
+            {
                 throw new ArgumentException("The layer '" + ((PdfString)child.Get(PdfName.Name)).ToUnicodeString() + "' already has a parent.");
+            }
+
             child.parent = this;
             if (children == null)
+            {
                 children = new ArrayList();
+            }
+
             children.Add(child);
         }
+
         /// <summary>
         /// Used by the creating application to store application-specific
         /// data associated with this optional content group.
@@ -233,8 +199,8 @@ namespace iTextSharp.text.pdf
         /// <param name="subtype">a string defining the type of content controlled by the group. Suggested</param>
         public void SetCreatorInfo(string creator, string subtype)
         {
-            PdfDictionary usage = Usage;
-            PdfDictionary dic = new PdfDictionary();
+            var usage = Usage;
+            var dic = new PdfDictionary();
             dic.Put(PdfName.Creator, new PdfString(creator, TEXT_UNICODE));
             dic.Put(PdfName.Subtype, new PdfName(subtype));
             usage.Put(PdfName.Creatorinfo, dic);
@@ -250,13 +216,17 @@ namespace iTextSharp.text.pdf
         /// <param name="preferred">used by viewer applications when there is a partial match but no exact</param>
         public void SetLanguage(string lang, bool preferred)
         {
-            PdfDictionary usage = Usage;
-            PdfDictionary dic = new PdfDictionary();
+            var usage = Usage;
+            var dic = new PdfDictionary();
             dic.Put(PdfName.Lang, new PdfString(lang, TEXT_UNICODE));
             if (preferred)
+            {
                 dic.Put(PdfName.Preferred, PdfName.On);
+            }
+
             usage.Put(PdfName.Language, dic);
         }
+
         /// <summary>
         /// Specifies that the content in this group is intended for
         /// use in printing
@@ -267,8 +237,8 @@ namespace iTextSharp.text.pdf
         /// <param name="printstate">indicates that the group should be</param>
         public void SetPrint(string subtype, bool printstate)
         {
-            PdfDictionary usage = Usage;
-            PdfDictionary dic = new PdfDictionary();
+            var usage = Usage;
+            var dic = new PdfDictionary();
             dic.Put(PdfName.Subtype, new PdfName(subtype));
             dic.Put(PdfName.Printstate, printstate ? PdfName.On : PdfName.OFF);
             usage.Put(PdfName.Print, dic);
@@ -286,13 +256,22 @@ namespace iTextSharp.text.pdf
         public void SetZoom(float min, float max)
         {
             if (min <= 0 && max < 0)
+            {
                 return;
-            PdfDictionary usage = Usage;
-            PdfDictionary dic = new PdfDictionary();
+            }
+
+            var usage = Usage;
+            var dic = new PdfDictionary();
             if (min > 0)
+            {
                 dic.Put(PdfName.MinLowerCase, new PdfNumber(min));
+            }
+
             if (max >= 0)
+            {
                 dic.Put(PdfName.MaxLowerCase, new PdfNumber(max));
+            }
+
             usage.Put(PdfName.Zoom, dic);
         }
     }

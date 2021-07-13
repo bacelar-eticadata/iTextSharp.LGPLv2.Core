@@ -1,5 +1,5 @@
-using System.Text;
 using System.Collections;
+using System.Text;
 
 namespace iTextSharp.text
 {
@@ -61,25 +61,13 @@ namespace iTextSharp.text
         /// Gets all the chunks in this element.
         /// </summary>
         /// <value>an ArrayList</value>
-        public ArrayList Chunks
-        {
-            get
-            {
-                return new ArrayList();
-            }
-        }
+        public ArrayList Chunks => new ArrayList();
 
         /// <summary>
         /// Returns the content of the meta information.
         /// </summary>
         /// <value>a string</value>
-        public string Content
-        {
-            get
-            {
-                return _content.ToString();
-            }
-        }
+        public string Content => _content.ToString();
 
         /// <summary>
         /// methods to retrieve information
@@ -116,13 +104,7 @@ namespace iTextSharp.text
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public int Type
-        {
-            get
-            {
-                return _type;
-            }
-        }
+        public int Type => _type;
 
         /// <summary>
         /// Returns the name of the meta information.

@@ -1,9 +1,8 @@
-using System.Collections;
 using iTextSharp.text.rtf.parser.properties;
+using System.Collections;
 
 namespace iTextSharp.text.rtf.parser.ctrlwords
 {
-
     /// <summary>
     ///  RtfCtrlWords  handles the creation of the control word wiring.
     /// It is a class containing the hash map of the control words (key)
@@ -13,7 +12,6 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
     /// </summary>
     internal sealed class RtfCtrlWordMap
     {
-
         /// <summary>
         /// 1810 control words in Spec v1.9. might be a few more for other apps that implement
         /// </summary>

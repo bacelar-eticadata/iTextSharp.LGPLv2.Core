@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -38,7 +38,6 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
                       }
                     };
 
-
             var pdfFilePath = TestUtils.GetOutputFileName();
             var stream = new FileStream(pdfFilePath, FileMode.Create);
 
@@ -52,7 +51,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.Open();
 
             // step 4
-            string font = TestUtils.GetTahomaFontPath();
+            var font = TestUtils.GetTahomaFontPath();
             for (var i = 0; i < 4; i++)
             {
                 var bf = BaseFont.CreateFont(font, movies[i][0], BaseFont.EMBEDDED);

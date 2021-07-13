@@ -9,7 +9,6 @@ namespace iTextSharp.text.rtf.document.output
     /// </summary>
     public class RtfMemoryCache : IRtfDataCache
     {
-
         /// <summary>
         /// The buffer for the rtf document data.
         /// </summary>

@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// @author  psoares
     /// </summary>
@@ -16,7 +15,9 @@ namespace iTextSharp.text.pdf
             Tint = tint;
         }
 
-        public SpotColor(PdfSpotColor spot) : this(spot, spot.Tint) { }
+        public SpotColor(PdfSpotColor spot) : this(spot, spot.Tint)
+        {
+        }
 
         public PdfSpotColor PdfSpotColor { get; }
 

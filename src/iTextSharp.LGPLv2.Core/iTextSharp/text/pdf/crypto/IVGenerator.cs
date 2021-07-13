@@ -8,15 +8,14 @@ namespace iTextSharp.text.pdf.crypto
     /// </summary>
     public static class IvGenerator
     {
-
         private static readonly ArcfourEncryption _rc4;
 
         static IvGenerator()
         {
             _rc4 = new ArcfourEncryption();
-            byte[] longBytes = new byte[8];
-            long val = DateTime.Now.Ticks;
-            for (int i = 0; i != 8; i++)
+            var longBytes = new byte[8];
+            var val = DateTime.Now.Ticks;
+            for (var i = 0; i != 8; i++)
             {
                 longBytes[i] = (byte)val;
                 val = (long)((ulong)val >> 8);
@@ -40,7 +39,7 @@ namespace iTextSharp.text.pdf.crypto
         /// <returns>a random initialization vector</returns>
         public static byte[] GetIv(int len)
         {
-            byte[] b = new byte[len];
+            var b = new byte[len];
             lock (_rc4)
             {
                 _rc4.EncryptArcfour(b);

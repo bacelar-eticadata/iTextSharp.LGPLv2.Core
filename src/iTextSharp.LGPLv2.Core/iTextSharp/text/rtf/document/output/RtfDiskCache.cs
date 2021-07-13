@@ -44,8 +44,8 @@ namespace iTextSharp.text.rtf.document.output
         public void WriteTo(Stream target)
         {
             _data.Dispose();
-            BufferedStream tempIn = new BufferedStream(new FileStream(_tempFile, FileMode.Open));
-            byte[] buffer = new byte[8192];
+            var tempIn = new BufferedStream(new FileStream(_tempFile, FileMode.Open));
+            var buffer = new byte[8192];
             int bytesRead;
             while ((bytesRead = tempIn.Read(buffer, 0, buffer.Length)) > 0)
             {

@@ -1,10 +1,9 @@
-using System.Xml;
-using System.Collections;
 using iTextSharp.text.xml;
+using System.Collections;
+using System.Xml;
 
 namespace iTextSharp.text.html
 {
-
     /// <summary>
     /// This class can be used to parse an XML file.
     /// </summary>
@@ -15,9 +14,9 @@ namespace iTextSharp.text.html
         /// </summary>
         /// <param name="document"></param>
         /// <param name="xDoc"></param>
-        public new static void Parse(IDocListener document, XmlDocument xDoc)
+        public static new void Parse(IDocListener document, XmlDocument xDoc)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, xDoc);
         }
 
@@ -26,9 +25,9 @@ namespace iTextSharp.text.html
         /// </summary>
         /// <param name="document"></param>
         /// <param name="file"></param>
-        public new static void Parse(IDocListener document, string file)
+        public static new void Parse(IDocListener document, string file)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, file);
         }
 
@@ -37,18 +36,18 @@ namespace iTextSharp.text.html
         /// </summary>
         /// <param name="document"></param>
         /// <param name="reader"></param>
-        public new static void Parse(IDocListener document, XmlReader reader)
+        public static new void Parse(IDocListener document, XmlReader reader)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, reader);
         }
 
         /// <summary>
         /// Parses a given file.
         /// </summary>
-        public new static void Parse(IDocListener document, XmlDocument xDoc, XmlDocument xTagmap)
+        public static new void Parse(IDocListener document, XmlDocument xDoc, XmlDocument xTagmap)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, xDoc, xTagmap);
         }
 
@@ -58,9 +57,9 @@ namespace iTextSharp.text.html
         /// <param name="document"></param>
         /// <param name="file"></param>
         /// <param name="tagmap"></param>
-        public new static void Parse(IDocListener document, string file, string tagmap)
+        public static new void Parse(IDocListener document, string file, string tagmap)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, file, tagmap);
         }
 
@@ -70,9 +69,9 @@ namespace iTextSharp.text.html
         /// <param name="document"></param>
         /// <param name="file"></param>
         /// <param name="tagmap"></param>
-        public new static void Parse(IDocListener document, string file, Hashtable tagmap)
+        public static new void Parse(IDocListener document, string file, Hashtable tagmap)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, file, tagmap);
         }
 
@@ -82,9 +81,9 @@ namespace iTextSharp.text.html
         /// <param name="document"></param>
         /// <param name="reader"></param>
         /// <param name="tagmap"></param>
-        public new static void Parse(IDocListener document, XmlReader reader, string tagmap)
+        public static new void Parse(IDocListener document, XmlReader reader, string tagmap)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, reader, tagmap);
         }
 
@@ -94,9 +93,9 @@ namespace iTextSharp.text.html
         /// <param name="document"></param>
         /// <param name="reader"></param>
         /// <param name="tagmap"></param>
-        public new static void Parse(IDocListener document, XmlReader reader, Hashtable tagmap)
+        public static new void Parse(IDocListener document, XmlReader reader, Hashtable tagmap)
         {
-            HtmlParser p = new HtmlParser();
+            var p = new HtmlParser();
             p.Go(document, reader, tagmap);
         }
 

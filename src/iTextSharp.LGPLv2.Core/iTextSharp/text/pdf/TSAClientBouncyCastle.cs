@@ -1,12 +1,11 @@
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Tsp;
 using System;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.util;
-using Org.BouncyCastle.Math;
-using Org.BouncyCastle.Tsp;
-using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Asn1.Cmp;
 
 namespace iTextSharp.text.pdf
 {
@@ -35,6 +34,7 @@ namespace iTextSharp.text.pdf
         /// URL of the Time Stamp Authority
         /// </summary>
         protected string TsaUrl;
+
         /// <summary>
         /// TSA Username
         /// </summary>
@@ -99,6 +99,7 @@ namespace iTextSharp.text.pdf
         {
             return TokSzEstimate;
         }
+
         /// <summary>
         /// Get timestamp token - Bouncy Castle request encoding / decoding layer
         /// </summary>
@@ -106,23 +107,23 @@ namespace iTextSharp.text.pdf
         {
             byte[] respBytes = null;
             // Setup the time stamp request
-            TimeStampRequestGenerator tsqGenerator = new TimeStampRequestGenerator();
+            var tsqGenerator = new TimeStampRequestGenerator();
             tsqGenerator.SetCertReq(true);
             // tsqGenerator.setReqPolicy("1.3.6.1.4.1.601.10.3.1");
-            BigInteger nonce = BigInteger.ValueOf(DateTime.Now.Ticks + Environment.TickCount);
-            TimeStampRequest request = tsqGenerator.Generate(X509ObjectIdentifiers.IdSha1.Id, imprint, nonce);
-            byte[] requestBytes = request.GetEncoded();
+            var nonce = BigInteger.ValueOf(DateTime.Now.Ticks + Environment.TickCount);
+            var request = tsqGenerator.Generate(X509ObjectIdentifiers.IdSha1.Id, imprint, nonce);
+            var requestBytes = request.GetEncoded();
 
             // Call the communications layer
             respBytes = GetTsaResponse(requestBytes);
 
             // Handle the TSA response
-            TimeStampResponse response = new TimeStampResponse(respBytes);
+            var response = new TimeStampResponse(respBytes);
 
             // validate communication level attributes (RFC 3161 PKIStatus)
             response.Validate(request);
-            PkiFailureInfo failure = response.GetFailInfo();
-            int value = (failure == null) ? 0 : failure.IntValue;
+            var failure = response.GetFailInfo();
+            var value = (failure == null) ? 0 : failure.IntValue;
             if (value != 0)
             {
                 // @todo: Translate value of 15 error codes defined by PKIFailureInfo to string
@@ -132,13 +133,13 @@ namespace iTextSharp.text.pdf
             //        assure we do not sign using an invalid timestamp).
 
             // extract just the time stamp token (removes communication status info)
-            TimeStampToken tsToken = response.TimeStampToken;
+            var tsToken = response.TimeStampToken;
             if (tsToken == null)
             {
                 throw new Exception($"TSA \'{TsaUrl}\' failed to return time stamp token: {response.GetStatusString()}");
             }
-            TimeStampTokenInfo info = tsToken.TimeStampInfo; // to view details
-            byte[] encoded = tsToken.GetEncoded();
+            var info = tsToken.TimeStampInfo; // to view details
+            var encoded = tsToken.GetEncoded();
 
             // Update our token size estimate for the next call (padded to be safe)
             TokSzEstimate = encoded.Length + 32;
@@ -151,37 +152,40 @@ namespace iTextSharp.text.pdf
         /// <returns>- byte[] - TSA response, raw bytes (RFC 3161 encoded)</returns>
         protected internal virtual byte[] GetTsaResponse(byte[] requestBytes)
         {
-            HttpWebRequest con = (HttpWebRequest)WebRequest.Create(TsaUrl);
+            var con = (HttpWebRequest)WebRequest.Create(TsaUrl);
             con.ContentType = "application/timestamp-query";
             con.Method = "POST";
             if ((TsaUsername != null) && !TsaUsername.Equals(""))
             {
-                string authInfo = TsaUsername + ":" + TsaPassword;
+                var authInfo = TsaUsername + ":" + TsaPassword;
                 authInfo = Convert.ToBase64String(Encoding.UTF8.GetBytes(authInfo));
                 con.Headers["Authorization"] = "Basic " + authInfo;
             }
 
 #if NET40
-            Stream outp = con.GetRequestStream();
+            var outp = con.GetRequestStream();
 #else
-            Stream outp = con.GetRequestStreamAsync().Result;
+            var outp = con.GetRequestStreamAsync().Result;
 #endif
             outp.Write(requestBytes, 0, requestBytes.Length);
             outp.Dispose();
 
 #if NET40
-            HttpWebResponse response = (HttpWebResponse)con.GetResponse();
+            var response = (HttpWebResponse)con.GetResponse();
 #else
-            HttpWebResponse response = (HttpWebResponse)con.GetResponseAsync().GetAwaiter().GetResult();
+            var response = (HttpWebResponse)con.GetResponseAsync().GetAwaiter().GetResult();
 #endif
             if (response.StatusCode != HttpStatusCode.OK)
+            {
                 throw new IOException("Invalid HTTP response: " + (int)response.StatusCode);
-            Stream inp = response.GetResponseStream();
-            string encoding = response.Headers["Content-Encoding"];
+            }
 
-            MemoryStream baos = new MemoryStream();
-            byte[] buffer = new byte[1024];
-            int bytesRead = 0;
+            var inp = response.GetResponseStream();
+            var encoding = response.Headers["Content-Encoding"];
+
+            var baos = new MemoryStream();
+            var buffer = new byte[1024];
+            var bytesRead = 0;
             while ((bytesRead = inp.Read(buffer, 0, buffer.Length)) > 0)
             {
                 baos.Write(buffer, 0, bytesRead);
@@ -193,7 +197,7 @@ namespace iTextSharp.text.pdf
             response.Dispose();
 #endif
 
-            byte[] respBytes = baos.ToArray();
+            var respBytes = baos.ToArray();
 
             if (encoding != null && Util.EqualsIgnoreCase(encoding, "base64"))
             {

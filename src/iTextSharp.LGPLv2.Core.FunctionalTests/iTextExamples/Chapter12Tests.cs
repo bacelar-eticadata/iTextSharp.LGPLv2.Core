@@ -1,23 +1,23 @@
-﻿using System.IO;
-using System.Text;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System.Text;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
     [TestClass]
     public class Chapter12Tests
     {
-        readonly byte[] _ownerPassword = Encoding.UTF8.GetBytes("World");
-        readonly byte[] _userPassword = Encoding.UTF8.GetBytes("Hello");
+        private readonly byte[] _ownerPassword = Encoding.UTF8.GetBytes("World");
+        private readonly byte[] _userPassword = Encoding.UTF8.GetBytes("Hello");
 
         [TestMethod]
         public void Verify_EncryptionPdf_CanBeCreated()
         {
             var pdfFilePath = TestUtils.GetOutputFileName();
             var enc1 = createPdf();
-            File.WriteAllBytes(Path.ChangeExtension(pdfFilePath,".enc1.pdf"), enc1);
+            File.WriteAllBytes(Path.ChangeExtension(pdfFilePath, ".enc1.pdf"), enc1);
 
             var enc2 = decryptPdf(enc1);
             File.WriteAllBytes(Path.ChangeExtension(pdfFilePath, ".enc2.pdf"), enc2);

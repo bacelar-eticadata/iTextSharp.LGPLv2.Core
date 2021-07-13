@@ -16,7 +16,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfPages
     {
-
         private readonly ArrayList _pages = new ArrayList();
         private readonly ArrayList _parents = new ArrayList();
         private readonly PdfWriter _writer;
@@ -40,10 +39,13 @@ namespace iTextSharp.text.pdf
         internal void AddPage(PdfDictionary page)
         {
             if ((_pages.Count % _leafSize) == 0)
+            {
                 _parents.Add(_writer.PdfIndirectReference);
-            PdfIndirectReference parent = (PdfIndirectReference)_parents[_parents.Count - 1];
+            }
+
+            var parent = (PdfIndirectReference)_parents[_parents.Count - 1];
             page.Put(PdfName.Parent, parent);
-            PdfIndirectReference current = _writer.CurrentPage;
+            var current = _writer.CurrentPage;
             _writer.AddToBody(page, current);
             _pages.Add(current);
         }
@@ -56,7 +58,10 @@ namespace iTextSharp.text.pdf
         internal PdfIndirectReference AddPageRef(PdfIndirectReference pageRef)
         {
             if ((_pages.Count % _leafSize) == 0)
+            {
                 _parents.Add(_writer.PdfIndirectReference);
+            }
+
             _pages.Add(pageRef);
             return (PdfIndirectReference)_parents[_parents.Count - 1];
         }
@@ -64,24 +69,39 @@ namespace iTextSharp.text.pdf
         internal int ReorderPages(int[] order)
         {
             if (order == null)
-                return _pages.Count;
-            if (_parents.Count > 1)
-                throw new DocumentException("Page reordering requires a single parent in the page tree. Call PdfWriter.SetLinearMode() after open.");
-            if (order.Length != _pages.Count)
-                throw new DocumentException("Page reordering requires an array with the same size as the number of pages.");
-            int max = _pages.Count;
-            bool[] temp = new bool[max];
-            for (int k = 0; k < max; ++k)
             {
-                int p = order[k];
+                return _pages.Count;
+            }
+
+            if (_parents.Count > 1)
+            {
+                throw new DocumentException("Page reordering requires a single parent in the page tree. Call PdfWriter.SetLinearMode() after open.");
+            }
+
+            if (order.Length != _pages.Count)
+            {
+                throw new DocumentException("Page reordering requires an array with the same size as the number of pages.");
+            }
+
+            var max = _pages.Count;
+            var temp = new bool[max];
+            for (var k = 0; k < max; ++k)
+            {
+                var p = order[k];
                 if (p < 1 || p > max)
+                {
                     throw new DocumentException("Page reordering requires pages between 1 and " + max + ". Found " + p + ".");
+                }
+
                 if (temp[p - 1])
+                {
                     throw new DocumentException("Page reordering requires no page repetition. Page " + p + " is repeated.");
+                }
+
                 temp[p - 1] = true;
             }
-            object[] copy = _pages.ToArray();
-            for (int k = 0; k < max; ++k)
+            var copy = _pages.ToArray();
+            for (var k = 0; k < max; ++k)
             {
                 _pages[k] = copy[order[k] - 1];
             }
@@ -91,7 +111,10 @@ namespace iTextSharp.text.pdf
         internal void SetLinearMode(PdfIndirectReference topParent)
         {
             if (_parents.Count > 1)
+            {
                 throw new Exception("Linear page mode can only be called with a single parent.");
+            }
+
             if (topParent != null)
             {
                 TopParent = topParent;
@@ -107,41 +130,55 @@ namespace iTextSharp.text.pdf
         internal PdfIndirectReference WritePageTree()
         {
             if (_pages.Count == 0)
+            {
                 throw new IOException("The document has no pages.");
-            int leaf = 1;
-            ArrayList tParents = _parents;
-            ArrayList tPages = _pages;
-            ArrayList nextParents = new ArrayList();
+            }
+
+            var leaf = 1;
+            var tParents = _parents;
+            var tPages = _pages;
+            var nextParents = new ArrayList();
             while (true)
             {
                 leaf *= _leafSize;
-                int stdCount = _leafSize;
-                int rightCount = tPages.Count % _leafSize;
+                var stdCount = _leafSize;
+                var rightCount = tPages.Count % _leafSize;
                 if (rightCount == 0)
+                {
                     rightCount = _leafSize;
-                for (int p = 0; p < tParents.Count; ++p)
+                }
+
+                for (var p = 0; p < tParents.Count; ++p)
                 {
                     int count;
-                    int thisLeaf = leaf;
+                    var thisLeaf = leaf;
                     if (p == tParents.Count - 1)
                     {
                         count = rightCount;
                         thisLeaf = _pages.Count % leaf;
                         if (thisLeaf == 0)
+                        {
                             thisLeaf = leaf;
+                        }
                     }
                     else
+                    {
                         count = stdCount;
-                    PdfDictionary top = new PdfDictionary(PdfName.Pages);
+                    }
+
+                    var top = new PdfDictionary(PdfName.Pages);
                     top.Put(PdfName.Count, new PdfNumber(thisLeaf));
-                    PdfArray kids = new PdfArray();
-                    ArrayList intern = kids.ArrayList;
+                    var kids = new PdfArray();
+                    var intern = kids.ArrayList;
                     intern.AddRange(tPages.GetRange(p * stdCount, count));
                     top.Put(PdfName.Kids, kids);
                     if (tParents.Count > 1)
                     {
                         if ((p % _leafSize) == 0)
+                        {
                             nextParents.Add(_writer.PdfIndirectReference);
+                        }
+
                         top.Put(PdfName.Parent, (PdfIndirectReference)nextParents[p / _leafSize]);
                     }
                     else

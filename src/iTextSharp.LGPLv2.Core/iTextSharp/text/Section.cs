@@ -1,6 +1,6 @@
 using System;
-using System.Text;
 using System.Collections;
+using System.Text;
 using System.util;
 
 namespace iTextSharp.text
@@ -145,15 +145,9 @@ namespace iTextSharp.text
         /// <value>a bool</value>
         public bool BookmarkOpen
         {
-            get
-            {
-                return bookmarkOpen;
-            }
+            get => bookmarkOpen;
 
-            set
-            {
-                bookmarkOpen = value;
-            }
+            set => bookmarkOpen = value;
         }
 
         /// <summary>
@@ -162,10 +156,7 @@ namespace iTextSharp.text
         /// </summary>
         public string BookmarkTitle
         {
-            set
-            {
-                bookmarkTitle = value;
-            }
+            set => bookmarkTitle = value;
         }
 
         /// <summary>
@@ -176,7 +167,7 @@ namespace iTextSharp.text
         {
             get
             {
-                ArrayList tmp = new ArrayList();
+                var tmp = new ArrayList();
                 foreach (IElement ele in this)
                 {
                     tmp.AddRange(ele.Chunks);
@@ -189,13 +180,7 @@ namespace iTextSharp.text
         /// Returns the depth of this section.
         /// </summary>
         /// <value>the depth</value>
-        public int Depth
-        {
-            get
-            {
-                return Numbers.Count;
-            }
-        }
+        public int Depth => Numbers.Count;
 
         /// <summary>
         /// @since   iText 2.0.8
@@ -203,14 +188,8 @@ namespace iTextSharp.text
         /// </summary>
         public bool ElementComplete
         {
-            get
-            {
-                return Complete;
-            }
-            set
-            {
-                Complete = value;
-            }
+            get => Complete;
+            set => Complete = value;
         }
 
         /// <summary>
@@ -219,15 +198,9 @@ namespace iTextSharp.text
         /// <value>the indentation</value>
         public float Indentation
         {
-            get
-            {
-                return indentation;
-            }
+            get => indentation;
 
-            set
-            {
-                indentation = value;
-            }
+            set => indentation = value;
         }
 
         /// <summary>
@@ -236,15 +209,9 @@ namespace iTextSharp.text
         /// <value>the indentation</value>
         public float IndentationLeft
         {
-            get
-            {
-                return indentationLeft;
-            }
+            get => indentationLeft;
 
-            set
-            {
-                indentationLeft = value;
-            }
+            set => indentationLeft = value;
         }
 
         /// <summary>
@@ -253,15 +220,9 @@ namespace iTextSharp.text
         /// <value>the indentation</value>
         public float IndentationRight
         {
-            get
-            {
-                return indentationRight;
-            }
+            get => indentationRight;
 
-            set
-            {
-                indentationRight = value;
-            }
+            set => indentationRight = value;
         }
 
         /// <summary>
@@ -271,14 +232,8 @@ namespace iTextSharp.text
         /// <returns>true if the section wasn't added yet</returns>
         public bool NotAddedYet
         {
-            get
-            {
-                return notAddedYet;
-            }
-            set
-            {
-                notAddedYet = value;
-            }
+            get => notAddedYet;
+            set => notAddedYet = value;
         }
 
         /// <summary>
@@ -287,15 +242,9 @@ namespace iTextSharp.text
         /// <value>a int</value>
         public int NumberDepth
         {
-            get
-            {
-                return numberDepth;
-            }
+            get => numberDepth;
 
-            set
-            {
-                numberDepth = value;
-            }
+            set => numberDepth = value;
         }
 
         /// <summary>
@@ -306,14 +255,8 @@ namespace iTextSharp.text
         /// </summary>
         public int NumberStyle
         {
-            set
-            {
-                numberStyle = value;
-            }
-            get
-            {
-                return numberStyle;
-            }
+            set => numberStyle = value;
+            get => numberStyle;
         }
 
         /// <summary>
@@ -322,40 +265,22 @@ namespace iTextSharp.text
         /// <value>a Paragraph</value>
         public Paragraph Title
         {
-            get
-            {
-                return ConstructTitle(title, Numbers, numberDepth, numberStyle);
-            }
+            get => ConstructTitle(title, Numbers, numberDepth, numberStyle);
 
-            set
-            {
-                title = value;
-            }
+            set => title = value;
         }
 
         public virtual bool TriggerNewPage
         {
-            get
-            {
-                return triggerNewPage && notAddedYet;
-            }
-            set
-            {
-                triggerNewPage = value;
-            }
+            get => triggerNewPage && notAddedYet;
+            set => triggerNewPage = value;
         }
 
         /// <summary>
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public virtual int Type
-        {
-            get
-            {
-                return Element.SECTION;
-            }
-        }
+        public virtual int Type => Element.SECTION;
 
         /// <summary>
         /// @see com.lowagie.text.LargeElement#isAddedCompletely()
@@ -363,14 +288,8 @@ namespace iTextSharp.text
         /// </summary>
         protected bool AddedCompletely
         {
-            get
-            {
-                return addedCompletely;
-            }
-            set
-            {
-                addedCompletely = value;
-            }
+            get => addedCompletely;
+            set => addedCompletely = value;
         }
 
         /// <summary>
@@ -388,13 +307,13 @@ namespace iTextSharp.text
             {
                 return null;
             }
-            int depth = Math.Min(numbers.Count, numberDepth);
+            var depth = Math.Min(numbers.Count, numberDepth);
             if (depth < 1)
             {
                 return title;
             }
-            StringBuilder buf = new StringBuilder(" ");
-            for (int i = 0; i < depth; i++)
+            var buf = new StringBuilder(" ");
+            for (var i = 0; i < depth; i++)
             {
                 buf.Insert(0, ".");
                 buf.Insert(0, (int)numbers[i]);
@@ -403,7 +322,7 @@ namespace iTextSharp.text
             {
                 buf.Remove(buf.Length - 2, 1);
             }
-            Paragraph result = new Paragraph(title);
+            var result = new Paragraph(title);
             result.Insert(0, new Chunk(buf.ToString(), title.Font));
             return result;
         }
@@ -442,7 +361,7 @@ namespace iTextSharp.text
             }
             try
             {
-                IElement element = (IElement)o;
+                var element = (IElement)o;
                 if (element.IsNestable())
                 {
                     Insert(index, element);
@@ -471,18 +390,18 @@ namespace iTextSharp.text
         {
             try
             {
-                IElement element = (IElement)o;
+                var element = (IElement)o;
                 if (element.Type == Element.SECTION)
                 {
-                    Section section = (Section)o;
+                    var section = (Section)o;
                     section.setNumbers(++Subsections, Numbers);
                     base.Add(section);
                     return true;
                 }
                 else if (o is MarkedSection && ((MarkedObject)o).Element.Type == Element.SECTION)
                 {
-                    MarkedSection mo = (MarkedSection)o;
-                    Section section = (Section)(mo.Element);
+                    var mo = (MarkedSection)o;
+                    var section = (Section)(mo.Element);
                     section.setNumbers(++Subsections, Numbers);
                     base.Add(mo);
                     return true;
@@ -511,7 +430,7 @@ namespace iTextSharp.text
         /// <returns>true if the action succeeded, false if not.</returns>
         public bool AddAll(ICollection collection)
         {
-            foreach (object itm in collection)
+            foreach (var itm in collection)
             {
                 Add(itm);
             }
@@ -523,7 +442,7 @@ namespace iTextSharp.text
         /// </summary>
         public MarkedSection AddMarkedSection()
         {
-            MarkedSection section = new MarkedSection(new Section(null, numberDepth + 1));
+            var section = new MarkedSection(new Section(null, numberDepth + 1));
             Add(section);
             return section;
         }
@@ -541,8 +460,10 @@ namespace iTextSharp.text
             {
                 throw new InvalidOperationException("This LargeElement has already been added to the Document.");
             }
-            Section section = new Section(title, numberDepth);
-            section.Indentation = indentation;
+            var section = new Section(title, numberDepth)
+            {
+                Indentation = indentation
+            };
             Add(section);
             return section;
         }
@@ -634,12 +555,12 @@ namespace iTextSharp.text
         {
             NotAddedYet = false;
             title = null;
-            for (int k = 0; k < Count; ++k)
+            for (var k = 0; k < Count; ++k)
             {
-                IElement element = (IElement)this[k];
+                var element = (IElement)this[k];
                 if (element is Section)
                 {
-                    Section s = (Section)element;
+                    var s = (Section)element;
                     if (!s.ElementComplete && Count == 1)
                     {
                         s.FlushContent();
@@ -662,9 +583,13 @@ namespace iTextSharp.text
         public Paragraph GetBookmarkTitle()
         {
             if (bookmarkTitle == null)
+            {
                 return Title;
+            }
             else
+            {
                 return new Paragraph(bookmarkTitle);
+            }
         }
 
         /// <summary>
@@ -774,7 +699,7 @@ namespace iTextSharp.text
         public void SetChapterNumber(int number)
         {
             Numbers[Numbers.Count - 1] = number;
-            foreach (object s in this)
+            foreach (var s in this)
             {
                 if (s is Section)
                 {
@@ -790,8 +715,10 @@ namespace iTextSharp.text
         /// <param name="numbers">an ArrayList, containing the numbers of the Parent</param>
         private void setNumbers(int number, ArrayList numbers)
         {
-            Numbers = new ArrayList();
-            Numbers.Add(number);
+            Numbers = new ArrayList
+            {
+                number
+            };
             Numbers.AddRange(numbers);
         }
     }

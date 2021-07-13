@@ -1,6 +1,6 @@
+using iTextSharp.text.factories;
 using System;
 using System.Collections;
-using iTextSharp.text.factories;
 
 namespace iTextSharp.text
 {
@@ -209,26 +209,14 @@ namespace iTextSharp.text
 
         public bool Alignindent
         {
-            set
-            {
-                alignindent = value;
-            }
-            get
-            {
-                return alignindent;
-            }
+            set => alignindent = value;
+            get => alignindent;
         }
 
         public bool Autoindent
         {
-            set
-            {
-                autoindent = value;
-            }
-            get
-            {
-                return autoindent;
-            }
+            set => autoindent = value;
+            get => autoindent;
         }
 
         /// <summary>
@@ -239,7 +227,7 @@ namespace iTextSharp.text
         {
             get
             {
-                ArrayList tmp = new ArrayList();
+                var tmp = new ArrayList();
                 foreach (IElement ele in list)
                 {
                     tmp.AddRange(ele.Chunks);
@@ -254,15 +242,9 @@ namespace iTextSharp.text
         /// <value>an int</value>
         public int First
         {
-            get
-            {
-                return first;
-            }
+            get => first;
 
-            set
-            {
-                first = value;
-            }
+            set => first = value;
         }
 
         /// <summary>
@@ -271,15 +253,9 @@ namespace iTextSharp.text
         /// <value>the indentation</value>
         public float IndentationLeft
         {
-            get
-            {
-                return indentationLeft;
-            }
+            get => indentationLeft;
 
-            set
-            {
-                indentationLeft = value;
-            }
+            set => indentationLeft = value;
         }
 
         /// <summary>
@@ -288,39 +264,21 @@ namespace iTextSharp.text
         /// <value>the indentation</value>
         public float IndentationRight
         {
-            get
-            {
-                return indentationRight;
-            }
+            get => indentationRight;
 
-            set
-            {
-                indentationRight = value;
-            }
+            set => indentationRight = value;
         }
 
         /// <summary>
         /// Gets all the items in the list.
         /// </summary>
         /// <value>an ArrayList containing ListItems</value>
-        public ArrayList Items
-        {
-            get
-            {
-                return list;
-            }
-        }
+        public ArrayList Items => list;
 
         public bool Lettered
         {
-            set
-            {
-                lettered = value;
-            }
-            get
-            {
-                return lettered;
-            }
+            set => lettered = value;
+            get => lettered;
         }
 
         /// <summary>
@@ -329,34 +287,19 @@ namespace iTextSharp.text
         /// <value>a Chunk</value>
         public Chunk ListSymbol
         {
-            set
-            {
-                symbol = value;
-            }
+            set => symbol = value;
         }
 
         public bool Lowercase
         {
-            set
-            {
-                lowercase = value;
-            }
-            get
-            {
-                return lowercase;
-            }
+            set => lowercase = value;
+            get => lowercase;
         }
 
         public bool Numbered
         {
-            set
-            {
-                numbered = value;
-            }
-            get
-            {
-                return numbered;
-            }
+            set => numbered = value;
+            get => numbered;
         }
 
         /// <summary>
@@ -365,14 +308,8 @@ namespace iTextSharp.text
         /// </summary>
         public string PostSymbol
         {
-            set
-            {
-                postSymbol = value;
-            }
-            get
-            {
-                return postSymbol;
-            }
+            set => postSymbol = value;
+            get => postSymbol;
         }
 
         /// <summary>
@@ -381,14 +318,8 @@ namespace iTextSharp.text
         /// </summary>
         public string PreSymbol
         {
-            set
-            {
-                preSymbol = value;
-            }
-            get
-            {
-                return preSymbol;
-            }
+            set => preSymbol = value;
+            get => preSymbol;
         }
 
         /// <summary>
@@ -398,13 +329,7 @@ namespace iTextSharp.text
         /// Gets the size of the list.
         /// </summary>
         /// <value>a size</value>
-        public int Size
-        {
-            get
-            {
-                return list.Count;
-            }
-        }
+        public int Size => list.Count;
 
         /// <summary>
         /// Get/set the symbol indentation.
@@ -412,14 +337,8 @@ namespace iTextSharp.text
         /// <value>a Chunk</value>
         public Chunk Symbol
         {
-            get
-            {
-                return symbol;
-            }
-            set
-            {
-                symbol = value;
-            }
+            get => symbol;
+            set => symbol = value;
         }
 
         /// <summary>
@@ -428,14 +347,8 @@ namespace iTextSharp.text
         /// <value>the symbol indentation</value>
         public float SymbolIndent
         {
-            set
-            {
-                symbolIndent = value;
-            }
-            get
-            {
-                return symbolIndent;
-            }
+            set => symbolIndent = value;
+            get => symbolIndent;
         }
 
         /// <summary>
@@ -450,7 +363,7 @@ namespace iTextSharp.text
                 {
                     return -1;
                 }
-                ListItem item = (ListItem)list[0];
+                var item = (ListItem)list[0];
                 return item.TotalLeading;
             }
         }
@@ -459,13 +372,7 @@ namespace iTextSharp.text
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public int Type
-        {
-            get
-            {
-                return Element.LIST;
-            }
-        }
+        public int Type => Element.LIST;
 
         /// <summary>
         /// Adds an Object to the List.
@@ -476,15 +383,20 @@ namespace iTextSharp.text
         {
             if (o is ListItem)
             {
-                ListItem item = (ListItem)o;
+                var item = (ListItem)o;
                 if (numbered || lettered)
                 {
-                    Chunk chunk = new Chunk(preSymbol, symbol.Font);
-                    int index = first + list.Count;
+                    var chunk = new Chunk(preSymbol, symbol.Font);
+                    var index = first + list.Count;
                     if (lettered)
+                    {
                         chunk.Append(RomanAlphabetFactory.GetString(index, lowercase));
+                    }
                     else
+                    {
                         chunk.Append(index.ToString());
+                    }
+
                     chunk.Append(postSymbol);
                     item.ListSymbol = chunk;
                 }
@@ -499,7 +411,7 @@ namespace iTextSharp.text
             }
             else if (o is List)
             {
-                List nested = (List)o;
+                var nested = (List)o;
                 nested.IndentationLeft = nested.IndentationLeft + symbolIndent;
                 first--;
                 list.Add(nested);

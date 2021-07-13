@@ -12,7 +12,6 @@ namespace iTextSharp.text.pdf.interfaces
     /// </summary>
     public interface IPdfEncryptionSettings
     {
-
         /// <summary>
         /// Sets the encryption options for this document. The userPassword and the
         /// ownerPassword can be null or have zero length. In this case the ownerPassword

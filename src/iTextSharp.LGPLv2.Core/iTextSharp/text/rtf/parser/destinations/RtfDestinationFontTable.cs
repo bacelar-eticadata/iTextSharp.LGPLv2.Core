@@ -1,6 +1,6 @@
+using iTextSharp.text.rtf.parser.ctrlwords;
 using System;
 using System.Collections;
-using iTextSharp.text.rtf.parser.ctrlwords;
 
 namespace iTextSharp.text.rtf.parser.destinations
 {
@@ -231,7 +231,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// </summary>
         public override bool HandleControlWord(RtfCtrlWordData ctrlWordData)
         {
-            bool result = true;
+            var result = true;
             // just let fonttbl fall through and set last ctrl word object.
 
             if (ctrlWordData.CtrlWord.Equals("f")) { SetFontNumber(ctrlWordData.Param); result = true; }
@@ -390,7 +390,11 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// </summary>
         public override void SetParser(RtfParser parser)
         {
-            if (RtfParser != null && RtfParser.Equals(parser)) return;
+            if (RtfParser != null && RtfParser.Equals(parser))
+            {
+                return;
+            }
+
             RtfParser = parser;
             init(true);
         }
@@ -460,12 +464,15 @@ namespace iTextSharp.text.rtf.parser.destinations
         private Font createfont(string fontName)
         {
             Font f1 = null;
-            int pos = -1;
+            var pos = -1;
             do
             {
                 f1 = FontFactory.GetFont(fontName);
 
-                if (f1.BaseFont != null) break; // found a font, exit the do/while
+                if (f1.BaseFont != null)
+                {
+                    break; // found a font, exit the do/while
+                }
 
                 pos = fontName.LastIndexOf(" ", StringComparison.Ordinal);    // find the last space
                 if (pos > 0)
@@ -510,8 +517,15 @@ namespace iTextSharp.text.rtf.parser.destinations
         private void processFont()
         {
             _fontName = _fontName.Trim();
-            if (_fontName.Length == 0) return;
-            if (_fontNr.Length == 0) return;
+            if (_fontName.Length == 0)
+            {
+                return;
+            }
+
+            if (_fontNr.Length == 0)
+            {
+                return;
+            }
 
             if (_fontName.Length > 0 && _fontName.IndexOf(";", StringComparison.Ordinal) >= 0)
             {
@@ -544,10 +558,12 @@ namespace iTextSharp.text.rtf.parser.destinations
             {
                 // This could probably be written as a better font matching function
 
-                string fName = _fontName;   // work variable for trimming name if needed.
-                Font f1 = createfont(fName);
+                var fName = _fontName;   // work variable for trimming name if needed.
+                var f1 = createfont(fName);
                 if (f1.BaseFont == null && _falt.Length > 0)
+                {
                     f1 = createfont(_falt);
+                }
 
                 if (f1.BaseFont == null)
                 {

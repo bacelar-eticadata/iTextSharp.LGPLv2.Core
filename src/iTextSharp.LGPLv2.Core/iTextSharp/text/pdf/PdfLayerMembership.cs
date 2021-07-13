@@ -21,6 +21,7 @@ namespace iTextSharp.text.pdf
         /// Visible only if all of the entries are <B>ON</B>.
         /// </summary>
         public static readonly PdfName Allon = new PdfName("AllOn");
+
         /// <summary>
         /// Visible if any of the entries are <B>OFF</B>.
         /// </summary>
@@ -30,6 +31,7 @@ namespace iTextSharp.text.pdf
         /// Visible if any of the entries are <B>ON</B>.
         /// </summary>
         public static readonly PdfName Anyon = new PdfName("AnyOn");
+
         internal Hashtable layers = new Hashtable();
         internal PdfArray Members = new PdfArray();
         internal PdfIndirectReference Refi;
@@ -48,37 +50,19 @@ namespace iTextSharp.text.pdf
         /// Gets the member layers.
         /// </summary>
         /// <returns>the member layers</returns>
-        public ICollection Layers
-        {
-            get
-            {
-                return layers.Keys;
-            }
-        }
+        public ICollection Layers => layers.Keys;
 
         /// <summary>
         /// Gets the dictionary representing the membership layer. It just returns  this .
         /// </summary>
         /// <returns>the dictionary representing the layer</returns>
-        public PdfObject PdfObject
-        {
-            get
-            {
-                return this;
-            }
-        }
+        public PdfObject PdfObject => this;
 
         /// <summary>
         /// Gets the  PdfIndirectReference  that represents this membership layer.
         /// </summary>
         /// <returns>the  PdfIndirectReference  that represents this layer</returns>
-        public PdfIndirectReference Ref
-        {
-            get
-            {
-                return Refi;
-            }
-        }
+        public PdfIndirectReference Ref => Refi;
 
         /// <summary>
         /// Sets the visibility policy for content belonging to this
@@ -87,10 +71,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public PdfName VisibilityPolicy
         {
-            set
-            {
-                Put(PdfName.P, value);
-            }
+            set => Put(PdfName.P, value);
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
-using System.Xml;
 using System.Collections;
+using System.Xml;
 
 namespace iTextSharp.text.xml
 {
@@ -20,7 +20,7 @@ namespace iTextSharp.text.xml
         /// <param name="xDoc"></param>
         public static void Parse(IDocListener document, XmlDocument xDoc)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, xDoc);
         }
 
@@ -31,7 +31,7 @@ namespace iTextSharp.text.xml
         /// <param name="file"></param>
         public static void Parse(IDocListener document, string file)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, file);
         }
 
@@ -42,7 +42,7 @@ namespace iTextSharp.text.xml
         /// <param name="reader"></param>
         public static void Parse(IDocListener document, XmlReader reader)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, reader);
         }
 
@@ -51,7 +51,7 @@ namespace iTextSharp.text.xml
         /// </summary>
         public static void Parse(IDocListener document, XmlDocument xDoc, XmlDocument xTagmap)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, xDoc, xTagmap);
         }
 
@@ -63,7 +63,7 @@ namespace iTextSharp.text.xml
         /// <param name="tagmap"></param>
         public static void Parse(IDocListener document, string file, string tagmap)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, file, tagmap);
         }
 
@@ -75,7 +75,7 @@ namespace iTextSharp.text.xml
         /// <param name="tagmap"></param>
         public static void Parse(IDocListener document, string file, Hashtable tagmap)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, file, tagmap);
         }
 
@@ -87,7 +87,7 @@ namespace iTextSharp.text.xml
         /// <param name="tagmap"></param>
         public static void Parse(IDocListener document, XmlReader reader, string tagmap)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, reader, tagmap);
         }
 
@@ -99,7 +99,7 @@ namespace iTextSharp.text.xml
         /// <param name="tagmap"></param>
         public static void Parse(IDocListener document, XmlReader reader, Hashtable tagmap)
         {
-            XmlParser p = new XmlParser();
+            var p = new XmlParser();
             p.Go(document, reader, tagmap);
         }
 

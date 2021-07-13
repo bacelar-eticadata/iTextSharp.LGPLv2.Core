@@ -7,9 +7,9 @@ namespace System.util
     /// </summary>
     public class ListIterator
     {
-        readonly ArrayList _col;
-        int _cursor;
-        int _lastRet = -1;
+        private readonly ArrayList _col;
+        private int _cursor;
+        private int _lastRet = -1;
 
         public ListIterator(ArrayList col)
         {
@@ -23,15 +23,15 @@ namespace System.util
 
         public object Next()
         {
-            object next = _col[_cursor];
+            var next = _col[_cursor];
             _lastRet = _cursor++;
             return next;
         }
 
         public object Previous()
         {
-            int i = _cursor - 1;
-            object previous = _col[i];
+            var i = _cursor - 1;
+            var previous = _col[i];
             _lastRet = _cursor = i;
             return previous;
         }
@@ -39,10 +39,16 @@ namespace System.util
         public void Remove()
         {
             if (_lastRet == -1)
+            {
                 throw new InvalidOperationException();
+            }
+
             _col.RemoveAt(_lastRet);
             if (_lastRet < _cursor)
+            {
                 _cursor--;
+            }
+
             _lastRet = -1;
         }
     }

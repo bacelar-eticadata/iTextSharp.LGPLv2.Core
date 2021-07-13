@@ -1,6 +1,6 @@
 using System;
-using System.Text;
 using System.Globalization;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
@@ -20,7 +20,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfDate : PdfString
     {
-
         /// <summary>
         /// constructors
         /// </summary>
@@ -34,7 +33,7 @@ namespace iTextSharp.text.pdf
             //d = d.ToUniversalTime();
 
             Value = d.ToString("\\D\\:yyyyMMddHHmmss", DateTimeFormatInfo.InvariantInfo);
-            string timezone = d.ToString("zzz", DateTimeFormatInfo.InvariantInfo);
+            var timezone = d.ToString("zzz", DateTimeFormatInfo.InvariantInfo);
             timezone = timezone.Replace(":", "'");
             Value += timezone + "'";
         }
@@ -43,7 +42,9 @@ namespace iTextSharp.text.pdf
         /// Constructs a  PdfDate -object, representing the current day and time.
         /// </summary>
 
-        public PdfDate() : this(DateTime.Now) { }
+        public PdfDate() : this(DateTime.Now)
+        {
+        }
 
         /// <summary>
         /// Adds a number of leading zeros to a given  string  in order to get a  string
@@ -53,10 +54,13 @@ namespace iTextSharp.text.pdf
         public static DateTime Decode(string date)
         {
             if (date.StartsWith("D:"))
+            {
                 date = date.Substring(2);
+            }
+
             int year, month = 1, day = 1, hour = 0, minute = 0, second = 0;
             int offsetHour = 0, offsetMinute = 0;
-            char variation = '\0';
+            var variation = '\0';
             year = int.Parse(date.Substring(0, 4));
             if (date.Length >= 6)
             {
@@ -78,12 +82,18 @@ namespace iTextSharp.text.pdf
                     }
                 }
             }
-            DateTime d = new DateTime(year, month, day, hour, minute, second);
+            var d = new DateTime(year, month, day, hour, minute, second);
             if (date.Length <= 14)
+            {
                 return d;
+            }
+
             variation = date[14];
             if (variation == 'Z')
+            {
                 return d.ToLocalTime();
+            }
+
             if (date.Length >= 17)
             {
                 offsetHour = int.Parse(date.Substring(15, 2));
@@ -92,11 +102,16 @@ namespace iTextSharp.text.pdf
                     offsetMinute = int.Parse(date.Substring(18, 2));
                 }
             }
-            TimeSpan span = new TimeSpan(offsetHour, offsetMinute, 0);
+            var span = new TimeSpan(offsetHour, offsetMinute, 0);
             if (variation == '-')
+            {
                 d += span;
+            }
             else
+            {
                 d -= span;
+            }
+
             return d.ToLocalTime();
         }
 
@@ -108,22 +123,37 @@ namespace iTextSharp.text.pdf
         public static string GetW3CDate(string d)
         {
             if (d.StartsWith("D:"))
+            {
                 d = d.Substring(2);
-            StringBuilder sb = new StringBuilder();
+            }
+
+            var sb = new StringBuilder();
             if (d.Length < 4)
+            {
                 return "0000";
+            }
+
             sb.Append(d.Substring(0, 4)); //year
             d = d.Substring(4);
             if (d.Length < 2)
+            {
                 return sb.ToString();
+            }
+
             sb.Append('-').Append(d.Substring(0, 2)); //month
             d = d.Substring(2);
             if (d.Length < 2)
+            {
                 return sb.ToString();
+            }
+
             sb.Append('-').Append(d.Substring(0, 2)); //day
             d = d.Substring(2);
             if (d.Length < 2)
+            {
                 return sb.ToString();
+            }
+
             sb.Append('T').Append(d.Substring(0, 2)); //hour
             d = d.Substring(2);
             if (d.Length < 2)
@@ -142,10 +172,10 @@ namespace iTextSharp.text.pdf
             d = d.Substring(2);
             if (d.StartsWith("-") || d.StartsWith("+"))
             {
-                string sign = d.Substring(0, 1);
+                var sign = d.Substring(0, 1);
                 d = d.Substring(1);
-                string h = "00";
-                string m = "00";
+                var h = "00";
+                var m = "00";
                 if (d.Length >= 2)
                 {
                     h = d.Substring(0, 2);
@@ -153,7 +183,9 @@ namespace iTextSharp.text.pdf
                     {
                         d = d.Substring(3);
                         if (d.Length >= 2)
+                        {
                             m = d.Substring(0, 2);
+                        }
                     }
                     sb.Append(sign).Append(h).Append(':').Append(m);
                     return sb.ToString();

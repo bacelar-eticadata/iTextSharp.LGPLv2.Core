@@ -42,7 +42,7 @@ namespace iTextSharp.text.pdf.hyphenation
             {
                 return "-";
             }
-            StringBuilder res = new StringBuilder("{");
+            var res = new StringBuilder("{");
             res.Append(PreBreak);
             res.Append("}{");
             res.Append(PostBreak);

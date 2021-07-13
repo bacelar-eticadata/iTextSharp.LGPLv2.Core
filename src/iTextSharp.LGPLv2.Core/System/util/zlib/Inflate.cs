@@ -80,10 +80,10 @@ namespace System.util.zlib
         private const int ZStreamError = -2;
         private const int ZVersionError = -6;
 
-           // waiting for method byte
-   // decompressing blocks
-                                        // finished check, done
-                                        // got an error--stay here
+        // waiting for method byte
+        // decompressing blocks
+        // finished check, done
+        // got an error--stay here
 
         // current inflate mode
 
@@ -101,7 +101,10 @@ namespace System.util.zlib
             int b;
 
             if (z == null || z.Istate == null || z.NextIn == null)
+            {
                 return ZStreamError;
+            }
+
             f = f == Z_FINISH ? ZBufError : ZOk;
             r = ZBufError;
             while (true)
@@ -111,7 +114,12 @@ namespace System.util.zlib
                 {
                     case Method:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         if (((z.Istate.method = z.NextIn[z.NextInIndex++]) & 0xf) != ZDeflated)
@@ -132,7 +140,12 @@ namespace System.util.zlib
                         goto case Flag;
                     case Flag:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         b = (z.NextIn[z.NextInIndex++]) & 0xff;
@@ -154,7 +167,12 @@ namespace System.util.zlib
                         goto case Dict4;
                     case Dict4:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need = ((z.NextIn[z.NextInIndex++] & 0xff) << 24) & 0xff000000L;
@@ -162,7 +180,12 @@ namespace System.util.zlib
                         goto case Dict3;
                     case Dict3:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need += ((z.NextIn[z.NextInIndex++] & 0xff) << 16) & 0xff0000L;
@@ -170,7 +193,12 @@ namespace System.util.zlib
                         goto case Dict2;
                     case Dict2:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need += ((z.NextIn[z.NextInIndex++] & 0xff) << 8) & 0xff00L;
@@ -178,7 +206,12 @@ namespace System.util.zlib
                         goto case Dict1;
                     case Dict1:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need += (z.NextIn[z.NextInIndex++] & 0xffL);
@@ -218,7 +251,12 @@ namespace System.util.zlib
                         goto case Check4;
                     case Check4:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need = ((z.NextIn[z.NextInIndex++] & 0xff) << 24) & 0xff000000L;
@@ -226,7 +264,12 @@ namespace System.util.zlib
                         goto case Check3;
                     case Check3:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need += ((z.NextIn[z.NextInIndex++] & 0xff) << 16) & 0xff0000L;
@@ -234,7 +277,12 @@ namespace System.util.zlib
                         goto case Check2;
                     case Check2:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need += ((z.NextIn[z.NextInIndex++] & 0xff) << 8) & 0xff00L;
@@ -242,7 +290,12 @@ namespace System.util.zlib
                         goto case Check1;
                     case Check1:
 
-                        if (z.AvailIn == 0) return r; r = f;
+                        if (z.AvailIn == 0)
+                        {
+                            return r;
+                        }
+
+                        r = f;
 
                         z.AvailIn--; z.TotalIn++;
                         z.Istate.Need += (z.NextIn[z.NextInIndex++] & 0xffL);
@@ -270,7 +323,10 @@ namespace System.util.zlib
         internal int InflateEnd(ZStream z)
         {
             if (blocks != null)
+            {
                 blocks.Free(z);
+            }
+
             blocks = null;
             //    ZFREE(z, z->state);
             return ZOk;
@@ -308,7 +364,10 @@ namespace System.util.zlib
 
         internal int InflateReset(ZStream z)
         {
-            if (z == null || z.Istate == null) return ZStreamError;
+            if (z == null || z.Istate == null)
+            {
+                return ZStreamError;
+            }
 
             z.TotalIn = z.TotalOut = 0;
             z.Msg = null;
@@ -318,10 +377,12 @@ namespace System.util.zlib
         }
         internal int InflateSetDictionary(ZStream z, byte[] dictionary, int dictLength)
         {
-            int index = 0;
-            int length = dictLength;
+            var index = 0;
+            var length = dictLength;
             if (z == null || z.Istate == null || z.Istate.Mode != Dict0)
+            {
                 return ZStreamError;
+            }
 
             if (z._adler.adler32(1L, dictionary, 0, dictLength) != z.Adler)
             {
@@ -348,14 +409,20 @@ namespace System.util.zlib
 
             // set up
             if (z == null || z.Istate == null)
+            {
                 return ZStreamError;
+            }
+
             if (z.Istate.Mode != Bad)
             {
                 z.Istate.Mode = Bad;
                 z.Istate.Marker = 0;
             }
             if ((n = z.AvailIn) == 0)
+            {
                 return ZBufError;
+            }
+
             p = z.NextInIndex;
             m = z.Istate.Marker;
 
@@ -416,7 +483,10 @@ namespace System.util.zlib
         internal int InflateSyncPoint(ZStream z)
         {
             if (z == null || z.Istate == null || z.Istate.blocks == null)
+            {
                 return ZStreamError;
+            }
+
             return z.Istate.blocks.sync_point();
         }
     }

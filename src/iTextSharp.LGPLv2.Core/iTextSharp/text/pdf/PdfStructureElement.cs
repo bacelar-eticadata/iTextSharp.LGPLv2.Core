@@ -9,11 +9,11 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfStructureElement : PdfDictionary
     {
-
         /// <summary>
         /// Holds value of property kids.
         /// </summary>
         private readonly PdfStructureElement _parent;
+
         private readonly PdfStructureTreeRoot _top;
 
         /// <summary>
@@ -50,46 +50,43 @@ namespace iTextSharp.text.pdf
         /// Gets the parent of this node.
         /// </summary>
         /// <returns>the parent of this node</returns>
-        public PdfDictionary Parent
-        {
-            get
-            {
-                return _parent;
-            }
-        }
+        public PdfDictionary Parent => _parent;
 
         /// <summary>
         /// Gets the reference this object will be written to.
         /// </summary>
         /// <returns>the reference this object will be written to</returns>
-        public PdfIndirectReference Reference
-        {
-            get
-            {
-                return _reference;
-            }
-        }
+        public PdfIndirectReference Reference => _reference;
 
         internal void SetPageMark(int page, int mark)
         {
             if (mark >= 0)
+            {
                 Put(PdfName.K, new PdfNumber(mark));
+            }
+
             _top.SetPageMark(page, _reference);
         }
 
         private void init(PdfDictionary parent, PdfName structureType)
         {
-            PdfObject kido = parent.Get(PdfName.K);
+            var kido = parent.Get(PdfName.K);
             PdfArray kids = null;
             if (kido != null && !kido.IsArray())
+            {
                 throw new ArgumentException("The parent has already another function.");
+            }
+
             if (kido == null)
             {
                 kids = new PdfArray();
                 parent.Put(PdfName.K, kids);
             }
             else
+            {
                 kids = (PdfArray)kido;
+            }
+
             kids.Add(this);
             Put(PdfName.S, structureType);
             _reference = _top.Writer.PdfIndirectReference;

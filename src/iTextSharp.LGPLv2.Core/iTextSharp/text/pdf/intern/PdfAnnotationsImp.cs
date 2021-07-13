@@ -3,7 +3,6 @@ using System.Collections;
 
 namespace iTextSharp.text.pdf.intern
 {
-
     public class PdfAnnotationsImp
     {
         /// <summary>
@@ -23,7 +22,6 @@ namespace iTextSharp.text.pdf.intern
         /// </summary>
         protected internal ArrayList DelayedAnnotations = new ArrayList();
 
-
         public PdfAnnotationsImp(PdfWriter writer)
         {
             acroForm = new PdfAcroForm(writer);
@@ -33,20 +31,11 @@ namespace iTextSharp.text.pdf.intern
         /// Gets the AcroForm object.
         /// </summary>
         /// <returns>the PdfAcroform object of the PdfDocument</returns>
-        public PdfAcroForm AcroForm
-        {
-            get
-            {
-                return acroForm;
-            }
-        }
+        public PdfAcroForm AcroForm => acroForm;
 
         public int SigFlags
         {
-            set
-            {
-                acroForm.SigFlags = value;
-            }
+            set => acroForm.SigFlags = value;
         }
 
         public static PdfAnnotation ConvertAnnotation(PdfWriter writer, Annotation annot, Rectangle defaultRect)
@@ -55,28 +44,40 @@ namespace iTextSharp.text.pdf.intern
             {
                 case Annotation.URL_NET:
                     return new PdfAnnotation(writer, annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry(), new PdfAction((Uri)annot.Attributes[Annotation.URL]));
+
                 case Annotation.URL_AS_STRING:
                     return new PdfAnnotation(writer, annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry(), new PdfAction((string)annot.Attributes[Annotation.FILE]));
+
                 case Annotation.FILE_DEST:
                     return new PdfAnnotation(writer, annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry(), new PdfAction((string)annot.Attributes[Annotation.FILE], (string)annot.Attributes[Annotation.DESTINATION]));
+
                 case Annotation.SCREEN:
-                    bool[] sparams = (bool[])annot.Attributes[Annotation.PARAMETERS];
-                    string fname = (string)annot.Attributes[Annotation.FILE];
-                    string mimetype = (string)annot.Attributes[Annotation.MIMETYPE];
+                    var sparams = (bool[])annot.Attributes[Annotation.PARAMETERS];
+                    var fname = (string)annot.Attributes[Annotation.FILE];
+                    var mimetype = (string)annot.Attributes[Annotation.MIMETYPE];
                     PdfFileSpecification fs;
                     if (sparams[0])
+                    {
                         fs = PdfFileSpecification.FileEmbedded(writer, fname, fname, null);
+                    }
                     else
+                    {
                         fs = PdfFileSpecification.FileExtern(writer, fname);
-                    PdfAnnotation ann = PdfAnnotation.CreateScreen(writer, new Rectangle(annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry()),
+                    }
+
+                    var ann = PdfAnnotation.CreateScreen(writer, new Rectangle(annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry()),
                             fname, fs, mimetype, sparams[1]);
                     return ann;
+
                 case Annotation.FILE_PAGE:
                     return new PdfAnnotation(writer, annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry(), new PdfAction((string)annot.Attributes[Annotation.FILE], (int)annot.Attributes[Annotation.PAGE]));
+
                 case Annotation.NAMED_DEST:
                     return new PdfAnnotation(writer, annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry(), new PdfAction((int)annot.Attributes[Annotation.NAMED]));
+
                 case Annotation.LAUNCH:
                     return new PdfAnnotation(writer, annot.GetLlx(), annot.GetLly(), annot.GetUrx(), annot.GetUry(), new PdfAction((string)annot.Attributes[Annotation.APPLICATION], (string)annot.Attributes[Annotation.PARAMETERS], (string)annot.Attributes[Annotation.OPERATION], (string)annot.Attributes[Annotation.DEFAULTDIR]));
+
                 default:
                     return new PdfAnnotation(writer, defaultRect.Left, defaultRect.Bottom, defaultRect.Right, defaultRect.Top, new PdfString(annot.Title, PdfObject.TEXT_UNICODE), new PdfString(annot.Content, PdfObject.TEXT_UNICODE));
             }
@@ -86,12 +87,16 @@ namespace iTextSharp.text.pdf.intern
         {
             if (annot.IsForm())
             {
-                PdfFormField field = (PdfFormField)annot;
+                var field = (PdfFormField)annot;
                 if (field.Parent == null)
+                {
                     addFormFieldRaw(field);
+                }
             }
             else
+            {
                 Annotations.Add(annot);
+            }
         }
 
         public void AddCalculationOrder(PdfFormField formField)
@@ -125,13 +130,13 @@ namespace iTextSharp.text.pdf.intern
 
         public PdfArray RotateAnnotations(PdfWriter writer, Rectangle pageSize)
         {
-            PdfArray array = new PdfArray();
-            int rotation = pageSize.Rotation % 360;
-            int currentPage = writer.CurrentPageNumber;
-            for (int k = 0; k < Annotations.Count; ++k)
+            var array = new PdfArray();
+            var rotation = pageSize.Rotation % 360;
+            var currentPage = writer.CurrentPageNumber;
+            for (var k = 0; k < Annotations.Count; ++k)
             {
-                PdfAnnotation dic = (PdfAnnotation)Annotations[k];
-                int page = dic.PlaceInPage;
+                var dic = (PdfAnnotation)Annotations[k];
+                var page = dic.PlaceInPage;
                 if (page > currentPage)
                 {
                     DelayedAnnotations.Add(dic);
@@ -141,20 +146,24 @@ namespace iTextSharp.text.pdf.intern
                 {
                     if (!dic.IsUsed())
                     {
-                        Hashtable templates = dic.Templates;
+                        var templates = dic.Templates;
                         if (templates != null)
+                        {
                             acroForm.AddFieldTemplates(templates);
+                        }
                     }
-                    PdfFormField field = (PdfFormField)dic;
+                    var field = (PdfFormField)dic;
                     if (field.Parent == null)
+                    {
                         acroForm.AddDocumentField(field.IndirectReference);
+                    }
                 }
                 if (dic.IsAnnotation())
                 {
                     array.Add(dic.IndirectReference);
                     if (!dic.IsUsed())
                     {
-                        PdfRectangle rect = (PdfRectangle)dic.Get(PdfName.Rect);
+                        var rect = (PdfRectangle)dic.Get(PdfName.Rect);
                         if (rect != null)
                         {
                             switch (rotation)
@@ -166,6 +175,7 @@ namespace iTextSharp.text.pdf.intern
                                             pageSize.Top - rect.Top,
                                             rect.Right));
                                     break;
+
                                 case 180:
                                     dic.Put(PdfName.Rect, new PdfRectangle(
                                             pageSize.Right - rect.Left,
@@ -173,6 +183,7 @@ namespace iTextSharp.text.pdf.intern
                                             pageSize.Right - rect.Right,
                                             pageSize.Top - rect.Top));
                                     break;
+
                                 case 270:
                                     dic.Put(PdfName.Rect, new PdfRectangle(
                                             rect.Bottom,
@@ -193,14 +204,16 @@ namespace iTextSharp.text.pdf.intern
             return array;
         }
 
-        void addFormFieldRaw(PdfFormField field)
+        private void addFormFieldRaw(PdfFormField field)
         {
             Annotations.Add(field);
-            ArrayList kids = field.Kids;
+            var kids = field.Kids;
             if (kids != null)
             {
-                for (int k = 0; k < kids.Count; ++k)
+                for (var k = 0; k < kids.Count; ++k)
+                {
                     addFormFieldRaw((PdfFormField)kids[k]);
+                }
             }
         }
     }

@@ -110,12 +110,15 @@ namespace iTextSharp.text.rtf.document
                     case RtfProtection.LEVEL_FORMPROT:
                         result.Write(_formprot, 0, _formprot.Length);
                         break;
+
                     case RtfProtection.LEVEL_ANNOTPROT:
                         result.Write(_annotprot, 0, _annotprot.Length);
                         break;
+
                     case RtfProtection.LEVEL_REVPROT:
                         result.Write(_revprot, 0, _revprot.Length);
                         break;
+
                     case RtfProtection.LEVEL_READPROT:
                         result.Write(_annotprot, 0, _annotprot.Length);
                         result.Write(_readprot, 0, _readprot.Length);

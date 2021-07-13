@@ -1,9 +1,8 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
+using System.IO;
 
 namespace iTextSharp.text.rtf.list
 {
-
     /// <summary>
     /// The RtfPictureList2 manages the pictures for lists.
     /// @author Howard Shank (hgshank@yahoo.com)
@@ -19,6 +18,7 @@ namespace iTextSharp.text.rtf.list
         public RtfPictureList(RtfDocument doc) : base(doc)
         {
         }
+
         /// <summary>
         /// (non-Javadoc)
         /// @see com.lowagie.text.rtf.RtfElement#writeContent(java.io.OutputStream)
@@ -26,7 +26,6 @@ namespace iTextSharp.text.rtf.list
         public override void WriteContent(Stream outp)
         {
             // TODO Auto-generated method stub
-
         }
 
         /// <summary>
@@ -41,6 +40,5 @@ namespace iTextSharp.text.rtf.list
             // if there are elements, write the \shppictlist here
             result.Write(CloseGroup, 0, CloseGroup.Length);
         }
-
     }
 }

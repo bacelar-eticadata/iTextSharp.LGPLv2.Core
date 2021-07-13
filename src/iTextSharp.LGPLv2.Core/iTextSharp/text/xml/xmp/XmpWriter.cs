@@ -1,7 +1,7 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.pdf;
 using iTextSharp.text.xml.simpleparser;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.xml.xmp
 {
@@ -108,15 +108,18 @@ namespace iTextSharp.text.xml.xmp
         {
             if (info != null)
             {
-                DublinCoreSchema dc = new DublinCoreSchema();
-                PdfSchema p = new PdfSchema();
-                XmpBasicSchema basic = new XmpBasicSchema();
+                var dc = new DublinCoreSchema();
+                var p = new PdfSchema();
+                var basic = new XmpBasicSchema();
                 PdfObject obj;
                 foreach (PdfName key in info.Keys)
                 {
                     obj = info.Get(key);
                     if (obj == null)
+                    {
                         continue;
+                    }
+
                     if (PdfName.Title.Equals(key))
                     {
                         dc.AddTitle(((PdfString)obj).ToUnicodeString());
@@ -151,16 +154,33 @@ namespace iTextSharp.text.xml.xmp
                         basic.AddModDate(((PdfDate)obj).GetW3CDate());
                     }
                 }
-                if (dc.Count > 0) AddRdfDescription(dc);
-                if (p.Count > 0) AddRdfDescription(p);
-                if (basic.Count > 0) AddRdfDescription(basic);
+                if (dc.Count > 0)
+                {
+                    AddRdfDescription(dc);
+                }
+
+                if (p.Count > 0)
+                {
+                    AddRdfDescription(p);
+                }
+
+                if (basic.Count > 0)
+                {
+                    AddRdfDescription(basic);
+                }
+
                 if (pdfXConformance == PdfWriter.PDFA1A || pdfXConformance == PdfWriter.PDFA1B)
                 {
-                    PdfA1Schema a1 = new PdfA1Schema();
+                    var a1 = new PdfA1Schema();
                     if (pdfXConformance == PdfWriter.PDFA1A)
+                    {
                         a1.AddConformance("A");
+                    }
                     else
+                    {
                         a1.AddConformance("B");
+                    }
+
                     AddRdfDescription(a1);
                 }
             }
@@ -175,16 +195,19 @@ namespace iTextSharp.text.xml.xmp
         {
             if (info != null)
             {
-                DublinCoreSchema dc = new DublinCoreSchema();
-                PdfSchema p = new PdfSchema();
-                XmpBasicSchema basic = new XmpBasicSchema();
+                var dc = new DublinCoreSchema();
+                var p = new PdfSchema();
+                var basic = new XmpBasicSchema();
                 string value;
                 foreach (DictionaryEntry entry in info)
                 {
-                    string key = (string)entry.Key;
+                    var key = (string)entry.Key;
                     value = (string)entry.Value;
                     if (value == null)
+                    {
                         continue;
+                    }
+
                     if ("Title".Equals(key))
                     {
                         dc.AddTitle(value);
@@ -219,9 +242,20 @@ namespace iTextSharp.text.xml.xmp
                         basic.AddModDate(PdfDate.GetW3CDate(value));
                     }
                 }
-                if (dc.Count > 0) AddRdfDescription(dc);
-                if (p.Count > 0) AddRdfDescription(p);
-                if (basic.Count > 0) AddRdfDescription(basic);
+                if (dc.Count > 0)
+                {
+                    AddRdfDescription(dc);
+                }
+
+                if (p.Count > 0)
+                {
+                    AddRdfDescription(p);
+                }
+
+                if (basic.Count > 0)
+                {
+                    AddRdfDescription(basic);
+                }
             }
         }
 
@@ -229,10 +263,7 @@ namespace iTextSharp.text.xml.xmp
         /// </summary>
         public string About
         {
-            set
-            {
-                about = value;
-            }
+            set => about = value;
         }
 
         /// <summary>
@@ -276,7 +307,7 @@ namespace iTextSharp.text.xml.xmp
         {
             Writer.Write("</rdf:RDF>");
             Writer.Write("</x:xmpmeta>\n");
-            for (int i = 0; i < ExtraSpace; i++)
+            for (var i = 0; i < ExtraSpace; i++)
             {
                 Writer.Write(EXTRASPACE);
             }

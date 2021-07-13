@@ -1,6 +1,6 @@
+using iTextSharp.LGPLv2.Core.System.NetUtils;
 using System;
 using System.IO;
-using iTextSharp.LGPLv2.Core.System.NetUtils;
 
 namespace iTextSharp.text
 {
@@ -91,7 +91,9 @@ namespace iTextSharp.text
                 }
                 _boxLength = Cio_read(4);
                 if (_boxLength == 0)
+                {
                     throw new IOException("Unsupported box size == 0");
+                }
             }
             else if (_boxLength == 0)
             {
@@ -101,8 +103,8 @@ namespace iTextSharp.text
 
         private int Cio_read(int n)
         {
-            int v = 0;
-            for (int i = n - 1; i >= 0; i--)
+            var v = 0;
+            for (var i = n - 1; i >= 0; i--)
             {
                 v += _inp.ReadByte() << (i << 3);
             }
@@ -177,10 +179,10 @@ namespace iTextSharp.text
                 else if ((uint)_boxLength == 0xff4fff51)
                 {
                     Utilities.Skip(_inp, 4);
-                    int x1 = Cio_read(4);
-                    int y1 = Cio_read(4);
-                    int x0 = Cio_read(4);
-                    int y0 = Cio_read(4);
+                    var x1 = Cio_read(4);
+                    var y1 = Cio_read(4);
+                    var x0 = Cio_read(4);
+                    var y0 = Cio_read(4);
                     Utilities.Skip(_inp, 16);
                     colorspace = Cio_read(2);
                     bpc = 8;

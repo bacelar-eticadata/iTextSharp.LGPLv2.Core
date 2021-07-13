@@ -1,10 +1,11 @@
-using System;
-using System.Globalization;
-using System.Reflection;
-using System.IO;
-using System.Collections;
-using System.util;
 using iTextSharp.text.xml.simpleparser;
+using System;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Reflection;
+using System.util;
+
 #if !NET40
 using System.Runtime.Loader;
 #endif
@@ -97,6 +98,7 @@ namespace iTextSharp.text.pdf
         /// This is a possible value of a base 14 type 1 font
         /// </summary>
         public const string COURIER_OBLIQUE = "Courier-Oblique";
+
         /// <summary>
         /// A possible encoding.
         /// </summary>
@@ -172,6 +174,7 @@ namespace iTextSharp.text.pdf
         /// This is a possible value of a base 14 type 1 font
         /// </summary>
         public const string HELVETICA_OBLIQUE = "Helvetica-Oblique";
+
         /// <summary>
         /// The Unicode encoding with horizontal writing.
         /// </summary>
@@ -268,6 +271,7 @@ namespace iTextSharp.text.pdf
         /// This is a possible value of a base 14 type 1 font
         /// </summary>
         public const string TIMES_ROMAN = "Times-Roman";
+
         /// <summary>
         /// The underline position. Usually a negative value.
         /// </summary>
@@ -287,16 +291,19 @@ namespace iTextSharp.text.pdf
         /// This is a possible value of a base 14 type 1 font
         /// </summary>
         public const string ZAPFDINGBATS = "ZapfDingbats";
+
         public static readonly int[] CharRangeArabic = { 0, 0x7f, 0x0600, 0x067f, 0x20a0, 0x20cf, 0xfb50, 0xfbff, 0xfe70, 0xfeff };
         public static readonly int[] CharRangeCyrillic = { 0, 0x7f, 0x0400, 0x052f, 0x2000, 0x206f, 0x20a0, 0x20cf };
         public static readonly int[] CharRangeHebrew = { 0, 0x7f, 0x0590, 0x05ff, 0x20a0, 0x20cf, 0xfb1d, 0xfb4f };
         public static readonly int[] CharRangeLatin = { 0, 0x17f, 0x2000, 0x206f, 0x20a0, 0x20cf, 0xfb00, 0xfb06 };
+
         /// <summary>
         /// The font type.
         /// </summary>
         internal int fontType;
 
         protected internal static readonly ArrayList ResourceSearch = ArrayList.Synchronized(new ArrayList());
+
         /// <summary>
         /// list of the 14 built in fonts.
         /// </summary>
@@ -308,6 +315,7 @@ namespace iTextSharp.text.pdf
         protected static readonly Hashtable FontCache = new Hashtable();
 
         protected int[][] CharBBoxes = new int[256][];
+
         /// <summary>
         /// The compression level for the font stream.
         /// @since   2.1.3
@@ -336,6 +344,7 @@ namespace iTextSharp.text.pdf
         protected string encoding;
 
         protected bool FastWinansi;
+
         /// <summary>
         /// true if the font must use its built in encoding. In that case the
         ///  encoding  is only used to map a char to the position inside
@@ -362,6 +371,7 @@ namespace iTextSharp.text.pdf
         protected bool subset = true;
 
         protected ArrayList SubsetRanges;
+
         /// <summary>
         /// same as differences but with the unicode codes
         /// </summary>
@@ -371,6 +381,7 @@ namespace iTextSharp.text.pdf
         /// table of characters widths for this encoding
         /// </summary>
         protected int[] widths = new int[256];
+
         private static readonly Random _random = new Random();
 
         static BaseFont()
@@ -410,13 +421,7 @@ namespace iTextSharp.text.pdf
         /// with True Type fonts.
         /// </summary>
         /// <returns>the code pages supported by the font</returns>
-        public virtual string[] CodePagesSupported
-        {
-            get
-            {
-                return new string[0];
-            }
-        }
+        public virtual string[] CodePagesSupported => new string[0];
 
         /// <summary>
         /// Sets the compression level to be used for the font streams.
@@ -427,27 +432,22 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value < PdfStream.NO_COMPRESSION || value > PdfStream.BEST_COMPRESSION)
+                {
                     compressionLevel = PdfStream.DEFAULT_COMPRESSION;
+                }
                 else
+                {
                     compressionLevel = value;
+                }
             }
-            get
-            {
-                return compressionLevel;
-            }
+            get => compressionLevel;
         }
 
         /// <summary>
         /// Gets the array with the names of the characters.
         /// </summary>
         /// <returns>the array with the names of the characters</returns>
-        public string[] Differences
-        {
-            get
-            {
-                return differences;
-            }
-        }
+        public string[] Differences => differences;
 
         /// <summary>
         /// Sets the conversion of  char  directly to  byte
@@ -456,27 +456,15 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool DirectTextToByte
         {
-            set
-            {
-                directTextToByte = value;
-            }
-            get
-            {
-                return directTextToByte;
-            }
+            set => directTextToByte = value;
+            get => directTextToByte;
         }
 
         /// <summary>
         /// Gets the encoding used to convert  string  into  byte[] .
         /// </summary>
         /// <returns>the encoding name</returns>
-        public string Encoding
-        {
-            get
-            {
-                return encoding;
-            }
-        }
+        public string Encoding => encoding;
 
         /// <summary>
         /// Gets the family name of the font. If it is a True Type font
@@ -499,15 +487,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the font type</returns>
         public int FontType
         {
-            get
-            {
-                return fontType;
-            }
+            get => fontType;
 
-            set
-            {
-                fontType = value;
-            }
+            set => fontType = value;
         }
 
         /// <summary>
@@ -517,14 +499,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool ForceWidthsOutput
         {
-            set
-            {
-                forceWidthsOutput = value;
-            }
-            get
-            {
-                return forceWidthsOutput;
-            }
+            set => forceWidthsOutput = value;
+            get => forceWidthsOutput;
         }
 
         /// <summary>
@@ -560,39 +536,21 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool Subset
         {
-            set
-            {
-                subset = value;
-            }
-            get
-            {
-                return subset;
-            }
+            set => subset = value;
+            get => subset;
         }
 
         /// <summary>
         /// Gets the array with the unicode characters.
         /// </summary>
         /// <returns>the array with the unicode characters</returns>
-        public char[] UnicodeDifferences
-        {
-            get
-            {
-                return unicodeDifferences;
-            }
-        }
+        public char[] UnicodeDifferences => unicodeDifferences;
 
         /// <summary>
         /// Gets the font width array.
         /// </summary>
         /// <returns>the font width array</returns>
-        public int[] Widths
-        {
-            get
-            {
-                return widths;
-            }
-        }
+        public int[] Widths => widths;
 
         public static void AddToResourceSearch(object obj)
         {
@@ -602,9 +560,11 @@ namespace iTextSharp.text.pdf
             }
             else if (obj is string)
             {
-                string f = (string)obj;
+                var f = (string)obj;
                 if (Directory.Exists(f) || File.Exists(f))
+                {
                     ResourceSearch.Add(obj);
+                }
             }
         }
 
@@ -901,17 +861,22 @@ namespace iTextSharp.text.pdf
         /// <returns>returns a new font. This font may come from the cache but only if cached</returns>
         public static BaseFont CreateFont(string name, string encoding, bool embedded, bool cached, byte[] ttfAfm, byte[] pfb, bool noThrow, bool forceRead)
         {
-            string nameBase = GetBaseName(name);
+            var nameBase = GetBaseName(name);
             encoding = NormalizeEncoding(encoding);
-            bool isBuiltinFonts14 = BuiltinFonts14.ContainsKey(name);
-            bool isCjkFont = isBuiltinFonts14 ? false : CjkFont.IsCjkFont(nameBase, encoding);
+            var isBuiltinFonts14 = BuiltinFonts14.ContainsKey(name);
+            var isCjkFont = isBuiltinFonts14 ? false : CjkFont.IsCjkFont(nameBase, encoding);
             if (isBuiltinFonts14 || isCjkFont)
+            {
                 embedded = false;
+            }
             else if (encoding.Equals(IDENTITY_H) || encoding.Equals(IDENTITY_V))
+            {
                 embedded = true;
+            }
+
             BaseFont fontFound;
             BaseFont fontBuilt;
-            string key = $"{name}\n{encoding}\n{embedded}";
+            var key = $"{name}\n{encoding}\n{embedded}";
             if (cached)
             {
                 lock (FontCache)
@@ -919,30 +884,44 @@ namespace iTextSharp.text.pdf
                     fontFound = (BaseFont)FontCache[key];
                 }
                 if (fontFound != null)
+                {
                     return fontFound;
+                }
             }
 
             if (isBuiltinFonts14 || name.EndsWith(".afm", StringComparison.OrdinalIgnoreCase) || name.EndsWith(".pfm", StringComparison.OrdinalIgnoreCase))
             {
-                fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb, forceRead);
-                fontBuilt.FastWinansi = encoding.Equals(CP1252);
+                fontBuilt = new Type1Font(name, encoding, embedded, ttfAfm, pfb, forceRead)
+                {
+                    FastWinansi = encoding.Equals(CP1252)
+                };
             }
             else if (nameBase.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase) || nameBase.EndsWith(".otf", StringComparison.OrdinalIgnoreCase) || nameBase.IndexOf(".ttc,", StringComparison.OrdinalIgnoreCase) > 0)
             {
                 if (encoding.Equals(IDENTITY_H) || encoding.Equals(IDENTITY_V))
+                {
                     fontBuilt = new TrueTypeFontUnicode(name, encoding, embedded, ttfAfm, forceRead);
+                }
                 else
                 {
-                    fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm, false, forceRead);
-                    fontBuilt.FastWinansi = encoding.Equals(CP1252);
+                    fontBuilt = new TrueTypeFont(name, encoding, embedded, ttfAfm, false, forceRead)
+                    {
+                        FastWinansi = encoding.Equals(CP1252)
+                    };
                 }
             }
             else if (isCjkFont)
+            {
                 fontBuilt = new CjkFont(name, encoding, embedded);
+            }
             else if (noThrow)
+            {
                 return null;
+            }
             else
+            {
                 throw new DocumentException($"Font \'{name}\' with \'{encoding}\' is not recognized.");
+            }
 
             if (cached)
             {
@@ -950,10 +929,13 @@ namespace iTextSharp.text.pdf
                 {
                     fontFound = (BaseFont)FontCache[key];
                     if (fontFound != null)
+                    {
                         return fontFound;
+                    }
+
                     FontCache.Add(key, fontBuilt);
 
-                    string keyNormalized = $"{fontBuilt.PostscriptFontName}\n{encoding}\n{embedded}";
+                    var keyNormalized = $"{fontBuilt.PostscriptFontName}\n{encoding}\n{embedded}";
                     if (!FontCache.ContainsKey(keyNormalized))
                     {
                         FontCache.Add(keyNormalized, fontBuilt);
@@ -1017,12 +999,17 @@ namespace iTextSharp.text.pdf
         /// <returns>an array of Object[] built with {getPostscriptFontName(), GetFamilyFontName(), GetFullFontName()}</returns>
         public static object[] GetAllFontNames(string name, string encoding, byte[] ttfAfm)
         {
-            string nameBase = GetBaseName(name);
+            var nameBase = GetBaseName(name);
             BaseFont fontBuilt = null;
             if (nameBase.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase) || nameBase.EndsWith(".otf", StringComparison.OrdinalIgnoreCase) || nameBase.IndexOf(".ttc,", StringComparison.OrdinalIgnoreCase) > 0)
+            {
                 fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true, false);
+            }
             else
+            {
                 fontBuilt = CreateFont(name, encoding, false, false, ttfAfm, null);
+            }
+
             return new object[] { fontBuilt.PostscriptFontName, fontBuilt.FamilyFontName, fontBuilt.FullFontName };
         }
 
@@ -1037,12 +1024,17 @@ namespace iTextSharp.text.pdf
         /// <returns>an array of Object[] built with {getPostscriptFontName(), getFamilyFontName(), getFullFontName()}</returns>
         public static string[][] GetAllNameEntries(string name, string encoding, byte[] ttfAfm)
         {
-            string nameBase = GetBaseName(name);
+            var nameBase = GetBaseName(name);
             BaseFont fontBuilt = null;
             if (nameBase.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase) || nameBase.EndsWith(".otf", StringComparison.OrdinalIgnoreCase) || nameBase.IndexOf(".ttc,", StringComparison.OrdinalIgnoreCase) > 0)
+            {
                 fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true, false);
+            }
             else
+            {
                 fontBuilt = CreateFont(name, encoding, false, false, ttfAfm, null);
+            }
+
             return fontBuilt.AllNameEntries;
         }
 
@@ -1055,11 +1047,14 @@ namespace iTextSharp.text.pdf
         /// <returns>the list of fonts and references</returns>
         public static ArrayList GetDocumentFonts(PdfReader reader)
         {
-            IntHashtable hits = new IntHashtable();
-            ArrayList fonts = new ArrayList();
-            int npages = reader.NumberOfPages;
-            for (int k = 1; k <= npages; ++k)
+            var hits = new IntHashtable();
+            var fonts = new ArrayList();
+            var npages = reader.NumberOfPages;
+            for (var k = 1; k <= npages; ++k)
+            {
                 recourseFonts(reader.GetPageN(k), hits, fonts, 1);
+            }
+
             return fonts;
         }
 
@@ -1073,8 +1068,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the list of fonts and references</returns>
         public static ArrayList GetDocumentFonts(PdfReader reader, int page)
         {
-            IntHashtable hits = new IntHashtable();
-            ArrayList fonts = new ArrayList();
+            var hits = new IntHashtable();
+            var fonts = new ArrayList();
             recourseFonts(reader.GetPageN(page), hits, fonts, 1);
             return fonts;
         }
@@ -1095,12 +1090,17 @@ namespace iTextSharp.text.pdf
         /// <returns>the full name of the font</returns>
         public static string[][] GetFullFontName(string name, string encoding, byte[] ttfAfm)
         {
-            string nameBase = GetBaseName(name);
+            var nameBase = GetBaseName(name);
             BaseFont fontBuilt = null;
             if (nameBase.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase) || nameBase.EndsWith(".otf", StringComparison.OrdinalIgnoreCase) || nameBase.IndexOf(".ttc,", StringComparison.OrdinalIgnoreCase) > 0)
+            {
                 fontBuilt = new TrueTypeFont(name, CP1252, false, ttfAfm, true, false);
+            }
             else
+            {
                 fontBuilt = CreateFont(name, encoding, false, false, ttfAfm, null);
+            }
+
             return fontBuilt.FullFontName;
         }
 
@@ -1123,31 +1123,35 @@ namespace iTextSharp.text.pdf
 #endif
                 istr = assm.GetManifestResourceStream(key);
             }
-            catch
-            {
-            }
+            catch { }
+
             if (istr != null)
-                return istr;
-            for (int k = 0; k < ResourceSearch.Count; ++k)
             {
-                object obj = ResourceSearch[k];
+                return istr;
+            }
+
+            for (var k = 0; k < ResourceSearch.Count; ++k)
+            {
+                var obj = ResourceSearch[k];
                 try
                 {
                     if (obj is Assembly)
                     {
                         istr = ((Assembly)obj).GetManifestResourceStream(key);
                         if (istr != null)
+                        {
                             return istr;
+                        }
                     }
                     else if (obj is string)
                     {
-                        string dir = (string)obj;
+                        var dir = (string)obj;
                         try
                         {
 #if NET40
                             var asm = Assembly.LoadFrom(dir);
 #else
-                            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(dir);
+                            var asm = AssemblyLoadContext.Default.LoadFromAssemblyPath(dir);                            
 #endif
                             istr = asm.GetManifestResourceStream(key);
                         }
@@ -1155,20 +1159,25 @@ namespace iTextSharp.text.pdf
                         {
                         }
                         if (istr != null)
+                        {
                             return istr;
-                        string modkey = key.Replace('.', '/');
-                        string fullPath = Path.Combine(dir, modkey);
+                        }
+
+                        var modkey = key.Replace('.', '/');
+                        var fullPath = Path.Combine(dir, modkey);
                         if (File.Exists(fullPath))
                         {
                             return new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
                         }
-                        int idx = modkey.LastIndexOf("/", StringComparison.Ordinal);
+                        var idx = modkey.LastIndexOf("/", StringComparison.Ordinal);
                         if (idx >= 0)
                         {
                             modkey = modkey.Substring(0, idx) + "." + modkey.Substring(idx + 1);
                             fullPath = Path.Combine(dir, modkey);
                             if (File.Exists(fullPath))
+                            {
                                 return new FileStream(fullPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                            }
                         }
                     }
                 }
@@ -1189,7 +1198,10 @@ namespace iTextSharp.text.pdf
         public void AddSubsetRange(int[] range)
         {
             if (SubsetRanges == null)
+            {
                 SubsetRanges = new ArrayList();
+            }
+
             SubsetRanges.Add(range);
         }
 
@@ -1201,7 +1213,7 @@ namespace iTextSharp.text.pdf
         /// <returns> true  if the character has a glyph,</returns>
         public virtual bool CharExists(int c)
         {
-            byte[] b = ConvertToBytes(c);
+            var b = ConvertToBytes(c);
             return b.Length > 0;
         }
 
@@ -1214,17 +1226,31 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public void CorrectArabicAdvance()
         {
-            for (char c = '\u064b'; c <= '\u0658'; ++c)
+            for (var c = '\u064b'; c <= '\u0658'; ++c)
+            {
                 SetCharAdvance(c, 0);
+            }
+
             SetCharAdvance('\u0670', 0);
-            for (char c = '\u06d6'; c <= '\u06dc'; ++c)
+            for (var c = '\u06d6'; c <= '\u06dc'; ++c)
+            {
                 SetCharAdvance(c, 0);
-            for (char c = '\u06df'; c <= '\u06e4'; ++c)
+            }
+
+            for (var c = '\u06df'; c <= '\u06e4'; ++c)
+            {
                 SetCharAdvance(c, 0);
-            for (char c = '\u06e7'; c <= '\u06e8'; ++c)
+            }
+
+            for (var c = '\u06e7'; c <= '\u06e8'; ++c)
+            {
                 SetCharAdvance(c, 0);
-            for (char c = '\u06ea'; c <= '\u06ed'; ++c)
+            }
+
+            for (var c = '\u06ea'; c <= '\u06ed'; ++c)
+            {
                 SetCharAdvance(c, 0);
+            }
         }
 
         /// <summary>
@@ -1235,13 +1261,15 @@ namespace iTextSharp.text.pdf
         /// <returns>the ascent in normalized 1000 units</returns>
         public int GetAscent(string text)
         {
-            int max = 0;
-            char[] chars = text.ToCharArray();
-            for (int k = 0; k < chars.Length; ++k)
+            var max = 0;
+            var chars = text.ToCharArray();
+            for (var k = 0; k < chars.Length; ++k)
             {
-                int[] bbox = GetCharBBox(chars[k]);
+                var bbox = GetCharBBox(chars[k]);
                 if (bbox != null && bbox[3] > max)
+                {
                     max = bbox[3];
+                }
             }
             return max;
         }
@@ -1269,11 +1297,15 @@ namespace iTextSharp.text.pdf
         /// <returns>an array of four floats with the bounding box in the format [llx,lly,urx,ury] or</returns>
         public virtual int[] GetCharBBox(int c)
         {
-            byte[] b = ConvertToBytes(c);
+            var b = ConvertToBytes(c);
             if (b.Length == 0)
+            {
                 return null;
+            }
             else
+            {
                 return CharBBoxes[b[0] & 0xff];
+            }
         }
 
         /// <summary>
@@ -1295,13 +1327,15 @@ namespace iTextSharp.text.pdf
         /// <returns>the dexcent in normalized 1000 units</returns>
         public int GetDescent(string text)
         {
-            int min = 0;
-            char[] chars = text.ToCharArray();
-            for (int k = 0; k < chars.Length; ++k)
+            var min = 0;
+            var chars = text.ToCharArray();
+            for (var k = 0; k < chars.Length; ++k)
             {
-                int[] bbox = GetCharBBox(chars[k]);
+                var bbox = GetCharBBox(chars[k]);
                 if (bbox != null && bbox[1] < min)
+                {
                     min = bbox[1];
+                }
             }
             return min;
         }
@@ -1368,16 +1402,23 @@ namespace iTextSharp.text.pdf
             if (FastWinansi)
             {
                 if (char1 < 128 || (char1 >= 160 && char1 <= 255))
+                {
                     return widths[char1];
+                }
                 else
+                {
                     return widths[PdfEncodings.Winansi[char1]];
+                }
             }
             else
             {
-                int total = 0;
-                byte[] mbytes = ConvertToBytes((char)char1);
-                for (int k = 0; k < mbytes.Length; ++k)
+                var total = 0;
+                var mbytes = ConvertToBytes((char)char1);
+                for (var k = 0; k < mbytes.Length; ++k)
+                {
                     total += widths[0xff & mbytes[k]];
+                }
+
                 return total;
             }
         }
@@ -1389,25 +1430,31 @@ namespace iTextSharp.text.pdf
         /// <returns>the width in normalized 1000 units</returns>
         public virtual int GetWidth(string text)
         {
-            int total = 0;
+            var total = 0;
             if (FastWinansi)
             {
-                int len = text.Length;
-                for (int k = 0; k < len; ++k)
+                var len = text.Length;
+                for (var k = 0; k < len; ++k)
                 {
-                    char char1 = text[k];
+                    var char1 = text[k];
                     if (char1 < 128 || (char1 >= 160 && char1 <= 255))
+                    {
                         total += widths[char1];
+                    }
                     else
+                    {
                         total += widths[PdfEncodings.Winansi[char1]];
+                    }
                 }
                 return total;
             }
             else
             {
-                byte[] mbytes = ConvertToBytes(text);
-                for (int k = 0; k < mbytes.Length; ++k)
+                var mbytes = ConvertToBytes(text);
+                for (var k = 0; k < mbytes.Length; ++k)
+                {
                     total += widths[0xff & mbytes[k]];
+                }
             }
             return total;
         }
@@ -1443,13 +1490,16 @@ namespace iTextSharp.text.pdf
         /// <returns>the width in points</returns>
         public float GetWidthPointKerned(string text, float fontSize)
         {
-            float size = GetWidth(text) * 0.001f * fontSize;
+            var size = GetWidth(text) * 0.001f * fontSize;
             if (!HasKernPairs())
+            {
                 return size;
-            int len = text.Length - 1;
-            int kern = 0;
-            char[] c = text.ToCharArray();
-            for (int k = 0; k < len; ++k)
+            }
+
+            var len = text.Length - 1;
+            var kern = 0;
+            var c = text.ToCharArray();
+            for (var k = 0; k < len; ++k)
             {
                 kern += GetKerning(c[k], c[k + 1]);
             }
@@ -1489,9 +1539,12 @@ namespace iTextSharp.text.pdf
         /// <returns> true  if the advance was set,</returns>
         public virtual bool SetCharAdvance(int c, int advance)
         {
-            byte[] b = ConvertToBytes(c);
+            var b = ConvertToBytes(c);
             if (b.Length == 0)
+            {
                 return false;
+            }
+
             widths[0xff & b[0]] = advance;
             return true;
         }
@@ -1511,11 +1564,13 @@ namespace iTextSharp.text.pdf
         /// <returns>the subset prefix</returns>
         internal static string CreateSubsetPrefix()
         {
-            char[] s = new char[7];
+            var s = new char[7];
             lock (_random)
             {
-                for (int k = 0; k < 6; ++k)
+                for (var k = 0; k < 6; ++k)
+                {
                     s[k] = (char)(_random.Next('A', 'Z' + 1));
+                }
             }
             s[6] = '+';
             return new string(s);
@@ -1530,26 +1585,33 @@ namespace iTextSharp.text.pdf
         internal virtual byte[] ConvertToBytes(string text)
         {
             if (directTextToByte)
+            {
                 return PdfEncodings.ConvertToBytes(text, null);
+            }
+
             if (SpecialMap != null)
             {
-                byte[] b = new byte[text.Length];
-                int ptr = 0;
-                int length = text.Length;
-                for (int k = 0; k < length; ++k)
+                var b = new byte[text.Length];
+                var ptr = 0;
+                var length = text.Length;
+                for (var k = 0; k < length; ++k)
                 {
-                    char c = text[k];
+                    var c = text[k];
                     if (SpecialMap.ContainsKey(c))
+                    {
                         b[ptr++] = (byte)SpecialMap[c];
+                    }
                 }
                 if (ptr < length)
                 {
-                    byte[] b2 = new byte[ptr];
+                    var b2 = new byte[ptr];
                     Array.Copy(b, 0, b2, 0, ptr);
                     return b2;
                 }
                 else
+                {
                     return b;
+                }
             }
             return PdfEncodings.ConvertToBytes(text, encoding);
         }
@@ -1563,13 +1625,20 @@ namespace iTextSharp.text.pdf
         internal virtual byte[] ConvertToBytes(int char1)
         {
             if (directTextToByte)
+            {
                 return PdfEncodings.ConvertToBytes((char)char1, null);
+            }
+
             if (SpecialMap != null)
             {
                 if (SpecialMap.ContainsKey(char1))
+                {
                     return new[] { (byte)SpecialMap[char1] };
+                }
                 else
+                {
                     return new byte[0];
+                }
             }
             return PdfEncodings.ConvertToBytes((char)char1, encoding);
         }
@@ -1611,13 +1680,21 @@ namespace iTextSharp.text.pdf
         protected static string GetBaseName(string name)
         {
             if (name.EndsWith(",Bold", StringComparison.OrdinalIgnoreCase))
+            {
                 return name.Substring(0, name.Length - 5);
+            }
             else if (name.EndsWith(",Italic", StringComparison.OrdinalIgnoreCase))
+            {
                 return name.Substring(0, name.Length - 7);
+            }
             else if (name.EndsWith(",BoldItalic", StringComparison.OrdinalIgnoreCase))
+            {
                 return name.Substring(0, name.Length - 11);
+            }
             else
+            {
                 return name;
+            }
         }
 
         /// <summary>
@@ -1629,14 +1706,25 @@ namespace iTextSharp.text.pdf
         protected static string NormalizeEncoding(string enc)
         {
             if (enc.Equals("winansi") || enc.Equals(""))
+            {
                 return CP1252;
+            }
             else if (enc.Equals("macroman"))
+            {
                 return MACROMAN;
-            int n = IanaEncodings.GetEncodingNumber(enc);
+            }
+
+            var n = IanaEncodings.GetEncodingNumber(enc);
             if (n == 1252)
+            {
                 return CP1252;
+            }
+
             if (n == 10000)
+            {
                 return MACROMAN;
+            }
+
             return enc;
         }
 
@@ -1649,19 +1737,24 @@ namespace iTextSharp.text.pdf
             if (encoding.StartsWith("#"))
             {
                 SpecialMap = new IntHashtable();
-                StringTokenizer tok = new StringTokenizer(encoding.Substring(1), " ,\t\n\r\f");
+                var tok = new StringTokenizer(encoding.Substring(1), " ,\t\n\r\f");
                 if (tok.NextToken().Equals("full"))
                 {
                     while (tok.HasMoreTokens())
                     {
-                        string order = tok.NextToken();
-                        string name = tok.NextToken();
-                        char uni = (char)int.Parse(tok.NextToken(), NumberStyles.HexNumber);
+                        var order = tok.NextToken();
+                        var name = tok.NextToken();
+                        var uni = (char)int.Parse(tok.NextToken(), NumberStyles.HexNumber);
                         int orderK;
                         if (order.StartsWith("'"))
+                        {
                             orderK = order[1];
+                        }
                         else
+                        {
                             orderK = int.Parse(order);
+                        }
+
                         orderK %= 256;
                         SpecialMap[uni] = orderK;
                         differences[orderK] = name;
@@ -1672,14 +1765,17 @@ namespace iTextSharp.text.pdf
                 }
                 else
                 {
-                    int k = 0;
+                    var k = 0;
                     if (tok.HasMoreTokens())
+                    {
                         k = int.Parse(tok.NextToken());
+                    }
+
                     while (tok.HasMoreTokens() && k < 256)
                     {
-                        string hex = tok.NextToken();
-                        int uni = int.Parse(hex, NumberStyles.HexNumber) % 0x10000;
-                        string name = GlyphList.UnicodeToName(uni);
+                        var hex = tok.NextToken();
+                        var uni = int.Parse(hex, NumberStyles.HexNumber) % 0x10000;
+                        var name = GlyphList.UnicodeToName(uni);
                         if (name != null)
                         {
                             SpecialMap[uni] = k;
@@ -1691,7 +1787,7 @@ namespace iTextSharp.text.pdf
                         }
                     }
                 }
-                for (int k = 0; k < 256; ++k)
+                for (var k = 0; k < 256; ++k)
                 {
                     if (differences[k] == null)
                     {
@@ -1701,7 +1797,7 @@ namespace iTextSharp.text.pdf
             }
             else if (FontSpecific)
             {
-                for (int k = 0; k < 256; ++k)
+                for (var k = 0; k < 256; ++k)
                 {
                     widths[k] = GetRawWidth(k, null);
                     CharBBoxes[k] = GetRawCharBBox(k, null);
@@ -1712,8 +1808,8 @@ namespace iTextSharp.text.pdf
                 string s;
                 string name;
                 char c;
-                byte[] b = new byte[1];
-                for (int k = 0; k < 256; ++k)
+                var b = new byte[1];
+                for (var k = 0; k < 256; ++k)
                 {
                     b[0] = (byte)k;
                     s = PdfEncodings.ConvertToString(b, encoding);
@@ -1727,7 +1823,10 @@ namespace iTextSharp.text.pdf
                     }
                     name = GlyphList.UnicodeToName(c);
                     if (name == null)
+                    {
                         name = notdef;
+                    }
+
                     differences[k] = name;
                     UnicodeDifferences[k] = c;
                     widths[k] = GetRawWidth(c, name);
@@ -1740,14 +1839,20 @@ namespace iTextSharp.text.pdf
 
         private static void addFont(PrIndirectReference fontRef, IntHashtable hits, ArrayList fonts)
         {
-            PdfObject obj = PdfReader.GetPdfObject(fontRef);
+            var obj = PdfReader.GetPdfObject(fontRef);
             if (obj == null || !obj.IsDictionary())
+            {
                 return;
-            PdfDictionary font = (PdfDictionary)obj;
-            PdfName subtype = font.GetAsName(PdfName.Subtype);
+            }
+
+            var font = (PdfDictionary)obj;
+            var subtype = font.GetAsName(PdfName.Subtype);
             if (!PdfName.Type1.Equals(subtype) && !PdfName.Truetype.Equals(subtype))
+            {
                 return;
-            PdfName name = font.GetAsName(PdfName.Basefont);
+            }
+
+            var name = font.GetAsName(PdfName.Basefont);
             fonts.Add(new object[] { PdfName.DecodeName(name.ToString()), fontRef });
             hits[fontRef.Number] = 1;
         }
@@ -1756,25 +1861,37 @@ namespace iTextSharp.text.pdf
         {
             ++level;
             if (level > 50) // in case we have an endless loop
+            {
                 return;
-            PdfDictionary resources = page.GetAsDict(PdfName.Resources);
+            }
+
+            var resources = page.GetAsDict(PdfName.Resources);
             if (resources == null)
+            {
                 return;
-            PdfDictionary font = resources.GetAsDict(PdfName.Font);
+            }
+
+            var font = resources.GetAsDict(PdfName.Font);
             if (font != null)
             {
                 foreach (PdfName key in font.Keys)
                 {
-                    PdfObject ft = font.Get(key);
+                    var ft = font.Get(key);
                     if (ft == null || !ft.IsIndirect())
+                    {
                         continue;
-                    int hit = ((PrIndirectReference)ft).Number;
+                    }
+
+                    var hit = ((PrIndirectReference)ft).Number;
                     if (hits.ContainsKey(hit))
+                    {
                         continue;
+                    }
+
                     addFont((PrIndirectReference)ft, hits, fonts);
                 }
             }
-            PdfDictionary xobj = resources.GetAsDict(PdfName.Xobject);
+            var xobj = resources.GetAsDict(PdfName.Xobject);
             if (xobj != null)
             {
                 foreach (PdfName key in xobj.Keys)
@@ -1790,7 +1907,6 @@ namespace iTextSharp.text.pdf
         /// </summary>
         internal class StreamFont : PdfStream
         {
-
             /// <summary>
             /// Generates the PDF stream with the Type1 and Truetype fonts returning
             /// a PdfStream.
@@ -1804,7 +1920,7 @@ namespace iTextSharp.text.pdf
             {
                 Bytes = contents;
                 Put(PdfName.LENGTH, new PdfNumber(Bytes.Length));
-                for (int k = 0; k < lengths.Length; ++k)
+                for (var k = 0; k < lengths.Length; ++k)
                 {
                     Put(new PdfName("Length" + (k + 1)), new PdfNumber(lengths[k]));
                 }
@@ -1824,7 +1940,10 @@ namespace iTextSharp.text.pdf
                 Bytes = contents;
                 Put(PdfName.LENGTH, new PdfNumber(Bytes.Length));
                 if (subType != null)
+                {
                     Put(PdfName.Subtype, new PdfName(subType));
+                }
+
                 FlateCompress(compressionLevel);
             }
         }

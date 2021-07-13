@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfBorderArray  defines the border of a  PdfAnnotation .
     /// @see        PdfArray
@@ -15,7 +14,9 @@ namespace iTextSharp.text.pdf
         /// Constructs a new  PdfBorderArray .
         /// </summary>
 
-        public PdfBorderArray(float hRadius, float vRadius, float width) : this(hRadius, vRadius, width, null) { }
+        public PdfBorderArray(float hRadius, float vRadius, float width) : this(hRadius, vRadius, width, null)
+        {
+        }
 
         /// <summary>
         /// Constructs a new  PdfBorderArray .
@@ -26,7 +27,9 @@ namespace iTextSharp.text.pdf
             Add(new PdfNumber(vRadius));
             Add(new PdfNumber(width));
             if (dash != null)
+            {
                 Add(dash);
+            }
         }
     }
 }

@@ -24,6 +24,7 @@ namespace iTextSharp.text.pdf
         /// A thin border with 1 point width.
         /// </summary>
         public const float BORDER_WIDTH_THIN = 1;
+
         /// <summary>
         /// combo box flag.
         /// </summary>
@@ -94,16 +95,19 @@ namespace iTextSharp.text.pdf
         /// The field is visible.
         /// </summary>
         public const int VISIBLE = 0;
+
         /// <summary>
         /// The field is visible but does not print.
         /// </summary>
         public const int VISIBLE_BUT_DOES_NOT_PRINT = 2;
+
         protected int alignment = Element.ALIGN_LEFT;
         protected BaseColor backgroundColor;
         protected BaseColor borderColor;
         protected int borderStyle = PdfBorderDictionary.STYLE_SOLID;
         protected float borderWidth = BORDER_WIDTH_THIN;
         protected Rectangle box;
+
         /// <summary>
         /// Holds value of property fieldName.
         /// </summary>
@@ -111,6 +115,7 @@ namespace iTextSharp.text.pdf
 
         protected BaseFont font;
         protected float fontSize;
+
         /// <summary>
         /// Holds value of property maxCharacterLength.
         /// </summary>
@@ -128,6 +133,7 @@ namespace iTextSharp.text.pdf
 
         protected string text;
         protected BaseColor textColor;
+
         /// <summary>
         /// Holds value of property visibility.
         /// </summary>
@@ -139,9 +145,13 @@ namespace iTextSharp.text.pdf
         static BaseField()
         {
             foreach (DictionaryEntry entry in PdfCopyFieldsImp.FieldKeys)
+            {
                 _fieldKeys[entry.Key] = entry.Value;
+            }
+
             _fieldKeys[PdfName.T] = 1;
         }
+
         /// <summary>
         /// Creates a new  TextField .
         /// will be included in the field allowing it to be used as a kid field.
@@ -162,14 +172,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int Alignment
         {
-            set
-            {
-                alignment = value;
-            }
-            get
-            {
-                return alignment;
-            }
+            set => alignment = value;
+            get => alignment;
         }
 
         /// <summary>
@@ -178,14 +182,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public BaseColor BackgroundColor
         {
-            set
-            {
-                backgroundColor = value;
-            }
-            get
-            {
-                return backgroundColor;
-            }
+            set => backgroundColor = value;
+            get => backgroundColor;
         }
 
         /// <summary>
@@ -194,14 +192,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public BaseColor BorderColor
         {
-            set
-            {
-                borderColor = value;
-            }
-            get
-            {
-                return borderColor;
-            }
+            set => borderColor = value;
+            get => borderColor;
         }
 
         /// <summary>
@@ -212,14 +204,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int BorderStyle
         {
-            set
-            {
-                borderStyle = value;
-            }
-            get
-            {
-                return borderStyle;
-            }
+            set => borderStyle = value;
+            get => borderStyle;
         }
 
         /// <summary>
@@ -228,14 +214,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float BorderWidth
         {
-            set
-            {
-                borderWidth = value;
-            }
-            get
-            {
-                return borderWidth;
-            }
+            set => borderWidth = value;
+            get => borderWidth;
         }
 
         /// <summary>
@@ -246,17 +226,16 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value == null)
+                {
                     box = null;
+                }
                 else
                 {
                     box = new Rectangle(value);
                     box.Normalize();
                 }
             }
-            get
-            {
-                return box;
-            }
+            get => box;
         }
 
         /// <summary>
@@ -265,14 +244,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string FieldName
         {
-            set
-            {
-                fieldName = value;
-            }
-            get
-            {
-                return fieldName;
-            }
+            set => fieldName = value;
+            get => fieldName;
         }
 
         /// <summary>
@@ -281,14 +254,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public BaseFont Font
         {
-            set
-            {
-                font = value;
-            }
-            get
-            {
-                return font;
-            }
+            set => font = value;
+            get => font;
         }
 
         /// <summary>
@@ -297,14 +264,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float FontSize
         {
-            set
-            {
-                fontSize = value;
-            }
-            get
-            {
-                return fontSize;
-            }
+            set => fontSize = value;
+            get => fontSize;
         }
 
         /// <summary>
@@ -313,14 +274,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int MaxCharacterLength
         {
-            set
-            {
-                maxCharacterLength = value;
-            }
-            get
-            {
-                return maxCharacterLength;
-            }
+            set => maxCharacterLength = value;
+            get => maxCharacterLength;
         }
 
         /// <summary>
@@ -332,14 +287,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int Options
         {
-            set
-            {
-                options = value;
-            }
-            get
-            {
-                return options;
-            }
+            set => options = value;
+            get => options;
         }
 
         /// <summary>
@@ -351,15 +300,17 @@ namespace iTextSharp.text.pdf
             set
             {
                 if (value % 90 != 0)
+                {
                     throw new ArgumentException("Rotation must be a multiple of 90.");
+                }
+
                 rotation = (value % 360);
                 if (rotation < 0)
+                {
                     rotation += 360;
+                }
             }
-            get
-            {
-                return rotation;
-            }
+            get => rotation;
         }
 
         /// <summary>
@@ -367,14 +318,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string Text
         {
-            set
-            {
-                text = value;
-            }
-            get
-            {
-                return text;
-            }
+            set => text = value;
+            get => text;
         }
 
         /// <summary>
@@ -383,14 +328,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public BaseColor TextColor
         {
-            set
-            {
-                textColor = value;
-            }
-            get
-            {
-                return textColor;
-            }
+            set => textColor = value;
+            get => textColor;
         }
 
         /// <summary>
@@ -400,26 +339,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int Visibility
         {
-            set
-            {
-                visibility = value;
-            }
-            get
-            {
-                return visibility;
-            }
+            set => visibility = value;
+            get => visibility;
         }
 
         public PdfWriter Writer
         {
-            get
-            {
-                return writer;
-            }
-            set
-            {
-                writer = value;
-            }
+            get => writer;
+            set => writer = value;
         }
 
         protected BaseFont RealFont
@@ -427,9 +354,13 @@ namespace iTextSharp.text.pdf
             get
             {
                 if (font == null)
+                {
                     return BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.WINANSI, false);
+                }
                 else
+                {
                     return font;
+                }
             }
         }
 
@@ -441,13 +372,16 @@ namespace iTextSharp.text.pdf
         /// <param name="to">the destination. It may be  null </param>
         public static void MoveFields(PdfDictionary from, PdfDictionary to)
         {
-            PdfName[] keys = new PdfName[from.Size];
-            foreach (PdfName key in keys)
+            var keys = new PdfName[from.Size];
+            foreach (var key in keys)
             {
                 if (_fieldKeys.ContainsKey(key))
                 {
                     if (to != null)
+                    {
                         to.Put(key, from.Get(key));
+                    }
+
                     from.Remove(key);
                 }
             }
@@ -465,20 +399,20 @@ namespace iTextSharp.text.pdf
 
         protected static ArrayList BreakLines(ArrayList breaks, BaseFont font, float fontSize, float width)
         {
-            ArrayList lines = new ArrayList();
-            StringBuilder buf = new StringBuilder();
-            for (int ck = 0; ck < breaks.Count; ++ck)
+            var lines = new ArrayList();
+            var buf = new StringBuilder();
+            for (var ck = 0; ck < breaks.Count; ++ck)
             {
                 buf.Length = 0;
                 float w = 0;
-                char[] cs = ((string)breaks[ck]).ToCharArray();
-                int len = cs.Length;
+                var cs = ((string)breaks[ck]).ToCharArray();
+                var len = cs.Length;
                 // 0 inline first, 1 inline, 2 spaces
-                int state = 0;
-                int lastspace = -1;
-                char c = (char)0;
-                int refk = 0;
-                for (int k = 0; k < len; ++k)
+                var state = 0;
+                var lastspace = -1;
+                var c = (char)0;
+                var refk = 0;
+                for (var k = 0; k < len; ++k)
                 {
                     c = cs[k];
                     switch (state)
@@ -498,21 +432,31 @@ namespace iTextSharp.text.pdf
                                 buf.Length = 0;
                                 refk = k;
                                 if (c == ' ')
+                                {
                                     state = 2;
+                                }
                                 else
+                                {
                                     state = 1;
+                                }
                             }
                             else
                             {
                                 if (c != ' ')
+                                {
                                     state = 1;
+                                }
                             }
                             break;
+
                         case 1:
                             w += font.GetWidthPoint(c, fontSize);
                             buf.Append(c);
                             if (c == ' ')
+                            {
                                 lastspace = k;
+                            }
+
                             if (w > width)
                             {
                                 w = 0;
@@ -538,10 +482,13 @@ namespace iTextSharp.text.pdf
                                     buf.Length = 0;
                                     refk = k;
                                     if (c == ' ')
+                                    {
                                         state = 2;
+                                    }
                                 }
                             }
                             break;
+
                         case 2:
                             if (c != ' ')
                             {
@@ -560,17 +507,20 @@ namespace iTextSharp.text.pdf
 
         protected static ArrayList GetHardBreaks(string text)
         {
-            ArrayList arr = new ArrayList();
-            char[] cs = text.ToCharArray();
-            int len = cs.Length;
-            StringBuilder buf = new StringBuilder();
-            for (int k = 0; k < len; ++k)
+            var arr = new ArrayList();
+            var cs = text.ToCharArray();
+            var len = cs.Length;
+            var buf = new StringBuilder();
+            for (var k = 0; k < len; ++k)
             {
-                char c = cs[k];
+                var c = cs[k];
                 if (c == '\r')
                 {
                     if (k + 1 < len && cs[k + 1] == '\n')
+                    {
                         ++k;
+                    }
+
                     arr.Add(buf.ToString());
                     buf = new StringBuilder();
                 }
@@ -580,7 +530,9 @@ namespace iTextSharp.text.pdf
                     buf = new StringBuilder();
                 }
                 else
+                {
                     buf.Append(c);
+                }
             }
             arr.Add(buf.ToString());
             return arr;
@@ -588,28 +540,36 @@ namespace iTextSharp.text.pdf
 
         protected static void TrimRight(StringBuilder buf)
         {
-            int len = buf.Length;
+            var len = buf.Length;
             while (true)
             {
                 if (len == 0)
+                {
                     return;
+                }
+
                 if (buf[--len] != ' ')
+                {
                     return;
+                }
+
                 buf.Length = len;
             }
         }
 
         protected PdfAppearance GetBorderAppearance()
         {
-            PdfAppearance app = PdfAppearance.CreateAppearance(writer, box.Width, box.Height);
+            var app = PdfAppearance.CreateAppearance(writer, box.Width, box.Height);
             switch (rotation)
             {
                 case 90:
                     app.SetMatrix(0, 1, -1, 0, box.Height, 0);
                     break;
+
                 case 180:
                     app.SetMatrix(-1, 0, 0, -1, box.Width, box.Height);
                     break;
+
                 case 270:
                     app.SetMatrix(0, -1, 1, 0, 0, box.Width);
                     break;
@@ -644,9 +604,12 @@ namespace iTextSharp.text.pdf
                     app.Stroke();
                 }
                 // beveled
-                BaseColor actual = backgroundColor;
+                var actual = backgroundColor;
                 if (actual == null)
+                {
                     actual = BaseColor.White;
+                }
+
                 app.SetGrayFill(1);
                 drawTopFrame(app);
                 app.SetColorFill(actual.Darker());
@@ -672,19 +635,22 @@ namespace iTextSharp.text.pdf
                 if (borderWidth.ApproxNotEqual(0) && borderColor != null)
                 {
                     if (borderStyle == PdfBorderDictionary.STYLE_DASHED)
+                    {
                         app.SetLineDash(3, 0);
+                    }
+
                     app.SetColorStroke(borderColor);
                     app.SetLineWidth(borderWidth);
                     app.Rectangle(borderWidth / 2, borderWidth / 2, box.Width - borderWidth, box.Height - borderWidth);
                     app.Stroke();
                     if ((options & COMB) != 0 && maxCharacterLength > 1)
                     {
-                        float step = box.Width / maxCharacterLength;
-                        float yb = borderWidth / 2;
-                        float yt = box.Height - borderWidth / 2;
-                        for (int k = 1; k < maxCharacterLength; ++k)
+                        var step = box.Width / maxCharacterLength;
+                        var yb = borderWidth / 2;
+                        var yt = box.Height - borderWidth / 2;
+                        for (var k = 1; k < maxCharacterLength; ++k)
                         {
-                            float x = step * k;
+                            var x = step * k;
                             app.MoveTo(x, yb);
                             app.LineTo(x, yt);
                         }
@@ -695,6 +661,7 @@ namespace iTextSharp.text.pdf
             app.RestoreState();
             return app;
         }
+
         private void drawBottomFrame(PdfAppearance app)
         {
             app.MoveTo(borderWidth, borderWidth);

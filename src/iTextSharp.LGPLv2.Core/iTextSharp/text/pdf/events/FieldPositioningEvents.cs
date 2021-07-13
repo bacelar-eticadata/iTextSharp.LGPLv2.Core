@@ -44,7 +44,7 @@ namespace iTextSharp.text.pdf.events
         public FieldPositioningEvents(PdfFormField parent, PdfFormField field)
         {
             CellField = field;
-            this.Parent = parent;
+            Parent = parent;
         }
 
         /// <summary>
@@ -55,8 +55,10 @@ namespace iTextSharp.text.pdf.events
         public FieldPositioningEvents(PdfWriter writer, string text)
         {
             FieldWriter = writer;
-            TextField tf = new TextField(writer, new Rectangle(0, 0), text);
-            tf.FontSize = 14;
+            var tf = new TextField(writer, new Rectangle(0, 0), text)
+            {
+                FontSize = 14
+            };
             CellField = tf.GetTextField();
         }
 
@@ -67,9 +69,11 @@ namespace iTextSharp.text.pdf.events
         /// </summary>
         public FieldPositioningEvents(PdfWriter writer, PdfFormField parent, string text)
         {
-            this.Parent = parent;
-            TextField tf = new TextField(writer, new Rectangle(0, 0), text);
-            tf.FontSize = 14;
+            Parent = parent;
+            var tf = new TextField(writer, new Rectangle(0, 0), text)
+            {
+                FontSize = 14
+            };
             CellField = tf.GetTextField();
         }
 
@@ -88,17 +92,26 @@ namespace iTextSharp.text.pdf.events
         {
             GenericChunkFields[text] = field;
         }
+
         /// <summary>
         /// @see com.lowagie.text.pdf.PdfPCellEvent#cellLayout(com.lowagie.text.pdf.PdfPCell, com.lowagie.text.Rectangle, com.lowagie.text.pdf.PdfContentByte[])
         /// </summary>
         public void CellLayout(PdfPCell cell, Rectangle rect, PdfContentByte[] canvases)
         {
-            if (CellField == null || (FieldWriter == null && Parent == null)) throw new ArgumentException("You have used the wrong constructor for this FieldPositioningEvents class.");
+            if (CellField == null || (FieldWriter == null && Parent == null))
+            {
+                throw new ArgumentException("You have used the wrong constructor for this FieldPositioningEvents class.");
+            }
+
             CellField.Put(PdfName.Rect, new PdfRectangle(rect.GetLeft(Padding), rect.GetBottom(Padding), rect.GetRight(Padding), rect.GetTop(Padding)));
             if (Parent == null)
+            {
                 FieldWriter.AddAnnotation(CellField);
+            }
             else
+            {
                 Parent.AddKid(CellField);
+            }
         }
 
         /// <summary>
@@ -108,11 +121,13 @@ namespace iTextSharp.text.pdf.events
                 Rectangle rect, string text)
         {
             rect.Bottom = rect.Bottom - 3;
-            PdfFormField field = (PdfFormField)GenericChunkFields[text];
+            var field = (PdfFormField)GenericChunkFields[text];
             if (field == null)
             {
-                TextField tf = new TextField(writer, new Rectangle(rect.GetLeft(Padding), rect.GetBottom(Padding), rect.GetRight(Padding), rect.GetTop(Padding)), text);
-                tf.FontSize = 14;
+                var tf = new TextField(writer, new Rectangle(rect.GetLeft(Padding), rect.GetBottom(Padding), rect.GetRight(Padding), rect.GetTop(Padding)), text)
+                {
+                    FontSize = 14
+                };
                 field = tf.GetTextField();
             }
             else
@@ -120,9 +135,13 @@ namespace iTextSharp.text.pdf.events
                 field.Put(PdfName.Rect, new PdfRectangle(rect.GetLeft(Padding), rect.GetBottom(Padding), rect.GetRight(Padding), rect.GetTop(Padding)));
             }
             if (Parent == null)
+            {
                 writer.AddAnnotation(field);
+            }
             else
+            {
                 Parent.AddKid(field);
+            }
         }
     }
 }

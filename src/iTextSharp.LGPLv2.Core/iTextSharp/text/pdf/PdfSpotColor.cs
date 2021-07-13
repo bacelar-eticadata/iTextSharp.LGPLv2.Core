@@ -2,14 +2,12 @@ using System;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfSpotColor  defines a ColorSpace
     /// @see     PdfDictionary
     /// </summary>
     public class PdfSpotColor
     {
-
         /// <summary>
         /// The alternative color space
         /// </summary>
@@ -24,6 +22,7 @@ namespace iTextSharp.text.pdf
         /// The tint value
         /// </summary>
         protected float tint;
+
         /// <summary>
         /// constructors
         /// </summary>
@@ -42,41 +41,32 @@ namespace iTextSharp.text.pdf
             Altcs = altcs;
         }
 
-        public BaseColor AlternativeCs
-        {
-            get
-            {
-                return Altcs;
-            }
-        }
+        public BaseColor AlternativeCs => Altcs;
 
-        public float Tint
-        {
-            get
-            {
-                return tint;
-            }
-        }
+        public float Tint => tint;
+
         protected internal PdfObject GetSpotObject(PdfWriter writer)
         {
-            PdfArray array = new PdfArray(PdfName.Separation);
+            var array = new PdfArray(PdfName.Separation);
             array.Add(Name);
             PdfFunction func = null;
             if (Altcs is ExtendedColor)
             {
-                int type = ((ExtendedColor)Altcs).Type;
+                var type = ((ExtendedColor)Altcs).Type;
                 switch (type)
                 {
                     case ExtendedColor.TYPE_GRAY:
                         array.Add(PdfName.Devicegray);
                         func = PdfFunction.Type2(writer, new float[] { 0, 1 }, null, new float[] { 0 }, new[] { ((GrayColor)Altcs).Gray }, 1);
                         break;
+
                     case ExtendedColor.TYPE_CMYK:
                         array.Add(PdfName.Devicecmyk);
-                        CmykColor cmyk = (CmykColor)Altcs;
+                        var cmyk = (CmykColor)Altcs;
                         func = PdfFunction.Type2(writer, new float[] { 0, 1 }, null, new float[] { 0, 0, 0, 0 },
                             new[] { cmyk.Cyan, cmyk.Magenta, cmyk.Yellow, cmyk.Black }, 1);
                         break;
+
                     default:
                         throw new Exception("Only RGB, Gray and CMYK are supported as alternative color spaces.");
                 }

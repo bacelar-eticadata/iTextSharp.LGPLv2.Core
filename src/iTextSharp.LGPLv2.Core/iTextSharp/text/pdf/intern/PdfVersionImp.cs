@@ -43,6 +43,7 @@ namespace iTextSharp.text.pdf.intern
         /// Indicates if the header was already written.
         /// </summary>
         protected bool HeaderWasWritten;
+
         /// <summary>
         /// @see com.lowagie.text.pdf.interfaces.PdfVersion#setPdfVersion(char)
         /// </summary>
@@ -73,15 +74,20 @@ namespace iTextSharp.text.pdf.intern
             }
             else
             {
-                PdfDictionary extension = Extensions.GetAsDict(de.Prefix);
+                var extension = Extensions.GetAsDict(de.Prefix);
                 if (extension != null)
                 {
-                    int diff = de.Baseversion.CompareTo(extension.GetAsName(PdfName.Baseversion));
+                    var diff = de.Baseversion.CompareTo(extension.GetAsName(PdfName.Baseversion));
                     if (diff < 0)
+                    {
                         return;
+                    }
+
                     diff = de.ExtensionLevel - extension.GetAsNumber(PdfName.Extensionlevel).IntValue;
                     if (diff <= 0)
+                    {
                         return;
+                    }
                 }
             }
             Extensions.Put(de.Prefix, de.GetDeveloperExtensions());
@@ -121,16 +127,22 @@ namespace iTextSharp.text.pdf.intern
             {
                 case PdfWriter.VERSION_1_2:
                     return PdfWriter.PdfVersion12;
+
                 case PdfWriter.VERSION_1_3:
                     return PdfWriter.PdfVersion13;
+
                 case PdfWriter.VERSION_1_4:
                     return PdfWriter.PdfVersion14;
+
                 case PdfWriter.VERSION_1_5:
                     return PdfWriter.PdfVersion15;
+
                 case PdfWriter.VERSION_1_6:
                     return PdfWriter.PdfVersion16;
+
                 case PdfWriter.VERSION_1_7:
                     return PdfWriter.PdfVersion17;
+
                 default:
                     return PdfWriter.PdfVersion14;
             }

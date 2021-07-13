@@ -1,13 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0C7F4AA3-EB30-48CD-A914-33A1EC6237B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iTextSharp.LGPLv2.Core", "src\iTextSharp.LGPLv2.Core\iTextSharp.LGPLv2.Core.csproj", "{DF47FB49-7509-42AD-B4DD-C5227D0116D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iTextSharp.LGPLv2.Core", "src\iTextSharp.LGPLv2.Core\iTextSharp.LGPLv2.Core.csproj", "{DF47FB49-7509-42AD-B4DD-C5227D0116D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iTextSharp.LGPLv2.Core.FunctionalTests", "src\iTextSharp.LGPLv2.Core.FunctionalTests\iTextSharp.LGPLv2.Core.FunctionalTests.csproj", "{E816960F-022D-473D-BA2E-C9A4DA005E04}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iTextSharp.LGPLv2.Core.FunctionalTests", "src\iTextSharp.LGPLv2.Core.FunctionalTests\iTextSharp.LGPLv2.Core.FunctionalTests.csproj", "{E816960F-022D-473D-BA2E-C9A4DA005E04}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B40C6B43-31AC-4270-AC85-DB13266FD45D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		appveyor.yml = appveyor.yml
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,9 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DF47FB49-7509-42AD-B4DD-C5227D0116D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -47,8 +52,14 @@ Global
 		{E816960F-022D-473D-BA2E-C9A4DA005E04}.Release|x86.ActiveCfg = Release|Any CPU
 		{E816960F-022D-473D-BA2E-C9A4DA005E04}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DF47FB49-7509-42AD-B4DD-C5227D0116D6} = {0C7F4AA3-EB30-48CD-A914-33A1EC6237B9}
 		{E816960F-022D-473D-BA2E-C9A4DA005E04} = {0C7F4AA3-EB30-48CD-A914-33A1EC6237B9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {304049A8-C1A3-4DE0-83CD-73D8DCD1CC42}
 	EndGlobalSection
 EndGlobal

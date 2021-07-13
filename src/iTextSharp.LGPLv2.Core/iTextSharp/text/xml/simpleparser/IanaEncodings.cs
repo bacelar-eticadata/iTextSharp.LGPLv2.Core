@@ -1,18 +1,22 @@
-using System;
+using iTextSharp.LGPLv2.Core.System.Encodings;
 using System.Collections;
 using System.Text;
+
+/* Unmerged change from project 'iTextSharp.LGPLv2.Core (netstandard2.0)'
+Before:
 using iTextSharp.LGPLv2.Core.System.Encodings;
+After:
+using System.Text;
+*/
 
 namespace iTextSharp.text.xml.simpleparser
 {
-
     /// <summary>
     /// Translates a IANA encoding name to a Java encoding.
     /// </summary>
 
     public class IanaEncodings
     {
-
         /// <summary>
         /// The object that maps IANA to Java encodings.
         /// </summary>
@@ -465,27 +469,46 @@ namespace iTextSharp.text.xml.simpleparser
 
         public static int GetEncodingNumber(string name)
         {
-            object n = _map[name.ToUpper(System.Globalization.CultureInfo.InvariantCulture)];
+            var n = _map[name.ToUpper(System.Globalization.CultureInfo.InvariantCulture)];
             if (n == null)
+            {
                 return 0;
+            }
+
             return (int)n;
         }
 
         public static Encoding GetEncodingEncoding(string name)
         {
-            string nameU = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
+            var nameU = name.ToUpper(System.Globalization.CultureInfo.InvariantCulture);
             if (nameU.Equals("UNICODEBIGUNMARKED"))
+            {
                 return new UnicodeEncoding(true, false);
+            }
+
             if (nameU.Equals("UNICODEBIG"))
+            {
                 return new UnicodeEncoding(true, true);
+            }
+
             if (nameU.Equals("UNICODELITTLEUNMARKED"))
+            {
                 return new UnicodeEncoding(false, false);
+            }
+
             if (nameU.Equals("UNICODELITTLE"))
+            {
                 return new UnicodeEncoding(false, true);
+            }
+
             if (_map.ContainsKey(nameU))
+            {
                 return EncodingsRegistry.Instance.GetEncoding((int)_map[nameU]);
+            }
             else
+            {
                 return EncodingsRegistry.Instance.GetEncoding(name);
+            }
         }
     }
 }

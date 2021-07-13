@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 
 namespace iTextSharp.text
 {
@@ -280,7 +279,7 @@ namespace iTextSharp.text
         public static Rectangle GetRectangle(string name)
         {
             name = name.Trim().ToUpper(System.Globalization.CultureInfo.InvariantCulture);
-            int pos = name.IndexOf(" ", StringComparison.Ordinal);
+            var pos = name.IndexOf(" ", StringComparison.Ordinal);
             if (pos == -1)
             {
                 try
@@ -296,8 +295,8 @@ namespace iTextSharp.text
             {
                 try
                 {
-                    string width = name.Substring(0, pos);
-                    string height = name.Substring(pos + 1);
+                    var width = name.Substring(0, pos);
+                    var height = name.Substring(pos + 1);
                     return new Rectangle(float.Parse(width, System.Globalization.NumberFormatInfo.InvariantInfo), float.Parse(height, System.Globalization.NumberFormatInfo.InvariantInfo));
                 }
                 catch (Exception e)

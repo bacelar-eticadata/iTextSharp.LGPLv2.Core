@@ -1,4 +1,3 @@
-using System;
 using System.util;
 
 namespace iTextSharp.text
@@ -8,7 +7,6 @@ namespace iTextSharp.text
     /// </summary>
     public static class ElementTags
     {
-
         /// <summary> attribute of the image tag </summary>
         public const string ABSOLUTEX = "absolutex";
 
@@ -375,6 +373,7 @@ namespace iTextSharp.text
 
         /// <summary> attribute of the root and annotation tag (also a special tag within a chapter or section) </summary>
         public const string TITLE = "title";
+
         /// <summary> attribute of the table/cell tag </summary>
         public const string TOP = "top";
 
@@ -409,19 +408,20 @@ namespace iTextSharp.text
         public const string WIDTHS = "widths";
 
         /// <summary> attribute of the chunk tag </summary>
-        public static readonly string Generictag = Chunk.GENERICTAG.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+        public static readonly string Generictag = Chunk.GENERICTAG.ToLowerInvariant();
 
         /// <summary> attribute of the chunk tag </summary>
-        public static readonly string Localdestination = Chunk.LOCALDESTINATION.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+        public static readonly string Localdestination = Chunk.LOCALDESTINATION.ToLowerInvariant();
 
         /// <summary> attribute of the chunk tag </summary>
-        public static readonly string Localgoto = Chunk.LOCALGOTO.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+        public static readonly string Localgoto = Chunk.LOCALGOTO.ToLowerInvariant();
 
         /// <summary> attribute of the chunk tag </summary>
-        public static readonly string Remotegoto = Chunk.REMOTEGOTO.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+        public static readonly string Remotegoto = Chunk.REMOTEGOTO.ToLowerInvariant();
 
         /// <summary> attribute of the chunk tag </summary>
-        public static readonly string Subsupscript = Chunk.SUBSUPSCRIPT.ToLower(System.Globalization.CultureInfo.InvariantCulture);
+        public static readonly string Subsupscript = Chunk.SUBSUPSCRIPT.ToLowerInvariant();
+
         /// <summary>
         /// methods
         /// </summary>
@@ -433,7 +433,11 @@ namespace iTextSharp.text
         /// <param name="alignment">value (one of the ALIGN_ constants of the Element interface)</param>
         public static int AlignmentValue(string alignment)
         {
-            if (alignment == null) return Element.ALIGN_UNDEFINED;
+            if (alignment == null)
+            {
+                return Element.ALIGN_UNDEFINED;
+            }
+
             if (Util.EqualsIgnoreCase(ALIGN_CENTER, alignment))
             {
                 return Element.ALIGN_CENTER;
@@ -485,21 +489,29 @@ namespace iTextSharp.text
             {
                 case Element.ALIGN_LEFT:
                     return ALIGN_LEFT;
+
                 case Element.ALIGN_CENTER:
                     return ALIGN_CENTER;
+
                 case Element.ALIGN_RIGHT:
                     return ALIGN_RIGHT;
+
                 case Element.ALIGN_JUSTIFIED:
                 case Element.ALIGN_JUSTIFIED_ALL:
                     return ALIGN_JUSTIFIED;
+
                 case Element.ALIGN_TOP:
                     return ALIGN_TOP;
+
                 case Element.ALIGN_MIDDLE:
                     return ALIGN_MIDDLE;
+
                 case Element.ALIGN_BOTTOM:
                     return ALIGN_BOTTOM;
+
                 case Element.ALIGN_BASELINE:
                     return ALIGN_BASELINE;
+
                 default:
                     return DEFAULT;
             }

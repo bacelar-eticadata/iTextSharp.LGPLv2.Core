@@ -44,36 +44,18 @@ namespace iTextSharp.text
         /// Gets all the chunks in this element.
         /// </summary>
         /// <returns>an  ArrayList </returns>
-        public virtual ArrayList Chunks
-        {
-            get
-            {
-                return Element.Chunks;
-            }
-        }
+        public virtual ArrayList Chunks => Element.Chunks;
 
         /// <summary>
         /// </summary>
         /// <returns>the markupAttributes</returns>
-        public virtual Properties MarkupAttributes
-        {
-            get
-            {
-                return markupAttributes;
-            }
-        }
+        public virtual Properties MarkupAttributes => markupAttributes;
 
         /// <summary>
         /// Gets the type of the text element.
         /// </summary>
         /// <returns>a type</returns>
-        public virtual int Type
-        {
-            get
-            {
-                return text.Element.MARKED;
-            }
-        }
+        public virtual int Type => text.Element.MARKED;
 
         /// <summary>
         /// @see com.lowagie.text.Element#isContent()

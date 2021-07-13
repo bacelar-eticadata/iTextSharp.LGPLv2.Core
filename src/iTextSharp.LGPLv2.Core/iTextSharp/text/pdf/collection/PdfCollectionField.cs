@@ -46,6 +46,7 @@ namespace iTextSharp.text.pdf.collection
         /// A possible type of collection field.
         /// </summary>
         public const int TEXT = 0;
+
         /// <summary>
         /// The type of the PDF collection field.
         /// </summary>
@@ -65,24 +66,31 @@ namespace iTextSharp.text.pdf.collection
                 default:
                     Put(PdfName.Subtype, PdfName.S);
                     break;
+
                 case DATE:
                     Put(PdfName.Subtype, PdfName.D);
                     break;
+
                 case NUMBER:
                     Put(PdfName.Subtype, PdfName.N);
                     break;
+
                 case FILENAME:
                     Put(PdfName.Subtype, PdfName.F);
                     break;
+
                 case DESC:
                     Put(PdfName.Subtype, PdfName.Desc);
                     break;
+
                 case MODDATE:
                     Put(PdfName.Subtype, PdfName.Moddate);
                     break;
+
                 case CREATIONDATE:
                     Put(PdfName.Subtype, PdfName.Creationdate);
                     break;
+
                 case SIZE:
                     Put(PdfName.Subtype, PdfName.Size);
                     break;
@@ -94,10 +102,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public bool Editable
         {
-            set
-            {
-                Put(PdfName.E, new PdfBoolean(value));
-            }
+            set => Put(PdfName.E, new PdfBoolean(value));
         }
 
         /// <summary>
@@ -105,10 +110,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public int Order
         {
-            set
-            {
-                Put(PdfName.O, new PdfNumber(value));
-            }
+            set => Put(PdfName.O, new PdfNumber(value));
         }
 
         /// <summary>
@@ -116,10 +118,7 @@ namespace iTextSharp.text.pdf.collection
         /// </summary>
         public bool Visible
         {
-            set
-            {
-                Put(PdfName.V, new PdfBoolean(value));
-            }
+            set => Put(PdfName.V, new PdfBoolean(value));
         }
 
         /// <summary>
@@ -131,8 +130,10 @@ namespace iTextSharp.text.pdf.collection
             {
                 case TEXT:
                     return new PdfString(v, TEXT_UNICODE);
+
                 case DATE:
                     return new PdfDate(PdfDate.Decode(v));
+
                 case NUMBER:
                     return new PdfNumber(v);
             }
@@ -150,6 +151,7 @@ namespace iTextSharp.text.pdf.collection
                 case DATE:
                 case NUMBER:
                     return true;
+
                 default:
                     return false;
             }

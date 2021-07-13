@@ -4,13 +4,11 @@ using System.Text;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// @author  Paulo Soares (psoares@consiste.pt)
     /// </summary>
     public class PrTokeniser
     {
-
         public const int TK_COMMENT = 4;
         public const int TK_END_ARRAY = 6;
         public const int TK_END_DIC = 8;
@@ -23,13 +21,13 @@ namespace iTextSharp.text.pdf
         public const int TK_STRING = 2;
         internal const string EMPTY = "";
 
-
         protected RandomAccessFileOrArray file;
         protected int generation;
         protected bool HexString;
         protected int reference;
         protected string stringValue;
         protected int Type;
+
         public PrTokeniser(string filename)
         {
             file = new RandomAccessFileOrArray(filename);
@@ -45,61 +43,19 @@ namespace iTextSharp.text.pdf
             this.file = file;
         }
 
-        public RandomAccessFileOrArray File
-        {
-            get
-            {
-                return file;
-            }
-        }
+        public RandomAccessFileOrArray File => file;
 
-        public int FilePointer
-        {
-            get
-            {
-                return file.FilePointer;
-            }
-        }
+        public int FilePointer => file.FilePointer;
 
-        public int Generation
-        {
-            get
-            {
-                return generation;
-            }
-        }
+        public int Generation => generation;
 
-        public int IntValue
-        {
-            get
-            {
-                return int.Parse(stringValue);
-            }
-        }
+        public int IntValue => int.Parse(stringValue);
 
-        public int Length
-        {
-            get
-            {
-                return file.Length;
-            }
-        }
+        public int Length => file.Length;
 
-        public int Reference
-        {
-            get
-            {
-                return reference;
-            }
-        }
+        public int Reference => reference;
 
-        public RandomAccessFileOrArray SafeFile
-        {
-            get
-            {
-                return new RandomAccessFileOrArray(file);
-            }
-        }
+        public RandomAccessFileOrArray SafeFile => new RandomAccessFileOrArray(file);
 
         public long Startxref
         {
@@ -109,53 +65,61 @@ namespace iTextSharp.text.pdf
                 const string startxref = "startxref";
                 var startxrefLength = startxref.Length;
                 long fileLength = file.Length;
-                long pos = fileLength - arrLength;
-                if (pos < 1) pos = 1;
+                var pos = fileLength - arrLength;
+                if (pos < 1)
+                {
+                    pos = 1;
+                }
+
                 while (pos > 0)
                 {
                     file.Seek(pos);
                     var str = ReadString(arrLength);
-                    int idx = str.LastIndexOf(startxref, StringComparison.Ordinal);
-                    if (idx >= 0) return pos + idx;
+                    var idx = str.LastIndexOf(startxref, StringComparison.Ordinal);
+                    if (idx >= 0)
+                    {
+                        return pos + idx;
+                    }
+
                     pos = pos - arrLength + startxrefLength;
                 }
                 throw new IOException("PDF startxref not found.");
             }
         }
 
-        public string StringValue
-        {
-            get
-            {
-                return stringValue;
-            }
-        }
+        public string StringValue => stringValue;
 
-        public int TokenType
-        {
-            get
-            {
-                return Type;
-            }
-        }
+        public int TokenType => Type;
 
         public static int[] CheckObjectStart(byte[] line)
         {
             try
             {
-                PrTokeniser tk = new PrTokeniser(line);
-                int num = 0;
-                int gen = 0;
+                var tk = new PrTokeniser(line);
+                var num = 0;
+                var gen = 0;
                 if (!tk.NextToken() || tk.TokenType != TK_NUMBER)
+                {
                     return null;
+                }
+
                 num = tk.IntValue;
                 if (!tk.NextToken() || tk.TokenType != TK_NUMBER)
+                {
                     return null;
+                }
+
                 gen = tk.IntValue;
                 if (!tk.NextToken())
+                {
                     return null;
+                }
+
                 if (!tk.StringValue.Equals("obj"))
+                {
                     return null;
+                }
+
                 return new[] { num, gen };
             }
             catch
@@ -167,11 +131,20 @@ namespace iTextSharp.text.pdf
         public static int GetHex(int v)
         {
             if (v >= '0' && v <= '9')
+            {
                 return v - '0';
+            }
+
             if (v >= 'A' && v <= 'F')
+            {
                 return v - 'A' + 10;
+            }
+
             if (v >= 'a' && v <= 'f')
+            {
                 return v - 'a' + 10;
+            }
+
             return -1;
         }
 
@@ -188,26 +161,34 @@ namespace iTextSharp.text.pdf
         public void BackOnePosition(int ch)
         {
             if (ch != -1)
+            {
                 file.PushBack((byte)ch);
+            }
         }
 
         public void CheckFdfHeader()
         {
             file.StartOffset = 0;
-            string str = ReadString(1024);
-            int idx = str.IndexOf("%FDF-1.2", StringComparison.Ordinal);
+            var str = ReadString(1024);
+            var idx = str.IndexOf("%FDF-1.2", StringComparison.Ordinal);
             if (idx < 0)
+            {
                 throw new IOException("FDF header signature not found.");
+            }
+
             file.StartOffset = idx;
         }
 
         public char CheckPdfHeader()
         {
             file.StartOffset = 0;
-            string str = ReadString(1024);
-            int idx = str.IndexOf("%PDF-", StringComparison.Ordinal);
+            var str = ReadString(1024);
+            var idx = str.IndexOf("%PDF-", StringComparison.Ordinal);
             if (idx < 0)
+            {
                 throw new IOException("PDF header signature not found.");
+            }
+
             file.StartOffset = idx;
             return str[idx + 7];
         }
@@ -224,13 +205,15 @@ namespace iTextSharp.text.pdf
 
         public bool NextToken()
         {
-            int ch = 0;
+            var ch = 0;
             do
             {
                 ch = file.Read();
             } while (ch != -1 && IsWhitespace(ch));
             if (ch == -1)
+            {
                 return false;
+            }
             // Note:  We have to initialize stringValue here, after we've looked for the end of the stream,
             // to ensure that we don't lose the value of a token that might end exactly at the end
             // of the stream
@@ -241,9 +224,11 @@ namespace iTextSharp.text.pdf
                 case '[':
                     Type = TK_START_ARRAY;
                     break;
+
                 case ']':
                     Type = TK_END_ARRAY;
                     break;
+
                 case '/':
                     {
                         outBuf = new StringBuilder();
@@ -252,7 +237,10 @@ namespace iTextSharp.text.pdf
                         {
                             ch = file.Read();
                             if (ch == -1 || IsDelimiter(ch) || IsWhitespace(ch))
+                            {
                                 break;
+                            }
+
                             if (ch == '#')
                             {
                                 ch = (GetHex(file.Read()) << 4) + GetHex(file.Read());
@@ -265,12 +253,16 @@ namespace iTextSharp.text.pdf
                 case '>':
                     ch = file.Read();
                     if (ch != '>')
+                    {
                         ThrowError("'>' not expected");
+                    }
+
                     Type = TK_END_DIC;
                     break;
+
                 case '<':
                     {
-                        int v1 = file.Read();
+                        var v1 = file.Read();
                         if (v1 == '<')
                         {
                             Type = TK_START_DIC;
@@ -279,19 +271,31 @@ namespace iTextSharp.text.pdf
                         outBuf = new StringBuilder();
                         Type = TK_STRING;
                         HexString = true;
-                        int v2 = 0;
+                        var v2 = 0;
                         while (true)
                         {
                             while (IsWhitespace(v1))
+                            {
                                 v1 = file.Read();
+                            }
+
                             if (v1 == '>')
+                            {
                                 break;
+                            }
+
                             v1 = GetHex(v1);
                             if (v1 < 0)
+                            {
                                 break;
+                            }
+
                             v2 = file.Read();
                             while (IsWhitespace(v2))
+                            {
                                 v2 = file.Read();
+                            }
+
                             if (v2 == '>')
                             {
                                 ch = v1 << 4;
@@ -300,13 +304,19 @@ namespace iTextSharp.text.pdf
                             }
                             v2 = GetHex(v2);
                             if (v2 < 0)
+                            {
                                 break;
+                            }
+
                             ch = (v1 << 4) + v2;
                             outBuf.Append((char)ch);
                             v1 = file.Read();
                         }
                         if (v1 < 0 || v2 < 0)
+                        {
                             ThrowError("Error reading string");
+                        }
+
                         break;
                     }
                 case '%':
@@ -316,17 +326,21 @@ namespace iTextSharp.text.pdf
                         ch = file.Read();
                     } while (ch != -1 && ch != '\r' && ch != '\n');
                     break;
+
                 case '(':
                     {
                         outBuf = new StringBuilder();
                         Type = TK_STRING;
                         HexString = false;
-                        int nesting = 0;
+                        var nesting = 0;
                         while (true)
                         {
                             ch = file.Read();
                             if (ch == -1)
+                            {
                                 break;
+                            }
+
                             if (ch == '(')
                             {
                                 ++nesting;
@@ -337,45 +351,56 @@ namespace iTextSharp.text.pdf
                             }
                             else if (ch == '\\')
                             {
-                                bool lineBreak = false;
+                                var lineBreak = false;
                                 ch = file.Read();
                                 switch (ch)
                                 {
                                     case 'n':
                                         ch = '\n';
                                         break;
+
                                     case 'r':
                                         ch = '\r';
                                         break;
+
                                     case 't':
                                         ch = '\t';
                                         break;
+
                                     case 'b':
                                         ch = '\b';
                                         break;
+
                                     case 'f':
                                         ch = '\f';
                                         break;
+
                                     case '(':
                                     case ')':
                                     case '\\':
                                         break;
+
                                     case '\r':
                                         lineBreak = true;
                                         ch = file.Read();
                                         if (ch != '\n')
+                                        {
                                             BackOnePosition(ch);
+                                        }
+
                                         break;
+
                                     case '\n':
                                         lineBreak = true;
                                         break;
+
                                     default:
                                         {
                                             if (ch < '0' || ch > '7')
                                             {
                                                 break;
                                             }
-                                            int octal = ch - '0';
+                                            var octal = ch - '0';
                                             ch = file.Read();
                                             if (ch < '0' || ch > '7')
                                             {
@@ -397,15 +422,23 @@ namespace iTextSharp.text.pdf
                                         }
                                 }
                                 if (lineBreak)
+                                {
                                     continue;
+                                }
+
                                 if (ch < 0)
+                                {
                                     break;
+                                }
                             }
                             else if (ch == '\r')
                             {
                                 ch = file.Read();
                                 if (ch < 0)
+                                {
                                     break;
+                                }
+
                                 if (ch != '\n')
                                 {
                                     BackOnePosition(ch);
@@ -413,11 +446,17 @@ namespace iTextSharp.text.pdf
                                 }
                             }
                             if (nesting == -1)
+                            {
                                 break;
+                            }
+
                             outBuf.Append((char)ch);
                         }
                         if (ch == -1)
+                        {
                             ThrowError("Error reading string");
+                        }
+
                         break;
                     }
                 default:
@@ -446,26 +485,35 @@ namespace iTextSharp.text.pdf
                     }
             }
             if (outBuf != null)
+            {
                 stringValue = outBuf.ToString();
+            }
+
             return true;
         }
 
         public void NextValidToken()
         {
-            int level = 0;
+            var level = 0;
             string n1 = null;
             string n2 = null;
-            int ptr = 0;
+            var ptr = 0;
             while (NextToken())
             {
                 if (Type == TK_COMMENT)
+                {
                     continue;
+                }
+
                 switch (level)
                 {
                     case 0:
                         {
                             if (Type != TK_NUMBER)
+                            {
                                 return;
+                            }
+
                             ptr = file.FilePointer;
                             n1 = stringValue;
                             ++level;
@@ -512,16 +560,19 @@ namespace iTextSharp.text.pdf
 
         public bool ReadLineSegment(byte[] input)
         {
-            int c = -1;
-            bool eol = false;
-            int ptr = 0;
-            int len = input.Length;
+            var c = -1;
+            var eol = false;
+            var ptr = 0;
+            var len = input.Length;
             // ssteward, pdftk-1.10, 040922:
             // skip initial whitespace; added this because PdfReader.RebuildXref()
             // assumes that line provided by readLineSegment does not have init. whitespace;
             if (ptr < len)
             {
-                while (IsWhitespace((c = Read()))) ;
+                while (IsWhitespace((c = Read())))
+                {
+                    ;
+                }
             }
             while (!eol && ptr < len)
             {
@@ -531,14 +582,16 @@ namespace iTextSharp.text.pdf
                     case '\n':
                         eol = true;
                         break;
+
                     case '\r':
                         eol = true;
-                        int cur = FilePointer;
+                        var cur = FilePointer;
                         if ((Read()) != '\n')
                         {
                             Seek(cur);
                         }
                         break;
+
                     default:
                         input[ptr++] = (byte)c;
                         break;
@@ -565,9 +618,10 @@ namespace iTextSharp.text.pdf
                         case '\n':
                             eol = true;
                             break;
+
                         case '\r':
                             eol = true;
-                            int cur = FilePointer;
+                            var cur = FilePointer;
                             if ((Read()) != '\n')
                             {
                                 Seek(cur);
@@ -591,13 +645,16 @@ namespace iTextSharp.text.pdf
 
         public string ReadString(int size)
         {
-            StringBuilder buf = new StringBuilder();
+            var buf = new StringBuilder();
             int ch;
             while ((size--) > 0)
             {
                 ch = file.Read();
                 if (ch == -1)
+                {
                     break;
+                }
+
                 buf.Append((char)ch);
             }
             return buf.ToString();
@@ -607,6 +664,7 @@ namespace iTextSharp.text.pdf
         {
             file.Seek(pos);
         }
+
         public void ThrowError(string error)
         {
             throw new IOException(error + " at file pointer " + file.FilePointer);

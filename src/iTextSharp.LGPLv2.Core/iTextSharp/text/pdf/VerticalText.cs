@@ -11,7 +11,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class VerticalText
     {
-
         /// <summary>
         /// Signals that there is no more column.
         /// </summary>
@@ -76,6 +75,7 @@ namespace iTextSharp.text.pdf
         /// The  PdfContent  where the text will be written to.
         /// </summary>
         protected PdfContentByte Text;
+
         /// <summary>
         /// Creates new VerticalText
         /// be a template.
@@ -92,15 +92,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the alignment</returns>
         public int Alignment
         {
-            get
-            {
-                return alignment;
-            }
+            get => alignment;
 
-            set
-            {
-                alignment = value;
-            }
+            set => alignment = value;
         }
 
         /// <summary>
@@ -109,15 +103,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the height</returns>
         public float Height
         {
-            get
-            {
-                return height;
-            }
+            get => height;
 
-            set
-            {
-                height = value;
-            }
+            set => height = value;
         }
 
         /// <summary>
@@ -126,15 +114,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the vertical line separation</returns>
         public float Leading
         {
-            get
-            {
-                return leading;
-            }
+            get => leading;
 
-            set
-            {
-                leading = value;
-            }
+            set => leading = value;
         }
 
         /// <summary>
@@ -144,15 +126,9 @@ namespace iTextSharp.text.pdf
         /// <returns>Value of property maxLines.</returns>
         public int MaxLines
         {
-            get
-            {
-                return maxLines;
-            }
+            get => maxLines;
 
-            set
-            {
-                maxLines = value;
-            }
+            set => maxLines = value;
         }
 
         /// <summary>
@@ -160,25 +136,13 @@ namespace iTextSharp.text.pdf
         /// after each call to  go() .
         /// </summary>
         /// <returns>the X coordinate</returns>
-        public float OriginX
-        {
-            get
-            {
-                return StartX;
-            }
-        }
+        public float OriginX => StartX;
 
         /// <summary>
         /// Gets the Y coordinate where the next line will be writen.
         /// </summary>
         /// <returns>the Y coordinate</returns>
-        public float OriginY
-        {
-            get
-            {
-                return StartY;
-            }
-        }
+        public float OriginY => StartY;
 
         /// <summary>
         /// Adds a  Phrase  to the current text array.
@@ -221,22 +185,28 @@ namespace iTextSharp.text.pdf
         /// <returns>returns the result of the operation. It can be  NO_MORE_TEXT </returns>
         public int Go(bool simulate)
         {
-            bool dirty = false;
+            var dirty = false;
             PdfContentByte graphics = null;
             if (Text != null)
             {
                 graphics = Text.Duplicate;
             }
             else if (!simulate)
+            {
                 throw new Exception("VerticalText.go with simulate==false and text==null.");
-            int status = 0;
-            for (;;)
+            }
+
+            var status = 0;
+            for (; ; )
             {
                 if (maxLines <= 0)
                 {
                     status = NoMoreColumn;
                     if (Chunks.Count == 0)
+                    {
                         status |= NoMoreText;
+                    }
+
                     break;
                 }
                 if (Chunks.Count == 0)
@@ -244,7 +214,7 @@ namespace iTextSharp.text.pdf
                     status = NoMoreText;
                     break;
                 }
-                PdfLine line = CreateLine(height);
+                var line = CreateLine(height);
                 if (!simulate && !dirty)
                 {
                     Text.BeginText();
@@ -294,6 +264,7 @@ namespace iTextSharp.text.pdf
             this.maxLines = maxLines;
             Leading = leading;
         }
+
         internal void WriteLine(PdfLine line, PdfContentByte text, PdfContentByte graphics)
         {
             PdfFont currentFont = null;
@@ -304,12 +275,17 @@ namespace iTextSharp.text.pdf
                     currentFont = chunk.Font;
                     text.SetFontAndSize(currentFont.Font, currentFont.Size);
                 }
-                BaseColor color = chunk.Color;
+                var color = chunk.Color;
                 if (color != null)
+                {
                     text.SetColorFill(color);
+                }
+
                 text.ShowText(chunk.ToString());
                 if (color != null)
+                {
                     text.ResetRgbColorFill();
+                }
             }
         }
 
@@ -321,14 +297,17 @@ namespace iTextSharp.text.pdf
         protected PdfLine CreateLine(float width)
         {
             if (Chunks.Count == 0)
+            {
                 return null;
+            }
+
             SplittedChunkText = null;
             CurrentStandbyChunk = null;
-            PdfLine line = new PdfLine(0, width, alignment, 0);
+            var line = new PdfLine(0, width, alignment, 0);
             string total;
             for (CurrentChunkMarker = 0; CurrentChunkMarker < Chunks.Count; ++CurrentChunkMarker)
             {
-                PdfChunk original = (PdfChunk)(Chunks[CurrentChunkMarker]);
+                var original = (PdfChunk)(Chunks[CurrentChunkMarker]);
                 total = original.ToString();
                 CurrentStandbyChunk = line.Add(original);
                 if (CurrentStandbyChunk != null)
@@ -347,17 +326,22 @@ namespace iTextSharp.text.pdf
         protected void ShortenChunkArray()
         {
             if (CurrentChunkMarker < 0)
+            {
                 return;
+            }
+
             if (CurrentChunkMarker >= Chunks.Count)
             {
                 Chunks.Clear();
                 return;
             }
-            PdfChunk split = (PdfChunk)(Chunks[CurrentChunkMarker]);
+            var split = (PdfChunk)(Chunks[CurrentChunkMarker]);
             split.Value = SplittedChunkText;
             Chunks[CurrentChunkMarker] = CurrentStandbyChunk;
-            for (int j = CurrentChunkMarker - 1; j >= 0; --j)
+            for (var j = CurrentChunkMarker - 1; j >= 0; --j)
+            {
                 Chunks.RemoveAt(j);
+            }
         }
     }
 }

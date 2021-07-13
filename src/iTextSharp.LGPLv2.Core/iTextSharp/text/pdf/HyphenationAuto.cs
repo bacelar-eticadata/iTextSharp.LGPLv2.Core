@@ -2,7 +2,6 @@ using iTextSharp.text.pdf.hyphenation;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Hyphenates words automatically accordingly to the language and country.
     /// The hyphenator engine was taken from FOP and uses the TEX patterns. If a language
@@ -11,11 +10,11 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class HyphenationAuto : IHyphenationEvent
     {
-
         /// <summary>
         /// The hyphenator engine.
         /// </summary>
         protected Hyphenator Hyphenator;
+
         /// <summary>
         /// The second part of the hyphenated word.
         /// </summary>
@@ -38,25 +37,13 @@ namespace iTextSharp.text.pdf
         /// after  getHyphenatedWordPre() .
         /// </summary>
         /// <returns>the second part of the hyphenated word</returns>
-        public string HyphenatedWordPost
-        {
-            get
-            {
-                return Post;
-            }
-        }
+        public string HyphenatedWordPost => Post;
 
         /// <summary>
         /// Gets the hyphen symbol.
         /// </summary>
         /// <returns>the hyphen symbol</returns>
-        public string HyphenSymbol
-        {
-            get
-            {
-                return "-";
-            }
-        }
+        public string HyphenSymbol => "-";
 
         /// <summary>
         /// Hyphenates a word and returns the first part of it. To get
@@ -71,25 +58,33 @@ namespace iTextSharp.text.pdf
         public string GetHyphenatedWordPre(string word, BaseFont font, float fontSize, float remainingWidth)
         {
             Post = word;
-            string hyphen = HyphenSymbol;
-            float hyphenWidth = font.GetWidthPoint(hyphen, fontSize);
+            var hyphen = HyphenSymbol;
+            var hyphenWidth = font.GetWidthPoint(hyphen, fontSize);
             if (hyphenWidth > remainingWidth)
+            {
                 return "";
-            Hyphenation hyphenation = Hyphenator.Hyphenate(word);
+            }
+
+            var hyphenation = Hyphenator.Hyphenate(word);
             if (hyphenation == null)
             {
                 return "";
             }
-            int len = hyphenation.Length;
+            var len = hyphenation.Length;
             int k;
             for (k = 0; k < len; ++k)
             {
                 if (font.GetWidthPoint(hyphenation.GetPreHyphenText(k), fontSize) + hyphenWidth > remainingWidth)
+                {
                     break;
+                }
             }
             --k;
             if (k < 0)
+            {
                 return "";
+            }
+
             Post = hyphenation.GetPostHyphenText(k);
             return hyphenation.GetPreHyphenText(k) + hyphen;
         }

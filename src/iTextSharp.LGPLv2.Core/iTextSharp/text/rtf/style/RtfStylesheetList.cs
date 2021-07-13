@@ -1,6 +1,6 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.style
 {
@@ -60,7 +60,7 @@ namespace iTextSharp.text.rtf.style
         /// <param name="rtfParagraphStyle">The RtfParagraphStyle to add.</param>
         public void RegisterParagraphStyle(RtfParagraphStyle rtfParagraphStyle)
         {
-            RtfParagraphStyle tempStyle = new RtfParagraphStyle(Document, rtfParagraphStyle);
+            var tempStyle = new RtfParagraphStyle(Document, rtfParagraphStyle);
             tempStyle.HandleInheritance();
             tempStyle.SetStyleNumber(_styleMap.Count);
             _styleMap[tempStyle.GetStyleName()] = tempStyle;
@@ -83,7 +83,10 @@ namespace iTextSharp.text.rtf.style
             result.Write(t = Delimiter, 0, t.Length);
             Document.OutputDebugLinebreak(result);
             foreach (RtfParagraphStyle rps in _styleMap.Values)
+            {
                 rps.WriteDefinition(result);
+            }
+
             result.Write(t = DocWriter.GetIsoBytes("}"), 0, t.Length);
             Document.OutputDebugLinebreak(result);
         }

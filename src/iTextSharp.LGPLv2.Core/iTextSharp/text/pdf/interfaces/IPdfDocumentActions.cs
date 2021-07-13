@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf.interfaces
 {
-
     /// <summary>
     /// A PDF document can have an open action and other additional actions.
     /// </summary>

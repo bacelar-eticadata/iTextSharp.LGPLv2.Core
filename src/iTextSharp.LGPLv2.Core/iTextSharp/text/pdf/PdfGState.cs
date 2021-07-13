@@ -78,10 +78,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool AlphaIsShape
         {
-            set
-            {
-                Put(PdfName.Ais, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
-            }
+            set => Put(PdfName.Ais, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
         }
 
         /// <summary>
@@ -89,10 +86,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public PdfName BlendMode
         {
-            set
-            {
-                Put(PdfName.Bm, value);
-            }
+            set => Put(PdfName.Bm, value);
         }
 
         /// <summary>
@@ -102,10 +96,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float FillOpacity
         {
-            set
-            {
-                Put(PdfName.CA_, new PdfNumber(value));
-            }
+            set => Put(PdfName.CA_, new PdfNumber(value));
         }
 
         /// <summary>
@@ -113,10 +104,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public int OverPrintMode
         {
-            set
-            {
-                Put(PdfName.Opm, new PdfNumber(value == 0 ? 0 : 1));
-            }
+            set => Put(PdfName.Opm, new PdfNumber(value == 0 ? 0 : 1));
         }
 
         /// <summary>
@@ -124,10 +112,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool OverPrintNonStroking
         {
-            set
-            {
-                Put(PdfName.Op_, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
-            }
+            set => Put(PdfName.Op_, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
         }
 
         /// <summary>
@@ -135,10 +120,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool OverPrintStroking
         {
-            set
-            {
-                Put(PdfName.Op, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
-            }
+            set => Put(PdfName.Op, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
         }
 
         /// <summary>
@@ -148,10 +130,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public float StrokeOpacity
         {
-            set
-            {
-                Put(PdfName.CA, new PdfNumber(value));
-            }
+            set => Put(PdfName.CA, new PdfNumber(value));
         }
 
         /// <summary>
@@ -160,10 +139,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool TextKnockout
         {
-            set
-            {
-                Put(PdfName.Tk, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
-            }
+            set => Put(PdfName.Tk, value ? PdfBoolean.Pdftrue : PdfBoolean.Pdffalse);
         }
     }
 }

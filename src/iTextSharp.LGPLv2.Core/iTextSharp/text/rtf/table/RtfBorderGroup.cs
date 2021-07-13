@@ -1,6 +1,6 @@
-using System.IO;
-using System.Collections;
 using iTextSharp.text.rtf.document;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.table
 {
@@ -58,8 +58,8 @@ namespace iTextSharp.text.rtf.table
             {
                 foreach (DictionaryEntry entry in borderGroup.GetBorders())
                 {
-                    int borderPos = (int)entry.Key;
-                    RtfBorder border = (RtfBorder)entry.Value;
+                    var borderPos = (int)entry.Key;
+                    var border = (RtfBorder)entry.Value;
                     _borders[borderPos] = new RtfBorder(Document, _borderType, border);
                 }
             }
@@ -170,7 +170,7 @@ namespace iTextSharp.text.rtf.table
         /// <param name="borderColor">The border color to use</param>
         private void setBorder(int borderPosition, int borderStyle, float borderWidth, BaseColor borderColor)
         {
-            RtfBorder border = new RtfBorder(Document, _borderType, borderPosition, borderStyle, borderWidth, borderColor);
+            var border = new RtfBorder(Document, _borderType, borderPosition, borderStyle, borderWidth, borderColor);
             _borders[borderPosition] = border;
         }
     }

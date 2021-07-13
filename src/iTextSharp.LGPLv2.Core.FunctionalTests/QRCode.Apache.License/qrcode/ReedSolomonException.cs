@@ -1,4 +1,5 @@
 using System;
+
 /*
  * Copyright 2007 ZXing authors
  *
@@ -17,22 +18,31 @@ using System;
 
 namespace iTextSharp.text.pdf.qrcode
 {
-
     /**
      * <p>Thrown when an exception occurs during Reed-Solomon decoding, such as when
      * there are too many errors to correct.</p>
      *
      * @author Sean Owen
      */
+
     [Serializable]
     public class ReedSolomonException : Exception
     {
-
-        public ReedSolomonException(String message)
+        public ReedSolomonException(string message)
             : base(message)
         {
         }
 
-        protected ReedSolomonException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        protected ReedSolomonException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        {
+        }
+
+        public ReedSolomonException()
+        {
+        }
+
+        public ReedSolomonException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

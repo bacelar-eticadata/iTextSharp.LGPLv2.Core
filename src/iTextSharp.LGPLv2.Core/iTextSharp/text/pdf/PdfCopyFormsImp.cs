@@ -1,5 +1,4 @@
 using System.IO;
-using System.Collections;
 
 namespace iTextSharp.text.pdf
 {
@@ -10,7 +9,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     internal class PdfCopyFormsImp : PdfCopyFieldsImp
     {
-
         /// <summary>
         /// This sets up the output document
         /// @throws DocumentException
@@ -28,7 +26,10 @@ namespace iTextSharp.text.pdf
         public void CopyDocumentFields(PdfReader reader)
         {
             if (!reader.IsOpenedWithFullPermissions)
+            {
                 throw new BadPasswordException("PdfReader not opened with owner password");
+            }
+
             if (Readers2Intrefs.ContainsKey(reader))
             {
                 reader = new PdfReader(reader);
@@ -36,7 +37,10 @@ namespace iTextSharp.text.pdf
             else
             {
                 if (reader.Tampered)
+                {
                     throw new DocumentException("The document was reused.");
+                }
+
                 reader.ConsolidateNamedDestinations();
                 reader.Tampered = true;
             }
@@ -52,12 +56,11 @@ namespace iTextSharp.text.pdf
         /// </summary>
         internal override void MergeFields()
         {
-            for (int k = 0; k < Fields.Count; ++k)
+            for (var k = 0; k < Fields.Count; ++k)
             {
-                Hashtable fd = ((AcroFields)Fields[k]).Fields;
+                var fd = ((AcroFields)Fields[k]).Fields;
                 MergeWithMaster(fd);
             }
         }
-
     }
 }

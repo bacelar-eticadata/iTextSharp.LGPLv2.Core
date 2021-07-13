@@ -5,7 +5,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfPsxObject : PdfTemplate
     {
-
         /// <summary>
         /// Constructs a PSXObject
         /// </summary>
@@ -28,7 +27,7 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                PdfPsxObject tpl = new PdfPsxObject
+                var tpl = new PdfPsxObject
                 {
                     Writer = Writer,
                     Pdf = Pdf,
@@ -49,7 +48,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the stream representing this template</returns>
         internal override PdfStream GetFormXObject(int compressionLevel)
         {
-            PdfStream s = new PdfStream(Content.ToByteArray());
+            var s = new PdfStream(Content.ToByteArray());
             s.Put(PdfName.TYPE, PdfName.Xobject);
             s.Put(PdfName.Subtype, PdfName.Ps);
             s.FlateCompress(compressionLevel);

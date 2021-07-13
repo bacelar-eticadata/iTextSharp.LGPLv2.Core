@@ -1,13 +1,11 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// A  PdfPattern  defines a ColorSpace
     /// @see     PdfStream
     /// </summary>
     public class PdfPattern : PdfStream
     {
-
         /// <summary>
         /// Creates a PdfPattern object.
         /// </summary>
@@ -24,8 +22,8 @@ namespace iTextSharp.text.pdf
         /// <param name="compressionLevel">the compressionLevel for the stream</param>
         internal PdfPattern(PdfPatternPainter painter, int compressionLevel)
         {
-            PdfNumber one = new PdfNumber(1);
-            PdfArray matrix = painter.Matrix;
+            var one = new PdfNumber(1);
+            var matrix = painter.Matrix;
             if (matrix != null)
             {
                 Put(PdfName.Matrix, matrix);
@@ -36,9 +34,14 @@ namespace iTextSharp.text.pdf
             Put(PdfName.Tilingtype, one);
             Put(PdfName.Patterntype, one);
             if (painter.IsStencil())
+            {
                 Put(PdfName.Painttype, new PdfNumber(2));
+            }
             else
+            {
                 Put(PdfName.Painttype, one);
+            }
+
             Put(PdfName.Xstep, new PdfNumber(painter.XStep));
             Put(PdfName.Ystep, new PdfNumber(painter.YStep));
             Bytes = painter.ToPdf(null);

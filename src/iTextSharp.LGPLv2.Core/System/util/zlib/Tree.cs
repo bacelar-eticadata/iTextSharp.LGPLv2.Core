@@ -145,7 +145,7 @@ namespace System.util.zlib
             int len   // its bit length
             )
         {
-            int res = 0;
+            var res = 0;
             do
             {
                 res |= code & 1;
@@ -195,7 +195,7 @@ namespace System.util.zlib
             short[] blCount // number of codes at each bit length
             )
         {
-            short[] nextCode = new short[MaxBits + 1]; // next code value for each bit length
+            var nextCode = new short[MaxBits + 1]; // next code value for each bit length
             short code = 0;            // running code value
             int bits;                  // bit index
             int n;                     // code index
@@ -216,7 +216,10 @@ namespace System.util.zlib
             for (n = 0; n <= maxCode; n++)
             {
                 int len = tree[n * 2 + 1];
-                if (len == 0) continue;
+                if (len == 0)
+                {
+                    continue;
+                }
                 // Now reverse the bits
                 tree[n * 2] = (short)(bi_reverse(nextCode[len]++, len));
             }
@@ -242,11 +245,11 @@ namespace System.util.zlib
         /// </summary>
         internal void build_tree(Deflate s)
         {
-            short[] tree = DynTree;
-            short[] stree = StatDesc.static_tree;
-            int elems = StatDesc.Elems;
+            var tree = DynTree;
+            var stree = StatDesc.static_tree;
+            var elems = StatDesc.Elems;
             int n, m;          // iterate over heap elements
-            int maxCode = -1;   // largest code with non zero frequency
+            var maxCode = -1;   // largest code with non zero frequency
             int node;          // new node being created
 
             // Construct the initial heap, with least frequent element in
@@ -277,7 +280,10 @@ namespace System.util.zlib
                 node = s.Heap[++s.HeapLen] = (maxCode < 2 ? ++maxCode : 0);
                 tree[node * 2] = 1;
                 s.Depth[node] = 0;
-                s.OptLen--; if (stree != null) s.StaticLen -= stree[node * 2 + 1];
+                s.OptLen--; if (stree != null)
+                {
+                    s.StaticLen -= stree[node * 2 + 1];
+                }
                 // node is 0 or 1 so it does not have extra bits
             }
             MaxCode = maxCode;
@@ -286,7 +292,9 @@ namespace System.util.zlib
             // establish sub-heaps of increasing lengths:
 
             for (n = s.HeapLen / 2; n >= 1; n--)
+            {
                 s.Pqdownheap(tree, n);
+            }
 
             // Construct the Huffman tree by repeatedly combining the least two
             // frequent nodes.
@@ -351,19 +359,22 @@ namespace System.util.zlib
         /// </summary>
         internal void gen_bitlen(Deflate s)
         {
-            short[] tree = DynTree;
-            short[] stree = StatDesc.static_tree;
-            int[] extra = StatDesc.ExtraBits;
-            int based = StatDesc.ExtraBase;
-            int maxLength = StatDesc.MaxLength;
+            var tree = DynTree;
+            var stree = StatDesc.static_tree;
+            var extra = StatDesc.ExtraBits;
+            var based = StatDesc.ExtraBase;
+            var maxLength = StatDesc.MaxLength;
             int h;              // heap index
             int n, m;           // iterate over the tree elements
             int bits;           // bit length
             int xbits;          // extra bits
             short f;            // frequency
-            int overflow = 0;   // number of elements with bit length too large
+            var overflow = 0;   // number of elements with bit length too large
 
-            for (bits = 0; bits <= MaxBits; bits++) s.BlCount[bits] = 0;
+            for (bits = 0; bits <= MaxBits; bits++)
+            {
+                s.BlCount[bits] = 0;
+            }
 
             // In a first pass, compute the optimal bit lengths (which may
             // overflow in the case of the bit length tree).
@@ -377,23 +388,40 @@ namespace System.util.zlib
                 tree[n * 2 + 1] = (short)bits;
                 // We overwrite tree[n*2+1] which is no longer needed
 
-                if (n > MaxCode) continue;  // not a leaf node
+                if (n > MaxCode)
+                {
+                    continue;  // not a leaf node
+                }
 
                 s.BlCount[bits]++;
                 xbits = 0;
-                if (n >= based) xbits = extra[n - based];
+                if (n >= based)
+                {
+                    xbits = extra[n - based];
+                }
+
                 f = tree[n * 2];
                 s.OptLen += f * (bits + xbits);
-                if (stree != null) s.StaticLen += f * (stree[n * 2 + 1] + xbits);
+                if (stree != null)
+                {
+                    s.StaticLen += f * (stree[n * 2 + 1] + xbits);
+                }
             }
-            if (overflow == 0) return;
+            if (overflow == 0)
+            {
+                return;
+            }
 
             // This happens for example on obj2 and pic of the Calgary corpus
             // Find the first bit length which could increase:
             do
             {
                 bits = maxLength - 1;
-                while (s.BlCount[bits] == 0) bits--;
+                while (s.BlCount[bits] == 0)
+                {
+                    bits--;
+                }
+
                 s.BlCount[bits]--;      // move one leaf down the tree
                 s.BlCount[bits + 1] += 2;   // move one overflow item as its brother
                 s.BlCount[maxLength]--;
@@ -409,7 +437,11 @@ namespace System.util.zlib
                 while (n != 0)
                 {
                     m = s.Heap[--h];
-                    if (m > MaxCode) continue;
+                    if (m > MaxCode)
+                    {
+                        continue;
+                    }
+
                     if (tree[m * 2 + 1] != bits)
                     {
                         s.OptLen += (int)((bits - (long)tree[m * 2 + 1]) * tree[m * 2]);

@@ -26,10 +26,7 @@ namespace System.Drawing
         /// <value>the size</value>
         public Dimension2D Size
         {
-            set
-            {
-                SetSize(value.Width, value.Height);
-            }
+            set => SetSize(value.Width, value.Height);
         }
 
         /// <summary>

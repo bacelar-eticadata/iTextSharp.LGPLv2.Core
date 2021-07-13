@@ -1,8 +1,8 @@
+using iTextSharp.LGPLv2.Core.System.NetUtils;
 using System;
 using System.Collections;
 using System.IO;
 using System.util;
-using iTextSharp.LGPLv2.Core.System.NetUtils;
 
 namespace iTextSharp.text.pdf.codec
 {
@@ -14,7 +14,6 @@ namespace iTextSharp.text.pdf.codec
     /// </summary>
     public class BmpImage
     {
-
         public Hashtable Properties = new Hashtable();
 
         private const int BiBitfields = 3;
@@ -80,7 +79,7 @@ namespace iTextSharp.text.pdf.codec
 
         private long _compression;
 
-        int _height;
+        private int _height;
 
         private long _imageSize;
 
@@ -90,11 +89,12 @@ namespace iTextSharp.text.pdf.codec
         /// BMP variables
         /// </summary>
         private Stream _inputStream;
+
         private bool _isBottomUp;
         private int _numBands;
         private byte[] _palette;
         private int _redMask, _greenMask, _blueMask, _alphaMask;
-        int _width;
+        private int _width;
         private long _xPelsPerMeter;
         private long _yPelsPerMeter;
 
@@ -117,7 +117,7 @@ namespace iTextSharp.text.pdf.codec
             try
             {
                 isp = url.GetResponseStream();
-                Image img = GetImage(isp);
+                var img = GetImage(isp);
                 img.Url = url;
                 return img;
             }
@@ -152,8 +152,8 @@ namespace iTextSharp.text.pdf.codec
         /// <returns>the image</returns>
         public static Image GetImage(Stream isp, bool noHeader, int size)
         {
-            BmpImage bmp = new BmpImage(isp, noHeader, size);
-            Image img = bmp.getImage();
+            var bmp = new BmpImage(isp, noHeader, size);
+            var img = bmp.getImage();
             img.SetDpi((int)(bmp._xPelsPerMeter * 0.0254 + 0.5), (int)(bmp._yPelsPerMeter * 0.0254 + 0.5));
             img.OriginalType = Image.ORIGINAL_BMP;
             return img;
@@ -179,11 +179,10 @@ namespace iTextSharp.text.pdf.codec
         public static Image GetImage(byte[] data)
         {
             Stream isp = new MemoryStream(data);
-            Image img = GetImage(isp);
+            var img = GetImage(isp);
             img.OriginalData = data;
             return img;
         }
-
 
         protected void Process(Stream stream, bool noHeader)
         {
@@ -217,7 +216,7 @@ namespace iTextSharp.text.pdf.codec
                 // End File Header
             }
             // Start BitmapCoreHeader
-            long size = readDWord(_inputStream);
+            var size = readDWord(_inputStream);
 
             if (size == 12)
             {
@@ -230,7 +229,7 @@ namespace iTextSharp.text.pdf.codec
                 _height = readLong(_inputStream);
             }
 
-            int planes = readWord(_inputStream);
+            var planes = readWord(_inputStream);
             _bitsPerPixel = readWord(_inputStream);
 
             Properties["color_planes"] = planes;
@@ -240,7 +239,10 @@ namespace iTextSharp.text.pdf.codec
             // which is bgra
             _numBands = 3;
             if (_bitmapOffset == 0)
+            {
                 _bitmapOffset = size;
+            }
+
             if (size == 12)
             {
                 // Windows 2.x and OS/2 1.x
@@ -265,8 +267,8 @@ namespace iTextSharp.text.pdf.codec
                 }
 
                 // Read in the palette
-                int numberOfEntries = (int)((_bitmapOffset - 14 - size) / 3);
-                int sizeOfPalette = numberOfEntries * 3;
+                var numberOfEntries = (int)((_bitmapOffset - 14 - size) / 3);
+                var sizeOfPalette = numberOfEntries * 3;
                 if (_bitmapOffset == size)
                 {
                     switch (_imageType)
@@ -274,12 +276,15 @@ namespace iTextSharp.text.pdf.codec
                         case Version21Bit:
                             sizeOfPalette = 2 * 3;
                             break;
+
                         case Version24Bit:
                             sizeOfPalette = 16 * 3;
                             break;
+
                         case Version28Bit:
                             sizeOfPalette = 256 * 3;
                             break;
+
                         case Version224Bit:
                             sizeOfPalette = 0;
                             break;
@@ -290,13 +295,12 @@ namespace iTextSharp.text.pdf.codec
             }
             else
             {
-
                 _compression = readDWord(_inputStream);
                 _imageSize = readDWord(_inputStream);
                 _xPelsPerMeter = readLong(_inputStream);
                 _yPelsPerMeter = readLong(_inputStream);
-                long colorsUsed = readDWord(_inputStream);
-                long colorsImportant = readDWord(_inputStream);
+                var colorsUsed = readDWord(_inputStream);
+                var colorsImportant = readDWord(_inputStream);
 
                 switch ((int)_compression)
                 {
@@ -327,7 +331,6 @@ namespace iTextSharp.text.pdf.codec
                     // Windows 3.x and Windows NT
                     switch ((int)_compression)
                     {
-
                         case BiRgb:  // No compression
                         case BiRle8:  // 8-bit RLE compression
                         case BiRle4:  // 4-bit RLE compression
@@ -370,8 +373,8 @@ namespace iTextSharp.text.pdf.codec
                             }
 
                             // Read in the palette
-                            int numberOfEntries = (int)((_bitmapOffset - 14 - size) / 4);
-                            int sizeOfPalette = numberOfEntries * 4;
+                            var numberOfEntries = (int)((_bitmapOffset - 14 - size) / 4);
+                            var sizeOfPalette = numberOfEntries * 4;
                             if (_bitmapOffset == size)
                             {
                                 switch (_imageType)
@@ -379,12 +382,15 @@ namespace iTextSharp.text.pdf.codec
                                     case Version31Bit:
                                         sizeOfPalette = (int)(colorsUsed == 0 ? 2 : colorsUsed) * 4;
                                         break;
+
                                     case Version34Bit:
                                         sizeOfPalette = (int)(colorsUsed == 0 ? 16 : colorsUsed) * 4;
                                         break;
+
                                     case Version38Bit:
                                         sizeOfPalette = (int)(colorsUsed == 0 ? 256 : colorsUsed) * 4;
                                         break;
+
                                     default:
                                         sizeOfPalette = 0;
                                         break;
@@ -442,19 +448,19 @@ namespace iTextSharp.text.pdf.codec
                     _blueMask = (int)readDWord(_inputStream);
                     // Only supported for 32bpp BI_RGB argb
                     _alphaMask = (int)readDWord(_inputStream);
-                    long csType = readDWord(_inputStream);
-                    int redX = readLong(_inputStream);
-                    int redY = readLong(_inputStream);
-                    int redZ = readLong(_inputStream);
-                    int greenX = readLong(_inputStream);
-                    int greenY = readLong(_inputStream);
-                    int greenZ = readLong(_inputStream);
-                    int blueX = readLong(_inputStream);
-                    int blueY = readLong(_inputStream);
-                    int blueZ = readLong(_inputStream);
-                    long gammaRed = readDWord(_inputStream);
-                    long gammaGreen = readDWord(_inputStream);
-                    long gammaBlue = readDWord(_inputStream);
+                    var csType = readDWord(_inputStream);
+                    var redX = readLong(_inputStream);
+                    var redY = readLong(_inputStream);
+                    var redZ = readLong(_inputStream);
+                    var greenX = readLong(_inputStream);
+                    var greenY = readLong(_inputStream);
+                    var greenZ = readLong(_inputStream);
+                    var blueX = readLong(_inputStream);
+                    var blueY = readLong(_inputStream);
+                    var blueZ = readLong(_inputStream);
+                    var gammaRed = readDWord(_inputStream);
+                    var gammaGreen = readDWord(_inputStream);
+                    var gammaBlue = readDWord(_inputStream);
 
                     if (_bitsPerPixel == 1)
                     {
@@ -499,8 +505,8 @@ namespace iTextSharp.text.pdf.codec
                     Properties["alpha_mask"] = _alphaMask;
 
                     // Read in the palette
-                    int numberOfEntries = (int)((_bitmapOffset - 14 - size) / 4);
-                    int sizeOfPalette = numberOfEntries * 4;
+                    var numberOfEntries = (int)((_bitmapOffset - 14 - size) / 4);
+                    var sizeOfPalette = numberOfEntries * 4;
                     if (_bitmapOffset == size)
                     {
                         switch (_imageType)
@@ -508,12 +514,15 @@ namespace iTextSharp.text.pdf.codec
                             case Version41Bit:
                                 sizeOfPalette = (int)(colorsUsed == 0 ? 2 : colorsUsed) * 4;
                                 break;
+
                             case Version44Bit:
                                 sizeOfPalette = (int)(colorsUsed == 0 ? 16 : colorsUsed) * 4;
                                 break;
+
                             case Version48Bit:
                                 sizeOfPalette = (int)(colorsUsed == 0 ? 256 : colorsUsed) * 4;
                                 break;
+
                             default:
                                 sizeOfPalette = 0;
                                 break;
@@ -555,7 +564,6 @@ namespace iTextSharp.text.pdf.codec
                             throw new
                             Exception("Not implemented yet.");
                     }
-
                 }
                 else
                 {
@@ -579,9 +587,7 @@ namespace iTextSharp.text.pdf.codec
             // When number of bitsPerPixel is <= 8, we use IndexColorModel.
             if (_bitsPerPixel == 1 || _bitsPerPixel == 4 || _bitsPerPixel == 8)
             {
-
                 _numBands = 1;
-
 
                 // Create IndexColorModel from the palette.
                 byte[] r;
@@ -592,7 +598,6 @@ namespace iTextSharp.text.pdf.codec
                 _imageType == Version24Bit ||
                 _imageType == Version28Bit)
                 {
-
                     sizep = _palette.Length / 3;
 
                     if (sizep > 256)
@@ -604,7 +609,7 @@ namespace iTextSharp.text.pdf.codec
                     r = new byte[sizep];
                     g = new byte[sizep];
                     b = new byte[sizep];
-                    for (int i = 0; i < sizep; i++)
+                    for (var i = 0; i < sizep; i++)
                     {
                         off = 3 * i;
                         b[i] = _palette[off];
@@ -625,7 +630,7 @@ namespace iTextSharp.text.pdf.codec
                     r = new byte[sizep];
                     g = new byte[sizep];
                     b = new byte[sizep];
-                    for (int i = 0; i < sizep; i++)
+                    for (var i = 0; i < sizep; i++)
                     {
                         off = 4 * i;
                         b[i] = _palette[off];
@@ -633,7 +638,6 @@ namespace iTextSharp.text.pdf.codec
                         r[i] = _palette[off + 2];
                     }
                 }
-
             }
             else if (_bitsPerPixel == 16)
             {
@@ -651,29 +655,29 @@ namespace iTextSharp.text.pdf.codec
 
         private byte[] decodeRle(bool is8, byte[] values)
         {
-            byte[] val = new byte[_width * _height];
+            var val = new byte[_width * _height];
             try
             {
-                int ptr = 0;
-                int x = 0;
-                int q = 0;
-                for (int y = 0; y < _height && ptr < values.Length;)
+                var ptr = 0;
+                var x = 0;
+                var q = 0;
+                for (var y = 0; y < _height && ptr < values.Length;)
                 {
-                    int count = values[ptr++] & 0xff;
+                    var count = values[ptr++] & 0xff;
                     if (count != 0)
                     {
                         // encoded mode
-                        int bt = values[ptr++] & 0xff;
+                        var bt = values[ptr++] & 0xff;
                         if (is8)
                         {
-                            for (int i = count; i != 0; --i)
+                            for (var i = count; i != 0; --i)
                             {
                                 val[q++] = (byte)bt;
                             }
                         }
                         else
                         {
-                            for (int i = 0; i < count; ++i)
+                            for (var i = 0; i < count; ++i)
                             {
                                 val[q++] = (byte)((i & 1) == 1 ? (bt & 0x0f) : ((bt >> 4) & 0x0f));
                             }
@@ -685,7 +689,10 @@ namespace iTextSharp.text.pdf.codec
                         // escape mode
                         count = values[ptr++] & 0xff;
                         if (count == 1)
+                        {
                             break;
+                        }
+
                         switch (count)
                         {
                             case 0:
@@ -693,26 +700,33 @@ namespace iTextSharp.text.pdf.codec
                                 ++y;
                                 q = y * _width;
                                 break;
+
                             case 2:
                                 // delta mode
                                 x += values[ptr++] & 0xff;
                                 y += values[ptr++] & 0xff;
                                 q = y * _width + x;
                                 break;
+
                             default:
                                 // absolute mode
                                 if (is8)
                                 {
-                                    for (int i = count; i != 0; --i)
+                                    for (var i = count; i != 0; --i)
+                                    {
                                         val[q++] = (byte)(values[ptr++] & 0xff);
+                                    }
                                 }
                                 else
                                 {
-                                    int bt = 0;
-                                    for (int i = 0; i < count; ++i)
+                                    var bt = 0;
+                                    for (var i = 0; i < count; ++i)
                                     {
                                         if ((i & 1) == 0)
+                                        {
                                             bt = values[ptr++] & 0xff;
+                                        }
+
                                         val[q++] = (byte)((i & 1) == 1 ? (bt & 0x0f) : ((bt >> 4) & 0x0f));
                                     }
                                 }
@@ -721,12 +735,16 @@ namespace iTextSharp.text.pdf.codec
                                 if (is8)
                                 {
                                     if ((count & 1) == 1)
+                                    {
                                         ++ptr;
+                                    }
                                 }
                                 else
                                 {
                                     if ((count & 3) == 1 || (count & 3) == 2)
+                                    {
                                         ++ptr;
+                                    }
                                 }
                                 break;
                         }
@@ -743,11 +761,14 @@ namespace iTextSharp.text.pdf.codec
 
         private int findMask(int mask)
         {
-            int k = 0;
+            var k = 0;
             for (; k < 32; ++k)
             {
                 if ((mask & 1) == 1)
+                {
                     break;
+                }
+
                 mask = Util.Usr(mask, 1);
             }
             return mask;
@@ -755,11 +776,14 @@ namespace iTextSharp.text.pdf.codec
 
         private int findShift(int mask)
         {
-            int k = 0;
+            var k = 0;
             for (; k < 32; ++k)
             {
                 if ((mask & 1) == 1)
+                {
                     break;
+                }
+
                 mask = Util.Usr(mask, 1);
             }
             return k;
@@ -781,7 +805,6 @@ namespace iTextSharp.text.pdf.codec
             // There should only be one tile.
             switch (_imageType)
             {
-
                 case Version21Bit:
                     // no compression
                     return read1Bit(3);
@@ -850,7 +873,6 @@ namespace iTextSharp.text.pdf.codec
                 case Version44Bit:
                     switch ((int)_compression)
                     {
-
                         case BiRgb:
                             return read4Bit(4);
 
@@ -865,7 +887,6 @@ namespace iTextSharp.text.pdf.codec
                 case Version48Bit:
                     switch ((int)_compression)
                     {
-
                         case BiRgb:
                             return read8Bit(4);
 
@@ -894,30 +915,34 @@ namespace iTextSharp.text.pdf.codec
         private byte[] getPalette(int group)
         {
             if (_palette == null)
-                return new byte[0];
-            byte[] np = new byte[_palette.Length / group * 3];
-            int e = _palette.Length / group;
-            for (int k = 0; k < e; ++k)
             {
-                int src = k * group;
-                int dest = k * 3;
+                return new byte[0];
+            }
+
+            var np = new byte[_palette.Length / group * 3];
+            var e = _palette.Length / group;
+            for (var k = 0; k < e; ++k)
+            {
+                var src = k * group;
+                var dest = k * 3;
                 np[dest + 2] = _palette[src++];
                 np[dest + 1] = _palette[src++];
                 np[dest] = _palette[src];
             }
             return np;
         }
+
         private Image indexedModel(byte[] bdata, int bpc, int paletteEntries)
         {
             Image img = new ImgRaw(_width, _height, 1, bpc, bdata);
-            PdfArray colorspace = new PdfArray();
+            var colorspace = new PdfArray();
             colorspace.Add(PdfName.Indexed);
             colorspace.Add(PdfName.Devicergb);
-            byte[] np = getPalette(paletteEntries);
-            int len = np.Length;
+            var np = getPalette(paletteEntries);
+            var len = np.Length;
             colorspace.Add(new PdfNumber(len / 3 - 1));
             colorspace.Add(new PdfString(np));
-            PdfDictionary ad = new PdfDictionary();
+            var ad = new PdfDictionary();
             ad.Put(PdfName.Colorspace, colorspace);
             img.Additional = ad;
             return img;
@@ -925,24 +950,23 @@ namespace iTextSharp.text.pdf.codec
 
         private Image read1632Bit(bool is32)
         {
-
-            int red_mask = findMask(_redMask);
-            int redShift = findShift(_redMask);
-            int redFactor = red_mask + 1;
-            int green_mask = findMask(_greenMask);
-            int greenShift = findShift(_greenMask);
-            int greenFactor = green_mask + 1;
-            int blue_mask = findMask(_blueMask);
-            int blueShift = findShift(_blueMask);
-            int blueFactor = blue_mask + 1;
-            byte[] bdata = new byte[_width * _height * 3];
+            var red_mask = findMask(_redMask);
+            var redShift = findShift(_redMask);
+            var redFactor = red_mask + 1;
+            var green_mask = findMask(_greenMask);
+            var greenShift = findShift(_greenMask);
+            var greenFactor = green_mask + 1;
+            var blue_mask = findMask(_blueMask);
+            var blueShift = findShift(_blueMask);
+            var blueFactor = blue_mask + 1;
+            var bdata = new byte[_width * _height * 3];
             // Padding bytes at the end of each scanline
-            int padding = 0;
+            var padding = 0;
 
             if (!is32)
             {
                 // width * bitsPerPixel should be divisible by 32
-                int bitsPerScanline = _width * 16;
+                var bitsPerScanline = _width * 16;
                 if (bitsPerScanline % 32 != 0)
                 {
                     padding = (bitsPerScanline / 32 + 1) * 32 - bitsPerScanline;
@@ -950,30 +974,35 @@ namespace iTextSharp.text.pdf.codec
                 }
             }
 
-            int imSize = (int)_imageSize;
+            var imSize = (int)_imageSize;
             if (imSize == 0)
             {
                 imSize = (int)(_bitmapFileSize - _bitmapOffset);
             }
 
-            int l = 0;
+            var l = 0;
             int v;
             if (_isBottomUp)
             {
-                for (int i = _height - 1; i >= 0; --i)
+                for (var i = _height - 1; i >= 0; --i)
                 {
                     l = _width * 3 * i;
-                    for (int j = 0; j < _width; j++)
+                    for (var j = 0; j < _width; j++)
                     {
                         if (is32)
+                        {
                             v = (int)readDWord(_inputStream);
+                        }
                         else
+                        {
                             v = readWord(_inputStream);
+                        }
+
                         bdata[l++] = (byte)((Util.Usr(v, redShift) & red_mask) * 256 / redFactor);
                         bdata[l++] = (byte)((Util.Usr(v, greenShift) & green_mask) * 256 / greenFactor);
                         bdata[l++] = (byte)((Util.Usr(v, blueShift) & blue_mask) * 256 / blueFactor);
                     }
-                    for (int m = 0; m < padding; m++)
+                    for (var m = 0; m < padding; m++)
                     {
                         _inputStream.ReadByte();
                     }
@@ -981,19 +1010,24 @@ namespace iTextSharp.text.pdf.codec
             }
             else
             {
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
-                    for (int j = 0; j < _width; j++)
+                    for (var j = 0; j < _width; j++)
                     {
                         if (is32)
+                        {
                             v = (int)readDWord(_inputStream);
+                        }
                         else
+                        {
                             v = readWord(_inputStream);
+                        }
+
                         bdata[l++] = (byte)((Util.Usr(v, redShift) & red_mask) * 256 / redFactor);
                         bdata[l++] = (byte)((Util.Usr(v, greenShift) & green_mask) * 256 / greenFactor);
                         bdata[l++] = (byte)((Util.Usr(v, blueShift) & blue_mask) * 256 / blueFactor);
                     }
-                    for (int m = 0; m < padding; m++)
+                    for (var m = 0; m < padding; m++)
                     {
                         _inputStream.ReadByte();
                     }
@@ -1007,21 +1041,21 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         private Image read1Bit(int paletteEntries)
         {
-            byte[] bdata = new byte[((_width + 7) / 8) * _height];
-            int padding = 0;
-            int bytesPerScanline = (int)Math.Ceiling(_width / 8.0);
+            var bdata = new byte[((_width + 7) / 8) * _height];
+            var padding = 0;
+            var bytesPerScanline = (int)Math.Ceiling(_width / 8.0);
 
-            int remainder = bytesPerScanline % 4;
+            var remainder = bytesPerScanline % 4;
             if (remainder != 0)
             {
                 padding = 4 - remainder;
             }
 
-            int imSize = (bytesPerScanline + padding) * _height;
+            var imSize = (bytesPerScanline + padding) * _height;
 
             // Read till we have the whole image
-            byte[] values = new byte[imSize];
-            int bytesRead = 0;
+            var values = new byte[imSize];
+            var bytesRead = 0;
             while (bytesRead < imSize)
             {
                 bytesRead += _inputStream.Read(values, bytesRead,
@@ -1030,11 +1064,10 @@ namespace iTextSharp.text.pdf.codec
 
             if (_isBottomUp)
             {
-
                 // Convert the bottom up image to a top down format by copying
                 // one scanline from the bottom to the top at a time.
 
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     Array.Copy(values,
                     imSize - (i + 1) * (bytesPerScanline + padding),
@@ -1044,8 +1077,7 @@ namespace iTextSharp.text.pdf.codec
             }
             else
             {
-
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     Array.Copy(values,
                     i * (bytesPerScanline + padding),
@@ -1063,27 +1095,29 @@ namespace iTextSharp.text.pdf.codec
         private void read24Bit(byte[] bdata)
         {
             // Padding bytes at the end of each scanline
-            int padding = 0;
+            var padding = 0;
 
             // width * bitsPerPixel should be divisible by 32
-            int bitsPerScanline = _width * 24;
+            var bitsPerScanline = _width * 24;
             if (bitsPerScanline % 32 != 0)
             {
                 padding = (bitsPerScanline / 32 + 1) * 32 - bitsPerScanline;
                 padding = (int)Math.Ceiling(padding / 8.0);
             }
 
-
-            int imSize = ((_width * 3 + 3) / 4 * 4) * _height;
+            var imSize = ((_width * 3 + 3) / 4 * 4) * _height;
             // Read till we have the whole image
-            byte[] values = new byte[imSize];
-            int bytesRead = 0;
+            var values = new byte[imSize];
+            var bytesRead = 0;
             while (bytesRead < imSize)
             {
-                int r = _inputStream.Read(values, bytesRead,
+                var r = _inputStream.Read(values, bytesRead,
                 imSize - bytesRead);
                 if (r < 0)
+                {
                     break;
+                }
+
                 bytesRead += r;
             }
 
@@ -1091,14 +1125,14 @@ namespace iTextSharp.text.pdf.codec
 
             if (_isBottomUp)
             {
-                int max = _width * _height * 3 - 1;
+                var max = _width * _height * 3 - 1;
 
                 count = -padding;
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     l = max - (i + 1) * _width * 3 + 1;
                     count += padding;
-                    for (int j = 0; j < _width; j++)
+                    for (var j = 0; j < _width; j++)
                     {
                         bdata[l + 2] = values[count++];
                         bdata[l + 1] = values[count++];
@@ -1110,10 +1144,10 @@ namespace iTextSharp.text.pdf.codec
             else
             {
                 count = -padding;
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     count += padding;
-                    for (int j = 0; j < _width; j++)
+                    for (var j = 0; j < _width; j++)
                     {
                         bdata[l + 2] = values[count++];
                         bdata[l + 1] = values[count++];
@@ -1129,23 +1163,23 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         private Image read4Bit(int paletteEntries)
         {
-            byte[] bdata = new byte[((_width + 1) / 2) * _height];
+            var bdata = new byte[((_width + 1) / 2) * _height];
 
             // Padding bytes at the end of each scanline
-            int padding = 0;
+            var padding = 0;
 
-            int bytesPerScanline = (int)Math.Ceiling(_width / 2.0);
-            int remainder = bytesPerScanline % 4;
+            var bytesPerScanline = (int)Math.Ceiling(_width / 2.0);
+            var remainder = bytesPerScanline % 4;
             if (remainder != 0)
             {
                 padding = 4 - remainder;
             }
 
-            int imSize = (bytesPerScanline + padding) * _height;
+            var imSize = (bytesPerScanline + padding) * _height;
 
             // Read till we have the whole image
-            byte[] values = new byte[imSize];
-            int bytesRead = 0;
+            var values = new byte[imSize];
+            var bytesRead = 0;
             while (bytesRead < imSize)
             {
                 bytesRead += _inputStream.Read(values, bytesRead,
@@ -1154,10 +1188,9 @@ namespace iTextSharp.text.pdf.codec
 
             if (_isBottomUp)
             {
-
                 // Convert the bottom up image to a top down format by copying
                 // one scanline from the bottom to the top at a time.
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     Array.Copy(values,
                     imSize - (i + 1) * (bytesPerScanline + padding),
@@ -1168,7 +1201,7 @@ namespace iTextSharp.text.pdf.codec
             }
             else
             {
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     Array.Copy(values,
                     i * (bytesPerScanline + padding),
@@ -1185,23 +1218,23 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         private Image read8Bit(int paletteEntries)
         {
-            byte[] bdata = new byte[_width * _height];
+            var bdata = new byte[_width * _height];
             // Padding bytes at the end of each scanline
-            int padding = 0;
+            var padding = 0;
 
             // width * bitsPerPixel should be divisible by 32
-            int bitsPerScanline = _width * 8;
+            var bitsPerScanline = _width * 8;
             if (bitsPerScanline % 32 != 0)
             {
                 padding = (bitsPerScanline / 32 + 1) * 32 - bitsPerScanline;
                 padding = (int)Math.Ceiling(padding / 8.0);
             }
 
-            int imSize = (_width + padding) * _height;
+            var imSize = (_width + padding) * _height;
 
             // Read till we have the whole image
-            byte[] values = new byte[imSize];
-            int bytesRead = 0;
+            var values = new byte[imSize];
+            var bytesRead = 0;
             while (bytesRead < imSize)
             {
                 bytesRead += _inputStream.Read(values, bytesRead, imSize - bytesRead);
@@ -1209,10 +1242,9 @@ namespace iTextSharp.text.pdf.codec
 
             if (_isBottomUp)
             {
-
                 // Convert the bottom up image to a top down format by copying
                 // one scanline from the bottom to the top at a time.
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     Array.Copy(values,
                     imSize - (i + 1) * (_width + padding),
@@ -1223,7 +1255,7 @@ namespace iTextSharp.text.pdf.codec
             }
             else
             {
-                for (int i = 0; i < _height; i++)
+                for (var i = 0; i < _height; i++)
                 {
                     Array.Copy(values,
                     i * (_width + padding),
@@ -1248,10 +1280,10 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         private int readInt(Stream stream)
         {
-            int b1 = readUnsignedByte(stream);
-            int b2 = readUnsignedByte(stream);
-            int b3 = readUnsignedByte(stream);
-            int b4 = readUnsignedByte(stream);
+            var b1 = readUnsignedByte(stream);
+            var b2 = readUnsignedByte(stream);
+            var b3 = readUnsignedByte(stream);
+            var b4 = readUnsignedByte(stream);
             return (b4 << 24) | (b3 << 16) | (b2 << 8) | b1;
         }
 
@@ -1270,10 +1302,10 @@ namespace iTextSharp.text.pdf.codec
                 return;
             }
             _palette = new byte[sizeOfPalette];
-            int bytesRead = 0;
+            var bytesRead = 0;
             while (bytesRead < sizeOfPalette)
             {
-                int r = _inputStream.Read(_palette, bytesRead, sizeOfPalette - bytesRead);
+                var r = _inputStream.Read(_palette, bytesRead, sizeOfPalette - bytesRead);
                 if (r <= 0)
                 {
                     throw new IOException("incomplete palette");
@@ -1282,19 +1314,19 @@ namespace iTextSharp.text.pdf.codec
             }
             Properties["palette"] = _palette;
         }
+
         private Image readRle4()
         {
-
             // If imageSize field is not specified, calculate it.
-            int imSize = (int)_imageSize;
+            var imSize = (int)_imageSize;
             if (imSize == 0)
             {
                 imSize = (int)(_bitmapFileSize - _bitmapOffset);
             }
 
             // Read till we have the whole image
-            byte[] values = new byte[imSize];
-            int bytesRead = 0;
+            var values = new byte[imSize];
+            var bytesRead = 0;
             while (bytesRead < imSize)
             {
                 bytesRead += _inputStream.Read(values, bytesRead,
@@ -1302,17 +1334,16 @@ namespace iTextSharp.text.pdf.codec
             }
 
             // Decompress the RLE4 compressed data.
-            byte[] val = decodeRle(false, values);
+            var val = decodeRle(false, values);
 
             // Invert it as it is bottom up format.
             if (_isBottomUp)
             {
-
-                byte[] inverted = val;
+                var inverted = val;
                 val = new byte[_width * _height];
                 int l = 0, index, lineEnd;
 
-                for (int i = _height - 1; i >= 0; i--)
+                for (var i = _height - 1; i >= 0; i--)
                 {
                     index = i * _width;
                     lineEnd = l + _width;
@@ -1322,18 +1353,22 @@ namespace iTextSharp.text.pdf.codec
                     }
                 }
             }
-            int stride = ((_width + 1) / 2);
-            byte[] bdata = new byte[stride * _height];
-            int ptr = 0;
-            int sh = 0;
-            for (int h = 0; h < _height; ++h)
+            var stride = ((_width + 1) / 2);
+            var bdata = new byte[stride * _height];
+            var ptr = 0;
+            var sh = 0;
+            for (var h = 0; h < _height; ++h)
             {
-                for (int w = 0; w < _width; ++w)
+                for (var w = 0; w < _width; ++w)
                 {
                     if ((w & 1) == 0)
+                    {
                         bdata[sh + w / 2] = (byte)(val[ptr++] << 4);
+                    }
                     else
+                    {
                         bdata[sh + w / 2] |= (byte)(val[ptr++] & 0x0f);
+                    }
                 }
                 sh += stride;
             }
@@ -1342,17 +1377,16 @@ namespace iTextSharp.text.pdf.codec
 
         private Image readRle8()
         {
-
             // If imageSize field is not provided, calculate it.
-            int imSize = (int)_imageSize;
+            var imSize = (int)_imageSize;
             if (imSize == 0)
             {
                 imSize = (int)(_bitmapFileSize - _bitmapOffset);
             }
 
             // Read till we have the whole image
-            byte[] values = new byte[imSize];
-            int bytesRead = 0;
+            var values = new byte[imSize];
+            var bytesRead = 0;
             while (bytesRead < imSize)
             {
                 bytesRead += _inputStream.Read(values, bytesRead,
@@ -1360,20 +1394,19 @@ namespace iTextSharp.text.pdf.codec
             }
 
             // Since data is compressed, decompress it
-            byte[] val = decodeRle(true, values);
+            var val = decodeRle(true, values);
 
             // Uncompressed data does not have any padding
             imSize = _width * _height;
 
             if (_isBottomUp)
             {
-
                 // Convert the bottom up image to a top down format by copying
                 // one scanline from the bottom to the top at a time.
                 // int bytesPerScanline = (int)Math.Ceil((double)width/8.0);
-                byte[] temp = new byte[val.Length];
-                int bytesPerScanline = _width;
-                for (int i = 0; i < _height; i++)
+                var temp = new byte[val.Length];
+                var bytesPerScanline = _width;
+                for (var i = 0; i < _height; i++)
                 {
                     Array.Copy(val,
                     imSize - (i + 1) * (bytesPerScanline),
@@ -1384,6 +1417,7 @@ namespace iTextSharp.text.pdf.codec
             }
             return indexedModel(val, 8, 4);
         }
+
         /// <summary>
         /// Windows defined data type reading methods - everything is little endian
         /// </summary>
@@ -1393,8 +1427,8 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         private int readShort(Stream stream)
         {
-            int b1 = readUnsignedByte(stream);
-            int b2 = readUnsignedByte(stream);
+            var b1 = readUnsignedByte(stream);
+            var b2 = readUnsignedByte(stream);
             return (b2 << 8) | b1;
         }
 
@@ -1411,10 +1445,10 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         private long readUnsignedInt(Stream stream)
         {
-            int b1 = readUnsignedByte(stream);
-            int b2 = readUnsignedByte(stream);
-            int b3 = readUnsignedByte(stream);
-            int b4 = readUnsignedByte(stream);
+            var b1 = readUnsignedByte(stream);
+            var b2 = readUnsignedByte(stream);
+            var b3 = readUnsignedByte(stream);
+            var b4 = readUnsignedByte(stream);
             long l = (b4 << 24) | (b3 << 16) | (b2 << 8) | b1;
             return l & 0xffffffff;
         }
@@ -1424,10 +1458,11 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         private int readUnsignedShort(Stream stream)
         {
-            int b1 = readUnsignedByte(stream);
-            int b2 = readUnsignedByte(stream);
+            var b1 = readUnsignedByte(stream);
+            var b2 = readUnsignedByte(stream);
             return ((b2 << 8) | b1) & 0xffff;
         }
+
         /// <summary>
         /// Unsigned 16 bits
         /// </summary>

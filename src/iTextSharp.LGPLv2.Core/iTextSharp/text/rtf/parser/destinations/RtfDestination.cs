@@ -1,5 +1,5 @@
-using System.Collections;
 using iTextSharp.text.rtf.parser.ctrlwords;
+using System.Collections;
 
 namespace iTextSharp.text.rtf.parser.destinations
 {
@@ -25,6 +25,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// Parser object
         /// </summary>
         protected RtfParser RtfParser;
+
         /// <summary>
         /// The  RtfDestinationListener .
         /// </summary>
@@ -37,6 +38,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         {
             RtfParser = null;
         }
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -45,6 +47,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         {
             RtfParser = parser;
         }
+
         /// <summary>
         /// Adds a  RtfDestinationListener  to the  RtfDestinationMgr .
         /// the new RtfDestinationListener.
@@ -117,7 +120,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// <param name="listener"></param>
         public bool RemoveListener(IRtfDestinationListener listener)
         {
-            int i = _listeners.IndexOf(listener);
+            var i = _listeners.IndexOf(listener);
             if (i >= 0)
             {
                 _listeners.RemoveAt(i);
@@ -132,13 +135,19 @@ namespace iTextSharp.text.rtf.parser.destinations
         /// <param name="parser">The RtfParser object.</param>
         public virtual void SetParser(RtfParser parser)
         {
-            if (RtfParser != null && RtfParser.Equals(parser)) return;
+            if (RtfParser != null && RtfParser.Equals(parser))
+            {
+                return;
+            }
+
             RtfParser = parser;
         }
+
         /// <summary>
         /// Method to set this object to the default values. Must be implemented in child class.
         /// </summary>
         public abstract void SetToDefaults();
+
         /// <summary>
         /// </summary>
         protected int AfterCharacter(int ch)
@@ -180,6 +189,7 @@ namespace iTextSharp.text.rtf.parser.destinations
             }
             return null;
         }
+
         /// <summary>
         /// </summary>
         protected int OnCharacter(int ch)
@@ -213,6 +223,7 @@ namespace iTextSharp.text.rtf.parser.destinations
             }
             return null;
         }
+
         /// <summary>
         /// </summary>
         /// <returns></returns>

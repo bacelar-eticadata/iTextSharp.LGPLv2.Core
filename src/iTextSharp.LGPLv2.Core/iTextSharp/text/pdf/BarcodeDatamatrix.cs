@@ -1,7 +1,7 @@
-using System;
-using iTextSharp.text.pdf.codec;
-using System.Collections;
 using iTextSharp.LGPLv2.Core.System.Encodings;
+using iTextSharp.text.pdf.codec;
+using System;
+using System.Collections;
 
 namespace iTextSharp.text.pdf
 {
@@ -59,6 +59,7 @@ namespace iTextSharp.text.pdf
         /// No error.
         /// </summary>
         public const int DM_NO_ERROR = 0;
+
         /// <summary>
         /// No encodation needed. The bytes provided are already encoded.
         /// </summary>
@@ -73,10 +74,12 @@ namespace iTextSharp.text.pdf
         /// TEXT encodation.
         /// </summary>
         public const int DM_TEXT = 3;
+
         /// <summary>
         /// X21 encodation.
         /// </summary>
         public const int DM_X21 = 5;
+
         private const string X12 = "\r*> 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         private static readonly DmParams[] _dmSizes = {
@@ -110,6 +113,7 @@ namespace iTextSharp.text.pdf
             new DmParams(120, 120, 20, 20, 1050, 175, 68),
             new DmParams(132, 132, 22, 22, 1304, 163, 62),
             new DmParams(144, 144, 24, 24, 1558, 156, 62)};
+
         private int _extOut;
         private short[] _place;
 
@@ -239,17 +243,20 @@ namespace iTextSharp.text.pdf
         public virtual System.Drawing.Image CreateDrawingImage(System.Drawing.Color foreground, System.Drawing.Color background)
         {
             if (BitImage == null)
-                return null;
-            int h = Height + 2 * Ws;
-            int w = Width + 2 * Ws;
-            int stride = (w + 7) / 8;
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(w, h);
-            for (int k = 0; k < h; ++k)
             {
-                int p = k * stride;
-                for (int j = 0; j < w; ++j)
+                return null;
+            }
+
+            var h = Height + 2 * Ws;
+            var w = Width + 2 * Ws;
+            var stride = (w + 7) / 8;
+            var bmp = new System.Drawing.Bitmap(w, h);
+            for (var k = 0; k < h; ++k)
+            {
+                var p = k * stride;
+                for (var j = 0; j < w; ++j)
                 {
-                    int b = BitImage[p + (j / 8)] & 0xff;
+                    var b = BitImage[p + (j / 8)] & 0xff;
                     b <<= j % 8;
                     bmp.SetPixel(j, k, (b & 0x80) == 0 ? background : foreground);
                 }
@@ -266,8 +273,11 @@ namespace iTextSharp.text.pdf
         public Image CreateImage()
         {
             if (BitImage == null)
+            {
                 return null;
-            byte[] g4 = Ccittg4Encoder.Compress(BitImage, Width + 2 * Ws, Height + 2 * Ws);
+            }
+
+            var g4 = Ccittg4Encoder.Compress(BitImage, Width + 2 * Ws, Height + 2 * Ws);
             return Image.GetInstance(Width + 2 * Ws, Height + 2 * Ws, false, Element.CCITTG4, 0, g4, null);
         }
 
@@ -284,7 +294,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the status of the generation. It can be one of this values:</returns>
         public int Generate(string text)
         {
-            byte[] t = EncodingsRegistry.Instance.GetEncoding(1252).GetBytes(text);
+            var t = EncodingsRegistry.Instance.GetEncoding(1252).GetBytes(text);
             return Generate(t, 0, t.Length);
         }
 
@@ -304,7 +314,7 @@ namespace iTextSharp.text.pdf
         {
             int extCount, e, k, full;
             DmParams dm, last;
-            byte[] data = new byte[2500];
+            var data = new byte[2500];
             _extOut = 0;
             extCount = processExtensions(text, textOffset, textSize, data);
             if (extCount < 0)
@@ -324,7 +334,9 @@ namespace iTextSharp.text.pdf
                 for (k = 0; k < _dmSizes.Length; ++k)
                 {
                     if (_dmSizes[k].DataSize >= e)
+                    {
                         break;
+                    }
                 }
                 dm = _dmSizes[k];
                 Height = dm.height;
@@ -335,7 +347,9 @@ namespace iTextSharp.text.pdf
                 for (k = 0; k < _dmSizes.Length; ++k)
                 {
                     if (Height == _dmSizes[k].height && Width == _dmSizes[k].width)
+                    {
                         break;
+                    }
                 }
                 if (k == _dmSizes.Length)
                 {
@@ -372,7 +386,10 @@ namespace iTextSharp.text.pdf
             while (ptrIn < textLength)
             {
                 if (ptrOut >= dataLength)
+                {
                     return -1;
+                }
+
                 c = text[ptrIn++] & 0xff;
                 if (isDigit(c) && ptrIn < textLength && isDigit(text[ptrIn] & 0xff))
                 {
@@ -381,7 +398,10 @@ namespace iTextSharp.text.pdf
                 else if (c > 127)
                 {
                     if (ptrOut + 1 >= dataLength)
+                    {
                         return -1;
+                    }
+
                     data[ptrOut++] = 235;
                     data[ptrOut++] = (byte)(c - 128 + 1);
                 }
@@ -397,11 +417,20 @@ namespace iTextSharp.text.pdf
         {
             int k, j, prn, tv, c;
             if (textLength == 0)
+            {
                 return 0;
+            }
+
             if (textLength < 250 && textLength + 2 > dataLength)
+            {
                 return -1;
+            }
+
             if (textLength >= 250 && textLength + 3 > dataLength)
+            {
                 return -1;
+            }
+
             data[dataOffset] = 231;
             if (textLength < 250)
             {
@@ -422,9 +451,11 @@ namespace iTextSharp.text.pdf
                 prn = ((149 * (j + 1)) % 255) + 1;
                 tv = c + prn;
                 if (tv > 255)
+                {
                     tv -= 256;
-                data[j] = (byte)tv;
+                }
 
+                data[j] = (byte)tv;
             }
             return k - dataOffset;
         }
@@ -434,13 +465,21 @@ namespace iTextSharp.text.pdf
             int ptrIn, ptrOut, encPtr, last0, last1, i, a, c;
             string basic, shift2, shift3;
             if (textLength == 0)
+            {
                 return 0;
+            }
+
             ptrIn = 0;
             ptrOut = 0;
             if (c40)
+            {
                 data[dataOffset + ptrOut++] = 230;
+            }
             else
+            {
                 data[dataOffset + ptrOut++] = 239;
+            }
+
             shift2 = "!\"#$%&'()*+,-./:;<=>?@[\\]^_";
             if (c40)
             {
@@ -452,7 +491,7 @@ namespace iTextSharp.text.pdf
                 basic = " 0123456789abcdefghijklmnopqrstuvwxyz";
                 shift3 = "`ABCDEFGHIJKLMNOPQRSTUVWXYZ{|}~\u007f";
             }
-            int[] enc = new int[textLength * 4 + 10];
+            var enc = new int[textLength * 4 + 10];
             encPtr = 0;
             last0 = 0;
             last1 = 0;
@@ -470,7 +509,7 @@ namespace iTextSharp.text.pdf
                     enc[encPtr++] = 1;
                     enc[encPtr++] = 30;
                 }
-                int idx = basic.IndexOf(((char)c).ToString(), StringComparison.Ordinal);
+                var idx = basic.IndexOf(((char)c).ToString(), StringComparison.Ordinal);
                 if (idx >= 0)
                 {
                     enc[encPtr++] = idx + 3;
@@ -510,7 +549,10 @@ namespace iTextSharp.text.pdf
             data[ptrOut++] = 254;
             i = asciiEncodation(text, ptrIn, textLength - ptrIn, data, ptrOut, dataLength - ptrOut);
             if (i < 0)
+            {
                 return i;
+            }
+
             return ptrOut + i;
         }
 
@@ -518,12 +560,15 @@ namespace iTextSharp.text.pdf
         {
             int ptrIn, ptrOut, edi, pedi, c;
             if (textLength == 0)
+            {
                 return 0;
+            }
+
             ptrIn = 0;
             ptrOut = 0;
             edi = 0;
             pedi = 18;
-            bool ascii = true;
+            var ascii = true;
             for (; ptrIn < textLength; ++ptrIn)
             {
                 c = text[ptrIn + textOffset] & 0xff;
@@ -532,7 +577,10 @@ namespace iTextSharp.text.pdf
                     if (ascii)
                     {
                         if (ptrOut + 1 > dataLength)
+                        {
                             break;
+                        }
+
                         data[dataOffset + ptrOut++] = 240;
                         ascii = false;
                     }
@@ -541,7 +589,10 @@ namespace iTextSharp.text.pdf
                     if (pedi == 0)
                     {
                         if (ptrOut + 3 > dataLength)
+                        {
                             break;
+                        }
+
                         data[dataOffset + ptrOut++] = (byte)(edi >> 16);
                         data[dataOffset + ptrOut++] = (byte)(edi >> 8);
                         data[dataOffset + ptrOut++] = (byte)edi;
@@ -549,7 +600,9 @@ namespace iTextSharp.text.pdf
                         pedi = 18;
                     }
                     else
+                    {
                         pedi -= 6;
+                    }
                 }
                 else
                 {
@@ -557,12 +610,21 @@ namespace iTextSharp.text.pdf
                     {
                         edi |= ('_' & 0x3f) << pedi;
                         if (ptrOut + (3 - pedi / 8) > dataLength)
+                        {
                             break;
+                        }
+
                         data[dataOffset + ptrOut++] = (byte)(edi >> 16);
                         if (pedi <= 12)
+                        {
                             data[dataOffset + ptrOut++] = (byte)(edi >> 8);
+                        }
+
                         if (pedi <= 6)
+                        {
                             data[dataOffset + ptrOut++] = (byte)edi;
+                        }
+
                         ascii = true;
                         pedi = 18;
                         edi = 0;
@@ -570,27 +632,44 @@ namespace iTextSharp.text.pdf
                     if (c > 127)
                     {
                         if (ptrOut >= dataLength)
+                        {
                             break;
+                        }
+
                         data[dataOffset + ptrOut++] = 235;
                         c -= 128;
                     }
                     if (ptrOut >= dataLength)
+                    {
                         break;
+                    }
+
                     data[dataOffset + ptrOut++] = (byte)(c + 1);
                 }
             }
             if (ptrIn != textLength)
+            {
                 return -1;
+            }
+
             if (!ascii)
             {
                 edi |= ('_' & 0x3f) << pedi;
                 if (ptrOut + (3 - pedi / 8) > dataLength)
+                {
                     return -1;
+                }
+
                 data[dataOffset + ptrOut++] = (byte)(edi >> 16);
                 if (pedi <= 12)
+                {
                     data[dataOffset + ptrOut++] = (byte)(edi >> 8);
+                }
+
                 if (pedi <= 6)
+                {
                     data[dataOffset + ptrOut++] = (byte)edi;
+                }
             }
             return ptrOut;
         }
@@ -598,31 +677,52 @@ namespace iTextSharp.text.pdf
         private static int getEncodation(byte[] text, int textOffset, int textSize, byte[] data, int dataOffset, int dataSize, int options, bool firstMatch)
         {
             int e, j, k;
-            int[] e1 = new int[6];
+            var e1 = new int[6];
             if (dataSize < 0)
+            {
                 return -1;
+            }
+
             e = -1;
             options &= 7;
             if (options == 0)
             {
                 e1[0] = asciiEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
                 if (firstMatch && e1[0] >= 0)
+                {
                     return e1[0];
+                }
+
                 e1[1] = c40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, false);
                 if (firstMatch && e1[1] >= 0)
+                {
                     return e1[1];
+                }
+
                 e1[2] = c40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, true);
                 if (firstMatch && e1[2] >= 0)
+                {
                     return e1[2];
+                }
+
                 e1[3] = b256Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
                 if (firstMatch && e1[3] >= 0)
+                {
                     return e1[3];
+                }
+
                 e1[4] = x12Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
                 if (firstMatch && e1[4] >= 0)
+                {
                     return e1[4];
+                }
+
                 e1[5] = edifactEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
                 if (firstMatch && e1[5] >= 0)
+                {
                     return e1[5];
+                }
+
                 if (e1[0] < 0 && e1[1] < 0 && e1[2] < 0 && e1[3] < 0 && e1[4] < 0 && e1[5] < 0)
                 {
                     return -1;
@@ -638,34 +738,54 @@ namespace iTextSharp.text.pdf
                     }
                 }
                 if (j == 0)
+                {
                     e = asciiEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
+                }
                 else if (j == 1)
+                {
                     e = c40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, false);
+                }
                 else if (j == 2)
+                {
                     e = c40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, true);
+                }
                 else if (j == 3)
+                {
                     e = b256Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
+                }
                 else if (j == 4)
+                {
                     e = x12Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
+                }
+
                 return e;
             }
             switch (options)
             {
                 case DM_ASCII:
                     return asciiEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
+
                 case DM_C40:
                     return c40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, true);
+
                 case DM_TEXT:
                     return c40OrTextEncodation(text, textOffset, textSize, data, dataOffset, dataSize, false);
+
                 case DM_B256:
                     return b256Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
+
                 case DM_X21:
                     return x12Encodation(text, textOffset, textSize, data, dataOffset, dataSize);
+
                 case DM_EDIFACT:
                     return edifactEncodation(text, textOffset, textSize, data, dataOffset, dataSize);
+
                 case DM_RAW:
                     if (textSize > dataSize)
+                    {
                         return -1;
+                    }
+
                     Array.Copy(text, textOffset, data, dataOffset, textSize);
                     return textSize;
             }
@@ -680,7 +800,10 @@ namespace iTextSharp.text.pdf
             {
                 c = text[ptrIn++] & 0xff;
                 if (c < '0' || c > '9')
+                {
                     return -1;
+                }
+
                 v = v * 10 + c - '0';
             }
             return v;
@@ -695,13 +818,19 @@ namespace iTextSharp.text.pdf
         {
             //already in ascii mode
             if (count <= 0)
+            {
                 return;
+            }
+
             data[position++] = 129;
             while (--count > 0)
             {
-                int t = 129 + (((position + 1) * 149) % 253) + 1;
+                var t = 129 + (((position + 1) * 149) % 253) + 1;
                 if (t > 254)
+                {
                     t -= 254;
+                }
+
                 data[position++] = (byte)t;
             }
         }
@@ -711,14 +840,17 @@ namespace iTextSharp.text.pdf
             int ptrIn, ptrOut, count, k, n, ci;
             byte c;
             if (textLength == 0)
+            {
                 return 0;
+            }
+
             ptrIn = 0;
             ptrOut = 0;
-            byte[] x = new byte[textLength];
+            var x = new byte[textLength];
             count = 0;
             for (; ptrIn < textLength; ++ptrIn)
             {
-                int i = X12.IndexOf(((char)text[ptrIn + textOffset]).ToString(), StringComparison.Ordinal);
+                var i = X12.IndexOf(((char)text[ptrIn + textOffset]).ToString(), StringComparison.Ordinal);
                 if (i >= 0)
                 {
                     x[ptrIn] = (byte)i;
@@ -728,29 +860,50 @@ namespace iTextSharp.text.pdf
                 {
                     x[ptrIn] = 100;
                     if (count >= 6)
+                    {
                         count -= (count / 3) * 3;
+                    }
+
                     for (k = 0; k < count; ++k)
+                    {
                         x[ptrIn - k - 1] = 100;
+                    }
+
                     count = 0;
                 }
             }
             if (count >= 6)
+            {
                 count -= (count / 3) * 3;
+            }
+
             for (k = 0; k < count; ++k)
+            {
                 x[ptrIn - k - 1] = 100;
+            }
+
             ptrIn = 0;
             c = 0;
             for (; ptrIn < textLength; ++ptrIn)
             {
                 c = x[ptrIn];
                 if (ptrOut >= dataLength)
+                {
                     break;
+                }
+
                 if (c < 40)
                 {
                     if (ptrIn == 0 || (ptrIn > 0 && x[ptrIn - 1] > 40))
+                    {
                         data[dataOffset + ptrOut++] = 238;
+                    }
+
                     if (ptrOut + 2 > dataLength)
+                    {
                         break;
+                    }
+
                     n = 1600 * x[ptrIn] + 40 * x[ptrIn + 1] + x[ptrIn + 2] + 1;
                     data[dataOffset + ptrOut++] = (byte)(n / 256);
                     data[dataOffset + ptrOut++] = (byte)n;
@@ -759,7 +912,10 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     if (ptrIn > 0 && x[ptrIn - 1] < 40)
+                    {
                         data[dataOffset + ptrOut++] = 254;
+                    }
+
                     ci = text[ptrIn + textOffset] & 0xff;
                     if (ci > 127)
                     {
@@ -767,26 +923,40 @@ namespace iTextSharp.text.pdf
                         ci -= 128;
                     }
                     if (ptrOut >= dataLength)
+                    {
                         break;
+                    }
+
                     data[dataOffset + ptrOut++] = (byte)(ci + 1);
                 }
             }
             c = 100;
             if (textLength > 0)
+            {
                 c = x[textLength - 1];
+            }
+
             if (ptrIn != textLength || (c < 40 && ptrOut >= dataLength))
+            {
                 return -1;
+            }
+
             if (c < 40)
+            {
                 data[dataOffset + ptrOut++] = 254;
+            }
+
             return ptrOut;
         }
 
         private void draw(byte[] data, int dataSize, DmParams dm)
         {
             int i, j, p, x, y, xs, ys, z;
-            int xByte = (dm.width + Ws * 2 + 7) / 8;
-            for (int k = 0; k < BitImage.Length; ++k)
+            var xByte = (dm.width + Ws * 2 + 7) / 8;
+            for (var k = 0; k < BitImage.Length; ++k)
+            {
                 BitImage[k] = 0;
+            }
             //alignment patterns
             //dotted horizontal line
             for (i = Ws; i < dm.height + Ws; i += dm.HeightSection)
@@ -831,7 +1001,9 @@ namespace iTextSharp.text.pdf
                         {
                             z = _place[p++];
                             if (z == 1 || (z > 1 && ((data[z / 8 - 1] & 0xff) & (128 >> (z % 8))) != 0))
+                            {
                                 setBit(x + xs + Ws, y + ys + Ws, xByte);
+                            }
                         }
                     }
                 }
@@ -842,14 +1014,20 @@ namespace iTextSharp.text.pdf
         {
             int order, ptrIn, ptrOut, eci, fn, ft, fi, c;
             if ((Options & DM_EXTENSION) == 0)
+            {
                 return 0;
+            }
+
             order = 0;
             ptrIn = 0;
             ptrOut = 0;
             while (ptrIn < textSize)
             {
                 if (order > 20)
+                {
                     return -1;
+                }
+
                 c = text[textOffset + ptrIn++] & 0xff;
                 ++order;
                 switch (c)
@@ -857,16 +1035,25 @@ namespace iTextSharp.text.pdf
                     case '.':
                         _extOut = ptrIn;
                         return ptrOut;
+
                     case 'e':
                         if (ptrIn + 6 > textSize)
+                        {
                             return -1;
+                        }
+
                         eci = getNumber(text, textOffset + ptrIn, 6);
                         if (eci < 0)
+                        {
                             return -1;
+                        }
+
                         ptrIn += 6;
                         data[ptrOut++] = 241;
                         if (eci < 127)
+                        {
                             data[ptrOut++] = (byte)(eci + 1);
+                        }
                         else if (eci < 16383)
                         {
                             data[ptrOut++] = (byte)((eci - 127) / 254 + 128);
@@ -879,47 +1066,81 @@ namespace iTextSharp.text.pdf
                             data[ptrOut++] = (byte)(((eci - 16383) % 254) + 1);
                         }
                         break;
+
                     case 's':
                         if (order != 1)
+                        {
                             return -1;
+                        }
+
                         if (ptrIn + 9 > textSize)
+                        {
                             return -1;
+                        }
+
                         fn = getNumber(text, textOffset + ptrIn, 2);
                         if (fn <= 0 || fn > 16)
+                        {
                             return -1;
+                        }
+
                         ptrIn += 2;
                         ft = getNumber(text, textOffset + ptrIn, 2);
                         if (ft <= 1 || ft > 16)
+                        {
                             return -1;
+                        }
+
                         ptrIn += 2;
                         fi = getNumber(text, textOffset + ptrIn, 5);
                         if (fi < 0 || fn >= 64516)
+                        {
                             return -1;
+                        }
+
                         ptrIn += 5;
                         data[ptrOut++] = 233;
                         data[ptrOut++] = (byte)(((fn - 1) << 4) | (17 - ft));
                         data[ptrOut++] = (byte)(fi / 254 + 1);
                         data[ptrOut++] = (byte)((fi % 254) + 1);
                         break;
+
                     case 'p':
                         if (order != 1)
+                        {
                             return -1;
+                        }
+
                         data[ptrOut++] = 234;
                         break;
+
                     case 'm':
                         if (order != 1)
+                        {
                             return -1;
+                        }
+
                         if (ptrIn + 1 > textSize)
+                        {
                             return -1;
+                        }
+
                         c = text[textOffset + ptrIn++] & 0xff;
                         if (c != '5' && c != '5')
+                        {
                             return -1;
+                        }
+
                         data[ptrOut++] = 234;
                         data[ptrOut++] = (byte)(c == '5' ? 236 : 237);
                         break;
+
                     case 'f':
                         if (order != 1 && (order != 2 || (text[textOffset] != 's' && text[textOffset] != 'm')))
+                        {
                             return -1;
+                        }
+
                         data[ptrOut++] = 232;
                         break;
                 }
@@ -931,26 +1152,33 @@ namespace iTextSharp.text.pdf
         {
             BitImage[y * xByte + x / 8] |= (byte)(128 >> (x & 7));
         }
+
         internal class Placement
         {
             private static readonly Hashtable _cache = Hashtable.Synchronized(new Hashtable());
             private short[] _array;
             private int _ncol;
             private int _nrow;
+
             private Placement()
             {
             }
 
             internal static short[] DoPlacement(int nrow, int ncol)
             {
-                int key = nrow * 1000 + ncol;
-                short[] pc = (short[])_cache[key];
+                var key = nrow * 1000 + ncol;
+                var pc = (short[])_cache[key];
                 if (pc != null)
+                {
                     return pc;
-                Placement p = new Placement();
-                p._nrow = nrow;
-                p._ncol = ncol;
-                p._array = new short[nrow * ncol];
+                }
+
+                var p = new Placement
+                {
+                    _nrow = nrow,
+                    _ncol = ncol,
+                    _array = new short[nrow * ncol]
+                };
                 p.ecc200();
                 _cache[key] = p._array;
                 return p._array;
@@ -1014,22 +1242,42 @@ namespace iTextSharp.text.pdf
             {
                 int row, col, chr;
                 /* First, fill the array[] with invalid entries */
-                for (int k = 0; k < _array.Length; ++k)
+                for (var k = 0; k < _array.Length; ++k)
+                {
                     _array[k] = 0;
+                }
                 /* Starting in the correct location for character #1, bit 8,... */
                 chr = 1; row = 4; col = 0;
                 do
                 {
                     /* repeatedly first check for one of the special corner cases, then... */
-                    if ((row == _nrow) && (col == 0)) corner1(chr++);
-                    if ((row == _nrow - 2) && (col == 0) && (_ncol % 4 != 0)) corner2(chr++);
-                    if ((row == _nrow - 2) && (col == 0) && (_ncol % 8 == 4)) corner3(chr++);
-                    if ((row == _nrow + 4) && (col == 2) && (_ncol % 8 == 0)) corner4(chr++);
+                    if ((row == _nrow) && (col == 0))
+                    {
+                        corner1(chr++);
+                    }
+
+                    if ((row == _nrow - 2) && (col == 0) && (_ncol % 4 != 0))
+                    {
+                        corner2(chr++);
+                    }
+
+                    if ((row == _nrow - 2) && (col == 0) && (_ncol % 8 == 4))
+                    {
+                        corner3(chr++);
+                    }
+
+                    if ((row == _nrow + 4) && (col == 2) && (_ncol % 8 == 0))
+                    {
+                        corner4(chr++);
+                    }
                     /* sweep upward diagonally, inserting successive characters,... */
                     do
                     {
                         if ((row < _nrow) && (col >= 0) && _array[row * _ncol + col] == 0)
+                        {
                             utah(row, col, chr++);
+                        }
+
                         row -= 2; col += 2;
                     } while ((row >= 0) && (col < _ncol));
                     row += 1; col += 3;
@@ -1038,7 +1286,10 @@ namespace iTextSharp.text.pdf
                     do
                     {
                         if ((row >= 0) && (col < _ncol) && _array[row * _ncol + col] == 0)
+                        {
                             utah(row, col, chr++);
+                        }
+
                         row += 2; col -= 2;
                     } while ((row < _nrow) && (col >= 0));
                     row += 3; col += 1;
@@ -1060,6 +1311,7 @@ namespace iTextSharp.text.pdf
                 if (col < 0) { col += _ncol; row += 4 - ((_ncol + 4) % 8); }
                 _array[row * _ncol + col] = (short)(8 * chr + bit);
             }
+
             /// <summary>
             /// "utah" places the 8 bits of a utah-shaped symbol character in ECC200
             /// </summary>
@@ -1078,7 +1330,6 @@ namespace iTextSharp.text.pdf
 
         internal class ReedSolomon
         {
-
             private static readonly int[] _alog = {
                 1,   2,   4,   8,  16,  32,  64, 128,  45,  90, 180,  69, 138,  57, 114, 228,
                 229, 231, 227, 235, 251, 219, 155,  27,  54, 108, 216, 157,  23,  46,  92, 184,
@@ -1116,6 +1367,7 @@ namespace iTextSharp.text.pdf
                 58,  69, 148,  18,  15,  16,  68,  17, 121, 149, 129,  19, 155,  59, 249,  70,
                 214, 250, 168,  71, 201, 156,  64,  60, 237, 130, 111,  20,  93, 122, 177, 150
             };
+
             private static readonly int[] _poly10 = {
                 28,  24, 185, 166, 223, 248, 116, 255, 110,  61
             };
@@ -1199,22 +1451,28 @@ namespace iTextSharp.text.pdf
             private static readonly int[] _poly7 = {
                 23,  68, 144, 134, 240,  92, 254
             };
+
             internal static void GenerateEcc(byte[] wd, int nd, int datablock, int nc)
             {
-                int blocks = (nd + 2) / datablock;
+                var blocks = (nd + 2) / datablock;
                 int b;
-                byte[] buf = new byte[256];
-                byte[] ecc = new byte[256];
-                int[] c = getPoly(nc);
+                var buf = new byte[256];
+                var ecc = new byte[256];
+                var c = getPoly(nc);
                 for (b = 0; b < blocks; b++)
                 {
                     int n, p = 0;
                     for (n = b; n < nd; n += blocks)
+                    {
                         buf[p++] = wd[n];
+                    }
+
                     reedSolomonBlock(buf, p, ecc, nc, c);
                     p = 0;
                     for (n = b; n < nc * blocks; n += blocks)
+                    {
                         wd[nd + n] = ecc[p++];
+                    }
                 }
             }
 
@@ -1224,34 +1482,49 @@ namespace iTextSharp.text.pdf
                 {
                     case 5:
                         return _poly5;
+
                     case 7:
                         return _poly7;
+
                     case 10:
                         return _poly10;
+
                     case 11:
                         return _poly11;
+
                     case 12:
                         return _poly12;
+
                     case 14:
                         return _poly14;
+
                     case 18:
                         return _poly18;
+
                     case 20:
                         return _poly20;
+
                     case 24:
                         return _poly24;
+
                     case 28:
                         return _poly28;
+
                     case 36:
                         return _poly36;
+
                     case 42:
                         return _poly42;
+
                     case 48:
                         return _poly48;
+
                     case 56:
                         return _poly56;
+
                     case 62:
                         return _poly62;
+
                     case 68:
                         return _poly68;
                 }
@@ -1262,7 +1535,11 @@ namespace iTextSharp.text.pdf
             {
                 int i, j, k;
 
-                for (i = 0; i <= nc; i++) ncout[i] = 0;
+                for (i = 0; i <= nc; i++)
+                {
+                    ncout[i] = 0;
+                }
+
                 for (i = 0; i < nd; i++)
                 {
                     k = (ncout[0] ^ wd[i]) & 0xff;

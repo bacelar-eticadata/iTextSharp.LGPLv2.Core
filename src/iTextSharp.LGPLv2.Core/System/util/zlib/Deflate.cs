@@ -381,8 +381,8 @@ namespace System.util.zlib
 
         internal static bool Smaller(short[] tree, int n, int m, byte[] depth)
         {
-            short tn2 = tree[n * 2];
-            short tm2 = tree[m * 2];
+            var tn2 = tree[n * 2];
+            var tm2 = tree[m * 2];
             return (tn2 < tm2 ||
                 (tn2 == tm2 && depth[n] <= depth[m]));
         }
@@ -446,13 +446,16 @@ namespace System.util.zlib
             )
         {
             int optLenb, staticLenb;// opt_len and static_len in bytes
-            int maxBlindex = 0;      // index of last bit length code of non zero freq
+            var maxBlindex = 0;      // index of last bit length code of non zero freq
 
             // Build the Huffman trees unless a stored block is forced
             if (Level > 0)
             {
                 // Check if the file is ascii or binary
-                if (DataType == ZUnknown) set_data_type();
+                if (DataType == ZUnknown)
+                {
+                    set_data_type();
+                }
 
                 // Construct the literal and distance trees
                 LDesc.build_tree(this);
@@ -470,7 +473,10 @@ namespace System.util.zlib
                 optLenb = (OptLen + 3 + 7) >> 3;
                 staticLenb = (StaticLen + 3 + 7) >> 3;
 
-                if (staticLenb <= optLenb) optLenb = staticLenb;
+                if (staticLenb <= optLenb)
+                {
+                    optLenb = staticLenb;
+                }
             }
             else
             {
@@ -555,8 +561,8 @@ namespace System.util.zlib
             if ((LastLit & 0x1fff) == 0 && Level > 2)
             {
                 // Compute an upper bound for the compressed length
-                int outLength = LastLit * 8;
-                int inLength = Strstart - BlockStart;
+                var outLength = LastLit * 8;
+                var inLength = Strstart - BlockStart;
                 int dcode;
                 for (dcode = 0; dcode < DCodes; dcode++)
                 {
@@ -564,7 +570,10 @@ namespace System.util.zlib
                         (5L + Tree.ExtraDbits[dcode]));
                 }
                 outLength >>= 3;
-                if ((Matches < (LastLit / 2)) && outLength < inLength / 2) return true;
+                if ((Matches < (LastLit / 2)) && outLength < inLength / 2)
+                {
+                    return true;
+                }
             }
 
             return (LastLit == LitBufsize - 1);
@@ -636,7 +645,10 @@ namespace System.util.zlib
             // 3 but the actual value used is 4.)
             for (maxBlindex = BlCodes - 1; maxBlindex >= 3; maxBlindex--)
             {
-                if (BlTree[Tree.BlOrder[maxBlindex] * 2 + 1] != 0) break;
+                if (BlTree[Tree.BlOrder[maxBlindex] * 2 + 1] != 0)
+                {
+                    break;
+                }
             }
             // Update opt_len to include the bit length tree and counts
             OptLen += 3 * (maxBlindex + 1) + 5 + 5 + 4;
@@ -651,7 +663,7 @@ namespace System.util.zlib
         {
             int dist;      // distance of matched string
             int lc;         // match length or unmatched char (if dist == 0)
-            int lx = 0;     // running index in l_buf
+            var lx = 0;     // running index in l_buf
             int code;       // the code to send
             int extra;      // number of extra bits to send
 
@@ -757,12 +769,20 @@ namespace System.util.zlib
             // Write the zlib header
             if (Status == InitState)
             {
-                int header = (ZDeflated + ((WBits - 8) << 4)) << 8;
-                int levelFlags = ((Level - 1) & 0xff) >> 1;
+                var header = (ZDeflated + ((WBits - 8) << 4)) << 8;
+                var levelFlags = ((Level - 1) & 0xff) >> 1;
 
-                if (levelFlags > 3) levelFlags = 3;
+                if (levelFlags > 3)
+                {
+                    levelFlags = 3;
+                }
+
                 header |= (levelFlags << 6);
-                if (Strstart != 0) header |= PresetDict;
+                if (Strstart != 0)
+                {
+                    header |= PresetDict;
+                }
+
                 header += 31 - (header % 31);
 
                 Status = BusyState;
@@ -816,7 +836,7 @@ namespace System.util.zlib
             if (strm.AvailIn != 0 || Lookahead != 0 ||
                 (flush != ZNoFlush && Status != FinishState))
             {
-                int bstate = -1;
+                var bstate = -1;
                 switch (_configTable[Level].Func)
                 {
                     case Stored:
@@ -865,8 +885,10 @@ namespace System.util.zlib
                         if (flush == ZFullFlush)
                         {
                             //state.head[s.hash_size-1]=0;
-                            for (int i = 0; i < HashSize/*-1*/; i++)  // forget history
+                            for (var i = 0; i < HashSize/*-1*/; i++)  // forget history
+                            {
                                 Head[i] = 0;
+                            }
                         }
                     }
                     strm.flush_pending();
@@ -878,8 +900,15 @@ namespace System.util.zlib
                 }
             }
 
-            if (flush != ZFinish) return ZOk;
-            if (Noheader != 0) return ZStreamEnd;
+            if (flush != ZFinish)
+            {
+                return ZOk;
+            }
+
+            if (Noheader != 0)
+            {
+                return ZStreamEnd;
+            }
 
             // Write the zlib trailer (adler32)
             PutShortMsb((int)(strm.Adler >> 16));
@@ -910,7 +939,7 @@ namespace System.util.zlib
         internal int deflate_fast(int flush)
         {
             //    short hash_head = 0; // head of the hash chain
-            int hashHead = 0; // head of the hash chain
+            var hashHead = 0; // head of the hash chain
             bool bflush;      // set if current block must be flushed
 
             while (true)
@@ -926,7 +955,10 @@ namespace System.util.zlib
                     {
                         return NeedMore;
                     }
-                    if (Lookahead == 0) break; // flush the current block
+                    if (Lookahead == 0)
+                    {
+                        break; // flush the current block
+                    }
                 }
 
                 // Insert the string window[strstart .. strstart+2] in the
@@ -1010,15 +1042,24 @@ namespace System.util.zlib
                 {
 
                     flush_block_only(false);
-                    if (Strm.AvailOut == 0) return NeedMore;
+                    if (Strm.AvailOut == 0)
+                    {
+                        return NeedMore;
+                    }
                 }
             }
 
             flush_block_only(flush == ZFinish);
             if (Strm.AvailOut == 0)
             {
-                if (flush == ZFinish) return FinishStarted;
-                else return NeedMore;
+                if (flush == ZFinish)
+                {
+                    return FinishStarted;
+                }
+                else
+                {
+                    return NeedMore;
+                }
             }
             return flush == ZFinish ? FinishDone : BlockDone;
         }
@@ -1035,7 +1076,7 @@ namespace System.util.zlib
         internal int deflate_slow(int flush)
         {
             //    short hash_head = 0;    // head of hash chain
-            int hashHead = 0;    // head of hash chain
+            var hashHead = 0;    // head of hash chain
             bool bflush;         // set if current block must be flushed
 
             // Process the input block.
@@ -1053,7 +1094,10 @@ namespace System.util.zlib
                     {
                         return NeedMore;
                     }
-                    if (Lookahead == 0) break; // flush the current block
+                    if (Lookahead == 0)
+                    {
+                        break; // flush the current block
+                    }
                 }
 
                 // Insert the string window[strstart .. strstart+2] in the
@@ -1101,7 +1145,7 @@ namespace System.util.zlib
                 // match is not better, output the previous match:
                 if (PrevLength >= MinMatch && MatchLength <= PrevLength)
                 {
-                    int maxInsert = Strstart + Lookahead - MinMatch;
+                    var maxInsert = Strstart + Lookahead - MinMatch;
                     // Do not insert strings in hash table beyond this.
 
                     //          check_match(strstart-1, prev_match, prev_length);
@@ -1133,7 +1177,10 @@ namespace System.util.zlib
                     if (bflush)
                     {
                         flush_block_only(false);
-                        if (Strm.AvailOut == 0) return NeedMore;
+                        if (Strm.AvailOut == 0)
+                        {
+                            return NeedMore;
+                        }
                     }
                 }
                 else if (MatchAvailable != 0)
@@ -1151,7 +1198,10 @@ namespace System.util.zlib
                     }
                     Strstart++;
                     Lookahead--;
-                    if (Strm.AvailOut == 0) return NeedMore;
+                    if (Strm.AvailOut == 0)
+                    {
+                        return NeedMore;
+                    }
                 }
                 else
                 {
@@ -1173,8 +1223,14 @@ namespace System.util.zlib
 
             if (Strm.AvailOut == 0)
             {
-                if (flush == ZFinish) return FinishStarted;
-                else return NeedMore;
+                if (flush == ZFinish)
+                {
+                    return FinishStarted;
+                }
+                else
+                {
+                    return NeedMore;
+                }
             }
 
             return flush == ZFinish ? FinishDone : BlockDone;
@@ -1206,7 +1262,7 @@ namespace System.util.zlib
             // Stored blocks are limited to 0xffff bytes, pending_buf is limited
             // to pending_buf_size, and each stored block has a 5 byte header:
 
-            int maxBlockSize = 0xffff;
+            var maxBlockSize = 0xffff;
             int maxStart;
 
             if (maxBlockSize > PendingBufSize - 5)
@@ -1221,8 +1277,15 @@ namespace System.util.zlib
                 if (Lookahead <= 1)
                 {
                     fill_window();
-                    if (Lookahead == 0 && flush == ZNoFlush) return NeedMore;
-                    if (Lookahead == 0) break; // flush the current block
+                    if (Lookahead == 0 && flush == ZNoFlush)
+                    {
+                        return NeedMore;
+                    }
+
+                    if (Lookahead == 0)
+                    {
+                        break; // flush the current block
+                    }
                 }
 
                 Strstart += Lookahead;
@@ -1237,8 +1300,10 @@ namespace System.util.zlib
                     Strstart = maxStart;
 
                     flush_block_only(false);
-                    if (Strm.AvailOut == 0) return NeedMore;
-
+                    if (Strm.AvailOut == 0)
+                    {
+                        return NeedMore;
+                    }
                 }
 
                 // Flush if we may have to slide, otherwise block_start may become
@@ -1246,13 +1311,18 @@ namespace System.util.zlib
                 if (Strstart - BlockStart >= WSize - MinLookahead)
                 {
                     flush_block_only(false);
-                    if (Strm.AvailOut == 0) return NeedMore;
+                    if (Strm.AvailOut == 0)
+                    {
+                        return NeedMore;
+                    }
                 }
             }
 
             flush_block_only(flush == ZFinish);
             if (Strm.AvailOut == 0)
+            {
                 return (flush == ZFinish) ? FinishStarted : NeedMore;
+            }
 
             return flush == ZFinish ? FinishDone : BlockDone;
         }
@@ -1287,7 +1357,7 @@ namespace System.util.zlib
         internal int DeflateInit2(ZStream strm, int level, int method, int windowBits,
                     int memLevel, int strategy)
         {
-            int noheader = 0;
+            var noheader = 0;
             //    byte[] my_version=ZLIB_VERSION;
 
             //
@@ -1298,7 +1368,10 @@ namespace System.util.zlib
 
             strm.Msg = null;
 
-            if (level == ZDefaultCompression) level = 6;
+            if (level == ZDefaultCompression)
+            {
+                level = 6;
+            }
 
             if (windowBits < 0)
             { // undocumented feature: suppress zlib header
@@ -1352,7 +1425,7 @@ namespace System.util.zlib
 
         internal int DeflateParams(ZStream strm, int _level, int _strategy)
         {
-            int err = ZOk;
+            var err = ZOk;
 
             if (_level == ZDefaultCompression)
             {
@@ -1408,15 +1481,21 @@ namespace System.util.zlib
 
         internal int DeflateSetDictionary(ZStream strm, byte[] dictionary, int dictLength)
         {
-            int length = dictLength;
-            int index = 0;
+            var length = dictLength;
+            var index = 0;
 
             if (dictionary == null || Status != InitState)
+            {
                 return ZStreamError;
+            }
 
             strm.Adler = strm._adler.adler32(strm.Adler, dictionary, 0, dictLength);
 
-            if (length < MinMatch) return ZOk;
+            if (length < MinMatch)
+            {
+                return ZOk;
+            }
+
             if (length > WSize - MinLookahead)
             {
                 length = WSize - MinLookahead;
@@ -1433,7 +1512,7 @@ namespace System.util.zlib
             InsH = Window[0] & 0xff;
             InsH = (((InsH) << HashShift) ^ (Window[1] & 0xff)) & HashMask;
 
-            for (int n = 0; n <= length - MinMatch; n++)
+            for (var n = 0; n <= length - MinMatch; n++)
             {
                 InsH = (((InsH) << HashShift) ^ (Window[(n) + (MinMatch - 1)] & 0xff)) & HashMask;
                 Prev[n & WMask] = Head[InsH];
@@ -1519,7 +1598,10 @@ namespace System.util.zlib
                     more += WSize;
                 }
 
-                if (Strm.AvailIn == 0) return;
+                if (Strm.AvailIn == 0)
+                {
+                    return;
+                }
 
                 // If there was no sliding:
                 //    strstart <= WSIZE+MAX_DIST-1 && lookahead <= MIN_LOOKAHEAD - 1 &&
@@ -1559,9 +1641,20 @@ namespace System.util.zlib
         internal void init_block()
         {
             // Initialize the trees.
-            for (int i = 0; i < LCodes; i++) DynLtree[i * 2] = 0;
-            for (int i = 0; i < DCodes; i++) DynDtree[i * 2] = 0;
-            for (int i = 0; i < BlCodes; i++) BlTree[i * 2] = 0;
+            for (var i = 0; i < LCodes; i++)
+            {
+                DynLtree[i * 2] = 0;
+            }
+
+            for (var i = 0; i < DCodes; i++)
+            {
+                DynDtree[i * 2] = 0;
+            }
+
+            for (var i = 0; i < BlCodes; i++)
+            {
+                BlTree[i * 2] = 0;
+            }
 
             DynLtree[EndBlock * 2] = 1;
             OptLen = StaticLen = 0;
@@ -1574,7 +1667,7 @@ namespace System.util.zlib
             WindowSize = 2 * WSize;
 
             Head[HashSize - 1] = 0;
-            for (int i = 0; i < HashSize - 1; i++)
+            for (var i = 0; i < HashSize - 1; i++)
             {
                 Head[i] = 0;
             }
@@ -1595,23 +1688,23 @@ namespace System.util.zlib
 
         internal int longest_match(int curMatch)
         {
-            int chainLength = MaxChainLength; // max hash chain length
-            int scan = Strstart;                 // current string
+            var chainLength = MaxChainLength; // max hash chain length
+            var scan = Strstart;                 // current string
             int match;                           // matched string
             int len;                             // length of current match
-            int bestLen = PrevLength;          // best match length so far
-            int limit = Strstart > (WSize - MinLookahead) ?
+            var bestLen = PrevLength;          // best match length so far
+            var limit = Strstart > (WSize - MinLookahead) ?
                 Strstart - (WSize - MinLookahead) : 0;
-            int niceMatch = NiceMatch;
+            var niceMatch = NiceMatch;
 
             // Stop when cur_match becomes <= limit. To simplify the code,
             // we prevent matches with the string of window index 0.
 
-            int wmask = WMask;
+            var wmask = WMask;
 
-            int strend = Strstart + MaxMatch;
-            byte scanEnd1 = Window[scan + bestLen - 1];
-            byte scanEnd = Window[scan + bestLen];
+            var strend = Strstart + MaxMatch;
+            var scanEnd1 = Window[scan + bestLen - 1];
+            var scanEnd = Window[scan + bestLen];
 
             // The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
             // It is easy to get rid of this optimization if necessary.
@@ -1624,7 +1717,10 @@ namespace System.util.zlib
 
             // Do not look for matches beyond the end of the input. This is necessary
             // to make deflate deterministic.
-            if (niceMatch > Lookahead) niceMatch = Lookahead;
+            if (niceMatch > Lookahead)
+            {
+                niceMatch = Lookahead;
+            }
 
             do
             {
@@ -1635,7 +1731,10 @@ namespace System.util.zlib
                 if (Window[match + bestLen] != scanEnd ||
                     Window[match + bestLen - 1] != scanEnd1 ||
                     Window[match] != Window[scan] ||
-                    Window[++match] != Window[scan + 1]) continue;
+                    Window[++match] != Window[scan + 1])
+                {
+                    continue;
+                }
 
                 // The check at best_len-1 can be removed because it will be made
                 // again later. (This heuristic is not always a win.)
@@ -1665,7 +1764,11 @@ namespace System.util.zlib
                 {
                     MatchStart = curMatch;
                     bestLen = len;
-                    if (len >= niceMatch) break;
+                    if (len >= niceMatch)
+                    {
+                        break;
+                    }
+
                     scanEnd1 = Window[scan + bestLen - 1];
                     scanEnd = Window[scan + bestLen];
                 }
@@ -1673,7 +1776,11 @@ namespace System.util.zlib
             } while ((curMatch = (Prev[curMatch & wmask] & 0xffff)) > limit
                 && --chainLength != 0);
 
-            if (bestLen <= Lookahead) return bestLen;
+            if (bestLen <= Lookahead)
+            {
+                return bestLen;
+            }
+
             return Lookahead;
         }
 
@@ -1693,8 +1800,8 @@ namespace System.util.zlib
             int k          // node to move down
             )
         {
-            int v = Heap[k];
-            int j = k << 1;  // left son of k
+            var v = Heap[k];
+            var j = k << 1;  // left son of k
             while (j <= HeapLen)
             {
                 // Set j to the smallest of the two sons:
@@ -1704,7 +1811,10 @@ namespace System.util.zlib
                     j++;
                 }
                 // Exit if v is smaller than both sons
-                if (Smaller(tree, v, Heap[j], Depth)) break;
+                if (Smaller(tree, v, Heap[j], Depth))
+                {
+                    break;
+                }
 
                 // Exchange v with the smallest son
                 Heap[k] = Heap[j]; k = j;
@@ -1754,12 +1864,12 @@ namespace System.util.zlib
             )
         {
             int n;                     // iterates over all tree elements
-            int prevlen = -1;          // last emitted length
+            var prevlen = -1;          // last emitted length
             int curlen;                // length of current code
             int nextlen = tree[0 * 2 + 1]; // length of next code
-            int count = 0;             // repeat count of the current code
-            int maxCount = 7;         // max repeat count
-            int minCount = 4;         // min repeat count
+            var count = 0;             // repeat count of the current code
+            var maxCount = 7;         // max repeat count
+            var minCount = 4;         // min repeat count
 
             if (nextlen == 0) { maxCount = 138; minCount = 3; }
             tree[(maxCode + 1) * 2 + 1] = -1; // guard
@@ -1777,7 +1887,11 @@ namespace System.util.zlib
                 }
                 else if (curlen != 0)
                 {
-                    if (curlen != prevlen) BlTree[curlen * 2]++;
+                    if (curlen != prevlen)
+                    {
+                        BlTree[curlen * 2]++;
+                    }
+
                     BlTree[Rep36 * 2]++;
                 }
                 else if (count <= 10)
@@ -1860,7 +1974,7 @@ namespace System.util.zlib
 
         internal void send_code(int c, short[] tree)
         {
-            int c2 = c * 2;
+            var c2 = c * 2;
             send_bits((tree[c2] & 0xffff), (tree[c2 + 1] & 0xffff));
         }
 
@@ -1875,12 +1989,12 @@ namespace System.util.zlib
             )
         {
             int n;                     // iterates over all tree elements
-            int prevlen = -1;          // last emitted length
+            var prevlen = -1;          // last emitted length
             int curlen;                // length of current code
             int nextlen = tree[0 * 2 + 1]; // length of next code
-            int count = 0;             // repeat count of the current code
-            int maxCount = 7;         // max repeat count
-            int minCount = 4;         // min repeat count
+            var count = 0;             // repeat count of the current code
+            var maxCount = 7;         // max repeat count
+            var minCount = 4;         // min repeat count
 
             if (nextlen == 0) { maxCount = 138; minCount = 3; }
 
@@ -1935,9 +2049,9 @@ namespace System.util.zlib
         /// </summary>
         internal void set_data_type()
         {
-            int n = 0;
-            int asciiFreq = 0;
-            int binFreq = 0;
+            var n = 0;
+            var asciiFreq = 0;
+            var binFreq = 0;
             while (n < 7) { binFreq += DynLtree[n * 2]; n++; }
             while (n < 128) { asciiFreq += DynLtree[n * 2]; n++; }
             while (n < Literals) { binFreq += DynLtree[n * 2]; n++; }

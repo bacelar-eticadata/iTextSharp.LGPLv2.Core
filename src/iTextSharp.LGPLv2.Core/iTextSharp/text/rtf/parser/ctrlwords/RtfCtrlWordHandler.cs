@@ -1,9 +1,8 @@
-using System;
 using iTextSharp.text.rtf.parser.destinations;
+using System;
 
 namespace iTextSharp.text.rtf.parser.ctrlwords
 {
-
     /// <summary>
     ///  RtfCtrlWordBase  is the base class for all
     /// control word handlers to extend from.
@@ -85,7 +84,8 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// @since 2.0.8
         /// </summary>
         private static readonly bool _debug = false;
-    // -1.0 unknown. Each class should override this as implemented.
+
+        // -1.0 unknown. Each class should override this as implemented.
         /// <summary>
         /// Constructor:
         /// The parser for this control word.
@@ -128,14 +128,13 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
                 {
                     SpecialHandler = "RtfDestinationNull";
                 }
-                string arg1 = ""; // stylesheet value - S, CS, TS
+                var arg1 = ""; // stylesheet value - S, CS, TS
                 RtfDestinationMgr.AddDestination(CtrlWord, new object[] { SpecialHandler, arg1 });
             }
             else
             {
                 if (CtrlWordType == RtfCtrlWordType.SYMBOL)
                 {
-
                 }
                 else
                 {
@@ -165,10 +164,10 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// <returns></returns>
         public bool HandleControlword(RtfCtrlWordData ctrlWordDataIn)
         {
-            bool result = false;
+            var result = false;
             CtrlWordData = ctrlWordDataIn;
             RtfDestination dest = null;
-            bool handled = false;
+            var handled = false;
 
             CtrlWordData.Prefix = CtrlWordPrefix;
             CtrlWordData.Suffix = CtrlWordSuffix;
@@ -228,7 +227,7 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
                         // If no substitute character, then provide special handling in the destination for the ctrl word.
                         if (data != null)
                         {
-                            foreach (char cc in data)
+                            foreach (var cc in data)
                             {
                                 handled = dest.HandleCharacter(cc);
                             }
@@ -243,7 +242,7 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
                 case RtfCtrlWordType.DESTINATION_EX:
                 case RtfCtrlWordType.DESTINATION:
                     // set the destination
-                    int x = 0;
+                    var x = 0;
                     if (CtrlWord == "shppict" || CtrlWord == "nonshppict")
                     {
                         x++;
@@ -282,7 +281,10 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// <returns> false  = stop processing,  true  = continue processing</returns>
         protected bool AfterControlWord()
         {
-            if (_debug) printDebug("afterControlWord");
+            if (_debug)
+            {
+                printDebug("afterControlWord");
+            }
             // TODO: This is where events would be triggered
             return true;
         }
@@ -299,10 +301,14 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// </summary>
         protected bool BeforeControlWord()
         {
-            if (_debug) printDebug("beforeControlWord");
+            if (_debug)
+            {
+                printDebug("beforeControlWord");
+            }
             // TODO: This is where events would be triggered
             return true;
         }
+
         /// <summary>
         /// Handle the control word.
         /// @since 2.0.8
@@ -310,7 +316,10 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// <returns> true  if control word was handled,  false  if it was not handled.</returns>
         protected bool OnControlWord()
         {
-            if (_debug) printDebug("onCtrlWord");
+            if (_debug)
+            {
+                printDebug("onCtrlWord");
+            }
             // TODO: This is where events would be triggered
             return false;
         }

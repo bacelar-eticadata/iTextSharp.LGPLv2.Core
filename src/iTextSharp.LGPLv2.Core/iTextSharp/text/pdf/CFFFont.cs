@@ -1,11 +1,10 @@
-using System.Text;
 using System.Collections;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
     public class CffFont
     {
-
         internal static string[] OperatorNames = {
             "version", "Notice", "FullName", "FamilyName",
             "Weight", "FontBBox", "BlueValues", "OtherBlues",
@@ -134,11 +133,10 @@ namespace iTextSharp.text.pdf
 
         protected int[] TopdictOffsets;
 
-        private int _offSize;
+        private readonly int _offSize;
 
         public CffFont(RandomAccessFileOrArray inputbuffer)
         {
-
             //System.err.Println("CFF: nStdString = "+standardStrings.length);
             Buf = inputbuffer;
             Seek(0);
@@ -180,12 +178,12 @@ namespace iTextSharp.text.pdf
             fdselectOffset    = new int[nfonts];
             */
 
-            for (int j = 0; j < NameOffsets.Length - 1; j++)
+            for (var j = 0; j < NameOffsets.Length - 1; j++)
             {
                 Fonts[j] = new Font();
                 Seek(NameOffsets[j]);
                 Fonts[j].Name = "";
-                for (int k = NameOffsets[j]; k < NameOffsets[j + 1]; k++)
+                for (var k = NameOffsets[j]; k < NameOffsets[j + 1]; k++)
                 {
                     Fonts[j].Name += GetCard8();
                 }
@@ -211,7 +209,7 @@ namespace iTextSharp.text.pdf
 
             // top dict
 
-            for (int j = 0; j < TopdictOffsets.Length - 1; j++)
+            for (var j = 0; j < TopdictOffsets.Length - 1; j++)
             {
                 Seek(TopdictOffsets[j]);
                 while (GetPosition() < TopdictOffsets[j + 1])
@@ -224,7 +222,9 @@ namespace iTextSharp.text.pdf
                         //System.err.Println("got it");
                     }
                     else if (Key == "ROS")
+                    {
                         Fonts[j].IsCid = true;
+                    }
                     else if (Key == "Private")
                     {
                         Fonts[j].PrivateLength = (int)Args[0];
@@ -233,7 +233,6 @@ namespace iTextSharp.text.pdf
                     else if (Key == "charset")
                     {
                         Fonts[j].CharsetOffset = (int)Args[0];
-
                     }
                     else if (Key == "Encoding")
                     {
@@ -243,16 +242,22 @@ namespace iTextSharp.text.pdf
                     else if (Key == "CharStrings")
                     {
                         Fonts[j].CharstringsOffset = (int)Args[0];
-                        int p = GetPosition();
+                        var p = GetPosition();
                         Fonts[j].CharstringsOffsets = GetIndex(Fonts[j].CharstringsOffset);
                         Seek(p);
                     }
                     else if (Key == "FDArray")
+                    {
                         Fonts[j].FdarrayOffset = (int)Args[0];
+                    }
                     else if (Key == "FDSelect")
+                    {
                         Fonts[j].FdselectOffset = (int)Args[0];
+                    }
                     else if (Key == "CharstringType")
+                    {
                         Fonts[j].CharstringType = (int)Args[0];
+                    }
                 }
 
                 // private dict
@@ -264,33 +269,37 @@ namespace iTextSharp.text.pdf
                     {
                         GetDictItem();
                         if (Key == "Subrs")
+                        {
                             //Add the private offset to the lsubrs since the offset is
                             // relative to the begining of the PrivateDict
                             Fonts[j].PrivateSubrs = (int)Args[0] + Fonts[j].PrivateOffset;
+                        }
                     }
                 }
 
                 // fdarray index
                 if (Fonts[j].FdarrayOffset >= 0)
                 {
-                    int[] fdarrayOffsets = GetIndex(Fonts[j].FdarrayOffset);
+                    var fdarrayOffsets = GetIndex(Fonts[j].FdarrayOffset);
 
                     Fonts[j].FdprivateOffsets = new int[fdarrayOffsets.Length - 1];
                     Fonts[j].FdprivateLengths = new int[fdarrayOffsets.Length - 1];
 
                     //System.err.Println("FD Font::");
 
-                    for (int k = 0; k < fdarrayOffsets.Length - 1; k++)
+                    for (var k = 0; k < fdarrayOffsets.Length - 1; k++)
                     {
                         Seek(fdarrayOffsets[k]);
                         while (GetPosition() < fdarrayOffsets[k + 1])
+                        {
                             GetDictItem();
+                        }
+
                         if (Key == "Private")
                         {
                             Fonts[j].FdprivateLengths[k] = (int)Args[0];
                             Fonts[j].FdprivateOffsets[k] = (int)Args[1];
                         }
-
                     }
                 }
             }
@@ -301,7 +310,13 @@ namespace iTextSharp.text.pdf
         {
             int j;
             for (j = 0; j < Fonts.Length; j++)
-                if (fontName.Equals(Fonts[j].Name)) return true;
+            {
+                if (fontName.Equals(Fonts[j].Name))
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -310,10 +325,19 @@ namespace iTextSharp.text.pdf
         {
             int j;
             for (j = 0; j < Fonts.Length; j++)
-                if (fontName.Equals(Fonts[j].Name)) break;
-            if (j == Fonts.Length) return null;
+            {
+                if (fontName.Equals(Fonts[j].Name))
+                {
+                    break;
+                }
+            }
 
-            ArrayList l = new ArrayList();
+            if (j == Fonts.Length)
+            {
+                return null;
+            }
+
+            var l = new ArrayList();
 
             // copy the header
 
@@ -348,13 +372,12 @@ namespace iTextSharp.text.pdf
 
             // create the topdict Index
 
-
             l.Add(new UInt16Item((char)1)); // count
             l.Add(new UInt8Item((char)2)); // offSize
             l.Add(new UInt16Item((char)1)); // first offset
             OffsetItem topdictIndex1Ref = new IndexOffsetItem(2);
             l.Add(topdictIndex1Ref);
-            IndexBaseItem topdictBase = new IndexBaseItem();
+            var topdictBase = new IndexBaseItem();
             l.Add(topdictBase);
 
             /*
@@ -406,9 +429,9 @@ namespace iTextSharp.text.pdf
             Seek(TopdictOffsets[j]);
             while (GetPosition() < TopdictOffsets[j + 1])
             {
-                int p1 = GetPosition();
+                var p1 = GetPosition();
                 GetDictItem();
-                int p2 = GetPosition();
+                var p2 = GetPosition();
                 if (Key == "Encoding"
                 || Key == "Private"
                 || Key == "FDSelect"
@@ -437,27 +460,45 @@ namespace iTextSharp.text.pdf
             }
             else
             {
-                string fdFontName = Fonts[j].Name + "-OneRange";
+                var fdFontName = Fonts[j].Name + "-OneRange";
                 if (fdFontName.Length > 127)
+                {
                     fdFontName = fdFontName.Substring(0, 127);
-                string extraStrings = "Adobe" + "Identity" + fdFontName;
+                }
 
-                int origStringsLen = StringOffsets[StringOffsets.Length - 1]
+                var extraStrings = "Adobe" + "Identity" + fdFontName;
+
+                var origStringsLen = StringOffsets[StringOffsets.Length - 1]
                 - StringOffsets[0];
-                int stringsBaseOffset = StringOffsets[0] - 1;
+                var stringsBaseOffset = StringOffsets[0] - 1;
 
                 byte stringsIndexOffSize;
-                if (origStringsLen + extraStrings.Length <= 0xff) stringsIndexOffSize = 1;
-                else if (origStringsLen + extraStrings.Length <= 0xffff) stringsIndexOffSize = 2;
-                else if (origStringsLen + extraStrings.Length <= 0xffffff) stringsIndexOffSize = 3;
-                else stringsIndexOffSize = 4;
+                if (origStringsLen + extraStrings.Length <= 0xff)
+                {
+                    stringsIndexOffSize = 1;
+                }
+                else if (origStringsLen + extraStrings.Length <= 0xffff)
+                {
+                    stringsIndexOffSize = 2;
+                }
+                else if (origStringsLen + extraStrings.Length <= 0xffffff)
+                {
+                    stringsIndexOffSize = 3;
+                }
+                else
+                {
+                    stringsIndexOffSize = 4;
+                }
 
                 l.Add(new UInt16Item((char)((StringOffsets.Length - 1) + 3))); // count
                 l.Add(new UInt8Item((char)stringsIndexOffSize)); // offSize
-                for (int i = 0; i < StringOffsets.Length; i++)
+                for (var i = 0; i < StringOffsets.Length; i++)
+                {
                     l.Add(new IndexOffsetItem(stringsIndexOffSize,
                     StringOffsets[i] - stringsBaseOffset));
-                int currentStringsOffset = StringOffsets[StringOffsets.Length - 1]
+                }
+
+                var currentStringsOffset = StringOffsets[StringOffsets.Length - 1]
                 - stringsBaseOffset;
                 //l.Add(new IndexOffsetItem(stringsIndexOffSize,currentStringsOffset));
                 currentStringsOffset += ("Adobe").Length;
@@ -512,7 +553,7 @@ namespace iTextSharp.text.pdf
 
                 OffsetItem privateIndex1Ref = new IndexOffsetItem(1);
                 l.Add(privateIndex1Ref);
-                IndexBaseItem privateBase = new IndexBaseItem();
+                var privateBase = new IndexBaseItem();
                 l.Add(privateBase);
 
                 // looking at the PS that acrobat generates from a PDF with
@@ -550,7 +591,7 @@ namespace iTextSharp.text.pdf
 
             // now create the new CFF font
 
-            int[] currentOffset = new int[1];
+            var currentOffset = new int[1];
             currentOffset[0] = 0;
 
             foreach (Item item in l)
@@ -563,8 +604,8 @@ namespace iTextSharp.text.pdf
                 item.Xref();
             }
 
-            int size = currentOffset[0];
-            byte[] b = new byte[size];
+            var size = currentOffset[0];
+            var b = new byte[size];
 
             foreach (Item item in l)
             {
@@ -576,9 +617,12 @@ namespace iTextSharp.text.pdf
 
         public string[] GetNames()
         {
-            string[] names = new string[Fonts.Length];
-            for (int i = 0; i < Fonts.Length; i++)
+            var names = new string[Fonts.Length];
+            for (var i = 0; i < Fonts.Length; i++)
+            {
                 names[i] = Fonts[i].Name;
+            }
+
             return names;
         }
 
@@ -587,13 +631,21 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public string GetString(char sid)
         {
-            if (sid < StandardStrings.Length) return StandardStrings[sid];
-            if (sid >= StandardStrings.Length + (StringOffsets.Length - 1)) return null;
-            int j = sid - StandardStrings.Length;
-            int p = GetPosition();
+            if (sid < StandardStrings.Length)
+            {
+                return StandardStrings[sid];
+            }
+
+            if (sid >= StandardStrings.Length + (StringOffsets.Length - 1))
+            {
+                return null;
+            }
+
+            var j = sid - StandardStrings.Length;
+            var p = GetPosition();
             Seek(StringOffsets[j]);
-            StringBuilder s = new StringBuilder();
-            for (int k = StringOffsets[j]; k < StringOffsets[j + 1]; k++)
+            var s = new StringBuilder();
+            for (var k = StringOffsets[j]; k < StringOffsets[j + 1]; k++)
             {
                 s.Append(GetCard8());
             }
@@ -615,7 +667,13 @@ namespace iTextSharp.text.pdf
         {
             int j;
             for (j = 0; j < Fonts.Length; j++)
-                if (fontName.Equals(Fonts[j].Name)) return Fonts[j].IsCid;
+            {
+                if (fontName.Equals(Fonts[j].Name))
+                {
+                    return Fonts[j].IsCid;
+                }
+            }
+
             return false;
         }
 
@@ -626,9 +684,10 @@ namespace iTextSharp.text.pdf
 
         internal char GetCard8()
         {
-            byte i = Buf.ReadByte();
+            var i = Buf.ReadByte();
             return (char)(i & 0xff);
         }
+
         /// <summary>
         /// read the offsets in the next index
         /// </summary>
@@ -647,7 +706,7 @@ namespace iTextSharp.text.pdf
 
             Seek(nextIndexOffset);
             count = GetCard16();
-            int[] offsets = new int[count + 1];
+            var offsets = new int[count + 1];
 
             if (count == 0)
             {
@@ -658,7 +717,7 @@ namespace iTextSharp.text.pdf
 
             indexOffSize = GetCard8();
 
-            for (int j = 0; j <= count; j++)
+            for (var j = 0; j <= count; j++)
             {
                 //nextIndexOffset = ofset to relative segment
                 offsets[j] = nextIndexOffset
@@ -682,8 +741,8 @@ namespace iTextSharp.text.pdf
 
         internal int GetOffset(int offSize)
         {
-            int offset = 0;
-            for (int i = 0; i < offSize; i++)
+            var offset = 0;
+            for (var i = 0; i < offSize; i++)
             {
                 offset *= 256;
                 offset += GetCard8();
@@ -712,19 +771,24 @@ namespace iTextSharp.text.pdf
         {
             Buf.Seek(offset);
         }
+
         protected void GetDictItem()
         {
-            for (int i = 0; i < ArgCount; i++) Args[i] = null;
+            for (var i = 0; i < ArgCount; i++)
+            {
+                Args[i] = null;
+            }
+
             ArgCount = 0;
             Key = null;
-            bool gotKey = false;
+            var gotKey = false;
 
             while (!gotKey)
             {
-                char b0 = GetCard8();
+                var b0 = GetCard8();
                 if (b0 == 29)
                 {
-                    int item = GetInt();
+                    var item = GetInt();
                     Args[ArgCount] = item;
                     ArgCount++;
                     //System.err.Println(item+" ");
@@ -732,7 +796,7 @@ namespace iTextSharp.text.pdf
                 }
                 if (b0 == 28)
                 {
-                    short item = GetShort();
+                    var item = GetShort();
                     Args[ArgCount] = (int)item;
                     ArgCount++;
                     //System.err.Println(item+" ");
@@ -740,7 +804,7 @@ namespace iTextSharp.text.pdf
                 }
                 if (b0 >= 32 && b0 <= 246)
                 {
-                    sbyte item = (sbyte)(b0 - 139);
+                    var item = (sbyte)(b0 - 139);
                     Args[ArgCount] = (int)item;
                     ArgCount++;
                     //System.err.Println(item+" ");
@@ -748,8 +812,8 @@ namespace iTextSharp.text.pdf
                 }
                 if (b0 >= 247 && b0 <= 250)
                 {
-                    char b1 = GetCard8();
-                    short item = (short)((b0 - 247) * 256 + b1 + 108);
+                    var b1 = GetCard8();
+                    var item = (short)((b0 - 247) * 256 + b1 + 108);
                     Args[ArgCount] = (int)item;
                     ArgCount++;
                     //System.err.Println(item+" ");
@@ -757,8 +821,8 @@ namespace iTextSharp.text.pdf
                 }
                 if (b0 >= 251 && b0 <= 254)
                 {
-                    char b1 = GetCard8();
-                    short item = (short)(-(b0 - 251) * 256 - b1 - 108);
+                    var b1 = GetCard8();
+                    var item = (short)(-(b0 - 251) * 256 - b1 - 108);
                     Args[ArgCount] = (int)item;
                     ArgCount++;
                     //System.err.Println(item+" ");
@@ -766,11 +830,11 @@ namespace iTextSharp.text.pdf
                 }
                 if (b0 == 30)
                 {
-                    string item = "";
-                    bool done = false;
-                    char buffer = (char)0;
+                    var item = "";
+                    var done = false;
+                    var buffer = (char)0;
                     byte avail = 0;
-                    int nibble = 0;
+                    var nibble = 0;
                     while (!done)
                     {
                         // get a nibble
@@ -786,7 +850,9 @@ namespace iTextSharp.text.pdf
                             case 0xf: done = true; break;
                             default:
                                 if (nibble >= 0 && nibble <= 9)
+                                {
                                     item += nibble.ToString();
+                                }
                                 else
                                 {
                                     item += "<NIBBLE ERROR: " + nibble + ">";
@@ -803,8 +869,14 @@ namespace iTextSharp.text.pdf
                 if (b0 <= 21)
                 {
                     gotKey = true;
-                    if (b0 != 12) Key = OperatorNames[b0];
-                    else Key = OperatorNames[32 + GetCard8()];
+                    if (b0 != 12)
+                    {
+                        Key = OperatorNames[b0];
+                    }
+                    else
+                    {
+                        Key = OperatorNames[32 + GetCard8()];
+                    }
                     //for (int i=0; i<arg_count; i++)
                     //  System.err.Print(args[i].ToString()+" ");
                     //System.err.Println(key+" ;");
@@ -829,7 +901,7 @@ namespace iTextSharp.text.pdf
             {
                 int indexOffSize = GetCard8();
                 Seek(indexOffset + 2 + 1 + count * indexOffSize);
-                int size = GetOffset(indexOffSize) - 1;
+                var size = GetOffset(indexOffSize) - 1;
                 return new RangeItem(Buf, indexOffset,
                 2 + 1 + (count + 1) * indexOffSize + size);
             }
@@ -839,7 +911,12 @@ namespace iTextSharp.text.pdf
         {
             public int Size = 5;
             public int Value;
-            public DictNumberItem(int value) { Value = value; }
+
+            public DictNumberItem(int value)
+            {
+                Value = value;
+            }
+
             /// <summary>
             /// this is imcomplete!
             /// </summary>
@@ -869,7 +946,11 @@ namespace iTextSharp.text.pdf
         protected internal class DictOffsetItem : OffsetItem
         {
             public int Size;
-            public DictOffsetItem() { Size = 5; }
+
+            public DictOffsetItem()
+            {
+                Size = 5;
+            }
 
             /// <summary>
             /// this is incomplete!
@@ -915,20 +996,24 @@ namespace iTextSharp.text.pdf
             public int[] FdSelect;
             public int FdSelectFormat;
             public int FdSelectLength;
+
             // only if CID
             public int FdselectOffset = -1;
 
             public string FullName;
             public bool IsCid;
             public string Name;
+
             // only if CID
             public int Nglyphs;
 
             public int Nstrings;
             public int PrivateLength = -1;
             public int PrivateOffset = -1; // only if not CID
-                                           // only if not CID
+
+            // only if not CID
             public int PrivateSubrs = -1;
+
             public int[] PrivateSubrsOffset;
             public int[][] PrivateSubrsOffsetsArray;
             public int[] SubrsOffsets;
@@ -942,11 +1027,13 @@ namespace iTextSharp.text.pdf
         {
             private readonly IndexBaseItem _indexBase;
             private readonly OffsetItem _offItem;
+
             public IndexMarkerItem(OffsetItem offItem, IndexBaseItem indexBase)
             {
                 _offItem = offItem;
                 _indexBase = indexBase;
             }
+
             public override void Xref()
             {
                 //System.err.Println("index marker item, base="+indexBase.myOffset+" my="+this.myOffset);
@@ -964,12 +1051,20 @@ namespace iTextSharp.text.pdf
         protected internal class IndexOffsetItem : OffsetItem
         {
             public int Size;
-            public IndexOffsetItem(int size, int value) { Size = size; Value = value; }
-            public IndexOffsetItem(int size) { Size = size; }
+
+            public IndexOffsetItem(int size, int value)
+            {
+                Size = size; Value = value;
+            }
+
+            public IndexOffsetItem(int size)
+            {
+                Size = size;
+            }
 
             public override void Emit(byte[] buffer)
             {
-                int i = 0;
+                var i = 0;
                 switch (Size)
                 {
                     case 4:
@@ -1008,6 +1103,7 @@ namespace iTextSharp.text.pdf
         protected internal abstract class Item
         {
             protected internal int MyOffset = -1;
+
             /// <summary>
             /// Emit the byte stream for this item.
             /// </summary>
@@ -1020,6 +1116,7 @@ namespace iTextSharp.text.pdf
             {
                 MyOffset = currentOffset[0];
             }
+
             /// <summary>
             /// Fix up cross references to this item (applies only to markers).
             /// </summary>
@@ -1028,8 +1125,13 @@ namespace iTextSharp.text.pdf
 
         protected internal class MarkerItem : Item
         {
-            readonly OffsetItem _p;
-            public MarkerItem(OffsetItem pointerToMarker) { _p = pointerToMarker; }
+            private readonly OffsetItem _p;
+
+            public MarkerItem(OffsetItem pointerToMarker)
+            {
+                _p = pointerToMarker;
+            }
+
             public override void Xref()
             {
                 _p.Set(MyOffset);
@@ -1039,13 +1141,13 @@ namespace iTextSharp.text.pdf
         protected internal abstract class OffsetItem : Item
         {
             public int Value;
+
             /// <summary>
             /// set the value of an offset item that was initially unknown.
             /// It will be fixed up latex by a call to xref on some marker.
             /// </summary>
             public void Set(int offset) { Value = offset; }
         }
-
 
         /// <summary>
         /// A range item.
@@ -1055,18 +1157,22 @@ namespace iTextSharp.text.pdf
         {
             public int Offset, Length;
             private readonly RandomAccessFileOrArray _buf;
+
             public RangeItem(RandomAccessFileOrArray buf, int offset, int length)
             {
                 Offset = offset;
                 Length = length;
                 _buf = buf;
             }
+
             public override void Emit(byte[] buffer)
             {
                 //System.err.Println("range emit offset "+offset+" size="+length);
                 _buf.Seek(Offset);
-                for (int i = MyOffset; i < MyOffset + Length; i++)
+                for (var i = MyOffset; i < MyOffset + Length; i++)
+                {
                     buffer[i] = _buf.ReadByte();
+                }
                 //System.err.Println("finished range emit");
             }
 
@@ -1076,15 +1182,22 @@ namespace iTextSharp.text.pdf
                 currentOffset[0] += Length;
             }
         }
+
         protected internal class StringItem : Item
         {
             public string S;
-            public StringItem(string s) { S = s; }
+
+            public StringItem(string s)
+            {
+                S = s;
+            }
 
             public override void Emit(byte[] buffer)
             {
-                for (int i = 0; i < S.Length; i++)
+                for (var i = 0; i < S.Length; i++)
+                {
                     buffer[MyOffset + i] = (byte)(S[i] & 0xff);
+                }
             }
 
             public override void Increment(int[] currentOffset)
@@ -1103,17 +1216,20 @@ namespace iTextSharp.text.pdf
         {
             private readonly IndexBaseItem _indexBase;
             private readonly OffsetItem _offItem;
+
             public SubrMarkerItem(OffsetItem offItem, IndexBaseItem indexBase)
             {
                 _offItem = offItem;
                 _indexBase = indexBase;
             }
+
             public override void Xref()
             {
                 //System.err.Println("index marker item, base="+indexBase.myOffset+" my="+this.myOffset);
                 _offItem.Set(MyOffset - _indexBase.MyOffset);
             }
         }
+
         /// <summary>
         /// Card24 item.
         /// </summary>
@@ -1121,7 +1237,11 @@ namespace iTextSharp.text.pdf
         protected internal class UInt16Item : Item
         {
             public char Value;
-            public UInt16Item(char value) { Value = value; }
+
+            public UInt16Item(char value)
+            {
+                Value = value;
+            }
 
             /// <summary>
             /// this is incomplete!
@@ -1142,7 +1262,11 @@ namespace iTextSharp.text.pdf
         protected internal class UInt24Item : Item
         {
             public int Value;
-            public UInt24Item(int value) { Value = value; }
+
+            public UInt24Item(int value)
+            {
+                Value = value;
+            }
 
             /// <summary>
             /// this is incomplete!
@@ -1168,7 +1292,11 @@ namespace iTextSharp.text.pdf
         protected internal class UInt32Item : Item
         {
             public int Value;
-            public UInt32Item(int value) { Value = value; }
+
+            public UInt32Item(int value)
+            {
+                Value = value;
+            }
 
             /// <summary>
             /// this is incomplete!
@@ -1198,7 +1326,11 @@ namespace iTextSharp.text.pdf
         protected internal class UInt8Item : Item
         {
             public char Value;
-            public UInt8Item(char value) { Value = value; }
+
+            public UInt8Item(char value)
+            {
+                Value = value;
+            }
 
             /// <summary>
             /// this is incomplete!

@@ -9,11 +9,11 @@ namespace iTextSharp.text.pdf.hyphenation
     /// </summary>
     public class ByteVector
     {
-
         /// <summary>
         /// Capacity increment size
         /// </summary>
         private static readonly int _defaultBlockSize = 2048;
+
         private readonly int _blockSize;
 
         /// <summary>
@@ -26,14 +26,21 @@ namespace iTextSharp.text.pdf.hyphenation
         /// </summary>
         private int _n;
 
-        public ByteVector() : this(_defaultBlockSize) { }
+        public ByteVector() : this(_defaultBlockSize)
+        {
+        }
 
         public ByteVector(int capacity)
         {
             if (capacity > 0)
+            {
                 _blockSize = capacity;
+            }
             else
+            {
                 _blockSize = _defaultBlockSize;
+            }
+
             _arr = new byte[_blockSize];
             _n = 0;
         }
@@ -48,53 +55,35 @@ namespace iTextSharp.text.pdf.hyphenation
         public ByteVector(byte[] a, int capacity)
         {
             if (capacity > 0)
+            {
                 _blockSize = capacity;
+            }
             else
+            {
                 _blockSize = _defaultBlockSize;
+            }
+
             _arr = a;
             _n = 0;
         }
 
-        public byte[] Arr
-        {
-            get
-            {
-                return _arr;
-            }
-        }
+        public byte[] Arr => _arr;
 
         /// <summary>
         /// returns current capacity of array
         /// </summary>
-        public int Capacity
-        {
-            get
-            {
-                return _arr.Length;
-            }
-        }
+        public int Capacity => _arr.Length;
 
         /// <summary>
         /// return number of items in array
         /// </summary>
-        public int Length
-        {
-            get
-            {
-                return _n;
-            }
-        }
+        public int Length => _n;
+
         public byte this[int index]
         {
-            get
-            {
-                return _arr[index];
-            }
+            get => _arr[index];
 
-            set
-            {
-                _arr[index] = value;
-            }
+            set => _arr[index] = value;
         }
 
         /// <summary>
@@ -102,11 +91,11 @@ namespace iTextSharp.text.pdf.hyphenation
         /// </summary>
         public int Alloc(int size)
         {
-            int index = _n;
-            int len = _arr.Length;
+            var index = _n;
+            var len = _arr.Length;
             if (_n + size >= len)
             {
-                byte[] aux = new byte[len + _blockSize];
+                var aux = new byte[len + _blockSize];
                 Array.Copy(_arr, 0, aux, 0, len);
                 _arr = aux;
             }
@@ -118,7 +107,7 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             if (_n < _arr.Length)
             {
-                byte[] aux = new byte[_n];
+                var aux = new byte[_n];
                 Array.Copy(_arr, 0, aux, 0, _n);
                 _arr = aux;
             }

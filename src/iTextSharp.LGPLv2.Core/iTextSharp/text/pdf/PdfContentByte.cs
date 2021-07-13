@@ -1,9 +1,9 @@
-﻿using System;
+﻿using iTextSharp.text.exceptions;
+using iTextSharp.text.pdf.intern;
+using System;
 using System.Collections;
 using System.Text;
 using System.util;
-using iTextSharp.text.exceptions;
-using iTextSharp.text.pdf.intern;
 
 namespace iTextSharp.text.pdf
 {
@@ -14,7 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfContentByte
     {
-
         /// <summary>
         /// The alignement is center
         /// </summary>
@@ -173,86 +172,44 @@ namespace iTextSharp.text.pdf
         /// Gets the current character spacing.
         /// </summary>
         /// <returns>the current character spacing</returns>
-        public float CharacterSpacing
-        {
-            get
-            {
-                return State.CharSpace;
-            }
-        }
+        public float CharacterSpacing => State.CharSpace;
 
         /// <summary>
         /// Gets a duplicate of this  PdfContentByte . All
         /// the members are copied by reference but the buffer stays different.
         /// </summary>
         /// <returns>a copy of this  PdfContentByte </returns>
-        public virtual PdfContentByte Duplicate
-        {
-            get
-            {
-                return new PdfContentByte(Writer);
-            }
-        }
+        public virtual PdfContentByte Duplicate => new PdfContentByte(Writer);
 
         /// <summary>
         /// Gets the current character spacing.
         /// </summary>
         /// <returns>the current character spacing</returns>
-        public float HorizontalScaling
-        {
-            get
-            {
-                return State.Scale;
-            }
-        }
+        public float HorizontalScaling => State.Scale;
 
         /// <summary>
         /// Gets the internal buffer.
         /// </summary>
         /// <returns>the internal buffer</returns>
-        public ByteBuffer InternalBuffer
-        {
-            get
-            {
-                return Content;
-            }
-        }
+        public ByteBuffer InternalBuffer => Content;
 
         /// <summary>
         /// Gets the current text leading.
         /// </summary>
         /// <returns>the current text leading</returns>
-        public float Leading
-        {
-            get
-            {
-                return State.leading;
-            }
-        }
+        public float Leading => State.leading;
 
         /// <summary>
         /// Gets the  PdfDocument  in use by this object.
         /// </summary>
         /// <returns>the  PdfDocument  in use by this object</returns>
-        public PdfDocument PdfDocument
-        {
-            get
-            {
-                return Pdf;
-            }
-        }
+        public PdfDocument PdfDocument => Pdf;
 
         /// <summary>
         /// Gets the  PdfWriter  in use by this object.
         /// </summary>
         /// <returns>the  PdfWriter  in use by this object</returns>
-        public PdfWriter PdfWriter
-        {
-            get
-            {
-                return Writer;
-            }
-        }
+        public PdfWriter PdfWriter => Writer;
 
         /// <summary>
         /// Gets the root outline.
@@ -271,57 +228,27 @@ namespace iTextSharp.text.pdf
         /// Gets the current word spacing.
         /// </summary>
         /// <returns>the current word spacing</returns>
-        public float WordSpacing
-        {
-            get
-            {
-                return State.WordSpace;
-            }
-        }
+        public float WordSpacing => State.WordSpace;
 
         /// <summary>
         /// Gets the x position of the text line matrix.
         /// </summary>
         /// <returns>the x position of the text line matrix</returns>
-        public float Xtlm
-        {
-            get
-            {
-                return State.XTlm;
-            }
-        }
+        public float Xtlm => State.XTlm;
 
         /// <summary>
         /// Gets the y position of the text line matrix.
         /// </summary>
         /// <returns>the y position of the text line matrix</returns>
-        public float Ytlm
-        {
-            get
-            {
-                return State.YTlm;
-            }
-        }
+        public float Ytlm => State.YTlm;
 
-        internal virtual PageResources PageResources
-        {
-            get
-            {
-                return Pdf.PageResources;
-            }
-        }
+        internal virtual PageResources PageResources => Pdf.PageResources;
 
         /// <summary>
         /// Gets the size of this content.
         /// </summary>
         /// <returns>the size of the content</returns>
-        internal int Size
-        {
-            get
-            {
-                return Content.Size;
-            }
-        }
+        internal int Size => Content.Size;
 
         /// <summary>
         /// Generates an array of bezier curves to draw an arc.
@@ -374,21 +301,21 @@ namespace iTextSharp.text.pdf
                 nfrag = (int)(Math.Ceiling(Math.Abs(extent) / 90f));
                 fragAngle = extent / nfrag;
             }
-            float xCen = (x1 + x2) / 2f;
-            float yCen = (y1 + y2) / 2f;
-            float rx = (x2 - x1) / 2f;
-            float ry = (y2 - y1) / 2f;
-            float halfAng = (float)(fragAngle * Math.PI / 360.0);
-            float kappa = (float)(Math.Abs(4.0 / 3.0 * (1.0 - Math.Cos(halfAng)) / Math.Sin(halfAng)));
-            ArrayList pointList = new ArrayList();
-            for (int i = 0; i < nfrag; ++i)
+            var xCen = (x1 + x2) / 2f;
+            var yCen = (y1 + y2) / 2f;
+            var rx = (x2 - x1) / 2f;
+            var ry = (y2 - y1) / 2f;
+            var halfAng = (float)(fragAngle * Math.PI / 360.0);
+            var kappa = (float)(Math.Abs(4.0 / 3.0 * (1.0 - Math.Cos(halfAng)) / Math.Sin(halfAng)));
+            var pointList = new ArrayList();
+            for (var i = 0; i < nfrag; ++i)
             {
-                float theta0 = (float)((startAng + i * fragAngle) * Math.PI / 180.0);
-                float theta1 = (float)((startAng + (i + 1) * fragAngle) * Math.PI / 180.0);
-                float cos0 = (float)Math.Cos(theta0);
-                float cos1 = (float)Math.Cos(theta1);
-                float sin0 = (float)Math.Sin(theta0);
-                float sin1 = (float)Math.Sin(theta1);
+                var theta0 = (float)((startAng + i * fragAngle) * Math.PI / 180.0);
+                var theta1 = (float)((startAng + (i + 1) * fragAngle) * Math.PI / 180.0);
+                var cos0 = (float)Math.Cos(theta0);
+                var cos1 = (float)Math.Cos(theta1);
+                var sin0 = (float)Math.Sin(theta0);
+                var sin1 = (float)Math.Sin(theta1);
                 if (fragAngle > 0f)
                 {
                     pointList.Add(new[]{xCen + rx * cos0,
@@ -423,16 +350,19 @@ namespace iTextSharp.text.pdf
         /// <returns>a PdfTextArray</returns>
         public static PdfTextArray GetKernArray(string text, BaseFont font)
         {
-            PdfTextArray pa = new PdfTextArray();
-            StringBuilder acc = new StringBuilder();
-            int len = text.Length - 1;
-            char[] c = text.ToCharArray();
+            var pa = new PdfTextArray();
+            var acc = new StringBuilder();
+            var len = text.Length - 1;
+            var c = text.ToCharArray();
             if (len >= 0)
-                acc.Append(c, 0, 1);
-            for (int k = 0; k < len; ++k)
             {
-                char c2 = c[k + 1];
-                int kern = font.GetKerning(c[k], c2);
+                acc.Append(c, 0, 1);
+            }
+
+            for (var k = 0; k < len; ++k)
+            {
+                var c2 = c[k + 1];
+                var kern = font.GetKerning(c[k], c2);
                 if (kern == 0)
                 {
                     acc.Append(c2);
@@ -452,7 +382,10 @@ namespace iTextSharp.text.pdf
         public void Add(PdfContentByte other)
         {
             if (other.Writer != null && Writer != other.Writer)
+            {
                 throw new Exception("Inconsistent writers. Are you mixing two documents?");
+            }
+
             Content.Append(other.Content);
         }
 
@@ -477,8 +410,11 @@ namespace iTextSharp.text.pdf
         public virtual void AddImage(Image image, bool inlineImage)
         {
             if (!image.HasAbsolutePosition())
+            {
                 throw new DocumentException("The image must have absolute positioning.");
-            float[] matrix = image.Matrix;
+            }
+
+            var matrix = image.Matrix;
             matrix[Image.CX] = image.AbsoluteX - matrix[Image.CX];
             matrix[Image.CY] = image.AbsoluteY - matrix[Image.CY];
             AddImage(image, matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], inlineImage);
@@ -519,13 +455,16 @@ namespace iTextSharp.text.pdf
         public virtual void AddImage(Image image, float a, float b, float c, float d, float e, float f, bool inlineImage)
         {
             if (image.Layer != null)
+            {
                 BeginLayer(image.Layer);
+            }
+
             if (image.IsImgTemplate())
             {
                 Writer.AddDirectImageSimple(image);
-                PdfTemplate template = image.TemplateData;
-                float w = template.Width;
-                float h = template.Height;
+                var template = image.TemplateData;
+                var w = template.Width;
+                var h = template.Height;
                 AddTemplate(template, a / w, b / w, c / h, d / h, e, f);
             }
             else
@@ -540,28 +479,31 @@ namespace iTextSharp.text.pdf
                 if (inlineImage)
                 {
                     Content.Append("\nBI\n");
-                    PdfImage pimage = new PdfImage(image, "", null);
+                    var pimage = new PdfImage(image, "", null);
                     if (image is ImgJbig2)
                     {
-                        byte[] globals = ((ImgJbig2)image).GlobalBytes;
+                        var globals = ((ImgJbig2)image).GlobalBytes;
                         if (globals != null)
                         {
-                            PdfDictionary decodeparms = new PdfDictionary();
+                            var decodeparms = new PdfDictionary();
                             decodeparms.Put(PdfName.Jbig2Globals, Writer.GetReferenceJbig2Globals(globals));
                             pimage.Put(PdfName.Decodeparms, decodeparms);
                         }
                     }
                     foreach (PdfName key in pimage.Keys)
                     {
-                        PdfObject value = pimage.Get(key);
-                        string s = (string)_abrev[key];
+                        var value = pimage.Get(key);
+                        var s = (string)_abrev[key];
                         if (s == null)
+                        {
                             continue;
+                        }
+
                         Content.Append(s);
-                        bool check = true;
+                        var check = true;
                         if (key.Equals(PdfName.Colorspace) && value.IsArray())
                         {
-                            PdfArray ar = (PdfArray)value;
+                            var ar = (PdfArray)value;
                             if (ar.Size == 4
                                 && PdfName.Indexed.Equals(ar.GetAsName(0))
                                 && ar[1].IsName()
@@ -571,12 +513,11 @@ namespace iTextSharp.text.pdf
                             {
                                 check = false;
                             }
-
                         }
                         if (check && key.Equals(PdfName.Colorspace) && !value.IsName())
                         {
-                            PdfName cs = Writer.GetColorspaceName();
-                            PageResources prs = PageResources;
+                            var cs = Writer.GetColorspaceName();
+                            var prs = PageResources;
                             prs.AddColor(cs, Writer.AddToBody(value).IndirectReference);
                             value = cs;
                         }
@@ -590,8 +531,8 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     PdfName name;
-                    PageResources prs = PageResources;
-                    Image maskImage = image.ImageMask;
+                    var prs = PageResources;
+                    var maskImage = image.ImageMask;
                     if (maskImage != null)
                     {
                         name = Writer.AddDirectImageSimple(maskImage);
@@ -605,28 +546,34 @@ namespace iTextSharp.text.pdf
             if (image.HasBorders())
             {
                 SaveState();
-                float w = image.Width;
-                float h = image.Height;
+                var w = image.Width;
+                var h = image.Height;
                 ConcatCtm(a / w, b / w, c / h, d / h, e, f);
                 Rectangle(image);
                 RestoreState();
             }
             if (image.Layer != null)
+            {
                 EndLayer();
-            Annotation annot = image.Annotation;
+            }
+
+            var annot = image.Annotation;
             if (annot == null)
+            {
                 return;
-            float[] r = new float[_unitRect.Length];
-            for (int k = 0; k < _unitRect.Length; k += 2)
+            }
+
+            var r = new float[_unitRect.Length];
+            for (var k = 0; k < _unitRect.Length; k += 2)
             {
                 r[k] = a * _unitRect[k] + c * _unitRect[k + 1] + e;
                 r[k + 1] = b * _unitRect[k] + d * _unitRect[k + 1] + f;
             }
-            float llx = r[0];
-            float lly = r[1];
-            float urx = llx;
-            float ury = lly;
-            for (int k = 2; k < r.Length; k += 2)
+            var llx = r[0];
+            var lly = r[1];
+            var urx = llx;
+            var ury = lly;
+            for (var k = 2; k < r.Length; k += 2)
             {
                 llx = Math.Min(llx, r[k]);
                 lly = Math.Min(lly, r[k + 1]);
@@ -635,9 +582,12 @@ namespace iTextSharp.text.pdf
             }
             annot = new Annotation(annot);
             annot.SetDimensions(llx, lly, urx, ury);
-            PdfAnnotation an = PdfAnnotationsImp.ConvertAnnotation(Writer, annot, new Rectangle(llx, lly, urx, ury));
+            var an = PdfAnnotationsImp.ConvertAnnotation(Writer, annot, new Rectangle(llx, lly, urx, ury));
             if (an == null)
+            {
                 return;
+            }
+
             AddAnnotation(an);
         }
 
@@ -659,8 +609,8 @@ namespace iTextSharp.text.pdf
         public void AddPsxObject(PdfPsxObject psobject)
         {
             CheckWriter();
-            PdfName name = Writer.AddDirectTemplateSimple(psobject, null);
-            PageResources prs = PageResources;
+            var name = Writer.AddDirectTemplateSimple(psobject, null);
+            var prs = PageResources;
             name = prs.AddXObject(name, psobject.IndirectReference);
             Content.Append(name.GetBytes()).Append(" Do").Append_i(Separator);
         }
@@ -679,8 +629,8 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             CheckNoPattern(template);
-            PdfName name = Writer.AddDirectTemplateSimple(template, null);
-            PageResources prs = PageResources;
+            var name = Writer.AddDirectTemplateSimple(template, null);
+            var prs = PageResources;
             name = prs.AddXObject(name, template.IndirectReference);
             Content.Append("q ");
             Content.Append(a).Append(' ');
@@ -716,12 +666,15 @@ namespace iTextSharp.text.pdf
         /// <param name="extent">angle extent in degrees</param>
         public void Arc(float x1, float y1, float x2, float y2, float startAng, float extent)
         {
-            ArrayList ar = BezierArc(x1, y1, x2, y2, startAng, extent);
+            var ar = BezierArc(x1, y1, x2, y2, startAng, extent);
             if (ar.Count == 0)
+            {
                 return;
-            float[] pt = (float[])ar[0];
+            }
+
+            var pt = (float[])ar[0];
             MoveTo(pt[0], pt[1]);
-            for (int k = 0; k < ar.Count; ++k)
+            for (var k = 0; k < ar.Count; ++k)
             {
                 pt = (float[])ar[k];
                 CurveTo(pt[2], pt[3], pt[4], pt[5], pt[6], pt[7]);
@@ -739,17 +692,23 @@ namespace iTextSharp.text.pdf
         public void BeginLayer(IPdfOcg layer)
         {
             if ((layer is PdfLayer) && ((PdfLayer)layer).Title != null)
+            {
                 throw new ArgumentException("A title is not a layer");
+            }
+
             if (LayerDepth == null)
+            {
                 LayerDepth = new ArrayList();
+            }
+
             if (layer is PdfLayerMembership)
             {
                 LayerDepth.Add(1);
                 beginLayer2(layer);
                 return;
             }
-            int n = 0;
-            PdfLayer la = (PdfLayer)layer;
+            var n = 0;
+            var la = (PdfLayer)layer;
             while (la != null)
             {
                 if (la.Title == null)
@@ -770,8 +729,8 @@ namespace iTextSharp.text.pdf
         /// <param name="struc">the tagging structure</param>
         public void BeginMarkedContentSequence(PdfStructureElement struc)
         {
-            PdfObject obj = struc.Get(PdfName.K);
-            int mark = Pdf.GetMarkPoint();
+            var obj = struc.Get(PdfName.K);
+            var mark = Pdf.GetMarkPoint();
             if (obj != null)
             {
                 PdfArray ar = null;
@@ -785,11 +744,16 @@ namespace iTextSharp.text.pdf
                 {
                     ar = (PdfArray)obj;
                     if (!ar[0].IsNumber())
+                    {
                         throw new ArgumentException("The structure has kids.");
+                    }
                 }
                 else
+                {
                     throw new ArgumentException("Unknown object at /K " + obj.GetType());
-                PdfDictionary dic = new PdfDictionary(PdfName.Mcr);
+                }
+
+                var dic = new PdfDictionary(PdfName.Mcr);
                 dic.Put(PdfName.Pg, Writer.CurrentPage);
                 dic.Put(PdfName.Mcid, new PdfNumber(mark));
                 ar.Add(dic);
@@ -822,16 +786,23 @@ namespace iTextSharp.text.pdf
             }
             Content.Append(tag.GetBytes()).Append(' ');
             if (inline)
+            {
                 property.ToPdf(Writer, Content);
+            }
             else
             {
                 PdfObject[] objs;
                 if (Writer.PropertyExists(property))
+                {
                     objs = Writer.AddSimpleProperty(property, null);
+                }
                 else
+                {
                     objs = Writer.AddSimpleProperty(property, Writer.PdfIndirectReference);
-                PdfName name = (PdfName)objs[0];
-                PageResources prs = PageResources;
+                }
+
+                var name = (PdfName)objs[0];
+                var prs = PageResources;
                 name = prs.AddProperty(name, (PdfIndirectReference)objs[1]);
                 Content.Append(name.GetBytes());
             }
@@ -871,7 +842,7 @@ namespace iTextSharp.text.pdf
         /// <param name="r">radius of circle</param>
         public void Circle(float x, float y, float r)
         {
-            float b = 0.5523f;
+            var b = 0.5523f;
             MoveTo(x + r, y);
             CurveTo(x + r, y + r * b, x + r * b, y + r, x, y + r);
             CurveTo(x - r * b, y + r, x - r, y + r * b, x - r, y);
@@ -944,12 +915,17 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             if (xstep.ApproxEquals(0.0f) || ystep.ApproxEquals(0.0f))
+            {
                 throw new Exception("XStep or YStep can not be ZERO.");
-            PdfPatternPainter painter = new PdfPatternPainter(Writer);
-            painter.Width = width;
-            painter.Height = height;
-            painter.XStep = xstep;
-            painter.YStep = ystep;
+            }
+
+            var painter = new PdfPatternPainter(Writer)
+            {
+                Width = width,
+                Height = height,
+                XStep = xstep,
+                YStep = ystep
+            };
             Writer.AddSimplePattern(painter);
             return painter;
         }
@@ -981,12 +957,17 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             if (xstep.ApproxEquals(0.0f) || ystep.ApproxEquals(0.0f))
+            {
                 throw new Exception("XStep or YStep can not be ZERO.");
-            PdfPatternPainter painter = new PdfPatternPainter(Writer, color);
-            painter.Width = width;
-            painter.Height = height;
-            painter.XStep = xstep;
-            painter.YStep = ystep;
+            }
+
+            var painter = new PdfPatternPainter(Writer, color)
+            {
+                Width = width,
+                Height = height,
+                XStep = xstep,
+                YStep = ystep
+            };
             Writer.AddSimplePattern(painter);
             return painter;
         }
@@ -1038,8 +1019,8 @@ namespace iTextSharp.text.pdf
 
         public void DrawButton(float llx, float lly, float urx, float ury, string text, BaseFont bf, float size)
         {
-            if (llx > urx) { float x = llx; llx = urx; urx = x; }
-            if (lly > ury) { float y = lly; lly = ury; ury = y; }
+            if (llx > urx) { var x = llx; llx = urx; urx = x; }
+            if (lly > ury) { var y = lly; lly = ury; ury = y; }
             // black rectangle not filled
             SetColorStroke(new BaseColor(0x00, 0x00, 0x00));
             SetLineWidth(1);
@@ -1078,8 +1059,8 @@ namespace iTextSharp.text.pdf
 
         public void DrawRadioField(float llx, float lly, float urx, float ury, bool on)
         {
-            if (llx > urx) { float x = llx; llx = urx; urx = x; }
-            if (lly > ury) { float y = lly; lly = ury; ury = y; }
+            if (llx > urx) { var x = llx; llx = urx; urx = x; }
+            if (lly > ury) { var y = lly; lly = ury; ury = y; }
             // silver circle
             SetLineWidth(1);
             SetLineCap(1);
@@ -1111,8 +1092,8 @@ namespace iTextSharp.text.pdf
 
         public void DrawTextField(float llx, float lly, float urx, float ury)
         {
-            if (llx > urx) { float x = llx; llx = urx; urx = x; }
-            if (lly > ury) { float y = lly; lly = ury; ury = y; }
+            if (llx > urx) { var x = llx; llx = urx; urx = x; }
+            if (lly > ury) { var y = lly; lly = ury; ury = y; }
             // silver rectangle not filled
             SetColorStroke(new BaseColor(0xC0, 0xC0, 0xC0));
             SetLineWidth(1);
@@ -1168,7 +1149,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public void EndLayer()
         {
-            int n = 1;
+            var n = 1;
             if (LayerDepth != null && LayerDepth.Count > 0)
             {
                 n = (int)LayerDepth[LayerDepth.Count - 1];
@@ -1179,7 +1160,9 @@ namespace iTextSharp.text.pdf
                 throw new IllegalPdfSyntaxException("Unbalanced layer operators.");
             }
             while (n-- > 0)
+            {
                 Content.Append("EMC").Append_i(Separator);
+            }
         }
 
         /// <summary>
@@ -1235,30 +1218,38 @@ namespace iTextSharp.text.pdf
 
         public float GetEffectiveStringWidth(string text, bool kerned)
         {
-            BaseFont bf = State.FontDetails.BaseFont;
+            var bf = State.FontDetails.BaseFont;
 
             float w;
             if (kerned)
+            {
                 w = bf.GetWidthPointKerned(text, State.size);
+            }
             else
+            {
                 w = bf.GetWidthPoint(text, State.size);
+            }
 
             if (State.CharSpace.ApproxNotEqual(0.0f) && text.Length > 1)
             {
                 w += State.CharSpace * (text.Length - 1);
             }
 
-            int ft = bf.FontType;
+            var ft = bf.FontType;
             if (State.WordSpace.ApproxNotEqual(0.0f) && (ft == BaseFont.FONT_TYPE_T1 || ft == BaseFont.FONT_TYPE_TT || ft == BaseFont.FONT_TYPE_T3))
             {
-                for (int i = 0; i < (text.Length - 1); i++)
+                for (var i = 0; i < (text.Length - 1); i++)
                 {
                     if (text[i] == ' ')
+                    {
                         w += State.WordSpace;
+                    }
                 }
             }
             if (State.Scale.ApproxNotEqual(100.0f))
+            {
                 w = (w * State.Scale) / 100.0f;
+            }
 
             //System.out.Println("String width = " + Float.ToString(w));
             return w;
@@ -1380,12 +1371,14 @@ namespace iTextSharp.text.pdf
         public virtual void PaintShading(PdfShading shading)
         {
             Writer.AddSimpleShading(shading);
-            PageResources prs = PageResources;
-            PdfName name = prs.AddShading(shading.ShadingName, shading.ShadingReference);
+            var prs = PageResources;
+            var name = prs.AddShading(shading.ShadingName, shading.ShadingReference);
             Content.Append(name.GetBytes()).Append(" sh").Append_i(Separator);
-            ColorDetails details = shading.ColorDetails;
+            var details = shading.ColorDetails;
             if (details != null)
+            {
                 prs.AddColor(details.ColorName, details.IndirectReference);
+            }
         }
 
         /// <summary>
@@ -1405,13 +1398,13 @@ namespace iTextSharp.text.pdf
         public void Rectangle(Rectangle rectangle)
         {
             // the coordinates of the border are retrieved
-            float x1 = rectangle.Left;
-            float y1 = rectangle.Bottom;
-            float x2 = rectangle.Right;
-            float y2 = rectangle.Top;
+            var x1 = rectangle.Left;
+            var y1 = rectangle.Bottom;
+            var x2 = rectangle.Right;
+            var y2 = rectangle.Top;
 
             // the backgroundcolor is set
-            BaseColor background = rectangle.BackgroundColor;
+            var background = rectangle.BackgroundColor;
             if (background != null)
             {
                 SetColorFill(background);
@@ -1442,7 +1435,7 @@ namespace iTextSharp.text.pdf
                 }
 
                 // the color is set to the color of the element
-                BaseColor color = rectangle.BorderColor;
+                var color = rectangle.BorderColor;
                 if (color != null)
                 {
                     SetColorStroke(color);
@@ -1597,9 +1590,12 @@ namespace iTextSharp.text.pdf
         public void RestoreState()
         {
             Content.Append('Q').Append_i(Separator);
-            int idx = StateList.Count - 1;
+            var idx = StateList.Count - 1;
             if (idx < 0)
+            {
                 throw new IllegalPdfSyntaxException("Unbalanced save/restore state operators.");
+            }
+
             State = (GraphicState)StateList[idx];
             StateList.RemoveAt(idx);
         }
@@ -1625,8 +1621,11 @@ namespace iTextSharp.text.pdf
                 h = -h;
             }
             if (r < 0)
+            {
                 r = -r;
-            float b = 0.4477f;
+            }
+
+            var b = 0.4477f;
             MoveTo(x + r, y);
             LineTo(x + w - r, y);
             CurveTo(x + w - r * b, y, x + w, y + r * b, x + w, y + r);
@@ -1746,7 +1745,7 @@ namespace iTextSharp.text.pdf
         public virtual void SetColorFill(BaseColor value)
         {
             PdfXConformanceImp.CheckPdfxConformance(Writer, PdfXConformanceImp.PDFXKEY_COLOR, value);
-            int type = ExtendedColor.GetType(value);
+            var type = ExtendedColor.GetType(value);
             switch (type)
             {
                 case ExtendedColor.TYPE_GRAY:
@@ -1756,25 +1755,25 @@ namespace iTextSharp.text.pdf
                     }
                 case ExtendedColor.TYPE_CMYK:
                     {
-                        CmykColor cmyk = (CmykColor)value;
+                        var cmyk = (CmykColor)value;
                         SetCmykColorFillF(cmyk.Cyan, cmyk.Magenta, cmyk.Yellow, cmyk.Black);
                         break;
                     }
                 case ExtendedColor.TYPE_SEPARATION:
                     {
-                        SpotColor spot = (SpotColor)value;
+                        var spot = (SpotColor)value;
                         SetColorFill(spot.PdfSpotColor, spot.Tint);
                         break;
                     }
                 case ExtendedColor.TYPE_PATTERN:
                     {
-                        PatternColor pat = (PatternColor)value;
+                        var pat = (PatternColor)value;
                         SetPatternFill(pat.Painter);
                         break;
                     }
                 case ExtendedColor.TYPE_SHADING:
                     {
-                        ShadingColor shading = (ShadingColor)value;
+                        var shading = (ShadingColor)value;
                         SetShadingFill(shading.PdfShadingPattern);
                         break;
                     }
@@ -1794,8 +1793,8 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             State.ColorDetails = Writer.AddSimple(sp);
-            PageResources prs = PageResources;
-            PdfName name = State.ColorDetails.ColorName;
+            var prs = PageResources;
+            var name = State.ColorDetails.ColorName;
             name = prs.AddColor(name, State.ColorDetails.IndirectReference);
             Content.Append(name.GetBytes()).Append(" cs ").Append(tint).Append(" scn").Append_i(Separator);
         }
@@ -1808,7 +1807,7 @@ namespace iTextSharp.text.pdf
         public virtual void SetColorStroke(BaseColor value)
         {
             PdfXConformanceImp.CheckPdfxConformance(Writer, PdfXConformanceImp.PDFXKEY_COLOR, value);
-            int type = ExtendedColor.GetType(value);
+            var type = ExtendedColor.GetType(value);
             switch (type)
             {
                 case ExtendedColor.TYPE_GRAY:
@@ -1818,25 +1817,25 @@ namespace iTextSharp.text.pdf
                     }
                 case ExtendedColor.TYPE_CMYK:
                     {
-                        CmykColor cmyk = (CmykColor)value;
+                        var cmyk = (CmykColor)value;
                         SetCmykColorStrokeF(cmyk.Cyan, cmyk.Magenta, cmyk.Yellow, cmyk.Black);
                         break;
                     }
                 case ExtendedColor.TYPE_SEPARATION:
                     {
-                        SpotColor spot = (SpotColor)value;
+                        var spot = (SpotColor)value;
                         SetColorStroke(spot.PdfSpotColor, spot.Tint);
                         break;
                     }
                 case ExtendedColor.TYPE_PATTERN:
                     {
-                        PatternColor pat = (PatternColor)value;
+                        var pat = (PatternColor)value;
                         SetPatternStroke(pat.Painter);
                         break;
                     }
                 case ExtendedColor.TYPE_SHADING:
                     {
-                        ShadingColor shading = (ShadingColor)value;
+                        var shading = (ShadingColor)value;
                         SetShadingStroke(shading.PdfShadingPattern);
                         break;
                     }
@@ -1856,8 +1855,8 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             State.ColorDetails = Writer.AddSimple(sp);
-            PageResources prs = PageResources;
-            PdfName name = State.ColorDetails.ColorName;
+            var prs = PageResources;
+            var name = State.ColorDetails.ColorName;
             name = prs.AddColor(name, State.ColorDetails.IndirectReference);
             Content.Append(name.GetBytes()).Append(" CS ").Append(tint).Append(" SCN").Append_i(Separator);
         }
@@ -1870,7 +1869,7 @@ namespace iTextSharp.text.pdf
         /// <param name="obj">the colorspace. A  null  or  PdfNull  removes any colorspace with the same name</param>
         public virtual void SetDefaultColorspace(PdfName name, PdfObject obj)
         {
-            PageResources prs = PageResources;
+            var prs = PageResources;
             prs.AddDefaultColor(name, obj);
         }
 
@@ -1891,11 +1890,14 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             if (size < 0.0001f && size > -0.0001f)
+            {
                 throw new ArgumentException("Font size too small: " + size);
+            }
+
             State.size = size;
             State.FontDetails = Writer.AddSimple(bf);
-            PageResources prs = PageResources;
-            PdfName name = State.FontDetails.FontName;
+            var prs = PageResources;
+            var name = State.FontDetails.FontName;
             name = prs.AddFont(name, State.FontDetails.IndirectReference);
             Content.Append(name.GetBytes()).Append(' ').Append(size).Append(" Tf").Append_i(Separator);
         }
@@ -1925,9 +1927,9 @@ namespace iTextSharp.text.pdf
         /// <param name="gstate">the graphic state</param>
         public void SetGState(PdfGState gstate)
         {
-            PdfObject[] obj = Writer.AddSimpleExtGState(gstate);
-            PageResources prs = PageResources;
-            PdfName name = prs.AddExtGState((PdfName)obj[0], (PdfIndirectReference)obj[1]);
+            var obj = Writer.AddSimpleExtGState(gstate);
+            var prs = PageResources;
+            var name = prs.AddExtGState((PdfName)obj[0], (PdfIndirectReference)obj[1]);
             Content.Append(name.GetBytes()).Append(" gs").Append_i(Separator);
         }
 
@@ -1977,10 +1979,13 @@ namespace iTextSharp.text.pdf
         public void SetLineDash(float[] array, float phase)
         {
             Content.Append('[');
-            for (int i = 0; i < array.Length; i++)
+            for (var i = 0; i < array.Length; i++)
             {
                 Content.Append(array[i]);
-                if (i < array.Length - 1) Content.Append(' ');
+                if (i < array.Length - 1)
+                {
+                    Content.Append(' ');
+                }
             }
             Content.Append("] ").Append(phase).Append(" d").Append_i(Separator);
         }
@@ -2046,8 +2051,8 @@ namespace iTextSharp.text.pdf
                 return;
             }
             CheckWriter();
-            PageResources prs = PageResources;
-            PdfName name = Writer.AddSimplePattern(p);
+            var prs = PageResources;
+            var name = Writer.AddSimplePattern(p);
             name = prs.AddPattern(name, p.IndirectReference);
             Content.Append(PdfName.Pattern.GetBytes()).Append(" cs ").Append(name.GetBytes()).Append(" scn").Append_i(Separator);
         }
@@ -2060,9 +2065,13 @@ namespace iTextSharp.text.pdf
         public virtual void SetPatternFill(PdfPatternPainter p, BaseColor color)
         {
             if (ExtendedColor.GetType(color) == ExtendedColor.TYPE_SEPARATION)
+            {
                 SetPatternFill(p, color, ((SpotColor)color).Tint);
+            }
             else
+            {
                 SetPatternFill(p, color, 0);
+            }
         }
 
         /// <summary>
@@ -2075,12 +2084,15 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             if (!p.IsStencil())
+            {
                 throw new Exception("An uncolored pattern was expected.");
-            PageResources prs = PageResources;
-            PdfName name = Writer.AddSimplePattern(p);
+            }
+
+            var prs = PageResources;
+            var name = Writer.AddSimplePattern(p);
             name = prs.AddPattern(name, p.IndirectReference);
-            ColorDetails csDetail = Writer.AddSimplePatternColorspace(color);
-            PdfName cName = prs.AddColor(csDetail.ColorName, csDetail.IndirectReference);
+            var csDetail = Writer.AddSimplePatternColorspace(color);
+            var cName = prs.AddColor(csDetail.ColorName, csDetail.IndirectReference);
             Content.Append(cName.GetBytes()).Append(" cs").Append_i(Separator);
             OutputColorNumbers(color, tint);
             Content.Append(' ').Append(name.GetBytes()).Append(" scn").Append_i(Separator);
@@ -2094,9 +2106,13 @@ namespace iTextSharp.text.pdf
         public virtual void SetPatternStroke(PdfPatternPainter p, BaseColor color)
         {
             if (ExtendedColor.GetType(color) == ExtendedColor.TYPE_SEPARATION)
+            {
                 SetPatternStroke(p, color, ((SpotColor)color).Tint);
+            }
             else
+            {
                 SetPatternStroke(p, color, 0);
+            }
         }
 
         /// <summary>
@@ -2109,12 +2125,15 @@ namespace iTextSharp.text.pdf
         {
             CheckWriter();
             if (!p.IsStencil())
+            {
                 throw new Exception("An uncolored pattern was expected.");
-            PageResources prs = PageResources;
-            PdfName name = Writer.AddSimplePattern(p);
+            }
+
+            var prs = PageResources;
+            var name = Writer.AddSimplePattern(p);
             name = prs.AddPattern(name, p.IndirectReference);
-            ColorDetails csDetail = Writer.AddSimplePatternColorspace(color);
-            PdfName cName = prs.AddColor(csDetail.ColorName, csDetail.IndirectReference);
+            var csDetail = Writer.AddSimplePatternColorspace(color);
+            var cName = prs.AddColor(csDetail.ColorName, csDetail.IndirectReference);
             Content.Append(cName.GetBytes()).Append(" CS").Append_i(Separator);
             OutputColorNumbers(color, tint);
             Content.Append(' ').Append(name.GetBytes()).Append(" SCN").Append_i(Separator);
@@ -2133,8 +2152,8 @@ namespace iTextSharp.text.pdf
                 return;
             }
             CheckWriter();
-            PageResources prs = PageResources;
-            PdfName name = Writer.AddSimplePattern(p);
+            var prs = PageResources;
+            var name = Writer.AddSimplePattern(p);
             name = prs.AddPattern(name, p.IndirectReference);
             Content.Append(PdfName.Pattern.GetBytes()).Append(" CS ").Append(name.GetBytes()).Append(" SCN").Append_i(Separator);
         }
@@ -2170,12 +2189,14 @@ namespace iTextSharp.text.pdf
         public virtual void SetShadingFill(PdfShadingPattern shading)
         {
             Writer.AddSimpleShadingPattern(shading);
-            PageResources prs = PageResources;
-            PdfName name = prs.AddPattern(shading.PatternName, shading.PatternReference);
+            var prs = PageResources;
+            var name = prs.AddPattern(shading.PatternName, shading.PatternReference);
             Content.Append(PdfName.Pattern.GetBytes()).Append(" cs ").Append(name.GetBytes()).Append(" scn").Append_i(Separator);
-            ColorDetails details = shading.ColorDetails;
+            var details = shading.ColorDetails;
             if (details != null)
+            {
                 prs.AddColor(details.ColorName, details.IndirectReference);
+            }
         }
 
         /// <summary>
@@ -2185,12 +2206,14 @@ namespace iTextSharp.text.pdf
         public virtual void SetShadingStroke(PdfShadingPattern shading)
         {
             Writer.AddSimpleShadingPattern(shading);
-            PageResources prs = PageResources;
-            PdfName name = prs.AddPattern(shading.PatternName, shading.PatternReference);
+            var prs = PageResources;
+            var name = prs.AddPattern(shading.PatternName, shading.PatternReference);
             Content.Append(PdfName.Pattern.GetBytes()).Append(" CS ").Append(name.GetBytes()).Append(" SCN").Append_i(Separator);
-            ColorDetails details = shading.ColorDetails;
+            var details = shading.ColorDetails;
             if (details != null)
+            {
                 prs.AddColor(details.ColorName, details.IndirectReference);
+            }
         }
 
         /// <summary>
@@ -2271,13 +2294,16 @@ namespace iTextSharp.text.pdf
         public void ShowText(PdfTextArray text)
         {
             if (State.FontDetails == null)
-                throw new ArgumentNullException("Font and size must be set before writing any text");
-            Content.Append('[');
-            ArrayList arrayList = text.ArrayList;
-            bool lastWasNumber = false;
-            for (int k = 0; k < arrayList.Count; ++k)
             {
-                object obj = arrayList[k];
+                throw new ArgumentNullException("Font and size must be set before writing any text");
+            }
+
+            Content.Append('[');
+            var arrayList = text.ArrayList;
+            var lastWasNumber = false;
+            for (var k = 0; k < arrayList.Count; ++k)
+            {
+                var obj = arrayList[k];
                 if (obj is string)
                 {
                     showText2((string)obj);
@@ -2286,9 +2312,14 @@ namespace iTextSharp.text.pdf
                 else
                 {
                     if (lastWasNumber)
+                    {
                         Content.Append(' ');
+                    }
                     else
+                    {
                         lastWasNumber = true;
+                    }
+
                     Content.Append(((float)obj));
                 }
             }
@@ -2328,12 +2359,19 @@ namespace iTextSharp.text.pdf
         public void ShowTextKerned(string text)
         {
             if (State.FontDetails == null)
+            {
                 throw new ArgumentNullException("Font and size must be set before writing any text");
-            BaseFont bf = State.FontDetails.BaseFont;
+            }
+
+            var bf = State.FontDetails.BaseFont;
             if (bf.HasKernPairs())
+            {
                 ShowText(GetKernArray(text, bf));
+            }
             else
+            {
                 ShowText(text);
+            }
         }
 
         public void Stroke()
@@ -2354,7 +2392,7 @@ namespace iTextSharp.text.pdf
 
         public void Transform(System.Drawing.Drawing2D.Matrix tx)
         {
-            float[] c = tx.Elements;
+            var c = tx.Elements;
             ConcatCtm(c[0], c[1], c[2], c[3], c[4], c[5]);
         }
 
@@ -2366,25 +2404,25 @@ namespace iTextSharp.text.pdf
         /// <param name="rect">a  Rectangle </param>
         public void VariableRectangle(Rectangle rect)
         {
-            float t = rect.Top;
-            float b = rect.Bottom;
-            float r = rect.Right;
-            float l = rect.Left;
-            float wt = rect.BorderWidthTop;
-            float wb = rect.BorderWidthBottom;
-            float wr = rect.BorderWidthRight;
-            float wl = rect.BorderWidthLeft;
-            BaseColor ct = rect.BorderColorTop;
-            BaseColor cb = rect.BorderColorBottom;
-            BaseColor cr = rect.BorderColorRight;
-            BaseColor cl = rect.BorderColorLeft;
+            var t = rect.Top;
+            var b = rect.Bottom;
+            var r = rect.Right;
+            var l = rect.Left;
+            var wt = rect.BorderWidthTop;
+            var wb = rect.BorderWidthBottom;
+            var wr = rect.BorderWidthRight;
+            var wl = rect.BorderWidthLeft;
+            var ct = rect.BorderColorTop;
+            var cb = rect.BorderColorBottom;
+            var cr = rect.BorderColorRight;
+            var cl = rect.BorderColorLeft;
             SaveState();
             SetLineCap(LINE_CAP_BUTT);
             SetLineJoin(LINE_JOIN_MITER);
             float clw = 0;
-            bool cdef = false;
+            var cdef = false;
             BaseColor ccol = null;
-            bool cdefi = false;
+            var cdefi = false;
             BaseColor cfil = null;
             // draw top
             if (wt > 0)
@@ -2392,9 +2430,14 @@ namespace iTextSharp.text.pdf
                 SetLineWidth(clw = wt);
                 cdef = true;
                 if (ct == null)
+                {
                     ResetRgbColorStroke();
+                }
                 else
+                {
                     SetColorStroke(ct);
+                }
+
                 ccol = ct;
                 MoveTo(l, t - wt / 2f);
                 LineTo(r, t - wt / 2f);
@@ -2405,14 +2448,22 @@ namespace iTextSharp.text.pdf
             if (wb > 0)
             {
                 if (wb.ApproxNotEqual(clw))
+                {
                     SetLineWidth(clw = wb);
+                }
+
                 if (!cdef || !compareColors(ccol, cb))
                 {
                     cdef = true;
                     if (cb == null)
+                    {
                         ResetRgbColorStroke();
+                    }
                     else
+                    {
                         SetColorStroke(cb);
+                    }
+
                     ccol = cb;
                 }
                 MoveTo(r, b + wb / 2f);
@@ -2424,18 +2475,26 @@ namespace iTextSharp.text.pdf
             if (wr > 0)
             {
                 if (wr.ApproxNotEqual(clw))
+                {
                     SetLineWidth(clw = wr);
+                }
+
                 if (!cdef || !compareColors(ccol, cr))
                 {
                     cdef = true;
                     if (cr == null)
+                    {
                         ResetRgbColorStroke();
+                    }
                     else
+                    {
                         SetColorStroke(cr);
+                    }
+
                     ccol = cr;
                 }
-                bool bt = compareColors(ct, cr);
-                bool bb = compareColors(cb, cr);
+                var bt = compareColors(ct, cr);
+                var bb = compareColors(cb, cr);
                 MoveTo(r - wr / 2f, bt ? t : t - wt);
                 LineTo(r - wr / 2f, bb ? b : b + wb);
                 Stroke();
@@ -2443,9 +2502,14 @@ namespace iTextSharp.text.pdf
                 {
                     cdefi = true;
                     if (cr == null)
+                    {
                         ResetRgbColorFill();
+                    }
                     else
+                    {
                         SetColorFill(cr);
+                    }
+
                     cfil = cr;
                     if (!bt)
                     {
@@ -2468,16 +2532,23 @@ namespace iTextSharp.text.pdf
             if (wl > 0)
             {
                 if (wl.ApproxNotEqual(clw))
+                {
                     SetLineWidth(wl);
+                }
+
                 if (!cdef || !compareColors(ccol, cl))
                 {
                     if (cl == null)
+                    {
                         ResetRgbColorStroke();
+                    }
                     else
+                    {
                         SetColorStroke(cl);
+                    }
                 }
-                bool bt = compareColors(ct, cl);
-                bool bb = compareColors(cb, cl);
+                var bt = compareColors(ct, cl);
+                var bb = compareColors(cb, cl);
                 MoveTo(l + wl / 2f, bt ? t : t - wt);
                 LineTo(l + wl / 2f, bb ? b : b + wb);
                 Stroke();
@@ -2486,9 +2557,13 @@ namespace iTextSharp.text.pdf
                     if (!cdefi || !compareColors(cfil, cl))
                     {
                         if (cl == null)
+                        {
                             ResetRgbColorFill();
+                        }
                         else
+                        {
                             SetColorFill(cl);
+                        }
                     }
                     if (!bt)
                     {
@@ -2516,7 +2591,7 @@ namespace iTextSharp.text.pdf
         /// <returns>an escaped  byte  array</returns>
         internal static byte[] EscapeString(byte[] b)
         {
-            ByteBuffer content = new ByteBuffer();
+            var content = new ByteBuffer();
             EscapeString(b, content);
             return content.ToByteArray();
         }
@@ -2529,31 +2604,37 @@ namespace iTextSharp.text.pdf
         internal static void EscapeString(byte[] b, ByteBuffer content)
         {
             content.Append_i('(');
-            for (int k = 0; k < b.Length; ++k)
+            for (var k = 0; k < b.Length; ++k)
             {
-                byte c = b[k];
+                var c = b[k];
                 switch ((int)c)
                 {
                     case '\r':
                         content.Append("\\r");
                         break;
+
                     case '\n':
                         content.Append("\\n");
                         break;
+
                     case '\t':
                         content.Append("\\t");
                         break;
+
                     case '\b':
                         content.Append("\\b");
                         break;
+
                     case '\f':
                         content.Append("\\f");
                         break;
+
                     case '(':
                     case ')':
                     case '\\':
                         content.Append_i('\\').Append_i(c);
                         break;
+
                     default:
                         content.Append_i(c);
                         break;
@@ -2570,7 +2651,7 @@ namespace iTextSharp.text.pdf
         internal void AddTemplateReference(PdfIndirectReference template, PdfName name, float a, float b, float c, float d, float e, float f)
         {
             CheckWriter();
-            PageResources prs = PageResources;
+            var prs = PageResources;
             name = prs.AddXObject(name, template);
             Content.Append("q ");
             Content.Append(a).Append(' ');
@@ -2589,15 +2670,19 @@ namespace iTextSharp.text.pdf
         internal void CheckNoPattern(PdfTemplate t)
         {
             if (t.Type == PdfTemplate.TYPE_PATTERN)
+            {
                 throw new ArgumentException("Invalid use of a pattern. A template was expected.");
+            }
         }
 
         internal PdfAppearance CreateAppearance(float width, float height, PdfName forcedName)
         {
             CheckWriter();
-            PdfAppearance template = new PdfAppearance(Writer);
-            template.Width = width;
-            template.Height = height;
+            var template = new PdfAppearance(Writer)
+            {
+                Width = width,
+                Height = height
+            };
             Writer.AddDirectTemplateSimple(template, forcedName);
             return template;
         }
@@ -2605,9 +2690,11 @@ namespace iTextSharp.text.pdf
         internal PdfTemplate CreateTemplate(float width, float height, PdfName forcedName)
         {
             CheckWriter();
-            PdfTemplate template = new PdfTemplate(Writer);
-            template.Width = width;
-            template.Height = height;
+            var template = new PdfTemplate(Writer)
+            {
+                Width = width,
+                Height = height
+            };
             Writer.AddDirectTemplateSimple(template, forcedName);
             return template;
         }
@@ -2620,7 +2707,7 @@ namespace iTextSharp.text.pdf
         internal void OutputColorNumbers(BaseColor color, float tint)
         {
             PdfXConformanceImp.CheckPdfxConformance(Writer, PdfXConformanceImp.PDFXKEY_COLOR, color);
-            int type = ExtendedColor.GetType(color);
+            var type = ExtendedColor.GetType(color);
             switch (type)
             {
                 case ExtendedColor.TYPE_RGB:
@@ -2630,12 +2717,14 @@ namespace iTextSharp.text.pdf
                     Content.Append(' ');
                     Content.Append((float)(color.B) / 0xFF);
                     break;
+
                 case ExtendedColor.TYPE_GRAY:
                     Content.Append(((GrayColor)color).Gray);
                     break;
+
                 case ExtendedColor.TYPE_CMYK:
                     {
-                        CmykColor cmyk = (CmykColor)color;
+                        var cmyk = (CmykColor)color;
                         Content.Append(cmyk.Cyan).Append(' ').Append(cmyk.Magenta);
                         Content.Append(' ').Append(cmyk.Yellow).Append(' ').Append(cmyk.Black);
                         break;
@@ -2643,6 +2732,7 @@ namespace iTextSharp.text.pdf
                 case ExtendedColor.TYPE_SEPARATION:
                     Content.Append(tint);
                     break;
+
                 default:
                     throw new Exception("Invalid color type.");
             }
@@ -2654,13 +2744,15 @@ namespace iTextSharp.text.pdf
         protected virtual void CheckWriter()
         {
             if (Writer == null)
+            {
                 throw new ArgumentNullException("The writer in PdfContentByte is null.");
+            }
         }
 
         private void beginLayer2(IPdfOcg layer)
         {
-            PdfName name = (PdfName)Writer.AddSimpleProperty(layer, layer.Ref)[0];
-            PageResources prs = PageResources;
+            var name = (PdfName)Writer.AddSimpleProperty(layer, layer.Ref)[0];
+            var prs = PageResources;
             name = prs.AddProperty(name, layer.Ref);
             Content.Append("/OC ").Append(name.GetBytes()).Append(" BDC").Append_i(Separator);
         }
@@ -2668,11 +2760,20 @@ namespace iTextSharp.text.pdf
         private bool compareColors(BaseColor c1, BaseColor c2)
         {
             if (c1 == null && c2 == null)
+            {
                 return true;
+            }
+
             if (c1 == null || c2 == null)
+            {
                 return false;
+            }
+
             if (c1 is ExtendedColor)
+            {
                 return c1.Equals(c2);
+            }
+
             return c2.Equals(c1);
         }
 
@@ -2686,21 +2787,41 @@ namespace iTextSharp.text.pdf
         private void helperCmyk(float cyan, float magenta, float yellow, float black)
         {
             if (cyan < 0)
+            {
                 cyan = 0.0f;
+            }
             else if (cyan > 1.0f)
+            {
                 cyan = 1.0f;
+            }
+
             if (magenta < 0)
+            {
                 magenta = 0.0f;
+            }
             else if (magenta > 1.0f)
+            {
                 magenta = 1.0f;
+            }
+
             if (yellow < 0)
+            {
                 yellow = 0.0f;
+            }
             else if (yellow > 1.0f)
+            {
                 yellow = 1.0f;
+            }
+
             if (black < 0)
+            {
                 black = 0.0f;
+            }
             else if (black > 1.0f)
+            {
                 black = 1.0f;
+            }
+
             Content.Append(cyan).Append(' ').Append(magenta).Append(' ').Append(yellow).Append(' ').Append(black);
         }
 
@@ -2714,17 +2835,32 @@ namespace iTextSharp.text.pdf
         {
             PdfXConformanceImp.CheckPdfxConformance(Writer, PdfXConformanceImp.PDFXKEY_RGB, null);
             if (red < 0)
+            {
                 red = 0.0f;
+            }
             else if (red > 1.0f)
+            {
                 red = 1.0f;
+            }
+
             if (green < 0)
+            {
                 green = 0.0f;
+            }
             else if (green > 1.0f)
+            {
                 green = 1.0f;
+            }
+
             if (blue < 0)
+            {
                 blue = 0.0f;
+            }
             else if (blue > 1.0f)
+            {
                 blue = 1.0f;
+            }
+
             Content.Append(red).Append(' ').Append(green).Append(' ').Append(blue);
         }
 
@@ -2736,8 +2872,11 @@ namespace iTextSharp.text.pdf
         private void showText2(string text)
         {
             if (State.FontDetails == null)
+            {
                 throw new Exception("Font and size must be set before writing any text");
-            byte[] b = State.FontDetails.ConvertToBytes(text);
+            }
+
+            var b = State.FontDetails.ConvertToBytes(text);
             EscapeString(b, Content);
         }
 
@@ -2747,7 +2886,10 @@ namespace iTextSharp.text.pdf
         private void showTextAligned(int alignment, string text, float x, float y, float rotation, bool kerned)
         {
             if (State.FontDetails == null)
+            {
                 throw new Exception("Font and size must be set before writing any text");
+            }
+
             if (rotation.ApproxEquals(0))
             {
                 switch (alignment)
@@ -2755,21 +2897,26 @@ namespace iTextSharp.text.pdf
                     case ALIGN_CENTER:
                         x -= GetEffectiveStringWidth(text, kerned) / 2;
                         break;
+
                     case ALIGN_RIGHT:
                         x -= GetEffectiveStringWidth(text, kerned);
                         break;
                 }
                 SetTextMatrix(x, y);
                 if (kerned)
+                {
                     ShowTextKerned(text);
+                }
                 else
+                {
                     ShowText(text);
+                }
             }
             else
             {
-                double alpha = rotation * Math.PI / 180.0;
-                float cos = (float)Math.Cos(alpha);
-                float sin = (float)Math.Sin(alpha);
+                var alpha = rotation * Math.PI / 180.0;
+                var cos = (float)Math.Cos(alpha);
+                var sin = (float)Math.Sin(alpha);
                 float len;
                 switch (alignment)
                 {
@@ -2778,6 +2925,7 @@ namespace iTextSharp.text.pdf
                         x -= len * cos;
                         y -= len * sin;
                         break;
+
                     case ALIGN_RIGHT:
                         len = GetEffectiveStringWidth(text, kerned);
                         x -= len * cos;
@@ -2786,9 +2934,14 @@ namespace iTextSharp.text.pdf
                 }
                 SetTextMatrix(cos, sin, -sin, cos, x, y);
                 if (kerned)
+                {
                     ShowTextKerned(text);
+                }
                 else
+                {
                     ShowText(text);
+                }
+
                 SetTextMatrix(0f, 0f);
             }
         }
@@ -2798,7 +2951,6 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public class GraphicState
         {
-
             /// <summary>
             /// This is the color in use
             /// </summary>
@@ -2808,6 +2960,7 @@ namespace iTextSharp.text.pdf
             /// This is the font in use
             /// </summary>
             internal FontDetails FontDetails;
+
             /// <summary>
             /// This is the font size in use
             /// </summary>
@@ -2837,10 +2990,12 @@ namespace iTextSharp.text.pdf
             /// The x position of the text line matrix.
             /// </summary>
             protected internal float XTlm;
+
             /// <summary>
             /// The y position of the text line matrix.
             /// </summary>
             protected internal float YTlm;
+
             internal GraphicState()
             {
             }

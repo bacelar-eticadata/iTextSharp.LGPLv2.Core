@@ -9,9 +9,9 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PrStream : PdfStream
     {
-
         protected int length;
         protected int objGen;
+
         /// <summary>
         /// added by ujihara for decryption
         /// </summary>
@@ -32,9 +32,13 @@ namespace iTextSharp.text.pdf
             objNum = stream.objNum;
             objGen = stream.objGen;
             if (newDic != null)
+            {
                 Merge(newDic);
+            }
             else
+            {
                 Merge(stream);
+            }
         }
 
         public PrStream(PrStream stream, PdfDictionary newDic, PdfReader reader) : this(stream, newDic)
@@ -66,15 +70,18 @@ namespace iTextSharp.text.pdf
             offset = -1;
             if (Document.Compress)
             {
-                MemoryStream stream = new MemoryStream();
-                ZDeflaterOutputStream zip = new ZDeflaterOutputStream(stream, compressionLevel);
+                var stream = new MemoryStream();
+                var zip = new ZDeflaterOutputStream(stream, compressionLevel);
                 zip.Write(conts, 0, conts.Length);
                 zip.Close();
                 Bytes = stream.ToArray();
                 Put(PdfName.Filter, PdfName.Flatedecode);
             }
             else
+            {
                 Bytes = conts;
+            }
+
             Length = Bytes.Length;
         }
 
@@ -85,51 +92,24 @@ namespace iTextSharp.text.pdf
                 length = value;
                 Put(PdfName.LENGTH, new PdfNumber(length));
             }
-            get
-            {
-                return length;
-            }
+            get => length;
         }
 
         public int ObjGen
         {
-            get
-            {
-                return objGen;
-            }
-            set
-            {
-                objGen = value;
-            }
+            get => objGen;
+            set => objGen = value;
         }
 
         public int ObjNum
         {
-            get
-            {
-                return objNum;
-            }
-            set
-            {
-                objNum = value;
-            }
+            get => objNum;
+            set => objNum = value;
         }
 
-        public int Offset
-        {
-            get
-            {
-                return offset;
-            }
-        }
+        public int Offset => offset;
 
-        public PdfReader Reader
-        {
-            get
-            {
-                return reader;
-            }
-        }
+        public PdfReader Reader => reader;
 
         public new byte[] GetBytes()
         {
@@ -164,8 +144,8 @@ namespace iTextSharp.text.pdf
             offset = -1;
             if (Document.Compress && compress)
             {
-                MemoryStream stream = new MemoryStream();
-                ZDeflaterOutputStream zip = new ZDeflaterOutputStream(stream, compressionLevel);
+                var stream = new MemoryStream();
+                var zip = new ZDeflaterOutputStream(stream, compressionLevel);
                 zip.Write(data, 0, data.Length);
                 zip.Close();
                 Bytes = stream.ToArray();
@@ -173,7 +153,10 @@ namespace iTextSharp.text.pdf
                 Put(PdfName.Filter, PdfName.Flatedecode);
             }
             else
+            {
                 Bytes = data;
+            }
+
             Length = Bytes.Length;
         }
 
@@ -188,14 +171,20 @@ namespace iTextSharp.text.pdf
 
         public override void ToPdf(PdfWriter writer, Stream os)
         {
-            byte[] b = PdfReader.GetStreamBytesRaw(this);
+            var b = PdfReader.GetStreamBytesRaw(this);
             PdfEncryption crypto = null;
             if (writer != null)
+            {
                 crypto = writer.Encryption;
-            PdfObject objLen = Get(PdfName.LENGTH);
-            int nn = b.Length;
+            }
+
+            var objLen = Get(PdfName.LENGTH);
+            var nn = b.Length;
             if (crypto != null)
+            {
                 nn = crypto.CalculateStreamSize(nn);
+            }
+
             Put(PdfName.LENGTH, new PdfNumber(nn));
             SuperToPdf(writer, os);
             Put(PdfName.LENGTH, objLen);
@@ -203,7 +192,10 @@ namespace iTextSharp.text.pdf
             if (length > 0)
             {
                 if (crypto != null && !crypto.IsEmbeddedFilesOnly())
+                {
                     b = crypto.EncryptByteArray(b);
+                }
+
                 os.Write(b, 0, b.Length);
             }
             os.Write(Endstream, 0, Endstream.Length);

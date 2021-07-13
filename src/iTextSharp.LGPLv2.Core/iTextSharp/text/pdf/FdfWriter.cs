@@ -1,6 +1,6 @@
-using System.util;
-using System.IO;
 using System.Collections;
+using System.IO;
+using System.util;
 
 namespace iTextSharp.text.pdf
 {
@@ -11,7 +11,7 @@ namespace iTextSharp.text.pdf
     public class FdfWriter
     {
         private static readonly byte[] _headerFdf = DocWriter.GetIsoBytes("%FDF-1.2\n%\u00e2\u00e3\u00cf\u00d3\n");
-        readonly Hashtable _fields = new Hashtable();
+        private readonly Hashtable _fields = new Hashtable();
 
         /// <summary>
         /// The PDF file associated with the FDF.
@@ -24,14 +24,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the PDF file name associated with the FDF</returns>
         public string File
         {
-            get
-            {
-                return _file;
-            }
-            set
-            {
-                _file = value;
-            }
+            get => _file;
+            set => _file = value;
         }
 
         /// <summary>
@@ -41,33 +35,49 @@ namespace iTextSharp.text.pdf
         /// <returns>the field value or  null  if not found</returns>
         public string GetField(string field)
         {
-            Hashtable map = _fields;
-            StringTokenizer tk = new StringTokenizer(field, ".");
+            var map = _fields;
+            var tk = new StringTokenizer(field, ".");
             if (!tk.HasMoreTokens())
+            {
                 return null;
+            }
+
             while (true)
             {
-                string s = tk.NextToken();
-                object obj = map[s];
+                var s = tk.NextToken();
+                var obj = map[s];
                 if (obj == null)
+                {
                     return null;
+                }
+
                 if (tk.HasMoreTokens())
                 {
                     if (obj is Hashtable)
+                    {
                         map = (Hashtable)obj;
+                    }
                     else
+                    {
                         return null;
+                    }
                 }
                 else
                 {
                     if (obj is Hashtable)
+                    {
                         return null;
+                    }
                     else
                     {
                         if (((PdfObject)obj).IsString())
+                        {
                             return ((PdfString)obj).ToUnicodeString();
+                        }
                         else
+                        {
                             return PdfName.DecodeName(obj.ToString());
+                        }
                     }
                 }
             }
@@ -80,7 +90,7 @@ namespace iTextSharp.text.pdf
         /// <returns>a map with all the fields</returns>
         public Hashtable GetFields()
         {
-            Hashtable values = new Hashtable();
+            var values = new Hashtable();
             IterateFields(values, _fields, "");
             return values;
         }
@@ -93,41 +103,57 @@ namespace iTextSharp.text.pdf
         /// <returns> true  if the field was found and removed,</returns>
         public bool RemoveField(string field)
         {
-            Hashtable map = _fields;
-            StringTokenizer tk = new StringTokenizer(field, ".");
+            var map = _fields;
+            var tk = new StringTokenizer(field, ".");
             if (!tk.HasMoreTokens())
+            {
                 return false;
-            ArrayList hist = new ArrayList();
+            }
+
+            var hist = new ArrayList();
             while (true)
             {
-                string s = tk.NextToken();
-                object obj = map[s];
+                var s = tk.NextToken();
+                var obj = map[s];
                 if (obj == null)
+                {
                     return false;
+                }
+
                 hist.Add(map);
                 hist.Add(s);
                 if (tk.HasMoreTokens())
                 {
                     if (obj is Hashtable)
+                    {
                         map = (Hashtable)obj;
+                    }
                     else
+                    {
                         return false;
+                    }
                 }
                 else
                 {
                     if (obj is Hashtable)
+                    {
                         return false;
+                    }
                     else
+                    {
                         break;
+                    }
                 }
             }
-            for (int k = hist.Count - 2; k >= 0; k -= 2)
+            for (var k = hist.Count - 2; k >= 0; k -= 2)
             {
                 map = (Hashtable)hist[k];
-                string s = (string)hist[k + 1];
+                var s = (string)hist[k + 1];
                 map.Remove(s);
                 if (map.Count > 0)
+                {
                     break;
+                }
             }
             return true;
         }
@@ -181,12 +207,12 @@ namespace iTextSharp.text.pdf
         /// <param name="fdf">the  FdfReader </param>
         public void SetFields(FdfReader fdf)
         {
-            Hashtable map = fdf.Fields;
+            var map = fdf.Fields;
             foreach (DictionaryEntry entry in map)
             {
-                string key = (string)entry.Key;
-                PdfDictionary dic = (PdfDictionary)entry.Value;
-                PdfObject v = dic.Get(PdfName.V);
+                var key = (string)entry.Key;
+                var dic = (PdfDictionary)entry.Value;
+                var v = dic.Get(PdfName.V);
                 if (v != null)
                 {
                     SetField(key, v);
@@ -216,15 +242,21 @@ namespace iTextSharp.text.pdf
         {
             foreach (DictionaryEntry entry in af.Fields)
             {
-                string fn = (string)entry.Key;
-                AcroFields.Item item = (AcroFields.Item)entry.Value;
-                PdfDictionary dic = item.GetMerged(0);
-                PdfObject v = PdfReader.GetPdfObjectRelease(dic.Get(PdfName.V));
+                var fn = (string)entry.Key;
+                var item = (AcroFields.Item)entry.Value;
+                var dic = item.GetMerged(0);
+                var v = PdfReader.GetPdfObjectRelease(dic.Get(PdfName.V));
                 if (v == null)
+                {
                     continue;
-                PdfObject ft = PdfReader.GetPdfObjectRelease(dic.Get(PdfName.Ft));
+                }
+
+                var ft = PdfReader.GetPdfObjectRelease(dic.Get(PdfName.Ft));
                 if (ft == null || PdfName.Sig.Equals(ft))
+                {
                     continue;
+                }
+
                 SetField(fn, v);
             }
         }
@@ -237,7 +269,7 @@ namespace iTextSharp.text.pdf
         /// <param name="os">the stream</param>
         public void WriteTo(Stream os)
         {
-            Wrt wrt = new Wrt(os, this);
+            var wrt = new Wrt(os, this);
             wrt.WriteTo();
         }
 
@@ -245,25 +277,32 @@ namespace iTextSharp.text.pdf
         {
             foreach (DictionaryEntry entry in map)
             {
-                string s = (string)entry.Key;
-                object obj = entry.Value;
+                var s = (string)entry.Key;
+                var obj = entry.Value;
                 if (obj is Hashtable)
+                {
                     IterateFields(values, (Hashtable)obj, name + "." + s);
+                }
                 else
+                {
                     values[(name + "." + s).Substring(1)] = obj;
+                }
             }
         }
 
         internal bool SetField(string field, PdfObject value)
         {
-            Hashtable map = _fields;
-            StringTokenizer tk = new StringTokenizer(field, ".");
+            var map = _fields;
+            var tk = new StringTokenizer(field, ".");
             if (!tk.HasMoreTokens())
+            {
                 return false;
+            }
+
             while (true)
             {
-                string s = tk.NextToken();
-                object obj = map[s];
+                var s = tk.NextToken();
+                var obj = map[s];
                 if (tk.HasMoreTokens())
                 {
                     if (obj == null)
@@ -274,9 +313,13 @@ namespace iTextSharp.text.pdf
                         continue;
                     }
                     else if (obj is Hashtable)
+                    {
                         map = (Hashtable)obj;
+                    }
                     else
+                    {
                         return false;
+                    }
                 }
                 else
                 {
@@ -286,10 +329,13 @@ namespace iTextSharp.text.pdf
                         return true;
                     }
                     else
+                    {
                         return false;
+                    }
                 }
             }
         }
+
         internal class Wrt : PdfWriter
         {
             private readonly FdfWriter _fdf;
@@ -303,12 +349,12 @@ namespace iTextSharp.text.pdf
 
             internal PdfArray Calculate(Hashtable map)
             {
-                PdfArray ar = new PdfArray();
+                var ar = new PdfArray();
                 foreach (DictionaryEntry entry in map)
                 {
-                    string key = (string)entry.Key;
-                    object v = entry.Value;
-                    PdfDictionary dic = new PdfDictionary();
+                    var key = (string)entry.Key;
+                    var v = entry.Value;
+                    var dic = new PdfDictionary();
                     dic.Put(PdfName.T, new PdfString(key, PdfObject.TEXT_UNICODE));
                     if (v is Hashtable)
                     {
@@ -329,16 +375,19 @@ namespace iTextSharp.text.pdf
 
             internal void WriteTo()
             {
-                PdfDictionary dic = new PdfDictionary();
+                var dic = new PdfDictionary();
                 dic.Put(PdfName.Fields, Calculate(_fdf._fields));
                 if (_fdf._file != null)
+                {
                     dic.Put(PdfName.F, new PdfString(_fdf._file, PdfObject.TEXT_UNICODE));
-                PdfDictionary fd = new PdfDictionary();
+                }
+
+                var fd = new PdfDictionary();
                 fd.Put(PdfName.Fdf, dic);
-                PdfIndirectReference refi = AddToBody(fd).IndirectReference;
-                byte[] b = GetIsoBytes("trailer\n");
+                var refi = AddToBody(fd).IndirectReference;
+                var b = GetIsoBytes("trailer\n");
                 ((DocWriter)this).Os.Write(b, 0, b.Length);
-                PdfDictionary trailer = new PdfDictionary();
+                var trailer = new PdfDictionary();
                 trailer.Put(PdfName.Root, refi);
                 trailer.ToPdf(null, ((DocWriter)this).Os);
                 b = GetIsoBytes("\n%%EOF\n");

@@ -264,25 +264,27 @@ namespace iTextSharp.text.pdf
         private int _textLength; // for convenience
                                  // for paragraph, not lines
                                  // for paragraph, not lines
-                                 /// <summary>
-                                 ///
-                                 /// </summary>
-                                 /// <summary>
-                                 /// Input
-                                 /// </summary>
-                                 /// <summary>
-                                 ///
-                                 /// </summary>
+        /// <summary>
+        ///
+        /// </summary>
+        /// <summary>
+        /// Input
+        /// </summary>
+        /// <summary>
+        ///
+        /// </summary>
 
         static BidiOrder()
         {
-            for (int k = 0; k < _baseTypes.Length; ++k)
+            for (var k = 0; k < _baseTypes.Length; ++k)
             {
                 int start = _baseTypes[k];
                 int end = _baseTypes[++k];
-                sbyte b = (sbyte)_baseTypes[++k];
+                var b = (sbyte)_baseTypes[++k];
                 while (start <= end)
+                {
                     _rtypes[start++] = b;
+                }
             }
         }
 
@@ -321,7 +323,7 @@ namespace iTextSharp.text.pdf
         public BidiOrder(char[] text, int offset, int length, sbyte paragraphEmbeddingLevel)
         {
             _initialTypes = new sbyte[length];
-            for (int k = 0; k < length; ++k)
+            for (var k = 0; k < length; ++k)
             {
                 _initialTypes[k] = _rtypes[text[offset + k]];
             }
@@ -375,7 +377,6 @@ namespace iTextSharp.text.pdf
         /// <returns>the resolved levels of the text</returns>
         public byte[] GetLevels(int[] linebreaks)
         {
-
             // Note that since the previous processing has removed all
             // P, S, and WS values from resultTypes, the values referred to
             // in these rules are the initial types, before any processing
@@ -389,23 +390,25 @@ namespace iTextSharp.text.pdf
 
             validateLineBreaks(linebreaks, _textLength);
 
-            byte[] result = new byte[_resultLevels.Length];
-            for (int k = 0; k < _resultLevels.Length; ++k)
+            var result = new byte[_resultLevels.Length];
+            for (var k = 0; k < _resultLevels.Length; ++k)
+            {
                 result[k] = (byte)_resultLevels[k];
+            }
 
             // don't worry about linebreaks since if there is a break within
             // a series of WS values preceeding S, the linebreak itself
             // causes the reset.
-            for (int i = 0; i < result.Length; ++i)
+            for (var i = 0; i < result.Length; ++i)
             {
-                sbyte t = _initialTypes[i];
+                var t = _initialTypes[i];
                 if (t == B || t == S)
                 {
                     // Rule L1, clauses one and two.
                     result[i] = (byte)_paragraphEmbeddingLevel;
 
                     // Rule L1, clause three.
-                    for (int j = i - 1; j >= 0; --j)
+                    for (var j = i - 1; j >= 0; --j)
                     {
                         if (isWhitespace(_initialTypes[j]))
                         { // including format codes
@@ -420,11 +423,11 @@ namespace iTextSharp.text.pdf
             }
 
             // Rule L1, clause four.
-            int start = 0;
-            for (int i = 0; i < linebreaks.Length; ++i)
+            var start = 0;
+            for (var i = 0; i < linebreaks.Length; ++i)
             {
-                int limit = linebreaks[i];
-                for (int j = limit - 1; j >= start; --j)
+                var limit = linebreaks[i];
+                for (var j = limit - 1; j >= start; --j)
                 {
                     if (isWhitespace(_initialTypes[j]))
                     { // including format codes
@@ -448,18 +451,18 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private static int[] computeMultilineReordering(sbyte[] levels, int[] linebreaks)
         {
-            int[] result = new int[levels.Length];
+            var result = new int[levels.Length];
 
-            int start = 0;
-            for (int i = 0; i < linebreaks.Length; ++i)
+            var start = 0;
+            for (var i = 0; i < linebreaks.Length; ++i)
             {
-                int limit = linebreaks[i];
+                var limit = linebreaks[i];
 
-                sbyte[] templevels = new sbyte[limit - start];
+                var templevels = new sbyte[limit - start];
                 Array.Copy(levels, start, templevels, 0, templevels.Length);
 
-                int[] temporder = computeReordering(templevels);
-                for (int j = 0; j < temporder.Length; ++j)
+                var temporder = computeReordering(templevels);
+                for (var j = 0; j < temporder.Length; ++j)
                 {
                     result[start + j] = temporder[j] + start;
                 }
@@ -478,12 +481,12 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private static int[] computeReordering(sbyte[] levels)
         {
-            int lineLength = levels.Length;
+            var lineLength = levels.Length;
 
-            int[] result = new int[lineLength];
+            var result = new int[lineLength];
 
             // initialize order
-            for (int i = 0; i < lineLength; ++i)
+            for (var i = 0; i < lineLength; ++i)
             {
                 result[i] = i;
             }
@@ -493,9 +496,9 @@ namespace iTextSharp.text.pdf
             // so this is sufficient.
             sbyte highestLevel = 0;
             sbyte lowestOddLevel = 63;
-            for (int i = 0; i < lineLength; ++i)
+            for (var i = 0; i < lineLength; ++i)
             {
-                sbyte level = levels[i];
+                var level = levels[i];
                 if (level > highestLevel)
                 {
                     highestLevel = level;
@@ -508,13 +511,13 @@ namespace iTextSharp.text.pdf
 
             for (int level = highestLevel; level >= lowestOddLevel; --level)
             {
-                for (int i = 0; i < lineLength; ++i)
+                for (var i = 0; i < lineLength; ++i)
                 {
                     if (levels[i] >= level)
                     {
                         // find range of text at or above this level
-                        int start = i;
-                        int limit = i + 1;
+                        var start = i;
+                        var limit = i + 1;
                         while (limit < lineLength && levels[limit] >= level)
                         {
                             ++limit;
@@ -523,7 +526,7 @@ namespace iTextSharp.text.pdf
                         // reverse run
                         for (int j = start, k = limit - 1; j < k; ++j, --k)
                         {
-                            int temp = result[j];
+                            var temp = result[j];
                             result[j] = result[k];
                             result[k] = temp;
                         }
@@ -552,6 +555,7 @@ namespace iTextSharp.text.pdf
                 case BN:
                 case WS:
                     return true;
+
                 default:
                     return false;
             }
@@ -567,40 +571,39 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private static sbyte[] processEmbeddings(sbyte[] resultTypes, sbyte paragraphEmbeddingLevel)
         {
-            int explicitLevelLimit = 62;
+            var explicitLevelLimit = 62;
 
-            int textLength = resultTypes.Length;
-            sbyte[] embeddings = new sbyte[textLength];
+            var textLength = resultTypes.Length;
+            var embeddings = new sbyte[textLength];
 
             // This stack will store the embedding levels and override status in a single sbyte
             // as described above.
-            sbyte[] embeddingValueStack = new sbyte[explicitLevelLimit];
-            int stackCounter = 0;
+            var embeddingValueStack = new sbyte[explicitLevelLimit];
+            var stackCounter = 0;
 
             // An LRE or LRO at level 60 is invalid, since the new level 62 is invalid.  But
             // an RLE at level 60 is valid, since the new level 61 is valid.  The current wording
             // of the rules requires that the RLE remain valid even if a previous LRE is invalid.
             // This keeps track of ignored LRE or LRO codes at level 60, so that the matching PDFs
             // will not try to pop the stack.
-            int overflowAlmostCounter = 0;
+            var overflowAlmostCounter = 0;
 
             // This keeps track of ignored pushes at level 61 or higher, so that matching PDFs will
             // not try to pop the stack.
-            int overflowCounter = 0;
+            var overflowCounter = 0;
 
             // Rule X1.
 
             // Keep the level separate from the value (level | override status flag) for ease of access.
-            sbyte currentEmbeddingLevel = paragraphEmbeddingLevel;
-            sbyte currentEmbeddingValue = paragraphEmbeddingLevel;
+            var currentEmbeddingLevel = paragraphEmbeddingLevel;
+            var currentEmbeddingValue = paragraphEmbeddingLevel;
 
             // Loop through types, handling all remaining rules
-            for (int i = 0; i < textLength; ++i)
+            for (var i = 0; i < textLength; ++i)
             {
-
                 embeddings[i] = currentEmbeddingValue;
 
-                sbyte t = resultTypes[i];
+                var t = resultTypes[i];
 
                 // Rules X2, X3, X4, X5
                 switch (t)
@@ -720,10 +723,10 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private static void validateLineBreaks(int[] linebreaks, int textLength)
         {
-            int prev = 0;
-            for (int i = 0; i < linebreaks.Length; ++i)
+            var prev = 0;
+            for (var i = 0; i < linebreaks.Length; ++i)
             {
-                int next = linebreaks[i];
+                var next = linebreaks[i];
                 if (next <= prev)
                 {
                     throw new ArgumentException("bad linebreak: " + next + " at index: " + i);
@@ -759,14 +762,14 @@ namespace iTextSharp.text.pdf
             {
                 throw new ArgumentException("types is null");
             }
-            for (int i = 0; i < types.Length; ++i)
+            for (var i = 0; i < types.Length; ++i)
             {
                 if (types[i] < TYPE_MIN || types[i] > TYPE_MAX)
                 {
                     throw new ArgumentException("illegal type value at " + i + ": " + types[i]);
                 }
             }
-            for (int i = 0; i < types.Length - 1; ++i)
+            for (var i = 0; i < types.Length - 1; ++i)
             {
                 if (types[i] == B)
                 {
@@ -787,9 +790,9 @@ namespace iTextSharp.text.pdf
         {
             _embeddings = processEmbeddings(_resultTypes, _paragraphEmbeddingLevel);
 
-            for (int i = 0; i < _textLength; ++i)
+            for (var i = 0; i < _textLength; ++i)
             {
-                sbyte level = _embeddings[i];
+                var level = _embeddings[i];
                 if ((level & 0x80) != 0)
                 {
                     level &= 0x7f;
@@ -811,9 +814,9 @@ namespace iTextSharp.text.pdf
             sbyte strongType = -1; // unknown
 
             // Rule P2.
-            for (int i = 0; i < _textLength; ++i)
+            for (var i = 0; i < _textLength; ++i)
             {
-                sbyte t = _resultTypes[i];
+                var t = _resultTypes[i];
                 if (t == L || t == AL || t == R)
                 {
                     strongType = t;
@@ -844,11 +847,11 @@ namespace iTextSharp.text.pdf
         private int findRunLimit(int index, int limit, sbyte[] validSet)
         {
             --index;
-            loop:
+        loop:
             while (++index < limit)
             {
-                sbyte t = _resultTypes[index];
-                for (int i = 0; i < validSet.Length; ++i)
+                var t = _resultTypes[index];
+                for (var i = 0; i < validSet.Length; ++i)
                 {
                     if (t == validSet[i])
                     {
@@ -867,11 +870,11 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private int findRunStart(int index, sbyte[] validSet)
         {
-            loop:
+        loop:
             while (--index >= 0)
             {
-                sbyte t = _resultTypes[index];
-                for (int i = 0; i < validSet.Length; ++i)
+                var t = _resultTypes[index];
+                for (var i = 0; i < validSet.Length; ++i)
                 {
                     if (t == validSet[i])
                     {
@@ -895,9 +898,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the length of the data (original length of</returns>
         private int reinsertExplicitCodes(int textLength)
         {
-            for (int i = _initialTypes.Length; --i >= 0;)
+            for (var i = _initialTypes.Length; --i >= 0;)
             {
-                sbyte t = _initialTypes[i];
+                var t = _initialTypes[i];
                 if (t == LRE || t == RLE || t == LRO || t == RLO || t == PDF || t == BN)
                 {
                     _embeddings[i] = 0;
@@ -921,7 +924,7 @@ namespace iTextSharp.text.pdf
             {
                 _resultLevels[0] = _paragraphEmbeddingLevel;
             }
-            for (int i = 1; i < _initialTypes.Length; ++i)
+            for (var i = 1; i < _initialTypes.Length; ++i)
             {
                 if (_resultLevels[i] == -1)
                 {
@@ -944,10 +947,10 @@ namespace iTextSharp.text.pdf
         /// <returns>the length of the data excluding explicit codes and BN.</returns>
         private int removeExplicitCodes()
         {
-            int w = 0;
-            for (int i = 0; i < _textLength; ++i)
+            var w = 0;
+            for (var i = 0; i < _textLength; ++i)
             {
-                sbyte t = _initialTypes[i];
+                var t = _initialTypes[i];
                 if (!(t == LRE || t == RLE || t == LRO || t == RLO || t == PDF || t == BN))
                 {
                     _embeddings[w] = _embeddings[i];
@@ -967,9 +970,9 @@ namespace iTextSharp.text.pdf
         {
             if ((level & 1) == 0)
             { // even level
-                for (int i = start; i < limit; ++i)
+                for (var i = start; i < limit; ++i)
                 {
-                    sbyte t = _resultTypes[i];
+                    var t = _resultTypes[i];
                     // Rule I1.
                     if (t == L)
                     {
@@ -987,9 +990,9 @@ namespace iTextSharp.text.pdf
             }
             else
             { // odd level
-                for (int i = start; i < limit; ++i)
+                for (var i = start; i < limit; ++i)
                 {
-                    sbyte t = _resultTypes[i];
+                    var t = _resultTypes[i];
                     // Rule I2.
                     if (t == R)
                     {
@@ -1009,15 +1012,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private void resolveNeutralTypes(int start, int limit, sbyte level, sbyte sor, sbyte eor)
         {
-
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
-                sbyte t = _resultTypes[i];
+                var t = _resultTypes[i];
                 if (t == WS || t == ON || t == B || t == S)
                 {
                     // find bounds of run of neutrals
-                    int runstart = i;
-                    int runlimit = findRunLimit(runstart, limit, new[] { B, S, WS, ON });
+                    var runstart = i;
+                    var runlimit = findRunLimit(runstart, limit, new[] { B, S, WS, ON });
 
                     // determine effective types at ends of run
                     sbyte leadingType;
@@ -1096,13 +1098,12 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private void resolveWeakTypes(int start, int limit, sbyte level, sbyte sor, sbyte eor)
         {
-
             // Rule W1.
             // Changes all NSMs.
-            sbyte preceedingCharacterType = sor;
-            for (int i = start; i < limit; ++i)
+            var preceedingCharacterType = sor;
+            for (var i = start; i < limit; ++i)
             {
-                sbyte t = _resultTypes[i];
+                var t = _resultTypes[i];
                 if (t == NSM)
                 {
                     _resultTypes[i] = preceedingCharacterType;
@@ -1115,13 +1116,13 @@ namespace iTextSharp.text.pdf
 
             // Rule W2.
             // EN does not change at the start of the run, because sor != AL.
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
                 if (_resultTypes[i] == EN)
                 {
-                    for (int j = i - 1; j >= start; --j)
+                    for (var j = i - 1; j >= start; --j)
                     {
-                        sbyte t = _resultTypes[j];
+                        var t = _resultTypes[j];
                         if (t == L || t == R || t == AL)
                         {
                             if (t == AL)
@@ -1135,7 +1136,7 @@ namespace iTextSharp.text.pdf
             }
 
             // Rule W3.
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
                 if (_resultTypes[i] == AL)
                 {
@@ -1155,12 +1156,12 @@ namespace iTextSharp.text.pdf
             // right is not ES or CS.  Thus either the current value will not change,
             // or its change will have no effect on the remainder of the analysis.
 
-            for (int i = start + 1; i < limit - 1; ++i)
+            for (var i = start + 1; i < limit - 1; ++i)
             {
                 if (_resultTypes[i] == ES || _resultTypes[i] == CS)
                 {
-                    sbyte prevSepType = _resultTypes[i - 1];
-                    sbyte succSepType = _resultTypes[i + 1];
+                    var prevSepType = _resultTypes[i - 1];
+                    var succSepType = _resultTypes[i + 1];
                     if (prevSepType == EN && succSepType == EN)
                     {
                         _resultTypes[i] = EN;
@@ -1173,16 +1174,16 @@ namespace iTextSharp.text.pdf
             }
 
             // Rule W5.
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
                 if (_resultTypes[i] == ET)
                 {
                     // locate end of sequence
-                    int runstart = i;
-                    int runlimit = findRunLimit(runstart, limit, new[] { ET });
+                    var runstart = i;
+                    var runlimit = findRunLimit(runstart, limit, new[] { ET });
 
                     // check values at ends of sequence
-                    sbyte t = runstart == start ? sor : _resultTypes[runstart - 1];
+                    var t = runstart == start ? sor : _resultTypes[runstart - 1];
 
                     if (t != EN)
                     {
@@ -1200,9 +1201,9 @@ namespace iTextSharp.text.pdf
             }
 
             // Rule W6.
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
-                sbyte t = _resultTypes[i];
+                var t = _resultTypes[i];
                 if (t == ES || t == ET || t == CS)
                 {
                     _resultTypes[i] = ON;
@@ -1210,15 +1211,15 @@ namespace iTextSharp.text.pdf
             }
 
             // Rule W7.
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
                 if (_resultTypes[i] == EN)
                 {
                     // set default if we reach start of run
-                    sbyte prevStrongType = sor;
-                    for (int j = i - 1; j >= start; --j)
+                    var prevStrongType = sor;
+                    for (var j = i - 1; j >= start; --j)
                     {
-                        sbyte t = _resultTypes[j];
+                        var t = _resultTypes[j];
                         if (t == L || t == R)
                         { // AL's have been removed
                             prevStrongType = t;
@@ -1246,7 +1247,6 @@ namespace iTextSharp.text.pdf
             // Result types initialized to input types.
             _resultTypes = (sbyte[])_initialTypes.Clone();
 
-
             // 1) determining the paragraph level
             // Rule P1 is the requirement for entering this algorithm.
             // Rules P2, P3.
@@ -1269,21 +1269,21 @@ namespace iTextSharp.text.pdf
 
             // Rule X10.
             // Run remainder of algorithm one level run at a time
-            sbyte prevLevel = _paragraphEmbeddingLevel;
-            int start = 0;
+            var prevLevel = _paragraphEmbeddingLevel;
+            var start = 0;
             while (start < _textLength)
             {
-                sbyte level = _resultLevels[start];
-                sbyte prevType = typeForLevel(Math.Max(prevLevel, level));
+                var level = _resultLevels[start];
+                var prevType = typeForLevel(Math.Max(prevLevel, level));
 
-                int limit = start + 1;
+                var limit = start + 1;
                 while (limit < _textLength && _resultLevels[limit] == level)
                 {
                     ++limit;
                 }
 
-                sbyte succLevel = limit < _textLength ? _resultLevels[limit] : _paragraphEmbeddingLevel;
-                sbyte succType = typeForLevel(Math.Max(succLevel, level));
+                var succLevel = limit < _textLength ? _resultLevels[limit] : _paragraphEmbeddingLevel;
+                var succType = typeForLevel(Math.Max(succLevel, level));
 
                 // 3) resolving weak types
                 // Rules W1-W7.
@@ -1308,12 +1308,13 @@ namespace iTextSharp.text.pdf
             // how to implement the algorithm without removing and reinserting the codes.
             _textLength = reinsertExplicitCodes(_textLength);
         }
+
         /// <summary>
         /// Set resultLevels from start up to (but not including) limit to newLevel.
         /// </summary>
         private void setLevels(int start, int limit, sbyte newLevel)
         {
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
                 _resultLevels[i] = newLevel;
             }
@@ -1324,7 +1325,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private void setTypes(int start, int limit, sbyte newType)
         {
-            for (int i = start; i < limit; ++i)
+            for (var i = start; i < limit; ++i)
             {
                 _resultTypes[i] = newType;
             }

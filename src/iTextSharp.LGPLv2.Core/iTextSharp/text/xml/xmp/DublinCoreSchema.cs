@@ -94,8 +94,10 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="author"></param>
         public void AddAuthor(string author)
         {
-            XmpArray array = new XmpArray(XmpArray.ORDERED);
-            array.Add(author);
+            var array = new XmpArray(XmpArray.ORDERED)
+            {
+                author
+            };
             SetProperty(CREATOR, array);
         }
 
@@ -105,8 +107,8 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="author"></param>
         public void AddAuthor(string[] author)
         {
-            XmpArray array = new XmpArray(XmpArray.ORDERED);
-            for (int i = 0; i < author.Length; i++)
+            var array = new XmpArray(XmpArray.ORDERED);
+            for (var i = 0; i < author.Length; i++)
             {
                 array.Add(author[i]);
             }
@@ -119,8 +121,10 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="desc"></param>
         public void AddDescription(string desc)
         {
-            XmpArray array = new XmpArray(XmpArray.ALTERNATIVE);
-            array.Add(desc);
+            var array = new XmpArray(XmpArray.ALTERNATIVE)
+            {
+                desc
+            };
             SetProperty(DESCRIPTION, array);
         }
 
@@ -130,8 +134,10 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="publisher"></param>
         public void AddPublisher(string publisher)
         {
-            XmpArray array = new XmpArray(XmpArray.ORDERED);
-            array.Add(publisher);
+            var array = new XmpArray(XmpArray.ORDERED)
+            {
+                publisher
+            };
             SetProperty(PUBLISHER, array);
         }
 
@@ -141,8 +147,8 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="publisher"></param>
         public void AddPublisher(string[] publisher)
         {
-            XmpArray array = new XmpArray(XmpArray.ORDERED);
-            for (int i = 0; i < publisher.Length; i++)
+            var array = new XmpArray(XmpArray.ORDERED);
+            for (var i = 0; i < publisher.Length; i++)
             {
                 array.Add(publisher[i]);
             }
@@ -155,8 +161,8 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="subject">array of subjects</param>
         public void addSubject(string[] subject)
         {
-            XmpArray array = new XmpArray(XmpArray.UNORDERED);
-            for (int i = 0; i < subject.Length; i++)
+            var array = new XmpArray(XmpArray.UNORDERED);
+            for (var i = 0; i < subject.Length; i++)
             {
                 array.Add(subject[i]);
             }
@@ -169,8 +175,10 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="subject"></param>
         public void AddSubject(string subject)
         {
-            XmpArray array = new XmpArray(XmpArray.UNORDERED);
-            array.Add(subject);
+            var array = new XmpArray(XmpArray.UNORDERED)
+            {
+                subject
+            };
             SetProperty(SUBJECT, array);
         }
 
@@ -180,8 +188,10 @@ namespace iTextSharp.text.xml.xmp
         /// <param name="title"></param>
         public void AddTitle(string title)
         {
-            XmpArray array = new XmpArray(XmpArray.ALTERNATIVE);
-            array.Add(title);
+            var array = new XmpArray(XmpArray.ALTERNATIVE)
+            {
+                title
+            };
             SetProperty(TITLE, array);
         }
     }

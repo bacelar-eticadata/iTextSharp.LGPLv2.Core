@@ -10,6 +10,7 @@ namespace iTextSharp.text.pdf.codec
         private const int Code = 1;
         private const int Eol = 0x001;
         private const int G3CodeEof = -3;
+
         /// <summary>
         /// status values returned instead of a run length
         /// </summary>
@@ -19,6 +20,7 @@ namespace iTextSharp.text.pdf.codec
         private const int G3CodeInvalid = -2;
         private const int Length = 0;
         private const int Runlen = 2;
+
         private static readonly byte[] _oneruns = {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 0x00 - 0x0f */
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 0x10 - 0x1f */
@@ -64,12 +66,14 @@ namespace iTextSharp.text.pdf.codec
         { 0x00, 0x01, 0x03, 0x07, 0x0f, 0x1f, 0x3f, 0x7f, 0xff };
 
         private readonly ByteBuffer _outBuf = new ByteBuffer(1024);
+
         private readonly int[] _passcode =
             { 4, 0x1, 0 };
 
         private readonly byte[] _refline;
         private readonly int _rowbytes;
         private readonly int _rowpixels;
+
         private readonly int[][] _tiffFaxBlackCodes = {
             new[]{ 10, 0x37, 0 },    /* 0000 1101 11 */
             new[]{ 3, 0x2, 1 },  /* 010 */
@@ -330,7 +334,7 @@ namespace iTextSharp.text.pdf.codec
         /// <returns>the encoded image</returns>
         public static byte[] Compress(byte[] data, int width, int height)
         {
-            Ccittg4Encoder g4 = new Ccittg4Encoder(width);
+            var g4 = new Ccittg4Encoder(width);
             g4.Fax4Encode(data, 0, g4._rowbytes * height);
             return g4.Close();
         }
@@ -364,6 +368,7 @@ namespace iTextSharp.text.pdf.codec
                 _sizeData -= _rowbytes;
             }
         }
+
         /// <summary>
         /// Encodes a number of lines.
         /// </summary>
@@ -376,10 +381,10 @@ namespace iTextSharp.text.pdf.codec
 
         private static int find0Span(byte[] bp, int offset, int bs, int be)
         {
-            int bits = be - bs;
+            var bits = be - bs;
             int n, span;
 
-            int pos = offset + (bs >> 3);
+            var pos = offset + (bs >> 3);
             /*
             * Check partial byte on lhs.
             */
@@ -387,23 +392,37 @@ namespace iTextSharp.text.pdf.codec
             {
                 span = _zeroruns[(bp[pos] << n) & 0xff];
                 if (span > 8 - n)     /* table value too generous */
+                {
                     span = 8 - n;
+                }
+
                 if (span > bits)    /* constrain span to bit range */
+                {
                     span = bits;
+                }
+
                 if (n + span < 8)     /* doesn't extend to edge of byte */
+                {
                     return (span);
+                }
+
                 bits -= span;
                 pos++;
             }
             else
+            {
                 span = 0;
+            }
             /*
-            * Scan full bytes for all 1's.
-            */
+* Scan full bytes for all 1's.
+*/
             while (bits >= 8)
             {
                 if (bp[pos] != 0)   /* end of run */
+                {
                     return (span + _zeroruns[bp[pos] & 0xff]);
+                }
+
                 span += 8;
                 bits -= 8;
                 pos++;
@@ -421,10 +440,10 @@ namespace iTextSharp.text.pdf.codec
 
         private static int find1Span(byte[] bp, int offset, int bs, int be)
         {
-            int bits = be - bs;
+            var bits = be - bs;
             int n, span;
 
-            int pos = offset + (bs >> 3);
+            var pos = offset + (bs >> 3);
             /*
             * Check partial byte on lhs.
             */
@@ -432,23 +451,37 @@ namespace iTextSharp.text.pdf.codec
             {
                 span = _oneruns[(bp[pos] << n) & 0xff];
                 if (span > 8 - n)     /* table value too generous */
+                {
                     span = 8 - n;
+                }
+
                 if (span > bits)    /* constrain span to bit range */
+                {
                     span = bits;
+                }
+
                 if (n + span < 8)     /* doesn't extend to edge of byte */
+                {
                     return (span);
+                }
+
                 bits -= span;
                 pos++;
             }
             else
+            {
                 span = 0;
+            }
             /*
-            * Scan full bytes for all 1's.
-            */
+* Scan full bytes for all 1's.
+*/
             while (bits >= 8)
             {
                 if (bp[pos] != 0xff)  /* end of run */
+                {
                     return (span + _oneruns[bp[pos] & 0xff]);
+                }
+
                 span += 8;
                 bits -= 8;
                 pos++;
@@ -476,17 +509,17 @@ namespace iTextSharp.text.pdf.codec
 
         private void fax3Encode2DRow()
         {
-            int a0 = 0;
-            int a1 = (pixel(_dataBp, _offsetData, 0) != 0 ? 0 : finddiff(_dataBp, _offsetData, 0, _rowpixels, 0));
-            int b1 = (pixel(_refline, 0, 0) != 0 ? 0 : finddiff(_refline, 0, 0, _rowpixels, 0));
+            var a0 = 0;
+            var a1 = (pixel(_dataBp, _offsetData, 0) != 0 ? 0 : finddiff(_dataBp, _offsetData, 0, _rowpixels, 0));
+            var b1 = (pixel(_refline, 0, 0) != 0 ? 0 : finddiff(_refline, 0, 0, _rowpixels, 0));
             int a2, b2;
 
-            for (;;)
+            for (; ; )
             {
                 b2 = finddiff2(_refline, 0, b1, _rowpixels, pixel(_refline, 0, b1));
                 if (b2 >= a1)
                 {
-                    int d = b1 - a1;
+                    var d = b1 - a1;
                     if (!(-3 <= d && d <= 3))
                     { /* horizontal mode */
                         a2 = finddiff2(_dataBp, _offsetData, a1, _rowpixels, pixel(_dataBp, _offsetData, a1));
@@ -515,7 +548,10 @@ namespace iTextSharp.text.pdf.codec
                     a0 = b2;
                 }
                 if (a0 >= _rowpixels)
+                {
                     break;
+                }
+
                 a1 = finddiff(_dataBp, _offsetData, a0, _rowpixels, pixel(_dataBp, _offsetData, a0));
                 b1 = finddiff(_refline, 0, a0, _rowpixels, pixel(_dataBp, _offsetData, a0) ^ 1);
                 b1 = finddiff(_refline, 0, b1, _rowpixels, pixel(_dataBp, _offsetData, a0));
@@ -537,7 +573,10 @@ namespace iTextSharp.text.pdf.codec
         private int pixel(byte[] data, int offset, int bit)
         {
             if (bit >= _rowpixels)
+            {
                 return 0;
+            }
+
             return ((data[offset + (bit >> 3)] & 0xff) >> (7 - ((bit) & 7))) & 1;
         }
 
@@ -572,7 +611,7 @@ namespace iTextSharp.text.pdf.codec
 
             while (span >= 2624)
             {
-                int[] te = tab[63 + (2560 >> 6)];
+                var te = tab[63 + (2560 >> 6)];
                 code = te[Code];
                 length = te[Length];
                 putBits(code, length);
@@ -580,7 +619,7 @@ namespace iTextSharp.text.pdf.codec
             }
             if (span >= 64)
             {
-                int[] te = tab[63 + (span >> 6)];
+                var te = tab[63 + (span >> 6)];
                 code = te[Code];
                 length = te[Length];
                 putBits(code, length);
@@ -590,17 +629,18 @@ namespace iTextSharp.text.pdf.codec
             length = tab[span][Length];
             putBits(code, length);
         }
-         /* bit length of g3 code */
-           /* g3 code */
-         /* run length in bits */
 
-         /* EOL code value - 0000 0000 0000 1 */
+        /* bit length of g3 code */
+        /* g3 code */
+        /* run length in bits */
 
-     /* NB: ACT_EOL - ACT_WRUNT */
-         /* NB: ACT_INVALID - ACT_WRUNT */
-             /* end of input data */
-          /* incomplete run code */
-              /* 001 */
-              /* 0001 */
+        /* EOL code value - 0000 0000 0000 1 */
+
+        /* NB: ACT_EOL - ACT_WRUNT */
+        /* NB: ACT_INVALID - ACT_WRUNT */
+        /* end of input data */
+        /* incomplete run code */
+        /* 001 */
+        /* 0001 */
     }
 }

@@ -71,25 +71,13 @@ namespace iTextSharp.text
         /// Gets all the chunks in this element.
         /// </summary>
         /// <value>an ArrayList</value>
-        public ArrayList Chunks
-        {
-            get
-            {
-                return new ArrayList();
-            }
-        }
+        public ArrayList Chunks => new ArrayList();
 
         /// <summary>
         /// Gets the number of columns.
         /// </summary>
         /// <value>a value</value>
-        public int Columns
-        {
-            get
-            {
-                return columns;
-            }
-        }
+        public int Columns => columns;
 
         /// <summary>
         /// Gets the horizontal Element.
@@ -97,27 +85,15 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public int HorizontalAlignment
         {
-            get
-            {
-                return horizontalAlignment;
-            }
-            set
-            {
-                horizontalAlignment = value;
-            }
+            get => horizontalAlignment;
+            set => horizontalAlignment = value;
         }
 
         /// <summary>
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public int Type
-        {
-            get
-            {
-                return Element.ROW;
-            }
-        }
+        public int Type => Element.ROW;
 
         /// <summary>
         /// Gets a Cell or Table from a certain column.
@@ -151,7 +127,7 @@ namespace iTextSharp.text
         /// <returns>true if none of the columns is reserved.</returns>
         public bool IsEmpty()
         {
-            for (int i = 0; i < columns; i++)
+            for (var i = 0; i < columns; i++)
             {
                 if (Cells[i] != null)
                 {
@@ -216,11 +192,22 @@ namespace iTextSharp.text
         /// </returns>
         internal int AddElement(object element, int column)
         {
-            if (element == null) throw new Exception("addCell - null argument");
-            if ((column < 0) || (column > columns)) throw new Exception("addCell - illegal column argument");
-            if (!((getObjectId(element) == Cell) || (getObjectId(element) == Table))) throw new ArgumentException("addCell - only Cells or Tables allowed");
+            if (element == null)
+            {
+                throw new Exception("addCell - null argument");
+            }
 
-            int lColspan = ((element is Cell) ? ((Cell)element).Colspan : 1);
+            if ((column < 0) || (column > columns))
+            {
+                throw new Exception("addCell - illegal column argument");
+            }
+
+            if (!((getObjectId(element) == Cell) || (getObjectId(element) == Table)))
+            {
+                throw new ArgumentException("addCell - only Cells or Tables allowed");
+            }
+
+            var lColspan = ((element is Cell) ? ((Cell)element).Colspan : 1);
 
             if (!Reserve(column, lColspan))
             {
@@ -244,10 +231,10 @@ namespace iTextSharp.text
                 throw new Exception("getCell at illegal index : " + column);
             }
             columns--;
-            bool[] newReserved = new bool[columns];
+            var newReserved = new bool[columns];
             object[] newCells = new Cell[columns];
 
-            for (int i = 0; i < column; i++)
+            for (var i = 0; i < column; i++)
             {
                 newReserved[i] = Reserved[i];
                 newCells[i] = Cells[i];
@@ -256,7 +243,7 @@ namespace iTextSharp.text
                     ((Cell)newCells[i]).Colspan = ((Cell)Cells[i]).Colspan - 1;
                 }
             }
-            for (int i = column; i < columns; i++)
+            for (var i = column; i < columns; i++)
             {
                 newReserved[i] = Reserved[i + 1];
                 newCells[i] = Cells[i + 1];
@@ -297,14 +284,17 @@ namespace iTextSharp.text
         /// <returns>true if the column was reserved, false if not.</returns>
         internal bool Reserve(int column, int size)
         {
-            if ((column < 0) || ((column + size) > columns)) throw new Exception("reserve - incorrect column/size");
+            if ((column < 0) || ((column + size) > columns))
+            {
+                throw new Exception("reserve - incorrect column/size");
+            }
 
-            for (int i = column; i < column + size; i++)
+            for (var i = column; i < column + size; i++)
             {
                 if (Reserved[i])
                 {
                     // undo reserve
-                    for (int j = i; j >= column; j--)
+                    for (var j = i; j >= column; j--)
                     {
                         Reserved[j] = false;
                     }
@@ -322,7 +312,10 @@ namespace iTextSharp.text
         /// <param name="column">the position where to add the cell.</param>
         internal void SetElement(object aElement, int column)
         {
-            if (Reserved[column]) throw new ArgumentException("setElement - position already taken");
+            if (Reserved[column])
+            {
+                throw new ArgumentException("setElement - position already taken");
+            }
 
             Cells[column] = aElement;
             if (aElement != null)
@@ -330,6 +323,7 @@ namespace iTextSharp.text
                 Reserved[column] = true;
             }
         }
+
         /// <summary>
         /// methods to retrieve information
         /// </summary>
@@ -338,11 +332,20 @@ namespace iTextSharp.text
         /// </summary>
         /// <param name="column">the column of which you'd like to know the type</param>
         /// <returns>the element id</returns>
-        int getElementId(int column)
+        private int getElementId(int column)
         {
-            if (Cells[column] == null) return Null;
-            else if (Cells[column] is Cell) return Cell;
-            else if (Cells[column] is Table) return Table;
+            if (Cells[column] == null)
+            {
+                return Null;
+            }
+            else if (Cells[column] is Cell)
+            {
+                return Cell;
+            }
+            else if (Cells[column] is Table)
+            {
+                return Table;
+            }
 
             return -1;
         }
@@ -353,11 +356,20 @@ namespace iTextSharp.text
         /// </summary>
         /// <param name="element"></param>
         /// <returns>the object of which you'd like to know the type-id, -1 if invalid</returns>
-        int getObjectId(object element)
+        private int getObjectId(object element)
         {
-            if (element == null) return Null;
-            else if (element is Cell) return Cell;
-            else if (element is Table) return Table;
+            if (element == null)
+            {
+                return Null;
+            }
+            else if (element is Cell)
+            {
+                return Cell;
+            }
+            else if (element is Table)
+            {
+                return Table;
+            }
 
             return -1;
         }

@@ -1,4 +1,5 @@
 using System;
+
 /*
  * Copyright 2007 ZXing authors
  *
@@ -15,19 +16,21 @@ using System;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
-
+namespace iTextSharp.text.pdf.qrcode
+{
     /**
      * See ISO 18004:2006 Annex D
      *
      * @author Sean Owen
      */
-    public sealed class Version {
 
+    public sealed partial class Version
+    {
         /**
          * See ISO 18004:2006 Annex D.
          * Element i represents the raw version bits that specify version i + 7
          */
+
         private static readonly int[] VERSION_DECODE_INFO = {
       0x07C94, 0x085BC, 0x09A99, 0x0A4D3, 0x0BBF6,
       0x0C762, 0x0D847, 0x0E60D, 0x0F928, 0x10B78,
@@ -40,47 +43,54 @@ namespace iTextSharp.text.pdf.qrcode {
 
         private static readonly Version[] VERSIONS = BuildVersions();
 
-        private int versionNumber;
-        private int[] alignmentPatternCenters;
-        private ECBlocks[] ecBlocks;
-        private int totalCodewords;
+        private readonly int versionNumber;
+        private readonly int[] alignmentPatternCenters;
+        private readonly ECBlocks[] ecBlocks;
+        private readonly int totalCodewords;
 
         private Version(int versionNumber,
                         int[] alignmentPatternCenters,
                         ECBlocks ecBlocks1,
                         ECBlocks ecBlocks2,
                         ECBlocks ecBlocks3,
-                        ECBlocks ecBlocks4) {
+                        ECBlocks ecBlocks4)
+        {
             this.versionNumber = versionNumber;
             this.alignmentPatternCenters = alignmentPatternCenters;
-            this.ecBlocks = new ECBlocks[] { ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4 };
-            int total = 0;
-            int ecCodewords = ecBlocks1.GetECCodewordsPerBlock();
-            ECB[] ecbArray = ecBlocks1.GetECBlocks();
-            for (int i = 0; i < ecbArray.Length; i++) {
-                ECB ecBlock = ecbArray[i];
+            ecBlocks = new ECBlocks[] { ecBlocks1, ecBlocks2, ecBlocks3, ecBlocks4 };
+            var total = 0;
+            var ecCodewords = ecBlocks1.GetECCodewordsPerBlock();
+            var ecbArray = ecBlocks1.GetECBlocks();
+            for (var i = 0; i < ecbArray.Length; i++)
+            {
+                var ecBlock = ecbArray[i];
                 total += ecBlock.GetCount() * (ecBlock.GetDataCodewords() + ecCodewords);
             }
-            this.totalCodewords = total;
+            totalCodewords = total;
         }
 
-        public int GetVersionNumber() {
+        public int GetVersionNumber()
+        {
             return versionNumber;
         }
 
-        public int[] GetAlignmentPatternCenters() {
+        public int[] GetAlignmentPatternCenters()
+        {
             return alignmentPatternCenters;
         }
 
-        public int GetTotalCodewords() {
+        public int GetTotalCodewords()
+        {
             return totalCodewords;
         }
 
-        public int GetDimensionForVersion() {
+        public int GetDimensionForVersion()
+        {
             return 17 + 4 * versionNumber;
         }
 
-        public ECBlocks GetECBlocksForLevel(ErrorCorrectionLevel ecLevel) {
+        public ECBlocks GetECBlocksForLevel(ErrorCorrectionLevel ecLevel)
+        {
             return ecBlocks[ecLevel.Ordinal()];
         }
 
@@ -91,167 +101,45 @@ namespace iTextSharp.text.pdf.qrcode {
          * @return {@link Version} for a QR Code of that dimension
          * @throws FormatException if dimension is not 1 mod 4
          */
-        public static Version GetProvisionalVersionForDimension(int dimension) {
-            if (dimension % 4 != 1) {
+
+        public static Version GetProvisionalVersionForDimension(int dimension)
+        {
+            if (dimension % 4 != 1)
+            {
                 throw new ArgumentException();
             }
-            try {
+            try
+            {
                 return GetVersionForNumber((dimension - 17) >> 2);
             }
-            catch (ArgumentException iae) {
-                throw iae;
+            catch (ArgumentException)
+            {
+                throw;
             }
         }
 
-        public static Version GetVersionForNumber(int versionNumber) {
-            if (versionNumber < 1 || versionNumber > 40) {
+        public static Version GetVersionForNumber(int versionNumber)
+        {
+            if (versionNumber < 1 || versionNumber > 40)
+            {
                 throw new ArgumentException();
             }
             return VERSIONS[versionNumber - 1];
         }
 
-        static Version DecodeVersionInformation(int versionBits) {
-            int bestDifference = int.MaxValue;
-            int bestVersion = 0;
-            for (int i = 0; i < VERSION_DECODE_INFO.Length; i++) {
-                int targetVersion = VERSION_DECODE_INFO[i];
-                // Do the version info bits match exactly? done.
-                if (targetVersion == versionBits) {
-                    return GetVersionForNumber(i + 7);
-                }
-                // Otherwise see if this is the closest to a real version info bit string
-                // we have seen so far
-                int bitsDifference = FormatInformation.NumBitsDiffering(versionBits, targetVersion);
-                if (bitsDifference < bestDifference) {
-                    bestVersion = i + 7;
-                    bestDifference = bitsDifference;
-                }
-            }
-            // We can tolerate up to 3 bits of error since no two version info codewords will
-            // differ in less than 4 bits.
-            if (bestDifference <= 3) {
-                return GetVersionForNumber(bestVersion);
-            }
-            // If we didn't find a close enough match, fail
-            return null;
-        }
-
-        /**
-         * See ISO 18004:2006 Annex E
-         */
-        BitMatrix BuildFunctionPattern() {
-            int dimension = GetDimensionForVersion();
-            BitMatrix bitMatrix = new BitMatrix(dimension);
-
-            // Top left finder pattern + separator + format
-            bitMatrix.SetRegion(0, 0, 9, 9);
-            // Top right finder pattern + separator + format
-            bitMatrix.SetRegion(dimension - 8, 0, 8, 9);
-            // Bottom left finder pattern + separator + format
-            bitMatrix.SetRegion(0, dimension - 8, 9, 8);
-
-            // Alignment patterns
-            int max = alignmentPatternCenters.Length;
-            for (int x = 0; x < max; x++) {
-                int i = alignmentPatternCenters[x] - 2;
-                for (int y = 0; y < max; y++) {
-                    if ((x == 0 && (y == 0 || y == max - 1)) || (x == max - 1 && y == 0)) {
-                        // No alignment patterns near the three finder paterns
-                        continue;
-                    }
-                    bitMatrix.SetRegion(alignmentPatternCenters[y] - 2, i, 5, 5);
-                }
-            }
-
-            // Vertical timing pattern
-            bitMatrix.SetRegion(6, 9, 1, dimension - 17);
-            // Horizontal timing pattern
-            bitMatrix.SetRegion(9, 6, dimension - 17, 1);
-
-            if (versionNumber > 6) {
-                // Version info, top right
-                bitMatrix.SetRegion(dimension - 11, 0, 3, 6);
-                // Version info, bottom left
-                bitMatrix.SetRegion(0, dimension - 11, 6, 3);
-            }
-
-            return bitMatrix;
-        }
-
-        /**
-         * <p>Encapsulates a set of error-correction blocks in one symbol version. Most versions will
-         * use blocks of differing sizes within one version, so, this encapsulates the parameters for
-         * each set of blocks. It also holds the number of error-correction codewords per block since it
-         * will be the same across all blocks within one version.</p>
-         */
-        public sealed class ECBlocks {
-            private int ecCodewordsPerBlock;
-            private ECB[] ecBlocks;
-
-            public ECBlocks(int ecCodewordsPerBlock, ECB ecBlocks) {
-                this.ecCodewordsPerBlock = ecCodewordsPerBlock;
-                this.ecBlocks = new ECB[] { ecBlocks };
-            }
-
-            public ECBlocks(int ecCodewordsPerBlock, ECB ecBlocks1, ECB ecBlocks2) {
-                this.ecCodewordsPerBlock = ecCodewordsPerBlock;
-                this.ecBlocks = new ECB[] { ecBlocks1, ecBlocks2 };
-            }
-
-            public int GetECCodewordsPerBlock() {
-                return ecCodewordsPerBlock;
-            }
-
-            public int GetNumBlocks() {
-                int total = 0;
-                for (int i = 0; i < ecBlocks.Length; i++) {
-                    total += ecBlocks[i].GetCount();
-                }
-                return total;
-            }
-
-            public int GetTotalECCodewords() {
-                return ecCodewordsPerBlock * GetNumBlocks();
-            }
-
-            public ECB[] GetECBlocks() {
-                return ecBlocks;
-            }
-        }
-
-        /**
-         * <p>Encapsualtes the parameters for one error-correction block in one symbol version.
-         * This includes the number of data codewords, and the number of times a block with these
-         * parameters is used consecutively in the QR code version's format.</p>
-         */
-        public sealed class ECB {
-            private int count;
-            private int dataCodewords;
-
-            public ECB(int count, int dataCodewords) {
-                this.count = count;
-                this.dataCodewords = dataCodewords;
-            }
-
-            public int GetCount() {
-                return count;
-            }
-
-            public int GetDataCodewords() {
-                return dataCodewords;
-            }
-        }
-
-        public override String ToString() {
+        public override string ToString()
+        {
             return versionNumber.ToString();
         }
 
         /**
          * See ISO 18004:2006 6.5.1 Table 9
          */
-        private static Version[] BuildVersions() {
+
+        private static Version[] BuildVersions()
+        {
             return new Version[]{
-        new Version(1, new int[]{},
+        new Version(1, Array.Empty<int>(),
             new ECBlocks(7, new ECB(1, 19)),
             new ECBlocks(10, new ECB(1, 16)),
             new ECBlocks(13, new ECB(1, 13)),

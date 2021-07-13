@@ -61,15 +61,9 @@ namespace iTextSharp.text.pdf.codec.wmf
         /// <returns>Value of property backgroundMode.</returns>
         public int BackgroundMode
         {
-            get
-            {
-                return backgroundMode;
-            }
+            get => backgroundMode;
 
-            set
-            {
-                backgroundMode = value;
-            }
+            set => backgroundMode = value;
         }
 
         /// <summary>
@@ -78,52 +72,22 @@ namespace iTextSharp.text.pdf.codec.wmf
         /// <returns>Value of property currentBackgroundColor.</returns>
         public BaseColor CurrentBackgroundColor
         {
-            get
-            {
-                return currentBackgroundColor;
-            }
+            get => currentBackgroundColor;
 
-            set
-            {
-                currentBackgroundColor = value;
-            }
+            set => currentBackgroundColor = value;
         }
 
-        public MetaBrush CurrentBrush
-        {
-            get
-            {
-                return currentBrush;
-            }
-        }
+        public MetaBrush CurrentBrush => currentBrush;
 
-        public MetaFont CurrentFont
-        {
-            get
-            {
-                return currentFont;
-            }
-        }
+        public MetaFont CurrentFont => currentFont;
 
-        public MetaPen CurrentPen
-        {
-            get
-            {
-                return currentPen;
-            }
-        }
+        public MetaPen CurrentPen => currentPen;
 
         public System.Drawing.Point CurrentPoint
         {
-            get
-            {
-                return currentPoint;
-            }
+            get => currentPoint;
 
-            set
-            {
-                currentPoint = value;
-            }
+            set => currentPoint = value;
         }
 
         /// <summary>
@@ -132,31 +96,19 @@ namespace iTextSharp.text.pdf.codec.wmf
         /// <returns>Value of property currentTextColor.</returns>
         public BaseColor CurrentTextColor
         {
-            get
-            {
-                return currentTextColor;
-            }
+            get => currentTextColor;
 
-            set
-            {
-                currentTextColor = value;
-            }
+            set => currentTextColor = value;
         }
 
         public int ExtentWx
         {
-            set
-            {
-                extentWx = value;
-            }
+            set => extentWx = value;
         }
 
         public int ExtentWy
         {
-            set
-            {
-                extentWy = value;
-            }
+            set => extentWy = value;
         }
 
         public PdfContentByte LineJoinPolygon
@@ -183,13 +135,7 @@ namespace iTextSharp.text.pdf.codec.wmf
             }
         }
 
-        public bool LineNeutral
-        {
-            get
-            {
-                return (LineJoin == 0);
-            }
-        }
+        public bool LineNeutral => (LineJoin == 0);
 
         public MetaState metaState
         {
@@ -218,18 +164,12 @@ namespace iTextSharp.text.pdf.codec.wmf
 
         public int OffsetWx
         {
-            set
-            {
-                offsetWx = value;
-            }
+            set => offsetWx = value;
         }
 
         public int OffsetWy
         {
-            set
-            {
-                offsetWy = value;
-            }
+            set => offsetWy = value;
         }
 
         /// <summary>
@@ -238,31 +178,19 @@ namespace iTextSharp.text.pdf.codec.wmf
         /// <returns>Value of property polyFillMode.</returns>
         public int PolyFillMode
         {
-            get
-            {
-                return polyFillMode;
-            }
+            get => polyFillMode;
 
-            set
-            {
-                polyFillMode = value;
-            }
+            set => polyFillMode = value;
         }
 
         public float ScalingX
         {
-            set
-            {
-                scalingX = value;
-            }
+            set => scalingX = value;
         }
 
         public float ScalingY
         {
-            set
-            {
-                scalingY = value;
-            }
+            set => scalingY = value;
         }
 
         /// <summary>
@@ -271,20 +199,14 @@ namespace iTextSharp.text.pdf.codec.wmf
         /// <returns>Value of property textAlign.</returns>
         public int TextAlign
         {
-            get
-            {
-                return textAlign;
-            }
+            get => textAlign;
 
-            set
-            {
-                textAlign = value;
-            }
+            set => textAlign = value;
         }
 
         public void AddMetaObject(MetaObject obj)
         {
-            for (int k = 0; k < MetaObjects.Count; ++k)
+            for (var k = 0; k < MetaObjects.Count; ++k)
             {
                 if (MetaObjects[k] == null)
                 {
@@ -297,9 +219,11 @@ namespace iTextSharp.text.pdf.codec.wmf
 
         public void Cleanup(PdfContentByte cb)
         {
-            int k = SavedStates.Count;
+            var k = SavedStates.Count;
             while (k-- > 0)
+            {
                 cb.RestoreState();
+            }
         }
 
         public void DeleteMetaObject(int index)
@@ -311,11 +235,19 @@ namespace iTextSharp.text.pdf.codec.wmf
         {
             int pops;
             if (index < 0)
+            {
                 pops = Math.Min(-index, SavedStates.Count);
+            }
             else
+            {
                 pops = Math.Max(SavedStates.Count - index, 0);
+            }
+
             if (pops == 0)
+            {
                 return;
+            }
+
             MetaState state = null;
             while (pops-- != 0)
             {
@@ -328,15 +260,18 @@ namespace iTextSharp.text.pdf.codec.wmf
         public void SaveState(PdfContentByte cb)
         {
             cb.SaveState();
-            MetaState state = new MetaState(this);
+            var state = new MetaState(this);
             SavedStates.Push(state);
         }
 
         public void SelectMetaObject(int index, PdfContentByte cb)
         {
-            MetaObject obj = (MetaObject)MetaObjects[index];
+            var obj = (MetaObject)MetaObjects[index];
             if (obj == null)
+            {
                 return;
+            }
+
             int style;
             switch (obj.Type)
             {
@@ -345,22 +280,23 @@ namespace iTextSharp.text.pdf.codec.wmf
                     style = currentBrush.Style;
                     if (style == MetaBrush.BS_SOLID)
                     {
-                        BaseColor color = currentBrush.Color;
+                        var color = currentBrush.Color;
                         cb.SetColorFill(color);
                     }
                     else if (style == MetaBrush.BS_HATCHED)
                     {
-                        BaseColor color = currentBackgroundColor;
+                        var color = currentBackgroundColor;
                         cb.SetColorFill(color);
                     }
                     break;
+
                 case MetaObject.META_PEN:
                     {
                         currentPen = (MetaPen)obj;
                         style = currentPen.Style;
                         if (style != MetaPen.PS_NULL)
                         {
-                            BaseColor color = currentPen.Color;
+                            var color = currentPen.Color;
                             cb.SetColorStroke(color);
                             cb.SetLineWidth(Math.Abs(currentPen.PenWidth * scalingX / extentWx));
                             switch (style)
@@ -368,15 +304,19 @@ namespace iTextSharp.text.pdf.codec.wmf
                                 case MetaPen.PS_DASH:
                                     cb.SetLineDash(18, 6, 0);
                                     break;
+
                                 case MetaPen.PS_DASHDOT:
                                     cb.SetLiteral("[9 6 3 6]0 d\n");
                                     break;
+
                                 case MetaPen.PS_DASHDOTDOT:
                                     cb.SetLiteral("[9 3 3 3 3 3]0 d\n");
                                     break;
+
                                 case MetaPen.PS_DOT:
                                     cb.SetLineDash(3, 0);
                                     break;
+
                                 default:
                                     cb.SetLineDash(0);
                                     break;
@@ -391,9 +331,10 @@ namespace iTextSharp.text.pdf.codec.wmf
                     }
             }
         }
+
         public float TransformAngle(float angle)
         {
-            float ta = scalingY < 0 ? -angle : angle;
+            var ta = scalingY < 0 ? -angle : angle;
             return (float)(scalingX < 0 ? Math.PI - ta : ta);
         }
 

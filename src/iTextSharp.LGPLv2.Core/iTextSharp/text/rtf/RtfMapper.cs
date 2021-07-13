@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using iTextSharp.text.pdf;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.field;
@@ -7,6 +5,8 @@ using iTextSharp.text.rtf.graphic;
 using iTextSharp.text.rtf.list;
 using iTextSharp.text.rtf.table;
 using iTextSharp.text.rtf.text;
+using System;
+using System.Collections;
 
 namespace iTextSharp.text.rtf
 {
@@ -23,7 +23,7 @@ namespace iTextSharp.text.rtf
         /// <summary>
         /// The RtfDocument this RtfMapper belongs to
         /// </summary>
-        readonly RtfDocument _rtfDoc;
+        private readonly RtfDocument _rtfDoc;
 
         /// <summary>
         /// Constructs a RtfMapper for a RtfDocument
@@ -44,18 +44,18 @@ namespace iTextSharp.text.rtf
         /// <returns>An array of RtfBasicElement wrapping the Element</returns>
         public IRtfBasicElement[] MapElement(IElement element)
         {
-            ArrayList rtfElements = new ArrayList();
+            var rtfElements = new ArrayList();
 
             if (element is IRtfBasicElement)
             {
-                IRtfBasicElement rtfElement = (IRtfBasicElement)element;
+                var rtfElement = (IRtfBasicElement)element;
                 rtfElement.SetRtfDocument(_rtfDoc);
                 return new[] { rtfElement };
             }
             switch (element.Type)
             {
                 case Element.CHUNK:
-                    Chunk chunk = (Chunk)element;
+                    var chunk = (Chunk)element;
                     if (chunk.HasAttributes())
                     {
                         if (chunk.Attributes.ContainsKey(Chunk.IMAGE))
@@ -68,8 +68,8 @@ namespace iTextSharp.text.rtf
                         }
                         else if (chunk.Attributes.ContainsKey(Chunk.TAB))
                         {
-                            float tabPos = (float)((object[])chunk.Attributes[Chunk.TAB])[1];
-                            RtfTab tab = new RtfTab(tabPos, RtfTab.TAB_LEFT_ALIGN);
+                            var tabPos = (float)((object[])chunk.Attributes[Chunk.TAB])[1];
+                            var tab = new RtfTab(tabPos, RtfTab.TAB_LEFT_ALIGN);
                             tab.SetRtfDocument(_rtfDoc);
                             rtfElements.Add(tab);
                             rtfElements.Add(new RtfChunk(_rtfDoc, new Chunk("\t")));

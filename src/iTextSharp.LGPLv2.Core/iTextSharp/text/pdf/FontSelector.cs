@@ -16,7 +16,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class FontSelector
     {
-
         protected ArrayList Fonts = new ArrayList();
 
         /// <summary>
@@ -30,8 +29,8 @@ namespace iTextSharp.text.pdf
                 Fonts.Add(font);
                 return;
             }
-            BaseFont bf = font.GetCalculatedBaseFont(true);
-            Font f2 = new Font(bf, font.Size, font.CalculatedStyle, font.Color);
+            var bf = font.GetCalculatedBaseFont(true);
+            var f2 = new Font(bf, font.Size, font.CalculatedStyle, font.Color);
             Fonts.Add(f2);
         }
 
@@ -43,18 +42,21 @@ namespace iTextSharp.text.pdf
         /// <returns>a  Phrase  with one or more chunks</returns>
         public Phrase Process(string text)
         {
-            int fsize = Fonts.Count;
+            var fsize = Fonts.Count;
             if (fsize == 0)
-                throw new ArgumentException("No font is defined.");
-            char[] cc = text.ToCharArray();
-            int len = cc.Length;
-            StringBuilder sb = new StringBuilder();
-            Font font = null;
-            int lastidx = -1;
-            Phrase ret = new Phrase();
-            for (int k = 0; k < len; ++k)
             {
-                char c = cc[k];
+                throw new ArgumentException("No font is defined.");
+            }
+
+            var cc = text.ToCharArray();
+            var len = cc.Length;
+            var sb = new StringBuilder();
+            Font font = null;
+            var lastidx = -1;
+            var ret = new Phrase();
+            for (var k = 0; k < len; ++k)
+            {
+                var c = cc[k];
                 if (c == '\n' || c == '\r')
                 {
                     sb.Append(c);
@@ -62,8 +64,8 @@ namespace iTextSharp.text.pdf
                 }
                 if (Utilities.IsSurrogatePair(cc, k))
                 {
-                    int u = Utilities.ConvertToUtf32(cc, k);
-                    for (int f = 0; f < fsize; ++f)
+                    var u = Utilities.ConvertToUtf32(cc, k);
+                    for (var f = 0; f < fsize; ++f)
                     {
                         font = (Font)Fonts[f];
                         if (font.BaseFont.CharExists(u) ||
@@ -73,7 +75,7 @@ namespace iTextSharp.text.pdf
                             {
                                 if (sb.Length > 0 && lastidx != -1)
                                 {
-                                    Chunk ck = new Chunk(sb.ToString(), (Font)Fonts[lastidx]);
+                                    var ck = new Chunk(sb.ToString(), (Font)Fonts[lastidx]);
                                     ret.Add(ck);
                                     sb.Length = 0;
                                 }
@@ -87,7 +89,7 @@ namespace iTextSharp.text.pdf
                 }
                 else
                 {
-                    for (int f = 0; f < fsize; ++f)
+                    for (var f = 0; f < fsize; ++f)
                     {
                         font = (Font)Fonts[f];
                         if (font.BaseFont.CharExists(c) ||
@@ -97,7 +99,7 @@ namespace iTextSharp.text.pdf
                             {
                                 if (sb.Length > 0 && lastidx != -1)
                                 {
-                                    Chunk ck = new Chunk(sb.ToString(), (Font)Fonts[lastidx]);
+                                    var ck = new Chunk(sb.ToString(), (Font)Fonts[lastidx]);
                                     ret.Add(ck);
                                     sb.Length = 0;
                                 }
@@ -111,7 +113,7 @@ namespace iTextSharp.text.pdf
             }
             if (sb.Length > 0)
             {
-                Chunk ck = new Chunk(sb.ToString(), (Font)Fonts[lastidx == -1 ? 0 : lastidx]);
+                var ck = new Chunk(sb.ToString(), (Font)Fonts[lastidx == -1 ? 0 : lastidx]);
                 ret.Add(ck);
             }
             return ret;

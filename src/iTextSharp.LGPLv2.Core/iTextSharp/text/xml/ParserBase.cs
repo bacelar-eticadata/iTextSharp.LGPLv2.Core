@@ -1,7 +1,7 @@
 using System;
+using System.Collections;
 using System.IO;
 using System.Xml;
-using System.Collections;
 
 namespace iTextSharp.text.xml
 {
@@ -28,10 +28,10 @@ namespace iTextSharp.text.xml
 
         public void Parse(XmlDocument xDoc)
         {
-            string xml = xDoc.OuterXml;
-            StringReader stringReader = new StringReader(xml);
+            var xml = xDoc.OuterXml;
+            var stringReader = new StringReader(xml);
 
-            XmlReader reader = XmlReader.Create(stringReader);
+            var reader = XmlReader.Create(stringReader);
             Parse(reader);
         }
 
@@ -44,13 +44,13 @@ namespace iTextSharp.text.xml
                     switch (reader.NodeType)
                     {
                         case XmlNodeType.Element:
-                            string namespaceUri = reader.NamespaceURI;
-                            string name = reader.Name;
-                            bool isEmpty = reader.IsEmptyElement;
-                            Hashtable attributes = new Hashtable();
+                            var namespaceUri = reader.NamespaceURI;
+                            var name = reader.Name;
+                            var isEmpty = reader.IsEmptyElement;
+                            var attributes = new Hashtable();
                             if (reader.HasAttributes)
                             {
-                                for (int i = 0; i < reader.AttributeCount; i++)
+                                for (var i = 0; i < reader.AttributeCount; i++)
                                 {
                                     reader.MoveToAttribute(i);
                                     attributes.Add(reader.Name, reader.Value);

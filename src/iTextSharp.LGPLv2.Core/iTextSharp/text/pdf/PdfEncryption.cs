@@ -1,9 +1,9 @@
-using System;
-using System.Security.Cryptography;
-using System.Text;
-using System.IO;
 using iTextSharp.text.pdf.crypto;
 using Org.BouncyCastle.X509;
+using System;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
@@ -12,7 +12,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfEncryption
     {
-
         public const int AES_128 = 4;
         public const int STANDARD_ENCRYPTION_128 = 3;
         public const int STANDARD_ENCRYPTION_40 = 2;
@@ -70,6 +69,7 @@ namespace iTextSharp.text.pdf
         private static readonly byte[] _salt = { 0x73, 0x41, 0x6c, 0x54 };
         private readonly ArcfourEncryption _rc4 = new ArcfourEncryption();
         private int _cryptoMode;
+
         /// <summary>
         /// Indicates if the encryption is only necessary for embedded files.
         /// @since 2.1.3
@@ -77,12 +77,14 @@ namespace iTextSharp.text.pdf
         private bool _embeddedFilesOnly;
 
         private bool _encryptMetadata;
+
         /// <summary>
         /// The generic key length. It may be 40 or 128.
         /// </summary>
         private int _keyLength;
 
         private int _revision;
+
         public PdfEncryption()
         {
             PublicKeyHandler = new PdfPublicKeySecurityHandler();
@@ -95,7 +97,10 @@ namespace iTextSharp.text.pdf
             UserKey = (byte[])enc.UserKey.Clone();
             Permissions = enc.Permissions;
             if (enc.DocumentId != null)
+            {
                 DocumentId = (byte[])enc.DocumentId.Clone();
+            }
+
             _revision = enc._revision;
             _keyLength = enc._keyLength;
             _encryptMetadata = enc._encryptMetadata;
@@ -103,32 +108,32 @@ namespace iTextSharp.text.pdf
             PublicKeyHandler = enc.PublicKeyHandler;
         }
 
-        public PdfObject FileId
-        {
-            get
-            {
-                return CreateInfoId(DocumentId);
-            }
-        }
+        public PdfObject FileId => CreateInfoId(DocumentId);
 
         public static byte[] CreateDocumentId()
         {
-            long time = DateTime.Now.Ticks + Environment.TickCount;
-            long mem = GC.GetTotalMemory(false);
-            string s = time + "+" + mem + "+" + (Seq++);
+            var time = DateTime.Now.Ticks + Environment.TickCount;
+            var mem = GC.GetTotalMemory(false);
+            var s = time + "+" + mem + "+" + (Seq++);
             return MD5.Create().ComputeHash(Encoding.ASCII.GetBytes(s));
         }
 
         public static PdfObject CreateInfoId(byte[] id)
         {
-            ByteBuffer buf = new ByteBuffer(90);
+            var buf = new ByteBuffer(90);
             buf.Append('[').Append('<');
-            for (int k = 0; k < 16; ++k)
+            for (var k = 0; k < 16; ++k)
+            {
                 buf.AppendHex(id[k]);
+            }
+
             buf.Append('>').Append('<');
             id = CreateDocumentId();
-            for (int k = 0; k < 16; ++k)
+            for (var k = 0; k < 16; ++k)
+            {
                 buf.AppendHex(id[k]);
+            }
+
             buf.Append('>').Append(']');
             return new PdfLiteral(buf.ToByteArray());
         }
@@ -142,18 +147,22 @@ namespace iTextSharp.text.pdf
         public int CalculateStreamSize(int n)
         {
             if (_revision == AES_128)
+            {
                 return (n & 0x7ffffff0) + 32;
+            }
             else
+            {
                 return n;
+            }
         }
 
         public byte[] ComputeUserPassword(byte[] ownerPassword)
         {
-            byte[] userPad = computeOwnerKey(OwnerKey, padPassword(ownerPassword));
-            for (int i = 0; i < userPad.Length; i++)
+            var userPad = computeOwnerKey(OwnerKey, padPassword(ownerPassword));
+            for (var i = 0; i < userPad.Length; i++)
             {
-                bool match = true;
-                for (int j = 0; j < userPad.Length - i; j++)
+                var match = true;
+                for (var j = 0; j < userPad.Length - i; j++)
                 {
                     if (userPad[i + j] != _pad[j])
                     {
@@ -161,8 +170,12 @@ namespace iTextSharp.text.pdf
                         break;
                     }
                 }
-                if (!match) continue;
-                byte[] userPassword = new byte[i];
+                if (!match)
+                {
+                    continue;
+                }
+
+                var userPassword = new byte[i];
                 Array.Copy(userPad, 0, userPassword, 0, i);
                 return userPassword;
             }
@@ -171,21 +184,27 @@ namespace iTextSharp.text.pdf
 
         public byte[] DecryptByteArray(byte[] b)
         {
-            MemoryStream ba = new MemoryStream();
-            StandardDecryption dec = GetDecryptor();
-            byte[] b2 = dec.Update(b, 0, b.Length);
+            var ba = new MemoryStream();
+            var dec = GetDecryptor();
+            var b2 = dec.Update(b, 0, b.Length);
             if (b2 != null)
+            {
                 ba.Write(b2, 0, b2.Length);
+            }
+
             b2 = dec.Finish();
             if (b2 != null)
+            {
                 ba.Write(b2, 0, b2.Length);
+            }
+
             return ba.ToArray();
         }
 
         public byte[] EncryptByteArray(byte[] b)
         {
-            MemoryStream ba = new MemoryStream();
-            OutputStreamEncryption os2 = GetEncryptionStream(ba);
+            var ba = new MemoryStream();
+            var os2 = GetEncryptionStream(ba);
             os2.Write(b, 0, b.Length);
             os2.Finish();
             return ba.ToArray();
@@ -203,7 +222,7 @@ namespace iTextSharp.text.pdf
 
         public PdfDictionary GetEncryptionDictionary()
         {
-            PdfDictionary dic = new PdfDictionary();
+            var dic = new PdfDictionary();
 
             if (PublicKeyHandler.GetRecipientsSize() > 0)
             {
@@ -233,16 +252,23 @@ namespace iTextSharp.text.pdf
                     dic.Put(PdfName.V, new PdfNumber(4));
                     dic.Put(PdfName.Subfilter, PdfName.AdbePkcs7S5);
 
-                    PdfDictionary stdcf = new PdfDictionary();
+                    var stdcf = new PdfDictionary();
                     stdcf.Put(PdfName.Recipients, recipients);
                     if (!_encryptMetadata)
+                    {
                         stdcf.Put(PdfName.Encryptmetadata, PdfBoolean.Pdffalse);
+                    }
 
                     if (_revision == AES_128)
+                    {
                         stdcf.Put(PdfName.Cfm, PdfName.Aesv2);
+                    }
                     else
+                    {
                         stdcf.Put(PdfName.Cfm, PdfName.V2);
-                    PdfDictionary cf = new PdfDictionary();
+                    }
+
+                    var cf = new PdfDictionary();
                     cf.Put(PdfName.Defaultcryptfilter, stdcf);
                     dic.Put(PdfName.Cf, cf);
                     if (_embeddedFilesOnly)
@@ -261,30 +287,35 @@ namespace iTextSharp.text.pdf
 #if NET40
                 SHA1 sh = new SHA1CryptoServiceProvider();
                 byte[] encodedRecipient = null;
-                byte[] seed = PublicKeyHandler.GetSeed();
+                var seed = PublicKeyHandler.GetSeed();
                 sh.TransformBlock(seed, 0, seed.Length, seed, 0);
-                for (int i = 0; i < PublicKeyHandler.GetRecipientsSize(); i++)
+                for (var i = 0; i < PublicKeyHandler.GetRecipientsSize(); i++)
                 {
                     encodedRecipient = PublicKeyHandler.GetEncodedRecipient(i);
                     sh.TransformBlock(encodedRecipient, 0, encodedRecipient.Length, encodedRecipient, 0);
                 }
                 if (!_encryptMetadata)
+                {
                     sh.TransformBlock(MetadataPad, 0, MetadataPad.Length, MetadataPad, 0);
+                }
+
                 sh.TransformFinalBlock(seed, 0, 0);
-                byte[] mdResult = sh.Hash;
+                var mdResult = sh.Hash;
 #else
                 byte[] mdResult;
                 using (var sh = IncrementalHash.CreateHash(HashAlgorithmName.SHA1))
                 {
-                    byte[] seed = PublicKeyHandler.GetSeed();
+                    var seed = PublicKeyHandler.GetSeed();
                     sh.AppendData(seed, 0, seed.Length);
-                    for (int i = 0; i < PublicKeyHandler.GetRecipientsSize(); i++)
+                    for (var i = 0; i < PublicKeyHandler.GetRecipientsSize(); i++)
                     {
                         var encodedRecipient = PublicKeyHandler.GetEncodedRecipient(i);
                         sh.AppendData(encodedRecipient, 0, encodedRecipient.Length);
                     }
                     if (!_encryptMetadata)
+                    {
                         sh.AppendData(MetadataPad, 0, MetadataPad.Length);
+                    }
 
                     mdResult = sh.GetHashAndReset();
                 }
@@ -307,16 +338,18 @@ namespace iTextSharp.text.pdf
                 {
                     dic.Put(PdfName.V, new PdfNumber(2));
                     dic.Put(PdfName.LENGTH, new PdfNumber(128));
-
                 }
                 else
                 {
                     if (!_encryptMetadata)
+                    {
                         dic.Put(PdfName.Encryptmetadata, PdfBoolean.Pdffalse);
+                    }
+
                     dic.Put(PdfName.R, new PdfNumber(AES_128));
                     dic.Put(PdfName.V, new PdfNumber(4));
                     dic.Put(PdfName.LENGTH, new PdfNumber(128));
-                    PdfDictionary stdcf = new PdfDictionary();
+                    var stdcf = new PdfDictionary();
                     stdcf.Put(PdfName.LENGTH, new PdfNumber(16));
                     if (_embeddedFilesOnly)
                     {
@@ -332,10 +365,15 @@ namespace iTextSharp.text.pdf
                         dic.Put(PdfName.Stmf, PdfName.Stdcf);
                     }
                     if (_revision == AES_128)
+                    {
                         stdcf.Put(PdfName.Cfm, PdfName.Aesv2);
+                    }
                     else
+                    {
                         stdcf.Put(PdfName.Cfm, PdfName.V2);
-                    PdfDictionary cf = new PdfDictionary();
+                    }
+
+                    var cf = new PdfDictionary();
                     cf.Put(PdfName.Stdcf, stdcf);
                     dic.Put(PdfName.Cf, cf);
                 }
@@ -377,18 +415,26 @@ namespace iTextSharp.text.pdf
                     _keyLength = 40;
                     _revision = STANDARD_ENCRYPTION_40;
                     break;
+
                 case PdfWriter.STANDARD_ENCRYPTION_128:
                     _embeddedFilesOnly = false;
                     if (kl > 0)
+                    {
                         _keyLength = kl;
+                    }
                     else
+                    {
                         _keyLength = 128;
+                    }
+
                     _revision = STANDARD_ENCRYPTION_128;
                     break;
+
                 case PdfWriter.ENCRYPTION_AES_128:
                     _keyLength = 128;
                     _revision = AES_128;
                     break;
+
                 default:
                     throw new ArgumentException("No valid encryption mode");
             }
@@ -408,7 +454,9 @@ namespace iTextSharp.text.pdf
                 md5.TransformBlock(Mkey, 0, Mkey.Length, Mkey, 0);
                 md5.TransformBlock(Extra, 0, Extra.Length, Extra, 0);
                 if (_revision == AES_128)
+                {
                     md5.TransformBlock(_salt, 0, _salt.Length, _salt, 0);
+                }
 
                 md5.TransformFinalBlock(Extra, 0, 0);
                 Key = md5.Hash;
@@ -424,7 +472,9 @@ namespace iTextSharp.text.pdf
                 md5.AppendData(Mkey, 0, Mkey.Length);
                 md5.AppendData(Extra, 0, Extra.Length);
                 if (_revision == AES_128)
+                {
                     md5.AppendData(_salt, 0, _salt.Length);
+                }
 
                 Key = md5.GetHashAndReset();
             }
@@ -432,7 +482,9 @@ namespace iTextSharp.text.pdf
 
             KeySize = Mkey.Length + 5;
             if (KeySize > 16)
+            {
                 KeySize = 16;
+            }
         }
 
         /// <summary>
@@ -441,14 +493,16 @@ namespace iTextSharp.text.pdf
         public void SetupAllKeys(byte[] userPassword, byte[] ownerPassword, int permissions)
         {
             if (ownerPassword == null || ownerPassword.Length == 0)
+            {
                 ownerPassword = MD5.Create().ComputeHash(CreateDocumentId());
+            }
 
             permissions |= (int)((_revision == STANDARD_ENCRYPTION_128 || _revision == AES_128) ? 0xfffff0c0 : 0xffffffc0);
             permissions &= unchecked((int)0xfffffffc);
             //PDF refrence 3.5.2 Standard Security Handler, Algorithum 3.3-1
             //If there is no owner password, use the user password instead.
-            byte[] userPad = padPassword(userPassword);
-            byte[] ownerPad = padPassword(ownerPassword);
+            var userPad = padPassword(userPassword);
+            var ownerPad = padPassword(ownerPassword);
 
             OwnerKey = computeOwnerKey(userPad, ownerPad);
             DocumentId = CreateDocumentId();
@@ -477,20 +531,26 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private byte[] computeOwnerKey(byte[] userPad, byte[] ownerPad)
         {
-            byte[] ownerKey = new byte[32];
+            var ownerKey = new byte[32];
             var md5 = MD5.Create();
-            byte[] digest = md5.ComputeHash(ownerPad);
+            var digest = md5.ComputeHash(ownerPad);
             if (_revision == STANDARD_ENCRYPTION_128 || _revision == AES_128)
             {
-                byte[] mkey = new byte[_keyLength / 8];
+                var mkey = new byte[_keyLength / 8];
                 // only use for the input as many bit as the key consists of
-                for (int k = 0; k < 50; ++k)
-                    Array.Copy(md5.ComputeHash(digest), 0, digest, 0, mkey.Length);
-                Array.Copy(userPad, 0, ownerKey, 0, 32);
-                for (int i = 0; i < 20; ++i)
+                for (var k = 0; k < 50; ++k)
                 {
-                    for (int j = 0; j < mkey.Length; ++j)
+                    Array.Copy(md5.ComputeHash(digest), 0, digest, 0, mkey.Length);
+                }
+
+                Array.Copy(userPad, 0, ownerKey, 0, 32);
+                for (var i = 0; i < 20; ++i)
+                {
+                    for (var j = 0; j < mkey.Length; ++j)
+                    {
                         mkey[j] = (byte)(digest[j] ^ i);
+                    }
+
                     _rc4.PrepareArcfourKey(mkey);
                     _rc4.EncryptArcfour(ownerKey);
                 }
@@ -506,7 +566,7 @@ namespace iTextSharp.text.pdf
 
         private byte[] padPassword(byte[] userPassword)
         {
-            byte[] userPad = new byte[32];
+            var userPad = new byte[32];
             if (userPassword == null)
             {
                 Array.Copy(_pad, 0, userPad, 0, 32);
@@ -515,14 +575,17 @@ namespace iTextSharp.text.pdf
             {
                 Array.Copy(userPassword, 0, userPad, 0, Math.Min(userPassword.Length, 32));
                 if (userPassword.Length < 32)
+                {
                     Array.Copy(_pad, 0, userPad, userPassword.Length, 32 - userPassword.Length);
+                }
             }
 
             return userPad;
         }
+
         private void setupByOwnerPad(byte[] documentId, byte[] ownerPad, byte[] userKey, byte[] ownerKey, int permissions)
         {
-            byte[] userPad = computeOwnerKey(ownerKey, ownerPad); //userPad will be set in this.ownerKey
+            var userPad = computeOwnerKey(ownerKey, ownerPad); //userPad will be set in this.ownerKey
             setupGlobalEncryptionKey(documentId, userPad, ownerKey, permissions); //step 3
             setupUserKey();
         }
@@ -545,7 +608,7 @@ namespace iTextSharp.text.pdf
             Permissions = permissions;
             // use variable keylength
             Mkey = new byte[_keyLength / 8];
-            byte[] digest = new byte[Mkey.Length];
+            var digest = new byte[Mkey.Length];
 
 #if NET40
             //fixed by ujihara in order to follow PDF refrence
@@ -555,16 +618,22 @@ namespace iTextSharp.text.pdf
                 md5.TransformBlock(userPad, 0, userPad.Length, userPad, 0);
                 md5.TransformBlock(ownerKey, 0, ownerKey.Length, ownerKey, 0);
 
-                byte[] ext = new byte[4];
+                var ext = new byte[4];
                 ext[0] = (byte)permissions;
                 ext[1] = (byte)(permissions >> 8);
                 ext[2] = (byte)(permissions >> 16);
                 ext[3] = (byte)(permissions >> 24);
                 md5.TransformBlock(ext, 0, 4, ext, 0);
                 if (documentId != null)
+                {
                     md5.TransformBlock(documentId, 0, documentId.Length, documentId, 0);
+                }
+
                 if (!_encryptMetadata)
+                {
                     md5.TransformBlock(MetadataPad, 0, MetadataPad.Length, MetadataPad, 0);
+                }
+
                 md5.TransformFinalBlock(ext, 0, 0);
 
                 Array.Copy(md5.Hash, 0, digest, 0, Mkey.Length);
@@ -575,25 +644,29 @@ namespace iTextSharp.text.pdf
             md5.AppendData(userPad, 0, userPad.Length);
             md5.AppendData(ownerKey, 0, ownerKey.Length);
 
-            byte[] ext = new byte[4];
+            var ext = new byte[4];
             ext[0] = (byte)permissions;
             ext[1] = (byte)(permissions >> 8);
             ext[2] = (byte)(permissions >> 16);
             ext[3] = (byte)(permissions >> 24);
             md5.AppendData(ext, 0, 4);
             if (documentId != null)
+            {
                 md5.AppendData(documentId, 0, documentId.Length);
+            }
+
             if (!_encryptMetadata)
+            {
                 md5.AppendData(MetadataPad, 0, MetadataPad.Length);
+            }
 
             Array.Copy(md5.GetHashAndReset(), 0, digest, 0, Mkey.Length);
 #endif
 
-
             // only use the really needed bits as input for the hash
             if (_revision == STANDARD_ENCRYPTION_128 || _revision == AES_128)
             {
-                for (int k = 0; k < 50; ++k)
+                for (var k = 0; k < 50; ++k)
                 {
                     using (var md5Hash = MD5.Create())
                     {
@@ -632,12 +705,18 @@ namespace iTextSharp.text.pdf
                 }
 #endif
                 Array.Copy(digest, 0, UserKey, 0, 16);
-                for (int k = 16; k < 32; ++k)
-                    UserKey[k] = 0;
-                for (int i = 0; i < 20; ++i)
+                for (var k = 16; k < 32; ++k)
                 {
-                    for (int j = 0; j < Mkey.Length; ++j)
+                    UserKey[k] = 0;
+                }
+
+                for (var i = 0; i < 20; ++i)
+                {
+                    for (var j = 0; j < Mkey.Length; ++j)
+                    {
                         digest[j] = (byte)(Mkey[j] ^ i);
+                    }
+
                     _rc4.PrepareArcfourKey(digest, 0, Mkey.Length);
                     _rc4.EncryptArcfour(UserKey, 0, 16);
                 }

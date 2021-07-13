@@ -31,10 +31,12 @@ namespace iTextSharp.text.pdf
         /// A type of barcode
         /// </summary>
         public const int EAN13 = 1;
+
         /// <summary>
         /// A type of barcode
         /// </summary>
         public const int EAN8 = 2;
+
         /// <summary>
         /// A type of barcode
         /// </summary>
@@ -59,10 +61,12 @@ namespace iTextSharp.text.pdf
         /// A type of barcode
         /// </summary>
         public const int UPCA = 3;
+
         /// <summary>
         /// A type of barcode
         /// </summary>
         public const int UPCE = 4;
+
         /// <summary>
         /// The alternate text to be used, if present.
         /// </summary>
@@ -147,20 +151,15 @@ namespace iTextSharp.text.pdf
         /// The minimum bar width.
         /// </summary>
         protected float x;
+
         /// <summary>
         /// Sets the alternate text. If present, this text will be used instead of the
         /// text derived from the supplied code.
         /// </summary>
         public string AltText
         {
-            set
-            {
-                altText = value;
-            }
-            get
-            {
-                return altText;
-            }
+            set => altText = value;
+            get => altText;
         }
 
         /// <summary>
@@ -179,15 +178,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the height of the bars</returns>
         public float BarHeight
         {
-            get
-            {
-                return barHeight;
-            }
+            get => barHeight;
 
-            set
-            {
-                barHeight = value;
-            }
+            set => barHeight = value;
         }
 
         /// <summary>
@@ -198,15 +191,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the baseline.</returns>
         public float Baseline
         {
-            get
-            {
-                return baseline;
-            }
+            get => baseline;
 
-            set
-            {
-                baseline = value;
-            }
+            set => baseline = value;
         }
 
         /// <summary>
@@ -214,14 +201,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool ChecksumText
         {
-            set
-            {
-                checksumText = value;
-            }
-            get
-            {
-                return checksumText;
-            }
+            set => checksumText = value;
+            get => checksumText;
         }
 
         /// <summary>
@@ -230,15 +211,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the code to generate</returns>
         public virtual string Code
         {
-            get
-            {
-                return code;
-            }
+            get => code;
 
-            set
-            {
-                code = value;
-            }
+            set => code = value;
         }
 
         /// <summary>
@@ -247,15 +222,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the code type</returns>
         public int CodeType
         {
-            get
-            {
-                return codeType;
-            }
+            get => codeType;
 
-            set
-            {
-                codeType = value;
-            }
+            set => codeType = value;
         }
 
         /// <summary>
@@ -263,14 +232,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool Extended
         {
-            set
-            {
-                extended = value;
-            }
-            get
-            {
-                return extended;
-            }
+            set => extended = value;
+            get => extended;
         }
 
         /// <summary>
@@ -279,15 +242,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the text font.  null  if no text</returns>
         public BaseFont Font
         {
-            get
-            {
-                return font;
-            }
+            get => font;
 
-            set
-            {
-                font = value;
-            }
+            set => font = value;
         }
 
         /// <summary>
@@ -295,14 +252,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool GenerateChecksum
         {
-            set
-            {
-                generateChecksum = value;
-            }
-            get
-            {
-                return generateChecksum;
-            }
+            set => generateChecksum = value;
+            get => generateChecksum;
         }
 
         /// <summary>
@@ -310,26 +261,14 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool GuardBars
         {
-            set
-            {
-                guardBars = value;
-            }
-            get
-            {
-                return guardBars;
-            }
+            set => guardBars = value;
+            get => guardBars;
         }
 
         public float InkSpreading
         {
-            set
-            {
-                inkSpreading = value;
-            }
-            get
-            {
-                return inkSpreading;
-            }
+            set => inkSpreading = value;
+            get => inkSpreading;
         }
 
         /// <summary>
@@ -338,15 +277,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the bar multiplier for wide bars</returns>
         public float N
         {
-            get
-            {
-                return n;
-            }
+            get => n;
 
-            set
-            {
-                n = value;
-            }
+            set => n = value;
         }
 
         /// <summary>
@@ -355,15 +288,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the size of the text</returns>
         public float Size
         {
-            get
-            {
-                return size;
-            }
+            get => size;
 
-            set
-            {
-                size = value;
-            }
+            set => size = value;
         }
 
         /// <summary>
@@ -372,14 +299,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public bool StartStopText
         {
-            set
-            {
-                startStopText = value;
-            }
-            get
-            {
-                return startStopText;
-            }
+            set => startStopText = value;
+            get => startStopText;
         }
 
         /// <summary>
@@ -389,15 +310,9 @@ namespace iTextSharp.text.pdf
         /// <returns>the text alignment</returns>
         public int TextAlignment
         {
-            get
-            {
-                return textAlignment;
-            }
+            get => textAlignment;
 
-            set
-            {
-                textAlignment = value;
-            }
+            set => textAlignment = value;
         }
 
         /// <summary>
@@ -406,16 +321,11 @@ namespace iTextSharp.text.pdf
         /// <returns>the minimum bar width</returns>
         public float X
         {
-            get
-            {
-                return x;
-            }
+            get => x;
 
-            set
-            {
-                x = value;
-            }
+            set => x = value;
         }
+
         public abstract System.Drawing.Image CreateDrawingImage(System.Drawing.Color foreground, System.Drawing.Color background);
 
         /// <summary>
@@ -443,8 +353,8 @@ namespace iTextSharp.text.pdf
         /// <returns>the template</returns>
         public PdfTemplate CreateTemplateWithBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
         {
-            PdfTemplate tp = cb.CreateTemplate(0, 0);
-            Rectangle rect = PlaceBarcode(tp, barColor, textColor);
+            var tp = cb.CreateTemplate(0, 0);
+            var rect = PlaceBarcode(tp, barColor, textColor);
             tp.BoundingBox = rect;
             return tp;
         }

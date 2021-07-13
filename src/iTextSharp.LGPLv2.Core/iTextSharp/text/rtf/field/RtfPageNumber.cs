@@ -1,5 +1,5 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
+using System.IO;
 
 namespace iTextSharp.text.rtf.field
 {
@@ -11,7 +11,6 @@ namespace iTextSharp.text.rtf.field
     /// </summary>
     public class RtfPageNumber : RtfField
     {
-
         /// <summary>
         /// Constant for the page number
         /// </summary>

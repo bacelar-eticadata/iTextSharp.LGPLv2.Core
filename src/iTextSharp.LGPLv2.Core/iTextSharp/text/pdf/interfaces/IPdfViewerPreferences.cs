@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf.interfaces
 {
-
     /// <summary>
     /// Viewer preferences are described in section 3.6.1 and 8.1 of the
     /// PDF Reference 1.7 (Table 3.25 on p139-142 and Table 8.1 on p579-581).

@@ -71,15 +71,9 @@ namespace System.Drawing
         /// <value>the size</value>
         public new Dimension Size
         {
-            get
-            {
-                return new Dimension(width, height);
-            }
+            get => new Dimension(width, height);
 
-            set
-            {
-                SetSize(value.width, value.height);
-            }
+            set => SetSize(value.width, value.height);
         }
 
         /// <summary>
@@ -97,7 +91,7 @@ namespace System.Drawing
         {
             if (obj is Dimension)
             {
-                Dimension d = (Dimension)obj;
+                var d = (Dimension)obj;
                 return (width == d.width) && (height == d.height);
             }
             return false;
@@ -109,7 +103,7 @@ namespace System.Drawing
         /// <returns>a hash code</returns>
         public override int GetHashCode()
         {
-            int sum = width + height;
+            var sum = width + height;
             return sum * (sum + 1) / 2 + width;
         }
 

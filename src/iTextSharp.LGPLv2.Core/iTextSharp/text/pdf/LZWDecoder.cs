@@ -8,7 +8,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class LzwDecoder
     {
-
         internal int[] AndTable = {
                              511,
                              1023,
@@ -16,13 +15,14 @@ namespace iTextSharp.text.pdf
                              4095
                          };
 
-        int _bytePointer;
-        byte[] _data;
-        int _nextBits;
-        int _nextData;
-        byte[][] _stringTable;
-        int _tableIndex, _bitsToGet = 9;
-        Stream _uncompData;
+        private int _bytePointer;
+        private byte[] _data;
+        private int _nextBits;
+        private int _nextData;
+        private byte[][] _stringTable;
+        private int _tableIndex, _bitsToGet = 9;
+        private Stream _uncompData;
+
         /// <summary>
         /// Returns the next 9, 10, 11 or 12 bits
         /// </summary>
@@ -45,7 +45,7 @@ namespace iTextSharp.text.pdf
                         _nextBits += 8;
                     }
 
-                    int code =
+                    var code =
                         (_nextData >> (_nextBits - _bitsToGet)) & AndTable[_bitsToGet - 9];
                     _nextBits -= _bitsToGet;
 
@@ -64,8 +64,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public void AddStringToTable(byte[] oldstring, byte newstring)
         {
-            int length = oldstring.Length;
-            byte[] str = new byte[length + 1];
+            var length = oldstring.Length;
+            var str = new byte[length + 1];
             Array.Copy(oldstring, 0, str, 0, length);
             str[length] = newstring;
 
@@ -91,7 +91,6 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public void AddStringToTable(byte[] str)
         {
-
             // Add this new string to the table
             _stringTable[_tableIndex++] = str;
 
@@ -114,8 +113,8 @@ namespace iTextSharp.text.pdf
         /// </summary>
         public byte[] ComposeString(byte[] oldstring, byte newstring)
         {
-            int length = oldstring.Length;
-            byte[] str = new byte[length + 1];
+            var length = oldstring.Length;
+            var str = new byte[length + 1];
             Array.Copy(oldstring, 0, str, 0, length);
             str[length] = newstring;
 
@@ -129,7 +128,6 @@ namespace iTextSharp.text.pdf
         /// <param name="uncompData">Array to return the uncompressed data in.</param>
         public void Decode(byte[] data, Stream uncompData)
         {
-
             if (data[0] == 0x00 && data[1] == 0x01)
             {
                 throw new Exception("LZW flavour not supported.");
@@ -151,10 +149,8 @@ namespace iTextSharp.text.pdf
 
             while ((code = NextCode) != 257)
             {
-
                 if (code == 256)
                 {
-
                     InitializeStringTable();
                     code = NextCode;
 
@@ -165,24 +161,19 @@ namespace iTextSharp.text.pdf
 
                     WriteString(_stringTable[code]);
                     oldCode = code;
-
                 }
                 else
                 {
-
                     if (code < _tableIndex)
                     {
-
                         str = _stringTable[code];
 
                         WriteString(str);
                         AddStringToTable(_stringTable[oldCode], str[0]);
                         oldCode = code;
-
                     }
                     else
                     {
-
                         str = _stringTable[oldCode];
                         str = ComposeString(str, str[0]);
                         WriteString(str);
@@ -193,16 +184,14 @@ namespace iTextSharp.text.pdf
             }
         }
 
-
         /// <summary>
         /// Initialize the string table.
         /// </summary>
         public void InitializeStringTable()
         {
-
             _stringTable = new byte[8192][];
 
-            for (int i = 0; i < 256; i++)
+            for (var i = 0; i < 256; i++)
             {
                 _stringTable[i] = new byte[1];
                 _stringTable[i][0] = (byte)i;

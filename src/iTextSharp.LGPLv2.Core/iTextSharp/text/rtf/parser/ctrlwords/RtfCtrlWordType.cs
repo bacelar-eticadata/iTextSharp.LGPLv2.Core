@@ -43,6 +43,7 @@ namespace iTextSharp.text.rtf.parser.ctrlwords
         /// Control word is unidentified.
         /// </summary>
         public const int UNIDENTIFIED = -1;
+
         /// <summary>
         /// Control word is a value.
         /// </summary>

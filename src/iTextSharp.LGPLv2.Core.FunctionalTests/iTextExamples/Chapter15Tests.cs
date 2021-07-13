@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -19,21 +19,21 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document();
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             writer.PdfVersion = PdfWriter.VERSION_1_5;
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfLayer a1 = new PdfLayer("answer 1", writer);
-            PdfLayer a2 = new PdfLayer("answer 2", writer);
-            PdfLayer a3 = new PdfLayer("answer 3", writer);
+            var a1 = new PdfLayer("answer 1", writer);
+            var a2 = new PdfLayer("answer 2", writer);
+            var a3 = new PdfLayer("answer 3", writer);
             a1.On = false;
             a2.On = false;
             a3.On = false;
 
-            BaseFont bf = BaseFont.CreateFont();
-            PdfContentByte cb = writer.DirectContent;
+            var bf = BaseFont.CreateFont();
+            var cb = writer.DirectContent;
             cb.BeginText();
             cb.SetFontAndSize(bf, 18);
             cb.ShowTextAligned(Element.ALIGN_LEFT,
@@ -61,18 +61,18 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             cb.EndText();
             cb.RestoreState();
 
-            var stateOn = new ArrayList {"ON", a1, a2, a3};
-            PdfAction actionOn = PdfAction.SetOcGstate(stateOn, true);
-            var stateOff = new ArrayList {"OFF", a1, a2, a3};
-            PdfAction actionOff = PdfAction.SetOcGstate(stateOff, true);
-            var stateToggle = new ArrayList {"Toggle", a1, a2, a3};
-            PdfAction actionToggle = PdfAction.SetOcGstate(stateToggle, true);
-            Phrase p = new Phrase("Change the state of the answers:");
-            Chunk on = new Chunk(" on ").SetAction(actionOn);
+            var stateOn = new ArrayList { "ON", a1, a2, a3 };
+            var actionOn = PdfAction.SetOcGstate(stateOn, true);
+            var stateOff = new ArrayList { "OFF", a1, a2, a3 };
+            var actionOff = PdfAction.SetOcGstate(stateOff, true);
+            var stateToggle = new ArrayList { "Toggle", a1, a2, a3 };
+            var actionToggle = PdfAction.SetOcGstate(stateToggle, true);
+            var p = new Phrase("Change the state of the answers:");
+            var on = new Chunk(" on ").SetAction(actionOn);
             p.Add(on);
-            Chunk off = new Chunk("/ off ").SetAction(actionOff);
+            var off = new Chunk("/ off ").SetAction(actionOff);
             p.Add(off);
-            Chunk toggle = new Chunk("/ toggle").SetAction(actionToggle);
+            var toggle = new Chunk("/ toggle").SetAction(actionToggle);
             p.Add(toggle);
             document.Add(p);
 

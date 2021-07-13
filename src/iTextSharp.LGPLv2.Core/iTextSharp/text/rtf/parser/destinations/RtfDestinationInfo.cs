@@ -53,7 +53,7 @@ namespace iTextSharp.text.rtf.parser.destinations
         {
             if (_text.Length > 0)
             {
-                Document doc = RtfParser.GetDocument();
+                var doc = RtfParser.GetDocument();
                 if (doc != null)
                 {
                     if (_elementName.Equals("author"))
@@ -71,25 +71,25 @@ namespace iTextSharp.text.rtf.parser.destinations
                 }
                 else
                 {
-                    RtfDocument rtfDoc = RtfParser.GetRtfDocument();
+                    var rtfDoc = RtfParser.GetRtfDocument();
                     if (rtfDoc != null)
                     {
                         if (_elementName.Equals("author"))
                         {
-                            Meta meta = new Meta(_elementName, _text);
-                            RtfInfoElement elem = new RtfInfoElement(rtfDoc, meta);
+                            var meta = new Meta(_elementName, _text);
+                            var elem = new RtfInfoElement(rtfDoc, meta);
                             rtfDoc.GetDocumentHeader().AddInfoElement(elem);
                         }
                         if (_elementName.Equals("title"))
                         {
-                            Meta meta = new Meta(_elementName, _text);
-                            RtfInfoElement elem = new RtfInfoElement(rtfDoc, meta);
+                            var meta = new Meta(_elementName, _text);
+                            var elem = new RtfInfoElement(rtfDoc, meta);
                             rtfDoc.GetDocumentHeader().AddInfoElement(elem);
                         }
                         if (_elementName.Equals("subject"))
                         {
-                            Meta meta = new Meta(_elementName, _text);
-                            RtfInfoElement elem = new RtfInfoElement(rtfDoc, meta);
+                            var meta = new Meta(_elementName, _text);
+                            var elem = new RtfInfoElement(rtfDoc, meta);
                             rtfDoc.GetDocumentHeader().AddInfoElement(elem);
                         }
                     }

@@ -1,7 +1,7 @@
+using iTextSharp.text.html;
 using System;
 using System.Collections;
 using System.util;
-using iTextSharp.text.html;
 
 namespace iTextSharp.text.factories
 {
@@ -143,7 +143,7 @@ namespace iTextSharp.text.factories
         /// <returns></returns>
         public static ChapterAutoNumber GetChapter(Properties attributes)
         {
-            ChapterAutoNumber chapter = new ChapterAutoNumber("");
+            var chapter = new ChapterAutoNumber("");
             setSectionParameters(chapter, attributes);
             return chapter;
         }
@@ -155,7 +155,7 @@ namespace iTextSharp.text.factories
         /// <returns></returns>
         public static Chunk GetChunk(Properties attributes)
         {
-            Chunk chunk = new Chunk {Font = FontFactory.GetFont(attributes)};
+            var chunk = new Chunk { Font = FontFactory.GetFont(attributes) };
 
             var value = attributes[ElementTags.ITEXT];
             if (value != null)
@@ -170,14 +170,14 @@ namespace iTextSharp.text.factories
             value = attributes[ElementTags.Remotegoto];
             if (value != null)
             {
-                string page = attributes[ElementTags.PAGE];
+                var page = attributes[ElementTags.PAGE];
                 if (page != null)
                 {
                     chunk.SetRemoteGoto(value, int.Parse(page));
                 }
                 else
                 {
-                    string destination = attributes[ElementTags.DESTINATION];
+                    var destination = attributes[ElementTags.DESTINATION];
                     if (destination != null)
                     {
                         chunk.SetRemoteGoto(value, destination);
@@ -197,7 +197,7 @@ namespace iTextSharp.text.factories
             value = attributes[Markup.CSS_KEY_VERTICALALIGN];
             if (value != null && value.EndsWith("%"))
             {
-                float p = float.Parse(value.Substring(0, value.Length - 1), System.Globalization.NumberFormatInfo.InvariantInfo) / 100f;
+                var p = float.Parse(value.Substring(0, value.Length - 1), System.Globalization.NumberFormatInfo.InvariantInfo) / 100f;
                 chunk.SetTextRise(p * chunk.Font.Size);
             }
             value = attributes[ElementTags.Generictag];
@@ -223,24 +223,39 @@ namespace iTextSharp.text.factories
         {
             var value = attributes[ElementTags.URL];
             if (value == null)
+            {
                 throw new ArgumentException("The URL of the image is missing.");
-            Image image = Image.GetInstance(value);
+            }
+
+            var image = Image.GetInstance(value);
 
             value = attributes[ElementTags.ALIGN];
-            int align = 0;
+            var align = 0;
             if (value != null)
             {
                 if (Util.EqualsIgnoreCase(ElementTags.ALIGN_LEFT, value))
+                {
                     align |= Element.ALIGN_LEFT;
+                }
                 else if (Util.EqualsIgnoreCase(ElementTags.ALIGN_RIGHT, value))
+                {
                     align |= Element.ALIGN_RIGHT;
+                }
                 else if (Util.EqualsIgnoreCase(ElementTags.ALIGN_MIDDLE, value))
+                {
                     align |= Element.ALIGN_MIDDLE;
+                }
             }
             if (Util.EqualsIgnoreCase("true", attributes[ElementTags.UNDERLYING]))
+            {
                 align |= Image.UNDERLYING;
+            }
+
             if (Util.EqualsIgnoreCase("true", attributes[ElementTags.TEXTWRAP]))
+            {
                 align |= Image.TEXTWRAP;
+            }
+
             image.Alignment = align;
 
             value = attributes[ElementTags.ALT];
@@ -249,8 +264,8 @@ namespace iTextSharp.text.factories
                 image.Alt = value;
             }
 
-            string x = attributes[ElementTags.ABSOLUTEX];
-            string y = attributes[ElementTags.ABSOLUTEY];
+            var x = attributes[ElementTags.ABSOLUTEX];
+            var y = attributes[ElementTags.ABSOLUTEY];
             if ((x != null) && (y != null))
             {
                 image.SetAbsolutePosition(float.Parse(x, System.Globalization.NumberFormatInfo.InvariantInfo),
@@ -281,7 +296,7 @@ namespace iTextSharp.text.factories
         /// <returns></returns>
         public static List GetList(Properties attributes)
         {
-            List list = new List
+            var list = new List
             {
                 Numbered = Utilities.CheckTrueOrFalse(attributes, ElementTags.NUMBERED),
                 Lettered = Utilities.CheckTrueOrFalse(attributes, ElementTags.LETTERED),
@@ -290,11 +305,10 @@ namespace iTextSharp.text.factories
                 Alignindent = Utilities.CheckTrueOrFalse(attributes, ElementTags.ALIGN_INDENTATION_ITEMS)
             };
 
-
             var value = attributes[ElementTags.FIRST];
             if (value != null)
             {
-                char character = value[0];
+                var character = value[0];
                 list.First = char.IsLetter(character) ? character : int.Parse(value);
             }
 
@@ -332,7 +346,7 @@ namespace iTextSharp.text.factories
         /// <returns></returns>
         public static ListItem GetListItem(Properties attributes)
         {
-            ListItem item = new ListItem(GetParagraph(attributes));
+            var item = new ListItem(GetParagraph(attributes));
             return item;
         }
 
@@ -343,7 +357,7 @@ namespace iTextSharp.text.factories
         /// <returns></returns>
         public static Paragraph GetParagraph(Properties attributes)
         {
-            Paragraph paragraph = new Paragraph(GetPhrase(attributes));
+            var paragraph = new Paragraph(GetPhrase(attributes));
             var value = attributes[ElementTags.ALIGN];
             if (value != null)
             {
@@ -369,7 +383,7 @@ namespace iTextSharp.text.factories
         /// <returns></returns>
         public static Phrase GetPhrase(Properties attributes)
         {
-            Phrase phrase = new Phrase {Font = FontFactory.GetFont(attributes)};
+            var phrase = new Phrase { Font = FontFactory.GetFont(attributes) };
             var value = attributes[ElementTags.LEADING];
             if (value != null)
             {
@@ -383,7 +397,7 @@ namespace iTextSharp.text.factories
             value = attributes[ElementTags.ITEXT];
             if (value != null)
             {
-                Chunk chunk = new Chunk(value);
+                var chunk = new Chunk(value);
                 if ((value = attributes[ElementTags.Generictag]) != null)
                 {
                     chunk.SetGenericTag(value);
@@ -392,6 +406,7 @@ namespace iTextSharp.text.factories
             }
             return phrase;
         }
+
         /// <summary>
         ///
         /// </summary>
@@ -400,7 +415,7 @@ namespace iTextSharp.text.factories
         /// <returns></returns>
         public static Section GetSection(Section parent, Properties attributes)
         {
-            Section section = parent.AddSection("");
+            var section = parent.AddSection("");
             setSectionParameters(section, attributes);
             return section;
         }
@@ -417,15 +432,15 @@ namespace iTextSharp.text.factories
             var value = attributes[ElementTags.WIDTHS];
             if (value != null)
             {
-                StringTokenizer widthTokens = new StringTokenizer(value, ";");
-                ArrayList values = new ArrayList();
+                var widthTokens = new StringTokenizer(value, ";");
+                var values = new ArrayList();
                 while (widthTokens.HasMoreTokens())
                 {
                     values.Add(widthTokens.NextToken());
                 }
                 table = new Table(values.Count);
-                float[] widths = new float[table.Columns];
-                for (int i = 0; i < values.Count; i++)
+                var widths = new float[table.Columns];
+                for (var i = 0; i < values.Count; i++)
                 {
                     value = (string)values[i];
                     widths[i] = float.Parse(value, System.Globalization.NumberFormatInfo.InvariantInfo);
@@ -478,7 +493,9 @@ namespace iTextSharp.text.factories
             if (value != null)
             {
                 if (value.EndsWith("%"))
+                {
                     table.Width = float.Parse(value.Substring(0, value.Length - 1), System.Globalization.NumberFormatInfo.InvariantInfo);
+                }
                 else
                 {
                     table.Width = float.Parse(value, System.Globalization.NumberFormatInfo.InvariantInfo);
@@ -505,7 +522,7 @@ namespace iTextSharp.text.factories
             {
                 rect.BorderWidth = float.Parse(value, System.Globalization.NumberFormatInfo.InvariantInfo);
             }
-            int border = 0;
+            var border = 0;
             if (Utilities.CheckTrueOrFalse(attributes, ElementTags.LEFT))
             {
                 border |= Rectangle.LEFT_BORDER;
@@ -529,12 +546,24 @@ namespace iTextSharp.text.factories
             var b = attributes[ElementTags.BLUE];
             if (r != null || g != null || b != null)
             {
-                int red = 0;
-                int green = 0;
-                int blue = 0;
-                if (r != null) red = int.Parse(r);
-                if (g != null) green = int.Parse(g);
-                if (b != null) blue = int.Parse(b);
+                var red = 0;
+                var green = 0;
+                var blue = 0;
+                if (r != null)
+                {
+                    red = int.Parse(r);
+                }
+
+                if (g != null)
+                {
+                    green = int.Parse(g);
+                }
+
+                if (b != null)
+                {
+                    blue = int.Parse(b);
+                }
+
                 rect.BorderColor = new BaseColor(red, green, blue);
             }
             else
@@ -547,12 +576,24 @@ namespace iTextSharp.text.factories
             value = attributes[ElementTags.BACKGROUNDCOLOR];
             if (r != null || g != null || b != null)
             {
-                int red = 0;
-                int green = 0;
-                int blue = 0;
-                if (r != null) red = int.Parse(r);
-                if (g != null) green = int.Parse(g);
-                if (b != null) blue = int.Parse(b);
+                var red = 0;
+                var green = 0;
+                var blue = 0;
+                if (r != null)
+                {
+                    red = int.Parse(r);
+                }
+
+                if (g != null)
+                {
+                    green = int.Parse(g);
+                }
+
+                if (b != null)
+                {
+                    blue = int.Parse(b);
+                }
+
                 rect.BackgroundColor = new BaseColor(red, green, blue);
             }
             else if (value != null)

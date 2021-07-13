@@ -12,7 +12,6 @@ namespace iTextSharp.text.rtf.document
     /// </summary>
     public class RtfPageSetting : RtfElement, IRtfExtendedElement
     {
-
         /// <summary>
         /// Constant for landscape
         /// </summary>
@@ -47,6 +46,7 @@ namespace iTextSharp.text.rtf.document
         /// Constant for the page height
         /// </summary>
         private static readonly byte[] _pageWidthBytes = DocWriter.GetIsoBytes("\\paperw");
+
         /// <summary>
         /// Constant for the section bottom margin
         /// </summary>
@@ -76,6 +76,7 @@ namespace iTextSharp.text.rtf.document
         /// Constant for the section page width
         /// </summary>
         private static readonly byte[] _sectionPageWidthBytes = DocWriter.GetIsoBytes("\\pgwsxn");
+
         /// <summary>
         /// Whether the page is portrait or landscape
         /// </summary>
@@ -110,6 +111,7 @@ namespace iTextSharp.text.rtf.document
         /// The page width to use
         /// </summary>
         private int _pageWidth = 11906;
+
         /// <summary>
         /// Constructs a new RtfPageSetting object belonging to a RtfDocument.
         /// </summary>
@@ -303,6 +305,7 @@ namespace iTextSharp.text.rtf.document
             result.Write(_sectionMarginBottomBytes, 0, _sectionMarginBottomBytes.Length);
             result.Write(t = IntToByteArray(_marginBottom), 0, t.Length);
         }
+
         /// <summary>
         /// This method compares to Rectangles. They are considered equal if width and height are the same
         /// </summary>
@@ -394,7 +397,7 @@ namespace iTextSharp.text.rtf.document
             }
             if (!rotate && guessFormat(pageSize, true))
             {
-                int x = _pageWidth;
+                var x = _pageWidth;
                 _pageWidth = _pageHeight;
                 _pageHeight = x;
                 return true;

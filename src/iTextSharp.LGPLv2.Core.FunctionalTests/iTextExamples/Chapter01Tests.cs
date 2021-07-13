@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -70,8 +70,8 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             // we set the compression to 0 so that we can read the PDF syntax
             writer.CompressionLevel = 0;
             // writes something to the direct content using a convenience method
-            Phrase hello = new Phrase("HelloWorldColumn");
-            PdfContentByte canvas = writer.DirectContentUnder;
+            var hello = new Phrase("HelloWorldColumn");
+            var canvas = writer.DirectContentUnder;
             ColumnText.ShowTextAligned(canvas, Element.ALIGN_LEFT,
               hello, 36, 788, 0
             );
@@ -97,7 +97,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfContentByte canvas = writer.DirectContentUnder;
+            var canvas = writer.DirectContentUnder;
             writer.CompressionLevel = 0;
             canvas.SaveState();                               // q
             canvas.BeginText();                               // BT
@@ -196,7 +196,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document(new Rectangle(14400, 14400));
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // changes the user unit
             writer.Userunit = 75000f;
             // step 3
@@ -258,8 +258,8 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
               "the top margin 108pt (1.5 inch); " +
               "the bottom margin 180pt (2.5 inch).")
             );
-            Paragraph paragraph = new Paragraph { Alignment = Element.ALIGN_JUSTIFIED };
-            for (int i = 0; i < 20; i++)
+            var paragraph = new Paragraph { Alignment = Element.ALIGN_JUSTIFIED };
+            for (var i = 0; i < 20; i++)
             {
                 paragraph.Add("Hello World! Hello People! " +
                 "Hello Sky! Hello Sun! Hello Moon! Hello Stars!"
@@ -303,8 +303,8 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
               "the top margin 108pt (1.5 inch); " +
               "the bottom margin 180pt (2.5 inch).")
             );
-            Paragraph paragraph = new Paragraph { Alignment = Element.ALIGN_JUSTIFIED };
-            for (int i = 0; i < 20; i++)
+            var paragraph = new Paragraph { Alignment = Element.ALIGN_JUSTIFIED };
+            for (var i = 0; i < 20; i++)
             {
                 paragraph.Add("Hello World! Hello People! " +
                   "Hello Sky! Hello Sun! Hello Moon! Hello Stars!"
@@ -327,7 +327,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
             // step 1
             // Using a custom page size
-            Rectangle pagesize = new Rectangle(216f, 720f);
+            var pagesize = new Rectangle(216f, 720f);
             var document = new Document(pagesize, 36f, 72f, 108f, 180f);
 
             // step 2
@@ -358,7 +358,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
             // step 2
             // Creating a PDF 1.7 document
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             writer.PdfVersion = PdfWriter.VERSION_1_7;
             // step 3
             document.AddAuthor(TestUtils.Author);

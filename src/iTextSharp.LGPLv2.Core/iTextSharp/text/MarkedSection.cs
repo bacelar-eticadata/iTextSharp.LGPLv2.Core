@@ -38,10 +38,7 @@ namespace iTextSharp.text
         /// </summary>
         public bool BookmarkOpen
         {
-            set
-            {
-                ((Section)Element).BookmarkOpen = value;
-            }
+            set => ((Section)Element).BookmarkOpen = value;
         }
 
         /// <summary>
@@ -50,10 +47,7 @@ namespace iTextSharp.text
         /// </summary>
         public string BookmarkTitle
         {
-            set
-            {
-                ((Section)Element).BookmarkTitle = value;
-            }
+            set => ((Section)Element).BookmarkTitle = value;
         }
 
         /// <summary>
@@ -61,10 +55,7 @@ namespace iTextSharp.text
         /// </summary>
         public float Indentation
         {
-            set
-            {
-                ((Section)Element).Indentation = value;
-            }
+            set => ((Section)Element).Indentation = value;
         }
 
         /// <summary>
@@ -72,18 +63,12 @@ namespace iTextSharp.text
         /// </summary>
         public float IndentationLeft
         {
-            set
-            {
-                ((Section)Element).IndentationLeft = value;
-            }
+            set => ((Section)Element).IndentationLeft = value;
         }
 
         public float IndentationRight
         {
-            set
-            {
-                ((Section)Element).IndentationRight = value;
-            }
+            set => ((Section)Element).IndentationRight = value;
         }
 
         /// <summary>
@@ -95,10 +80,7 @@ namespace iTextSharp.text
         /// </summary>
         public int NumberDepth
         {
-            set
-            {
-                ((Section)Element).NumberDepth = value;
-            }
+            set => ((Section)Element).NumberDepth = value;
         }
 
         /// <summary>
@@ -109,13 +91,17 @@ namespace iTextSharp.text
             set
             {
                 if (value.Element is Paragraph)
+                {
                     title = value;
+                }
             }
             get
             {
-                Paragraph result = Section.ConstructTitle((Paragraph)title.Element, ((Section)Element).Numbers, ((Section)Element).NumberDepth, ((Section)Element).NumberStyle);
-                MarkedObject mo = new MarkedObject(result);
-                mo.markupAttributes = title.MarkupAttributes;
+                var result = Section.ConstructTitle((Paragraph)title.Element, ((Section)Element).Numbers, ((Section)Element).NumberDepth, ((Section)Element).NumberStyle);
+                var mo = new MarkedObject(result)
+                {
+                    markupAttributes = title.MarkupAttributes
+                };
                 return mo;
             }
         }
@@ -125,10 +111,7 @@ namespace iTextSharp.text
         /// </summary>
         public bool TriggerNewPage
         {
-            set
-            {
-                ((Section)Element).TriggerNewPage = value;
-            }
+            set => ((Section)Element).TriggerNewPage = value;
         }
 
         public void Add(int index, object o)
@@ -156,7 +139,7 @@ namespace iTextSharp.text
 
         public MarkedSection AddSection(float indentation, int numberDepth)
         {
-            MarkedSection section = ((Section)Element).AddMarkedSection();
+            var section = ((Section)Element).AddMarkedSection();
             section.Indentation = indentation;
             section.NumberDepth = numberDepth;
             return section;
@@ -164,7 +147,7 @@ namespace iTextSharp.text
 
         public MarkedSection AddSection(float indentation)
         {
-            MarkedSection section = ((Section)Element).AddMarkedSection();
+            var section = ((Section)Element).AddMarkedSection();
             section.Indentation = indentation;
             return section;
         }
@@ -176,7 +159,7 @@ namespace iTextSharp.text
         /// </summary>
         public MarkedSection AddSection(int numberDepth)
         {
-            MarkedSection section = ((Section)Element).AddMarkedSection();
+            var section = ((Section)Element).AddMarkedSection();
             section.NumberDepth = numberDepth;
             return section;
         }

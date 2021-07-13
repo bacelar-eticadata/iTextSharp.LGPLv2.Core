@@ -15,7 +15,8 @@ using System;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
+namespace iTextSharp.text.pdf.qrcode
+{
 
     /**
      * <p>This class contains utility methods for performing mathematical operations over
@@ -27,15 +28,16 @@ namespace iTextSharp.text.pdf.qrcode {
      *
      * @author Sean Owen
      */
-    public sealed class GF256 {
+    public sealed class GF256
+    {
 
         public static readonly GF256 QR_CODE_FIELD = new GF256(0x011D); // x^8 + x^4 + x^3 + x^2 + 1
         public static readonly GF256 DATA_MATRIX_FIELD = new GF256(0x012D); // x^8 + x^5 + x^3 + x^2 + 1
 
-        private int[] expTable;
-        private int[] logTable;
-        private GF256Poly zero;
-        private GF256Poly one;
+        private readonly int[] expTable;
+        private readonly int[] logTable;
+        private readonly GF256Poly zero;
+        private readonly GF256Poly one;
 
         /**
          * Create a representation of GF(256) using the given primitive polynomial.
@@ -44,18 +46,22 @@ namespace iTextSharp.text.pdf.qrcode {
          *  the bits of an int, where the least-significant bit represents the constant
          *  coefficient
          */
-        private GF256(int primitive) {
+        private GF256(int primitive)
+        {
             expTable = new int[256];
             logTable = new int[256];
-            int x = 1;
-            for (int i = 0; i < 256; i++) {
+            var x = 1;
+            for (var i = 0; i < 256; i++)
+            {
                 expTable[i] = x;
                 x <<= 1; // x = x * 2; we're assuming the generator alpha is 2
-                if (x >= 0x100) {
+                if (x >= 0x100)
+                {
                     x ^= primitive;
                 }
             }
-            for (int i = 0; i < 255; i++) {
+            for (var i = 0; i < 255; i++)
+            {
                 logTable[expTable[i]] = i;
             }
             // logTable[0] == 0 but this should never be used
@@ -63,25 +69,30 @@ namespace iTextSharp.text.pdf.qrcode {
             one = new GF256Poly(this, new int[] { 1 });
         }
 
-        internal GF256Poly GetZero() {
+        internal GF256Poly GetZero()
+        {
             return zero;
         }
 
-        internal GF256Poly GetOne() {
+        internal GF256Poly GetOne()
+        {
             return one;
         }
 
         /**
          * @return the monomial representing coefficient * x^degree
          */
-        internal GF256Poly BuildMonomial(int degree, int coefficient) {
-            if (degree < 0) {
+        internal GF256Poly BuildMonomial(int degree, int coefficient)
+        {
+            if (degree < 0)
+            {
                 throw new ArgumentException();
             }
-            if (coefficient == 0) {
+            if (coefficient == 0)
+            {
                 return zero;
             }
-            int[] coefficients = new int[degree + 1];
+            var coefficients = new int[degree + 1];
             coefficients[0] = coefficient;
             return new GF256Poly(this, coefficients);
         }
@@ -91,22 +102,26 @@ namespace iTextSharp.text.pdf.qrcode {
          *
          * @return sum/difference of a and b
          */
-        internal static int AddOrSubtract(int a, int b) {
+        internal static int AddOrSubtract(int a, int b)
+        {
             return a ^ b;
         }
 
         /**
          * @return 2 to the power of a in GF(256)
          */
-        internal int Exp(int a) {
+        internal int Exp(int a)
+        {
             return expTable[a];
         }
 
         /**
          * @return base 2 log of a in GF(256)
          */
-        internal int Log(int a) {
-            if (a == 0) {
+        internal int Log(int a)
+        {
+            if (a == 0)
+            {
                 throw new ArgumentException();
             }
             return logTable[a];
@@ -115,8 +130,10 @@ namespace iTextSharp.text.pdf.qrcode {
         /**
          * @return multiplicative inverse of a
          */
-        internal int Inverse(int a) {
-            if (a == 0) {
+        internal int Inverse(int a)
+        {
+            if (a == 0)
+            {
                 throw new ArithmeticException();
             }
             return expTable[255 - logTable[a]];
@@ -127,14 +144,18 @@ namespace iTextSharp.text.pdf.qrcode {
          * @param b
          * @return product of a and b in GF(256)
          */
-        internal int Multiply(int a, int b) {
-            if (a == 0 || b == 0) {
+        internal int Multiply(int a, int b)
+        {
+            if (a == 0 || b == 0)
+            {
                 return 0;
             }
-            if (a == 1) {
+            if (a == 1)
+            {
                 return b;
             }
-            if (b == 1) {
+            if (b == 1)
+            {
                 return a;
             }
             return expTable[(logTable[a] + logTable[b]) % 255];

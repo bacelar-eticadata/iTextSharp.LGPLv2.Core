@@ -1,7 +1,7 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.style;
 using iTextSharp.text.rtf.text;
+using System.IO;
 
 namespace iTextSharp.text.rtf.list
 {
@@ -57,6 +57,7 @@ namespace iTextSharp.text.rtf.list
         /// Constant for list level
         /// </summary>
         private static readonly byte[] _listLevel = DocWriter.GetIsoBytes("\\listlevel");
+
         /// <summary>
         /// Constant for list level alignment old
         /// </summary>
@@ -155,6 +156,7 @@ namespace iTextSharp.text.rtf.list
         /// Constant for list level
         /// </summary>
         private static readonly byte[] _listLevelTemplateId = DocWriter.GetIsoBytes("\\leveltemplateid");
+
         /// <summary>
         /// Constant for the lvltentative control word
         /// </summary>
@@ -169,10 +171,12 @@ namespace iTextSharp.text.rtf.list
         /// Constant for list level style old
         /// </summary>
         private static readonly byte[] _listLevelType = DocWriter.GetIsoBytes("\\levelnfc");
+
         /// <summary>
         /// Constant for list level style new
         /// </summary>
         private static readonly byte[] _listLevelTypeNew = DocWriter.GetIsoBytes("\\levelnfcn");
+
         /* unknown type */
         /* BASE value to subtract to get RTF Value if above base*/
         /* 0 Arabic (1, 2, 3) */
@@ -186,6 +190,7 @@ namespace iTextSharp.text.rtf.list
         /* 22   Arabic with leading zero (01, 02, 03, ..., 10, 11)*/
         /* 23   Bullet (no number at all)*/
         /*  255 No number */
+
         /// <summary>
         /// Which picture bullet from the \listpicture destination should be applied
         /// </summary>
@@ -301,6 +306,7 @@ namespace iTextSharp.text.rtf.list
         /// Whether this RtfList is numbered
         /// </summary>
         private int _listType = LIST_TYPE_UNKNOWN;
+
         /// <summary>
         /// Parent list object
         /// </summary>
@@ -320,6 +326,7 @@ namespace iTextSharp.text.rtf.list
         /// The level of this RtfListLevel
         /// </summary>
         private int listLevel;
+
         public RtfListLevel(RtfDocument doc) : base(doc)
         {
             _templateId = Document.GetRandomInt();
@@ -611,6 +618,7 @@ namespace iTextSharp.text.rtf.list
         {
             _listNoRestart = listNoRestart;
         }
+
         /// <summary>
         /// </summary>
         /// <param name="listStartAt">the listStartAt to set</param>
@@ -804,8 +812,8 @@ namespace iTextSharp.text.rtf.list
             WriteIndentation(result);
             result.Write(CloseGroup, 0, CloseGroup.Length);
             Document.OutputDebugLinebreak(result);
-
         }
+
         /// <summary>
         /// Write the indentation values for this  RtfList .
         /// @throws IOException On i/o errors.
@@ -822,7 +830,6 @@ namespace iTextSharp.text.rtf.list
             result.Write(t = IntToByteArray(_rightIndent), 0, t.Length);
             result.Write(_listLevelSymbolIndent, 0, _listLevelSymbolIndent.Length);
             result.Write(t = IntToByteArray(_leftIndent), 0, t.Length);
-
         }
 
         /// <summary>
@@ -843,12 +850,15 @@ namespace iTextSharp.text.rtf.list
                 case Element.ALIGN_LEFT:
                     result.Write(RtfParagraphStyle.AlignLeft, 0, RtfParagraphStyle.AlignLeft.Length);
                     break;
+
                 case Element.ALIGN_RIGHT:
                     result.Write(RtfParagraphStyle.AlignRight, 0, RtfParagraphStyle.AlignRight.Length);
                     break;
+
                 case Element.ALIGN_CENTER:
                     result.Write(RtfParagraphStyle.AlignCenter, 0, RtfParagraphStyle.AlignCenter.Length);
                     break;
+
                 case Element.ALIGN_JUSTIFIED:
                 case Element.ALIGN_JUSTIFIED_ALL:
                     result.Write(RtfParagraphStyle.AlignJustify, 0, RtfParagraphStyle.AlignJustify.Length);
@@ -869,7 +879,6 @@ namespace iTextSharp.text.rtf.list
         /// </summary>
         protected internal void CorrectIndentation()
         {
-
             if (_listLevelParent != null)
             {
                 _leftIndent = _leftIndent + _listLevelParent.GetLeftIndent() + _listLevelParent.GetFirstIndent();

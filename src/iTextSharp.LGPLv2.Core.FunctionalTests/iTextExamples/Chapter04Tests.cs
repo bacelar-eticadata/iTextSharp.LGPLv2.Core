@@ -1,7 +1,7 @@
-﻿using System.IO;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -23,12 +23,12 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfPTable table = new PdfPTable(2);
+            var table = new PdfPTable(2);
             // a long phrase
-            Phrase p = new Phrase(
+            var p = new Phrase(
               "Dr. iText or: How I Learned to Stop Worrying and Love PDF."
             );
-            PdfPCell cell = new PdfPCell(p);
+            var cell = new PdfPCell(p);
             // the prhase is wrapped
             table.AddCell("wrap");
             cell.NoWrap = false;
@@ -51,7 +51,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             table.AddCell(cell);
             // The minimum height is exceeded
             table.AddCell("minimum height");
-            cell = new PdfPCell(new Phrase("Dr. iText")) {MinimumHeight = 36f};
+            cell = new PdfPCell(new Phrase("Dr. iText")) { MinimumHeight = 36f };
             table.AddCell(cell);
             // The last row is extended
             table.ExtendLastRow = true;
@@ -80,7 +80,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfPTable table = createTable1();
+            var table = createTable1();
             document.Add(table);
             table = createTable2();
             table.SpacingBefore = 5;
@@ -139,14 +139,14 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfPTable table = new PdfPTable(4);
-            PdfPTable nested1 = new PdfPTable(2);
+            var table = new PdfPTable(4);
+            var nested1 = new PdfPTable(2);
             nested1.AddCell("1.1");
             nested1.AddCell("1.2");
-            PdfPTable nested2 = new PdfPTable(1);
+            var nested2 = new PdfPTable(1);
             nested2.AddCell("12.1");
             nested2.AddCell("12.2");
-            for (int k = 0; k < 16; ++k)
+            for (var k = 0; k < 16; ++k)
             {
                 if (k == 1)
                 {
@@ -184,7 +184,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfPTable table = new PdfPTable(4);
+            var table = new PdfPTable(4);
             table.SetWidths(new[] { 1, 3, 3, 3 });
             table.WidthPercentage = 100;
             // row 1, cell 1
@@ -314,12 +314,12 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfPTable table = new PdfPTable(2) {WidthPercentage = 100};
-            Phrase p = new Phrase(
+            var table = new PdfPTable(2) { WidthPercentage = 100 };
+            var p = new Phrase(
               "Dr. iText or: How I Learned to Stop Worrying " +
               "and Love the Portable Document Format."
             );
-            PdfPCell cell = new PdfPCell(p);
+            var cell = new PdfPCell(p);
             table.AddCell("default leading / spacing");
             table.AddCell(cell);
             table.AddCell("absolute leading: 20");
@@ -392,7 +392,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfPTable table = createFirstTable();
+            var table = createFirstTable();
             table.WidthPercentage = 50;
             table.HorizontalAlignment = Element.ALIGN_LEFT;
             document.Add(table);
@@ -422,7 +422,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfPTable table = createFirstTable();
+            var table = createFirstTable();
             document.Add(new Paragraph(string.Format(
               "Table height before document.Add(): {0}",
               table.TotalHeight)
@@ -491,13 +491,13 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
                   Image.GetInstance(TestUtils.GetPosterPath("0348150.jpg"))
                 };
             // Creates a table with 6 columns
-            PdfPTable table = new PdfPTable(6) {WidthPercentage = 100};
+            var table = new PdfPTable(6) { WidthPercentage = 100 };
             // first movie
             table.DefaultCell.HorizontalAlignment = Element.ALIGN_CENTER;
             table.DefaultCell.VerticalAlignment = Element.ALIGN_TOP;
             table.AddCell("X-Men");
             // we wrap he image in a PdfPCell
-            PdfPCell cell = new PdfPCell(img[0]);
+            var cell = new PdfPCell(img[0]);
             table.AddCell(cell);
             // second movie
             table.DefaultCell.VerticalAlignment = Element.ALIGN_MIDDLE;
@@ -530,13 +530,13 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
         private static PdfPTable createFirstTable()
         {
             // a table with three columns
-            PdfPTable table = new PdfPTable(3);
+            var table = new PdfPTable(3);
             // the cell object
             // we add a cell with colspan 3
-            var cell = new PdfPCell(new Phrase("Cell with colspan 3")) {Colspan = 3};
+            var cell = new PdfPCell(new Phrase("Cell with colspan 3")) { Colspan = 3 };
             table.AddCell(cell);
             // now we add a cell with rowspan 2
-            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) {Rowspan = 2};
+            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) { Rowspan = 2 };
             table.AddCell(cell);
             // we add the four remaining cells with addCell()
             table.AddCell("row 1; cell 1");
@@ -548,11 +548,11 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static PdfPTable createTable1()
         {
-            PdfPTable table = new PdfPTable(3) {WidthPercentage = 288/5.23f};
+            var table = new PdfPTable(3) { WidthPercentage = 288 / 5.23f };
             table.SetWidths(new[] { 2, 1, 1 });
-            var cell = new PdfPCell(new Phrase("Table 1")) {Colspan = 3};
+            var cell = new PdfPCell(new Phrase("Table 1")) { Colspan = 3 };
             table.AddCell(cell);
-            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) {Rowspan = 2};
+            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) { Rowspan = 2 };
             table.AddCell(cell);
             table.AddCell("row 1; cell 1");
             table.AddCell("row 1; cell 2");
@@ -563,15 +563,15 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static PdfPTable createTable2()
         {
-            PdfPTable table = new PdfPTable(3)
+            var table = new PdfPTable(3)
             {
                 TotalWidth = 288,
                 LockedWidth = true
             };
             table.SetWidths(new float[] { 2, 1, 1 });
-            var cell = new PdfPCell(new Phrase("Table 2")) {Colspan = 3};
+            var cell = new PdfPCell(new Phrase("Table 2")) { Colspan = 3 };
             table.AddCell(cell);
-            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) {Rowspan = 2};
+            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) { Rowspan = 2 };
             table.AddCell(cell);
             table.AddCell("row 1; cell 1");
             table.AddCell("row 1; cell 2");
@@ -582,10 +582,10 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static PdfPTable createTable3()
         {
-            PdfPTable table = new PdfPTable(new float[] {2, 1, 1}) {WidthPercentage = 55.067f};
-            var cell = new PdfPCell(new Phrase("Table 3")) {Colspan = 3};
+            var table = new PdfPTable(new float[] { 2, 1, 1 }) { WidthPercentage = 55.067f };
+            var cell = new PdfPCell(new Phrase("Table 3")) { Colspan = 3 };
             table.AddCell(cell);
-            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) {Rowspan = 2};
+            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) { Rowspan = 2 };
             table.AddCell(cell);
             table.AddCell("row 1; cell 1");
             table.AddCell("row 1; cell 2");
@@ -596,12 +596,12 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static PdfPTable createTable4()
         {
-            PdfPTable table = new PdfPTable(3);
-            Rectangle rect = new Rectangle(523, 770);
+            var table = new PdfPTable(3);
+            var rect = new Rectangle(523, 770);
             table.SetWidthPercentage(new float[] { 144, 72, 72 }, rect);
-            var cell = new PdfPCell(new Phrase("Table 4")) {Colspan = 3};
+            var cell = new PdfPCell(new Phrase("Table 4")) { Colspan = 3 };
             table.AddCell(cell);
-            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) {Rowspan = 2};
+            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) { Rowspan = 2 };
             table.AddCell(cell);
             table.AddCell("row 1; cell 1");
             table.AddCell("row 1; cell 2");
@@ -612,12 +612,12 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
         private static PdfPTable createTable5()
         {
-            PdfPTable table = new PdfPTable(3);
+            var table = new PdfPTable(3);
             table.SetTotalWidth(new float[] { 144, 72, 72 });
             table.LockedWidth = true;
-            var cell = new PdfPCell(new Phrase("Table 5")) {Colspan = 3};
+            var cell = new PdfPCell(new Phrase("Table 5")) { Colspan = 3 };
             table.AddCell(cell);
-            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) {Rowspan = 2};
+            cell = new PdfPCell(new Phrase("Cell with rowspan 2")) { Rowspan = 2 };
             table.AddCell(cell);
             table.AddCell("row 1; cell 1");
             table.AddCell("row 1; cell 2");

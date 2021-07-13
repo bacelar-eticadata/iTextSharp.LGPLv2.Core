@@ -1,10 +1,9 @@
+using iTextSharp.text.factories;
 using System;
 using System.Collections;
-using iTextSharp.text.factories;
 
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Page labels are used to identify each
     /// page visually on the screen or in print.
@@ -12,11 +11,11 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfPageLabels
     {
-
         /// <summary>
         /// Logical pages will have the form 1,2,3,...
         /// </summary>
         public const int DECIMAL_ARABIC_NUMERALS = 0;
+
         /// <summary>
         /// No logical page numbers are generated but fixed text may
         /// still exist
@@ -44,11 +43,13 @@ namespace iTextSharp.text.pdf
         /// Logical pages will have the form I,II,III,IV,...
         /// </summary>
         public const int UPPERCASE_ROMAN_NUMERALS = 1;
+
         /// <summary>
         /// Dictionary values to set the logical page styles
         /// </summary>
         internal static PdfName[] NumberingStyle = {PdfName.D, PdfName.R,
                     new PdfName("r"), PdfName.A, new PdfName("a")};
+
         /// <summary>
         /// The sequence of logical pages. Will contain at least a value for page 1
         /// </summary>
@@ -71,22 +72,25 @@ namespace iTextSharp.text.pdf
         /// <returns>a PdfPageLabelEntry array, containing an entry for each format change</returns>
         public static PdfPageLabelFormat[] GetPageLabelFormats(PdfReader reader)
         {
-            PdfDictionary dict = reader.Catalog;
-            PdfDictionary labels = (PdfDictionary)PdfReader.GetPdfObjectRelease(dict.Get(PdfName.Pagelabels));
+            var dict = reader.Catalog;
+            var labels = (PdfDictionary)PdfReader.GetPdfObjectRelease(dict.Get(PdfName.Pagelabels));
             if (labels == null)
+            {
                 return null;
-            Hashtable numberTree = PdfNumberTree.ReadTree(labels);
-            int[] numbers = new int[numberTree.Count];
+            }
+
+            var numberTree = PdfNumberTree.ReadTree(labels);
+            var numbers = new int[numberTree.Count];
             numberTree.Keys.CopyTo(numbers, 0);
             Array.Sort(numbers);
-            PdfPageLabelFormat[] formats = new PdfPageLabelFormat[numberTree.Count];
+            var formats = new PdfPageLabelFormat[numberTree.Count];
             string prefix;
             int numberStyle;
             int pagecount;
-            for (int k = 0; k < numbers.Length; ++k)
+            for (var k = 0; k < numbers.Length; ++k)
             {
-                int key = numbers[k];
-                PdfDictionary d = (PdfDictionary)PdfReader.GetPdfObjectRelease((PdfObject)numberTree[key]);
+                var key = numbers[k];
+                var d = (PdfDictionary)PdfReader.GetPdfObjectRelease((PdfObject)numberTree[key]);
                 if (d.Contains(PdfName.St))
                 {
                     pagecount = ((PdfNumber)d.Get(PdfName.St)).IntValue;
@@ -105,7 +109,7 @@ namespace iTextSharp.text.pdf
                 }
                 if (d.Contains(PdfName.S))
                 {
-                    char type = ((PdfName)d.Get(PdfName.S)).ToString()[1];
+                    var type = ((PdfName)d.Get(PdfName.S)).ToString()[1];
                     switch (type)
                     {
                         case 'R': numberStyle = UPPERCASE_ROMAN_NUMERALS; break;
@@ -131,25 +135,26 @@ namespace iTextSharp.text.pdf
         /// <returns>a String array or  null  if no page labels are present</returns>
         public static string[] GetPageLabels(PdfReader reader)
         {
+            var n = reader.NumberOfPages;
 
-            int n = reader.NumberOfPages;
-
-            PdfDictionary dict = reader.Catalog;
-            PdfDictionary labels = (PdfDictionary)PdfReader.GetPdfObjectRelease(dict.Get(PdfName.Pagelabels));
+            var dict = reader.Catalog;
+            var labels = (PdfDictionary)PdfReader.GetPdfObjectRelease(dict.Get(PdfName.Pagelabels));
             if (labels == null)
+            {
                 return null;
+            }
 
-            string[] labelstrings = new string[n];
-            Hashtable numberTree = PdfNumberTree.ReadTree(labels);
+            var labelstrings = new string[n];
+            var numberTree = PdfNumberTree.ReadTree(labels);
 
-            int pagecount = 1;
-            string prefix = "";
-            char type = 'D';
-            for (int i = 0; i < n; i++)
+            var pagecount = 1;
+            var prefix = "";
+            var type = 'D';
+            for (var i = 0; i < n; i++)
             {
                 if (numberTree.ContainsKey(i))
                 {
-                    PdfDictionary d = (PdfDictionary)PdfReader.GetPdfObjectRelease((PdfObject)numberTree[i]);
+                    var d = (PdfDictionary)PdfReader.GetPdfObjectRelease((PdfObject)numberTree[i]);
                     if (d.Contains(PdfName.St))
                     {
                         pagecount = ((PdfNumber)d.Get(PdfName.St)).IntValue;
@@ -172,15 +177,19 @@ namespace iTextSharp.text.pdf
                     default:
                         labelstrings[i] = prefix + pagecount;
                         break;
+
                     case 'R':
                         labelstrings[i] = prefix + RomanNumberFactory.GetUpperCaseString(pagecount);
                         break;
+
                     case 'r':
                         labelstrings[i] = prefix + RomanNumberFactory.GetLowerCaseString(pagecount);
                         break;
+
                     case 'A':
                         labelstrings[i] = prefix + RomanAlphabetFactory.GetUpperCaseString(pagecount);
                         break;
+
                     case 'a':
                         labelstrings[i] = prefix + RomanAlphabetFactory.GetLowerCaseString(pagecount);
                         break;
@@ -200,14 +209,26 @@ namespace iTextSharp.text.pdf
         public void AddPageLabel(int page, int numberStyle, string text, int firstPage)
         {
             if (page < 1 || firstPage < 1)
+            {
                 throw new ArgumentException("In a page label the page numbers must be greater or equal to 1.");
-            PdfDictionary dic = new PdfDictionary();
+            }
+
+            var dic = new PdfDictionary();
             if (numberStyle >= 0 && numberStyle < NumberingStyle.Length)
+            {
                 dic.Put(PdfName.S, NumberingStyle[numberStyle]);
+            }
+
             if (text != null)
+            {
                 dic.Put(PdfName.P, new PdfString(text, PdfObject.TEXT_UNICODE));
+            }
+
             if (firstPage != 1)
+            {
                 dic.Put(PdfName.St, new PdfNumber(firstPage));
+            }
+
             Map[page - 1] = dic;
         }
 
@@ -249,7 +270,10 @@ namespace iTextSharp.text.pdf
         public void RemovePageLabel(int page)
         {
             if (page <= 1)
+            {
                 return;
+            }
+
             Map.Remove(page - 1);
         }
 
@@ -261,13 +285,14 @@ namespace iTextSharp.text.pdf
         {
             return PdfNumberTree.WriteTree(Map, writer);
         }
+
         public class PdfPageLabelFormat
         {
-
             public int LogicalPage;
             public int NumberStyle;
             public int PhysicalPage;
             public string Prefix;
+
             /// <summary>
             /// Creates a page label format.
             /// </summary>

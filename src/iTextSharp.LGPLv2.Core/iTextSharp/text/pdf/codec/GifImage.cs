@@ -1,7 +1,7 @@
-using System;
-using System.IO;
-using System.Collections;
 using iTextSharp.LGPLv2.Core.System.NetUtils;
+using System;
+using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.pdf.codec
 {
@@ -16,10 +16,12 @@ namespace iTextSharp.text.pdf.codec
         protected int BgColor;
         protected int BgIndex;
         protected byte[] Block = new byte[256];
+
         // current data block
         protected int BlockSize;
 
         protected int Delay;
+
         /// <summary>
         /// last graphic control extension info
         /// </summary>
@@ -34,6 +36,7 @@ namespace iTextSharp.text.pdf.codec
         protected bool Interlace;
         protected int Ix, Iy, Iw, Ih;
         protected bool LctFlag;
+
         // local color table flag
         // interlace flag
         protected int LctSize;
@@ -45,12 +48,14 @@ namespace iTextSharp.text.pdf.codec
         protected int MLineStride;
         protected byte[] MLocalTable;
         protected byte[] MOut;
+
         // background color index
         // background color
         protected int PixelAspect;
 
         protected byte[] Pixels;
         protected byte[] PixelStack;
+
         /// <summary>
         /// LZW decoder working arrays
         /// </summary>
@@ -66,7 +71,6 @@ namespace iTextSharp.text.pdf.codec
         protected bool Transparency;
 
         protected int Width;            // full image width
-
 
         /// <summary>
         /// Reads gif images from an URL.
@@ -150,9 +154,8 @@ namespace iTextSharp.text.pdf.codec
         /// <returns>the [x,y] position of the frame</returns>
         public int[] GetFramePosition(int frame)
         {
-            GifFrame gf = (GifFrame)Frames[frame - 1];
+            var gf = (GifFrame)Frames[frame - 1];
             return new[] { gf.Ix, gf.Iy };
-
         }
 
         /// <summary>
@@ -162,9 +165,10 @@ namespace iTextSharp.text.pdf.codec
         /// <returns>the image</returns>
         public Image GetImage(int frame)
         {
-            GifFrame gf = (GifFrame)Frames[frame - 1];
+            var gf = (GifFrame)Frames[frame - 1];
             return gf.Image;
         }
+
         /// <summary>
         /// Gets the logical screen. The images may be smaller and placed
         /// in some position in this screen to playback some animation.
@@ -182,7 +186,9 @@ namespace iTextSharp.text.pdf.codec
             ReadHeader();
             ReadContents();
             if (Frames.Count == 0)
+            {
                 throw new IOException("The file does not contain any valid image.");
+            }
         }
 
         protected static int NewBpc(int bpc)
@@ -193,8 +199,10 @@ namespace iTextSharp.text.pdf.codec
                 case 2:
                 case 4:
                     break;
+
                 case 3:
                     return 4;
+
                 default:
                     return 8;
             }
@@ -203,25 +211,33 @@ namespace iTextSharp.text.pdf.codec
 
         protected bool DecodeImageData()
         {
-            int nullCode = -1;
-            int npix = Iw * Ih;
+            var nullCode = -1;
+            var npix = Iw * Ih;
             int available, clear, codeMask, codeSize, endOfInformation, inCode, oldCode,
             bits, code, count, i, datum, dataSize, first, top, bi;
-            bool skipZero = false;
+            var skipZero = false;
 
             if (Prefix == null)
+            {
                 Prefix = new short[MaxStackSize];
+            }
+
             if (Suffix == null)
+            {
                 Suffix = new byte[MaxStackSize];
+            }
+
             if (PixelStack == null)
+            {
                 PixelStack = new byte[MaxStackSize + 1];
+            }
 
             MLineStride = (Iw * MBpc + 7) / 8;
             MOut = new byte[MLineStride * Ih];
-            int pass = 1;
-            int inc = Interlace ? 8 : 1;
-            int line = 0;
-            int xpos = 0;
+            var pass = 1;
+            var inc = Interlace ? 8 : 1;
+            var line = 0;
+            var xpos = 0;
 
             //  Initialize GIF data stream decoder.
 
@@ -276,7 +292,10 @@ namespace iTextSharp.text.pdf.codec
                     //  Interpret the code
 
                     if ((code > available) || (code == endOfInformation))
+                    {
                         break;
+                    }
+
                     if (code == clear)
                     {
                         //  Reset decoder.
@@ -309,7 +328,10 @@ namespace iTextSharp.text.pdf.codec
                     //  Add a new string to the string table,
 
                     if (available >= MaxStackSize)
+                    {
                         break;
+                    }
+
                     PixelStack[top++] = (byte)first;
                     Prefix[available] = (short)oldCode;
                     Suffix[available] = (byte)first;
@@ -345,14 +367,17 @@ namespace iTextSharp.text.pdf.codec
                                     case 2:
                                         line = 4;
                                         break;
+
                                     case 3:
                                         line = 2;
                                         inc = 4;
                                         break;
+
                                     case 4:
                                         line = 1;
                                         inc = 2;
                                         break;
+
                                     default: // this shouldn't happen
                                         line = Ih - 1;
                                         inc = 0;
@@ -379,10 +404,13 @@ namespace iTextSharp.text.pdf.codec
         {
             BlockSize = Inp.ReadByte();
             if (BlockSize <= 0)
-                return BlockSize = 0;
-            for (int k = 0; k < BlockSize; ++k)
             {
-                int v = Inp.ReadByte();
+                return BlockSize = 0;
+            }
+
+            for (var k = 0; k < BlockSize; ++k)
+            {
+                var v = Inp.ReadByte();
                 if (v < 0)
                 {
                     return BlockSize = k;
@@ -394,10 +422,10 @@ namespace iTextSharp.text.pdf.codec
 
         protected byte[] ReadColorTable(int bpc)
         {
-            int ncolors = 1 << bpc;
-            int nbytes = 3 * ncolors;
+            var ncolors = 1 << bpc;
+            var nbytes = 3 * ncolors;
             bpc = NewBpc(bpc);
-            byte[] table = new byte[(1 << bpc) * 3];
+            var table = new byte[(1 << bpc) * 3];
             readFully(table, 0, nbytes);
             return table;
         }
@@ -405,13 +433,12 @@ namespace iTextSharp.text.pdf.codec
         protected void ReadContents()
         {
             // read GIF file content blocks
-            bool done = false;
+            var done = false;
             while (!done)
             {
-                int code = Inp.ReadByte();
+                var code = Inp.ReadByte();
                 switch (code)
                 {
-
                     case 0x2C:    // image separator
                         ReadImage();
                         break;
@@ -420,7 +447,6 @@ namespace iTextSharp.text.pdf.codec
                         code = Inp.ReadByte();
                         switch (code)
                         {
-
                             case 0xf9:    // graphics control extension
                                 ReadGraphicControlExt();
                                 break;
@@ -449,10 +475,13 @@ namespace iTextSharp.text.pdf.codec
         protected void ReadGraphicControlExt()
         {
             Inp.ReadByte();    // block size
-            int packed = Inp.ReadByte();   // packed fields
+            var packed = Inp.ReadByte();   // packed fields
             Dispose = (packed & 0x1c) >> 2;   // disposal method
             if (Dispose == 0)
+            {
                 Dispose = 1;   // elect to keep old image if discretionary
+            }
+
             Transparency = (packed & 1) != 0;
             Delay = ReadShort() * 10;   // delay inp milliseconds
             TransIndex = Inp.ReadByte();        // transparent color index
@@ -464,9 +493,12 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         protected void ReadHeader()
         {
-            string id = "";
-            for (int i = 0; i < 6; i++)
+            var id = "";
+            for (var i = 0; i < 6; i++)
+            {
                 id += (char)Inp.ReadByte();
+            }
+
             if (!id.StartsWith("GIF8"))
             {
                 throw new IOException("Gif signature nor found.");
@@ -489,7 +521,7 @@ namespace iTextSharp.text.pdf.codec
             Iw = ReadShort();
             Ih = ReadShort();
 
-            int packed = Inp.ReadByte();
+            var packed = Inp.ReadByte();
             LctFlag = (packed & 0x80) != 0;     // 1 - local color table flag
             Interlace = (packed & 0x40) != 0;   // 2 - interlace flag
             // 3 - sort flag
@@ -506,27 +538,32 @@ namespace iTextSharp.text.pdf.codec
                 MCurrTable = MGlobalTable;
             }
             if (Transparency && TransIndex >= MCurrTable.Length / 3)
+            {
                 Transparency = false;
+            }
+
             if (Transparency && MBpc == 1)
             { // Acrobat 5.05 doesn't like this combination
-                byte[] tp = new byte[12];
+                var tp = new byte[12];
                 Array.Copy(MCurrTable, 0, tp, 0, 6);
                 MCurrTable = tp;
                 MBpc = 2;
             }
-            bool skipZero = DecodeImageData();   // decode pixel data
+            var skipZero = DecodeImageData();   // decode pixel data
             if (!skipZero)
+            {
                 Skip();
+            }
 
             Image img = null;
             img = new ImgRaw(Iw, Ih, 1, MBpc, MOut);
-            PdfArray colorspace = new PdfArray();
+            var colorspace = new PdfArray();
             colorspace.Add(PdfName.Indexed);
             colorspace.Add(PdfName.Devicergb);
-            int len = MCurrTable.Length;
+            var len = MCurrTable.Length;
             colorspace.Add(new PdfNumber(len / 3 - 1));
             colorspace.Add(new PdfString(MCurrTable));
-            PdfDictionary ad = new PdfDictionary();
+            var ad = new PdfDictionary();
             ad.Put(PdfName.Colorspace, colorspace);
             img.Additional = ad;
             if (Transparency)
@@ -536,14 +573,15 @@ namespace iTextSharp.text.pdf.codec
             img.OriginalType = Image.ORIGINAL_GIF;
             img.OriginalData = FromData;
             img.Url = FromUrl;
-            GifFrame gf = new GifFrame();
-            gf.Image = img;
-            gf.Ix = Ix;
-            gf.Iy = Iy;
+            var gf = new GifFrame
+            {
+                Image = img,
+                Ix = Ix,
+                Iy = Iy
+            };
             Frames.Add(gf);   // add image to frame list
 
             //ResetFrame();
-
         }
 
         /// <summary>
@@ -551,13 +589,12 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         protected void ReadLsd()
         {
-
             // logical screen size
             Width = ReadShort();
             Height = ReadShort();
 
             // packed fields
-            int packed = Inp.ReadByte();
+            var packed = Inp.ReadByte();
             GctFlag = (packed & 0x80) != 0;      // 1   : global color table flag
             MGbpc = (packed & 7) + 1;
             BgIndex = Inp.ReadByte();        // background color index
@@ -572,6 +609,7 @@ namespace iTextSharp.text.pdf.codec
             // read 16-bit value, LSB first
             return Inp.ReadByte() | (Inp.ReadByte() << 8);
         }
+
         /// <summary>
         /// Resets frame state for reading next image.
         /// </summary>
@@ -583,16 +621,17 @@ namespace iTextSharp.text.pdf.codec
         {
             if (MBpc == 8)
             {
-                int pos = x + Iw * y;
+                var pos = x + Iw * y;
                 MOut[pos] = (byte)v;
             }
             else
             {
-                int pos = MLineStride * y + x / (8 / MBpc);
-                int vout = v << (8 - MBpc * (x % (8 / MBpc)) - MBpc);
+                var pos = MLineStride * y + x / (8 / MBpc);
+                var vout = v << (8 - MBpc * (x % (8 / MBpc)) - MBpc);
                 MOut[pos] |= (byte)vout;
             }
         }
+
         /// <summary>
         /// Skips variable length blocks up to and including
         /// next zero length block.
@@ -609,9 +648,12 @@ namespace iTextSharp.text.pdf.codec
         {
             while (count > 0)
             {
-                int n = Inp.Read(b, offset, count);
+                var n = Inp.Read(b, offset, count);
                 if (n <= 0)
+                {
                     throw new IOException("Insufficient data.");
+                }
+
                 count -= n;
                 offset += n;
             }

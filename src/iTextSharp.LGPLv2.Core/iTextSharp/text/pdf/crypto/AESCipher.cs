@@ -1,7 +1,7 @@
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Paddings;
-using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 
 namespace iTextSharp.text.pdf.crypto
@@ -22,28 +22,33 @@ namespace iTextSharp.text.pdf.crypto
             IBlockCipher aes = new AesEngine();
             IBlockCipher cbc = new CbcBlockCipher(aes);
             _bp = new PaddedBufferedBlockCipher(cbc);
-            KeyParameter kp = new KeyParameter(key);
-            ParametersWithIV piv = new ParametersWithIV(kp, iv);
+            var kp = new KeyParameter(key);
+            var piv = new ParametersWithIV(kp, iv);
             _bp.Init(forEncryption, piv);
         }
 
         public byte[] Update(byte[] inp, int inpOff, int inpLen)
         {
-            int neededLen = _bp.GetUpdateOutputSize(inpLen);
+            var neededLen = _bp.GetUpdateOutputSize(inpLen);
             byte[] outp = null;
             if (neededLen > 0)
+            {
                 outp = new byte[neededLen];
+            }
             else
+            {
                 neededLen = 0;
+            }
+
             _bp.ProcessBytes(inp, inpOff, inpLen, outp, 0);
             return outp;
         }
 
         public byte[] DoFinal()
         {
-            int neededLen = _bp.GetOutputSize(0);
-            byte[] outp = new byte[neededLen];
-            int n = 0;
+            var neededLen = _bp.GetOutputSize(0);
+            var outp = new byte[neededLen];
+            var n = 0;
             try
             {
                 n = _bp.DoFinal(outp, 0);
@@ -54,13 +59,14 @@ namespace iTextSharp.text.pdf.crypto
             }
             if (n != outp.Length)
             {
-                byte[] outp2 = new byte[n];
+                var outp2 = new byte[n];
                 System.Array.Copy(outp, 0, outp2, 0, n);
                 return outp2;
             }
             else
+            {
                 return outp;
+            }
         }
-
     }
 }

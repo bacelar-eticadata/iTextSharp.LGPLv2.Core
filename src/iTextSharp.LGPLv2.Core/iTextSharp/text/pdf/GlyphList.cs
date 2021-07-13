@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.IO;
 using System.Globalization;
+using System.IO;
 using System.util;
 
 namespace iTextSharp.text.pdf
@@ -22,37 +22,49 @@ namespace iTextSharp.text.pdf
                 istr = BaseFont.GetResourceStream($"{BaseFont.RESOURCE_PATH}glyphlist.txt");
                 if (istr == null)
                 {
-                    string msg = "glyphlist.txt not found as resource.";
+                    var msg = "glyphlist.txt not found as resource.";
                     throw new Exception(msg);
                 }
-                byte[] buf = new byte[1024];
-                MemoryStream outp = new MemoryStream();
+                var buf = new byte[1024];
+                var outp = new MemoryStream();
                 while (true)
                 {
-                    int size = istr.Read(buf, 0, buf.Length);
+                    var size = istr.Read(buf, 0, buf.Length);
                     if (size == 0)
+                    {
                         break;
+                    }
+
                     outp.Write(buf, 0, size);
                 }
                 istr.Dispose();
                 istr = null;
-                string s = PdfEncodings.ConvertToString(outp.ToArray(), null);
-                StringTokenizer tk = new StringTokenizer(s, "\r\n");
+                var s = PdfEncodings.ConvertToString(outp.ToArray(), null);
+                var tk = new StringTokenizer(s, "\r\n");
                 while (tk.HasMoreTokens())
                 {
-                    string line = tk.NextToken();
+                    var line = tk.NextToken();
                     if (line.StartsWith("#"))
+                    {
                         continue;
-                    StringTokenizer t2 = new StringTokenizer(line, " ;\r\n\t\f");
+                    }
+
+                    var t2 = new StringTokenizer(line, " ;\r\n\t\f");
                     string name = null;
                     string hex = null;
                     if (!t2.HasMoreTokens())
+                    {
                         continue;
+                    }
+
                     name = t2.NextToken();
                     if (!t2.HasMoreTokens())
+                    {
                         continue;
+                    }
+
                     hex = t2.NextToken();
-                    int num = int.Parse(hex, NumberStyles.HexNumber);
+                    var num = int.Parse(hex, NumberStyles.HexNumber);
                     _unicode2Names[num] = name;
                     _names2Unicode[name] = new[] { num };
                 }

@@ -1,6 +1,5 @@
 namespace iTextSharp.text.pdf
 {
-
     /// <summary>
     /// Represents a pattern. Can be used in high-level constructs (Paragraph, Cell, etc.).
     /// </summary>
@@ -9,7 +8,7 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// The actual pattern.
         /// </summary>
-        readonly PdfPatternPainter _painter;
+        private readonly PdfPatternPainter _painter;
 
         /// <summary>
         /// Creates a color representing a pattern.
@@ -24,13 +23,7 @@ namespace iTextSharp.text.pdf
         /// Gets the pattern.
         /// </summary>
         /// <returns>the pattern</returns>
-        public PdfPatternPainter Painter
-        {
-            get
-            {
-                return _painter;
-            }
-        }
+        public PdfPatternPainter Painter => _painter;
 
         public override bool Equals(object obj)
         {

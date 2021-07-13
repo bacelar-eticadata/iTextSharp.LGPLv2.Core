@@ -1,4 +1,3 @@
-using System;
 /*
  * Copyright 2008 ZXing authors
  *
@@ -15,14 +14,16 @@ using System;
  * limitations under the License.
  */
 
-namespace iTextSharp.text.pdf.qrcode {
+namespace iTextSharp.text.pdf.qrcode
+{
 
     /**
      * These are a set of hints that you may pass to Writers to specify their behavior.
      *
      * @author dswitkin@google.com (Daniel Switkin)
      */
-    public sealed class EncodeHintType {
+    public sealed class EncodeHintType
+    {
 
         /**
          * Specifies what degree of error correction to use, for example in QR Codes (type Integer).
@@ -34,7 +35,8 @@ namespace iTextSharp.text.pdf.qrcode {
          */
         public static readonly EncodeHintType CHARACTER_SET = new EncodeHintType();
 
-        private EncodeHintType() {
+        private EncodeHintType()
+        {
         }
     }
 }

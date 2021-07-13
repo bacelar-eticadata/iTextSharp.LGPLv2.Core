@@ -101,7 +101,7 @@ namespace iTextSharp.text
             var anchor = phrase as Anchor;
             if (anchor != null)
             {
-                Anchor a = anchor;
+                var a = anchor;
                 Name = a.name;
                 Reference = a.reference;
             }
@@ -118,9 +118,9 @@ namespace iTextSharp.text
         {
             get
             {
-                ArrayList tmp = new ArrayList();
-                bool localDestination = (reference != null && reference.StartsWith("#"));
-                bool notGotoOk = true;
+                var tmp = new ArrayList();
+                var localDestination = (reference != null && reference.StartsWith("#"));
+                var notGotoOk = true;
                 foreach (Chunk chunk in this)
                 {
                     if (name != null && notGotoOk && !chunk.IsEmpty())
@@ -148,15 +148,9 @@ namespace iTextSharp.text
         /// </summary>
         public string Name
         {
-            get
-            {
-                return name;
-            }
+            get => name;
 
-            set
-            {
-                name = value;
-            }
+            set => name = value;
         }
 
         /// <summary>
@@ -164,15 +158,9 @@ namespace iTextSharp.text
         /// </summary>
         public string Reference
         {
-            get
-            {
-                return reference;
-            }
+            get => reference;
 
-            set
-            {
-                reference = value;
-            }
+            set => reference = value;
         }
 
         /// <summary>
@@ -216,8 +204,8 @@ namespace iTextSharp.text
         {
             try
             {
-                bool localDestination = (reference != null && reference.StartsWith("#"));
-                bool notGotoOk = true;
+                var localDestination = (reference != null && reference.StartsWith("#"));
+                var notGotoOk = true;
                 foreach (Chunk chunk in Chunks)
                 {
                     if (name != null && notGotoOk && !chunk.IsEmpty())
@@ -230,7 +218,10 @@ namespace iTextSharp.text
                         chunk.SetLocalGoto(reference.Substring(1));
                     }
                     else if (reference != null)
+                    {
                         chunk.SetAnchor(reference);
+                    }
+
                     listener.Add(chunk);
                 }
                 return true;

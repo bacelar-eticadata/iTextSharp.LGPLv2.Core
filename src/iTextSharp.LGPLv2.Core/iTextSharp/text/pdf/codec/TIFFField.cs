@@ -25,6 +25,7 @@ namespace iTextSharp.text.pdf.codec
         /// Flag for 8 bit unsigned integers.
         /// </summary>
         public const int TIFF_BYTE = 1;
+
         /// <summary>
         /// Flag for 64 bit IEEE doubles.
         /// </summary>
@@ -54,6 +55,7 @@ namespace iTextSharp.text.pdf.codec
         /// Flag for 16 bit unsigned integers.
         /// </summary>
         public const int TIFF_SHORT = 3;
+
         /// <summary>
         /// Flag for 32 bit signed integers.
         /// </summary>
@@ -73,25 +75,27 @@ namespace iTextSharp.text.pdf.codec
         /// Flag for 8 bit uninterpreted bytes.
         /// </summary>
         public const int TIFF_UNDEFINED = 7;
+
         /// <summary>
         /// The number of data items present in the field.
         /// </summary>
-        readonly int _count;
+        private readonly int _count;
 
         /// <summary>
         /// The field data.
         /// </summary>
-        readonly object _data;
+        private readonly object _data;
 
         /// <summary>
         /// The tag number.
         /// </summary>
-        readonly int _tag;
+        private readonly int _tag;
 
         /// <summary>
         /// The tag type.
         /// </summary>
-        readonly int _type;
+        private readonly int _type;
+
         /// <summary>
         /// Constructs a TIFFField with arbitrary data.  The data
         /// parameter must be an array of a Java type appropriate for the
@@ -139,6 +143,7 @@ namespace iTextSharp.text.pdf.codec
         /// The default constructor.
         /// </summary>
         internal TiffField() { }
+
         /// <summary>
         /// Compares this  TIFFField  with another
         ///  TIFFField  by comparing the tags.
@@ -155,7 +160,7 @@ namespace iTextSharp.text.pdf.codec
                 throw new ArgumentException();
             }
 
-            int oTag = ((TiffField)o).GetTag();
+            var oTag = ((TiffField)o).GetTag();
 
             if (_tag < oTag)
             {
@@ -211,26 +216,36 @@ namespace iTextSharp.text.pdf.codec
             {
                 case TIFF_BYTE:
                     return ((byte[])_data)[index] & 0xff;
+
                 case TIFF_SBYTE:
                     return ((byte[])_data)[index];
+
                 case TIFF_SHORT:
                     return ((char[])_data)[index] & 0xffff;
+
                 case TIFF_SSHORT:
                     return ((short[])_data)[index];
+
                 case TIFF_SLONG:
                     return ((int[])_data)[index];
+
                 case TIFF_LONG:
                     return ((long[])_data)[index];
+
                 case TIFF_FLOAT:
                     return ((float[])_data)[index];
+
                 case TIFF_DOUBLE:
                     return ((double[])_data)[index];
+
                 case TIFF_SRATIONAL:
-                    int[] ivalue = GetAsSRational(index);
+                    var ivalue = GetAsSRational(index);
                     return (double)ivalue[0] / ivalue[1];
+
                 case TIFF_RATIONAL:
-                    long[] lvalue = GetAsRational(index);
+                    var lvalue = GetAsRational(index);
                     return (double)lvalue[0] / lvalue[1];
+
                 default:
                     throw new InvalidCastException();
             }
@@ -262,26 +277,36 @@ namespace iTextSharp.text.pdf.codec
             {
                 case TIFF_BYTE:
                     return ((byte[])_data)[index] & 0xff;
+
                 case TIFF_SBYTE:
                     return ((byte[])_data)[index];
+
                 case TIFF_SHORT:
                     return ((char[])_data)[index] & 0xffff;
+
                 case TIFF_SSHORT:
                     return ((short[])_data)[index];
+
                 case TIFF_SLONG:
                     return ((int[])_data)[index];
+
                 case TIFF_LONG:
                     return ((long[])_data)[index];
+
                 case TIFF_FLOAT:
                     return ((float[])_data)[index];
+
                 case TIFF_DOUBLE:
                     return (float)((double[])_data)[index];
+
                 case TIFF_SRATIONAL:
-                    int[] ivalue = GetAsSRational(index);
+                    var ivalue = GetAsSRational(index);
                     return (float)((double)ivalue[0] / ivalue[1]);
+
                 case TIFF_RATIONAL:
-                    long[] lvalue = GetAsRational(index);
+                    var lvalue = GetAsRational(index);
                     return (float)((double)lvalue[0] / lvalue[1]);
+
                 default:
                     throw new InvalidCastException();
             }
@@ -315,14 +340,19 @@ namespace iTextSharp.text.pdf.codec
                 case TIFF_BYTE:
                 case TIFF_UNDEFINED:
                     return ((byte[])_data)[index] & 0xff;
+
                 case TIFF_SBYTE:
                     return ((byte[])_data)[index];
+
                 case TIFF_SHORT:
                     return ((char[])_data)[index] & 0xffff;
+
                 case TIFF_SSHORT:
                     return ((short[])_data)[index];
+
                 case TIFF_SLONG:
                     return ((int[])_data)[index];
+
                 default:
                     throw new InvalidCastException();
             }
@@ -357,16 +387,22 @@ namespace iTextSharp.text.pdf.codec
                 case TIFF_BYTE:
                 case TIFF_UNDEFINED:
                     return ((byte[])_data)[index] & 0xff;
+
                 case TIFF_SBYTE:
                     return ((byte[])_data)[index];
+
                 case TIFF_SHORT:
                     return ((char[])_data)[index] & 0xffff;
+
                 case TIFF_SSHORT:
                     return ((short[])_data)[index];
+
                 case TIFF_SLONG:
                     return ((int[])_data)[index];
+
                 case TIFF_LONG:
                     return ((long[])_data)[index];
+
                 default:
                     throw new InvalidCastException();
             }
@@ -392,7 +428,10 @@ namespace iTextSharp.text.pdf.codec
         public long[] GetAsRational(int index)
         {
             if (_type == TIFF_LONG)
+            {
                 return GetAsLongs();
+            }
+
             return ((long[][])_data)[index];
         }
 

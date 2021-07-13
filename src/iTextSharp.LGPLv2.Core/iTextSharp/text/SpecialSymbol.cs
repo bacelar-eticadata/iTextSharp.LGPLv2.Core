@@ -14,12 +14,12 @@ namespace iTextSharp.text
         /// <returns>a SYMBOL version of a character</returns>
         public static Chunk Get(char c, Font font)
         {
-            char greek = GetCorrespondingSymbol(c);
+            var greek = GetCorrespondingSymbol(c);
             if (greek == ' ')
             {
                 return new Chunk(c.ToString(), font);
             }
-            Font symbol = new Font(Font.SYMBOL, font.Size, font.Style, font.Color);
+            var symbol = new Font(Font.SYMBOL, font.Size, font.Style, font.Color);
             return new Chunk(greek.ToString(), symbol);
         }
 
@@ -142,8 +142,8 @@ namespace iTextSharp.text
         /// <returns>an index of -1 if no special symbol was found</returns>
         public static int Index(string str)
         {
-            int length = str.Length;
-            for (int i = 0; i < length; i++)
+            var length = str.Length;
+            for (var i = 0; i < length; i++)
             {
                 if (GetCorrespondingSymbol(str[i]) != ' ')
                 {

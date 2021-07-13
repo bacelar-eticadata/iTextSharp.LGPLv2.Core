@@ -7,21 +7,20 @@ namespace iTextSharp.text.pdf.codec
     /// </summary>
     public class TifflzwDecoder
     {
+        private byte[][] _stringTable;
+        private byte[] _data;
+        private byte[] _uncompData;
+        private int _tableIndex, _bitsToGet = 9;
+        private int _bytePointer;
+        private int _dstIndex;
+        private readonly int _w;
+        private int _h;
+        private readonly int _predictor;
+        private readonly int _samplesPerPixel;
+        private int _nextData;
+        private int _nextBits;
 
-        byte[][] _stringTable;
-        byte[] _data;
-        byte[] _uncompData;
-        int _tableIndex, _bitsToGet = 9;
-        int _bytePointer;
-        int _dstIndex;
-        readonly int _w;
-        int _h;
-        readonly int _predictor;
-        readonly int _samplesPerPixel;
-        int _nextData;
-        int _nextBits;
-
-        readonly int[] _andTable = {
+        private readonly int[] _andTable = {
             511,
             1023,
             2047,
@@ -43,7 +42,6 @@ namespace iTextSharp.text.pdf.codec
         /// <param name="h">The number of rows the compressed data contains.</param>
         public byte[] Decode(byte[] data, byte[] uncompData, int h)
         {
-
             if (data[0] == 0x00 && data[1] == 0x01)
             {
                 throw new InvalidOperationException("TIFF 5.0-style LZW codes are not supported.");
@@ -59,7 +57,6 @@ namespace iTextSharp.text.pdf.codec
             _bytePointer = 0;
             _dstIndex = 0;
 
-
             _nextData = 0;
             _nextBits = 0;
 
@@ -69,10 +66,8 @@ namespace iTextSharp.text.pdf.codec
             while (((code = GetNextCode()) != 257) &&
             _dstIndex < uncompData.Length)
             {
-
                 if (code == 256)
                 {
-
                     InitializeStringTable();
                     code = GetNextCode();
 
@@ -83,48 +78,38 @@ namespace iTextSharp.text.pdf.codec
 
                     WriteString(_stringTable[code]);
                     oldCode = code;
-
                 }
                 else
                 {
-
                     if (code < _tableIndex)
                     {
-
                         strn = _stringTable[code];
 
                         WriteString(strn);
                         AddStringToTable(_stringTable[oldCode], strn[0]);
                         oldCode = code;
-
                     }
                     else
                     {
-
                         strn = _stringTable[oldCode];
                         strn = ComposeString(strn, strn[0]);
                         WriteString(strn);
                         AddStringToTable(strn);
                         oldCode = code;
                     }
-
                 }
-
             }
 
             // Horizontal Differencing Predictor
             if (_predictor == 2)
             {
-
                 int count;
-                for (int j = 0; j < h; j++)
+                for (var j = 0; j < h; j++)
                 {
-
                     count = _samplesPerPixel * (j * _w + 1);
 
-                    for (int i = _samplesPerPixel; i < _w * _samplesPerPixel; i++)
+                    for (var i = _samplesPerPixel; i < _w * _samplesPerPixel; i++)
                     {
-
                         uncompData[count] += uncompData[count - _samplesPerPixel];
                         count++;
                     }
@@ -134,16 +119,14 @@ namespace iTextSharp.text.pdf.codec
             return uncompData;
         }
 
-
         /// <summary>
         /// Initialize the string table.
         /// </summary>
         public void InitializeStringTable()
         {
-
             _stringTable = new byte[4096][];
 
-            for (int i = 0; i < 256; i++)
+            for (var i = 0; i < 256; i++)
             {
                 _stringTable[i] = new byte[1];
                 _stringTable[i][0] = (byte)i;
@@ -159,9 +142,12 @@ namespace iTextSharp.text.pdf.codec
         public void WriteString(byte[] strn)
         {
             // Fix for broken tiff files
-            int max = _uncompData.Length - _dstIndex;
+            var max = _uncompData.Length - _dstIndex;
             if (strn.Length < max)
+            {
                 max = strn.Length;
+            }
+
             Array.Copy(strn, 0, _uncompData, _dstIndex, max);
             _dstIndex += max;
         }
@@ -171,8 +157,8 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public void AddStringToTable(byte[] oldString, byte newString)
         {
-            int length = oldString.Length;
-            byte[] strn = new byte[length + 1];
+            var length = oldString.Length;
+            var strn = new byte[length + 1];
             Array.Copy(oldString, 0, strn, 0, length);
             strn[length] = newString;
 
@@ -198,7 +184,6 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public void AddStringToTable(byte[] strn)
         {
-
             // Add this new String to the table
             _stringTable[_tableIndex++] = strn;
 
@@ -221,8 +206,8 @@ namespace iTextSharp.text.pdf.codec
         /// </summary>
         public byte[] ComposeString(byte[] oldString, byte newString)
         {
-            int length = oldString.Length;
-            byte[] strn = new byte[length + 1];
+            var length = oldString.Length;
+            var strn = new byte[length + 1];
             Array.Copy(oldString, 0, strn, 0, length);
             strn[length] = newString;
 
@@ -249,7 +234,7 @@ namespace iTextSharp.text.pdf.codec
                     _nextBits += 8;
                 }
 
-                int code =
+                var code =
                 (_nextData >> (_nextBits - _bitsToGet)) & _andTable[_bitsToGet - 9];
                 _nextBits -= _bitsToGet;
 

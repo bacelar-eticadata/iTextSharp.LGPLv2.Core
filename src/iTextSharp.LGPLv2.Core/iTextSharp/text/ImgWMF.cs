@@ -1,8 +1,8 @@
-using System;
-using System.IO;
 using iTextSharp.LGPLv2.Core.System.NetUtils;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.codec.wmf;
+using System;
+using System.IO;
 
 namespace iTextSharp.text
 {
@@ -76,7 +76,7 @@ namespace iTextSharp.text
                 {
                     istr = new MemoryStream(rawData);
                 }
-                MetaDo meta = new MetaDo(istr, template);
+                var meta = new MetaDo(istr, template);
                 meta.ReadAll();
             }
             finally
@@ -109,17 +109,17 @@ namespace iTextSharp.text
                     istr = new MemoryStream(rawData);
                     errorId = "Byte array";
                 }
-                InputMeta im = new InputMeta(istr);
+                var im = new InputMeta(istr);
                 if (im.ReadInt() != unchecked((int)0x9AC6CDD7))
                 {
                     throw new BadElementException(errorId + " is not a valid placeable windows metafile.");
                 }
                 im.ReadWord();
-                int left = im.ReadShort();
-                int top = im.ReadShort();
-                int right = im.ReadShort();
-                int bottom = im.ReadShort();
-                int inch = im.ReadWord();
+                var left = im.ReadShort();
+                var top = im.ReadShort();
+                var right = im.ReadShort();
+                var bottom = im.ReadShort();
+                var inch = im.ReadWord();
                 dpiX = 72;
                 dpiY = 72;
                 scaledHeight = (float)(bottom - top) / inch * 72f;

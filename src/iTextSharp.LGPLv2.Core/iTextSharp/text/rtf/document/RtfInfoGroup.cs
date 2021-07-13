@@ -1,5 +1,5 @@
-using System.IO;
 using System.Collections;
+using System.IO;
 
 namespace iTextSharp.text.rtf.document
 {
@@ -25,7 +25,7 @@ namespace iTextSharp.text.rtf.document
         /// <summary>
         /// The RtfInfoElements that belong to this RtfInfoGroup
         /// </summary>
-        readonly ArrayList _infoElements;
+        private readonly ArrayList _infoElements;
 
         /// <summary>
         /// Constructs a RtfInfoGroup belonging to a RtfDocument
@@ -52,9 +52,9 @@ namespace iTextSharp.text.rtf.document
         {
             result.Write(OpenGroup, 0, OpenGroup.Length);
             result.Write(_infoGroup, 0, _infoGroup.Length);
-            for (int i = 0; i < _infoElements.Count; i++)
+            for (var i = 0; i < _infoElements.Count; i++)
             {
-                RtfInfoElement infoElement = (RtfInfoElement)_infoElements[i];
+                var infoElement = (RtfInfoElement)_infoElements[i];
                 infoElement.WriteContent(result);
             }
 

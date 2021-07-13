@@ -1,7 +1,7 @@
 using System;
-using System.Text;
 using System.Collections;
 using System.IO;
+using System.Text;
 
 namespace iTextSharp.text.pdf
 {
@@ -47,61 +47,63 @@ namespace iTextSharp.text.pdf
         {
         }
 
-        public byte[] Data
-        {
-            get
-            {
-                return data;
-            }
-        }
+        public byte[] Data => data;
 
-        public int NumComponents
-        {
-            get
-            {
-                return numComponents;
-            }
-        }
+        public int NumComponents => numComponents;
 
         public static IccProfile GetInstance(byte[] data)
         {
             if (data.Length < 128 | data[36] != 0x61 || data[37] != 0x63
                 || data[38] != 0x73 || data[39] != 0x70)
+            {
                 throw new ArgumentException("Invalid ICC profile");
-            IccProfile icc = new IccProfile();
-            icc.data = data;
-            object cs = _cstags[Encoding.ASCII.GetString(data, 16, 4)];
+            }
+
+            var icc = new IccProfile
+            {
+                data = data
+            };
+            var cs = _cstags[Encoding.ASCII.GetString(data, 16, 4)];
             icc.numComponents = (cs == null ? 0 : (int)cs);
             return icc;
         }
 
         public static IccProfile GetInstance(Stream file)
         {
-            byte[] head = new byte[128];
-            int remain = head.Length;
-            int ptr = 0;
+            var head = new byte[128];
+            var remain = head.Length;
+            var ptr = 0;
             while (remain > 0)
             {
-                int n = file.Read(head, ptr, remain);
+                var n = file.Read(head, ptr, remain);
                 if (n <= 0)
+                {
                     throw new ArgumentException("Invalid ICC profile");
+                }
+
                 remain -= n;
                 ptr += n;
             }
             if (head[36] != 0x61 || head[37] != 0x63
                 || head[38] != 0x73 || head[39] != 0x70)
+            {
                 throw new ArgumentException("Invalid ICC profile");
+            }
+
             remain = ((head[0] & 0xff) << 24) | ((head[1] & 0xff) << 16)
                       | ((head[2] & 0xff) << 8) | (head[3] & 0xff);
-            byte[] icc = new byte[remain];
+            var icc = new byte[remain];
             Array.Copy(head, 0, icc, 0, head.Length);
             remain -= head.Length;
             ptr = head.Length;
             while (remain > 0)
             {
-                int n = file.Read(icc, ptr, remain);
+                var n = file.Read(icc, ptr, remain);
                 if (n <= 0)
+                {
                     throw new ArgumentException("Invalid ICC profile");
+                }
+
                 remain -= n;
                 ptr += n;
             }
@@ -110,8 +112,8 @@ namespace iTextSharp.text.pdf
 
         public static IccProfile GetInstance(string fname)
         {
-            FileStream fs = new FileStream(fname, FileMode.Open, FileAccess.Read, FileShare.Read);
-            IccProfile icc = GetInstance(fs);
+            var fs = new FileStream(fname, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var icc = GetInstance(fs);
             fs.Dispose();
             return icc;
         }

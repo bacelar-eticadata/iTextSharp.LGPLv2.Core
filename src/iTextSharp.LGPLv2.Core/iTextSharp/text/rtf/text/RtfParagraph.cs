@@ -1,6 +1,6 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
 using iTextSharp.text.rtf.graphic;
+using System.IO;
 using ST = iTextSharp.text.rtf.style;
 
 namespace iTextSharp.text.rtf.text
@@ -54,9 +54,9 @@ namespace iTextSharp.text.rtf.text
                 ParagraphStyle.SetKeepTogether(paragraph.KeepTogether);
             }
 
-            for (int i = 0; i < paragraph.Count; i++)
+            for (var i = 0; i < paragraph.Count; i++)
             {
-                IElement chunk = (IElement)paragraph[i];
+                var chunk = (IElement)paragraph[i];
                 if (chunk is Chunk)
                 {
                     ((Chunk)chunk).Font = baseFont.Difference(((Chunk)chunk).Font);
@@ -67,8 +67,8 @@ namespace iTextSharp.text.rtf.text
                 }
                 try
                 {
-                    IRtfBasicElement[] rtfElements = doc.GetMapper().MapElement(chunk);
-                    for (int j = 0; j < rtfElements.Length; j++)
+                    var rtfElements = doc.GetMapper().MapElement(chunk);
+                    for (var j = 0; j < rtfElements.Length; j++)
                     {
                         Chunks.Add(rtfElements[j]);
                     }
@@ -141,9 +141,9 @@ namespace iTextSharp.text.rtf.text
                 ParagraphStyle.WriteBegin(result);
             }
             result.Write(Plain, 0, Plain.Length);
-            for (int i = 0; i < Chunks.Count; i++)
+            for (var i = 0; i < Chunks.Count; i++)
             {
-                IRtfBasicElement rbe = (IRtfBasicElement)Chunks[i];
+                var rbe = (IRtfBasicElement)Chunks[i];
                 rbe.WriteContent(result);
             }
             if (ParagraphStyle != null)

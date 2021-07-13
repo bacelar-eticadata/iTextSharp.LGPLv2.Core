@@ -2,7 +2,6 @@ using System.Collections;
 
 namespace iTextSharp.text.pdf.events
 {
-
     /// <summary>
     /// If you want to add more than one page eventa to a PdfWriter,
     /// you have to construct a PdfPageEventForwarder, add the
@@ -11,7 +10,6 @@ namespace iTextSharp.text.pdf.events
     /// </summary>
     public class PdfPageEventForwarder : IPdfPageEvent
     {
-
         /// <summary>
         /// ArrayList containing all the PageEvents that have to be executed.
         /// </summary>

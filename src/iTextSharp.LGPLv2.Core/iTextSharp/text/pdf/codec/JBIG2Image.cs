@@ -9,7 +9,6 @@ namespace iTextSharp.text.pdf.codec
     /// </summary>
     public class Jbig2Image
     {
-
         /// <summary>
         /// Gets a byte array that can be used as a /JBIG2Globals,
         /// or null if not applicable to the given jbig2.
@@ -20,7 +19,7 @@ namespace iTextSharp.text.pdf.codec
         {
             try
             {
-                Jbig2SegmentReader sr = new Jbig2SegmentReader(ra);
+                var sr = new Jbig2SegmentReader(ra);
                 sr.Read();
                 return sr.GetGlobal(true);
             }
@@ -39,11 +38,13 @@ namespace iTextSharp.text.pdf.codec
         public static Image GetJbig2Image(RandomAccessFileOrArray ra, int page)
         {
             if (page < 1)
+            {
                 throw new ArgumentException("The page number must be >= 1.");
+            }
 
-            Jbig2SegmentReader sr = new Jbig2SegmentReader(ra);
+            var sr = new Jbig2SegmentReader(ra);
             sr.Read();
-            Jbig2SegmentReader.Jbig2Page p = sr.GetPage(page);
+            var p = sr.GetPage(page);
             Image img = new ImgJbig2(p.PageBitmapWidth, p.PageBitmapHeight, p.GetData(true), sr.GetGlobal(true));
             return img;
         }
@@ -55,7 +56,7 @@ namespace iTextSharp.text.pdf.codec
         /// <returns>the number of pages</returns>
         public static int GetNumberOfPages(RandomAccessFileOrArray ra)
         {
-            Jbig2SegmentReader sr = new Jbig2SegmentReader(ra);
+            var sr = new Jbig2SegmentReader(ra);
             sr.Read();
             return sr.NumberOfPages();
         }

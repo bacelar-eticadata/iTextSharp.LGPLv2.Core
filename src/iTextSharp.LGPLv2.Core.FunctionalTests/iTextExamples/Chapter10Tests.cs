@@ -1,8 +1,8 @@
-﻿using System.IO;
-using System.Text;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System.Text;
 
 namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 {
@@ -19,16 +19,16 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document(new Rectangle(340, 842));
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfContentByte cb = writer.DirectContent;
+            var cb = writer.DirectContent;
 
             // EAN 13
             document.Add(new Paragraph("Barcode EAN.UCC-13"));
-            BarcodeEan codeEan = new BarcodeEan { Code = "4512345678906" };
+            var codeEan = new BarcodeEan { Code = "4512345678906" };
             document.Add(new Paragraph("default:"));
             document.Add(codeEan.CreateImageWithBarcode(cb, null, null));
             codeEan.GuardBars = false;
@@ -65,33 +65,33 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.Add(new Paragraph("ISBN 0-321-30474-8"));
             codeEan.CodeType = Barcode.EAN13;
             codeEan.Code = "9781935182610";
-            BarcodeEan codeSupp = new BarcodeEan
+            var codeSupp = new BarcodeEan
             {
                 CodeType = Barcode.SUPP5,
                 Code = "55999",
                 Baseline = -2
             };
-            BarcodeEansupp eanSupp = new BarcodeEansupp(codeEan, codeSupp);
+            var eanSupp = new BarcodeEansupp(codeEan, codeSupp);
             document.Add(eanSupp.CreateImageWithBarcode(cb, null, BaseColor.Blue));
 
             // CODE 128
             document.Add(new Paragraph("Barcode 128"));
-            Barcode128 code128 = new Barcode128 { Code = "0123456789 hello" };
+            var code128 = new Barcode128 { Code = "0123456789 hello" };
             document.Add(code128.CreateImageWithBarcode(cb, null, null));
             code128.Code = "0123456789\uffffMy Raw Barcode (0 - 9)";
             code128.CodeType = Barcode.CODE128_RAW;
             document.Add(code128.CreateImageWithBarcode(cb, null, null));
 
             // Data for the barcode :
-            string code402 = "24132399420058289";
-            string code90 = "3700000050";
-            string code421 = "422356";
-            StringBuilder data = new StringBuilder(code402);
+            var code402 = "24132399420058289";
+            var code90 = "3700000050";
+            var code421 = "422356";
+            var data = new StringBuilder(code402);
             data.Append(Barcode128.FNC1);
             data.Append(code90);
             data.Append(Barcode128.FNC1);
             data.Append(code421);
-            Barcode128 shipBarCode = new Barcode128
+            var shipBarCode = new Barcode128
             {
                 X = 0.75f,
                 N = 1.5f,
@@ -106,7 +106,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             ));
 
             // it is composed of 3 blocks whith AI 01, 3101 and 10
-            Barcode128 uccEan128 = new Barcode128
+            var uccEan128 = new Barcode128
             {
                 CodeType = Barcode.CODE128_UCC,
                 Code = "(01)00000090311314(10)ABC123(15)060916"
@@ -125,7 +125,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
             // INTER25
             document.Add(new Paragraph("Barcode Interleaved 2 of 5"));
-            BarcodeInter25 code25 = new BarcodeInter25
+            var code25 = new BarcodeInter25
             {
                 GenerateChecksum = true,
                 Code = "41-1200076041-001"
@@ -139,7 +139,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
             // POSTNET
             document.Add(new Paragraph("Barcode Postnet"));
-            BarcodePostnet codePost = new BarcodePostnet();
+            var codePost = new BarcodePostnet();
             document.Add(new Paragraph("ZIP"));
             codePost.Code = "01234";
             document.Add(codePost.CreateImageWithBarcode(cb, null, null));
@@ -151,7 +151,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             document.Add(codePost.CreateImageWithBarcode(cb, null, null));
 
             document.Add(new Paragraph("Barcode Planet"));
-            BarcodePostnet codePlanet = new BarcodePostnet
+            var codePlanet = new BarcodePostnet
             {
                 Code = "01234567890",
                 CodeType = Barcode.PLANET
@@ -160,11 +160,11 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
             // CODE 39
             document.Add(new Paragraph("Barcode 3 of 9"));
-            Barcode39 code39 = new Barcode39 { Code = "ITEXT IN ACTION" };
+            var code39 = new Barcode39 { Code = "ITEXT IN ACTION" };
             document.Add(code39.CreateImageWithBarcode(cb, null, null));
 
             document.Add(new Paragraph("Barcode 3 of 9 extended"));
-            Barcode39 code39Ext = new Barcode39
+            var code39Ext = new Barcode39
             {
                 Code = "iText in Action",
                 StartStopText = false,
@@ -174,7 +174,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
             // CODABAR
             document.Add(new Paragraph("Codabar"));
-            BarcodeCodabar codabar = new BarcodeCodabar
+            var codabar = new BarcodeCodabar
             {
                 Code = "A123A",
                 StartStopText = true
@@ -183,19 +183,19 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
 
             // PDF417
             document.Add(new Paragraph("Barcode PDF417"));
-            BarcodePdf417 pdf417 = new BarcodePdf417();
-            string text = "Call me Ishmael. Some years ago--never mind how long "
+            var pdf417 = new BarcodePdf417();
+            var text = "Call me Ishmael. Some years ago--never mind how long "
             + "precisely --having little or no money in my purse, and nothing "
                   + "particular to interest me on shore, I thought I would sail about "
                   + "a little and see the watery part of the world."
                 ;
             pdf417.SetText(text);
-            Image img = pdf417.GetImage();
+            var img = pdf417.GetImage();
             img.ScalePercent(50, 50 * pdf417.YHeight);
             document.Add(img);
 
             document.Add(new Paragraph("Barcode Datamatrix"));
-            BarcodeDatamatrix datamatrix = new BarcodeDatamatrix();
+            var datamatrix = new BarcodeDatamatrix();
             datamatrix.Generate(text);
             img = datamatrix.CreateImage();
             document.Add(img);
@@ -216,20 +216,20 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document();
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
             var img = Image.GetInstance(TestUtils.GetImagePath("hitchcock.png"));
-            float w = img.ScaledWidth;
-            float h = img.ScaledHeight;
-            PdfTemplate t = writer.DirectContent.CreateTemplate(850, 600);
+            var w = img.ScaledWidth;
+            var h = img.ScaledHeight;
+            var t = writer.DirectContent.CreateTemplate(850, 600);
             t.Ellipse(0, 0, 850, 600);
             t.Clip();
             t.NewPath();
             t.AddImage(img, w, 0, 0, h, 0, -600);
-            Image clipped = Image.GetInstance(t);
+            var clipped = Image.GetInstance(t);
             clipped.ScalePercent(50);
             document.Add(clipped);
 
@@ -249,18 +249,18 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             var document = new Document();
 
             // step 2
-            PdfWriter writer = PdfWriter.GetInstance(document, stream);
+            var writer = PdfWriter.GetInstance(document, stream);
             // step 3
             document.AddAuthor(TestUtils.Author);
             document.Open();
             // step 4
-            PdfContentByte canvas = writer.DirectContent;
-            PdfShading axial = PdfShading.SimpleAxial(writer, 36, 716, 396,
+            var canvas = writer.DirectContent;
+            var axial = PdfShading.SimpleAxial(writer, 36, 716, 396,
               788, BaseColor.Orange, BaseColor.Blue
             );
             canvas.PaintShading(axial);
             document.NewPage();
-            PdfShading radial = PdfShading.SimpleRadial(writer,
+            var radial = PdfShading.SimpleRadial(writer,
               200, 700, 50, 300, 700, 100,
               new BaseColor(0xFF, 0xF7, 0x94),
               new BaseColor(0xF7, 0x8A, 0x6B),
@@ -268,7 +268,7 @@ namespace iTextSharp.LGPLv2.Core.FunctionalTests.iTextExamples
             );
             canvas.PaintShading(radial);
 
-            PdfShadingPattern shading = new PdfShadingPattern(axial);
+            var shading = new PdfShadingPattern(axial);
             colorRectangle(canvas, new ShadingColor(shading), 150, 420, 126, 126);
             canvas.SetShadingFill(shading);
             canvas.Rectangle(300, 420, 126, 126);

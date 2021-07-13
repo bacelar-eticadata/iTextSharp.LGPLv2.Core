@@ -52,7 +52,7 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                float width = ((code.Length + 1) * 5 + 1) * n + x;
+                var width = ((code.Length + 1) * 5 + 1) * n + x;
                 return new Rectangle(width, barHeight);
             }
         }
@@ -64,39 +64,52 @@ namespace iTextSharp.text.pdf
         /// <returns>the bars</returns>
         public static byte[] GetBarsPostnet(string text)
         {
-            int total = 0;
-            for (int k = text.Length - 1; k >= 0; --k)
+            var total = 0;
+            for (var k = text.Length - 1; k >= 0; --k)
             {
-                int n = text[k] - '0';
+                var n = text[k] - '0';
                 total += n;
             }
             text += (char)(((10 - (total % 10)) % 10) + '0');
-            byte[] bars = new byte[text.Length * 5 + 2];
+            var bars = new byte[text.Length * 5 + 2];
             bars[0] = 1;
             bars[bars.Length - 1] = 1;
-            for (int k = 0; k < text.Length; ++k)
+            for (var k = 0; k < text.Length; ++k)
             {
-                int c = text[k] - '0';
+                var c = text[k] - '0';
                 Array.Copy(_bars[c], 0, bars, k * 5 + 1, 5);
             }
             return bars;
         }
+
         public override System.Drawing.Image CreateDrawingImage(System.Drawing.Color foreground, System.Drawing.Color background)
         {
-            int barWidth = (int)x;
+            var barWidth = (int)x;
             if (barWidth <= 0)
+            {
                 barWidth = 1;
-            int barDistance = (int)n;
+            }
+
+            var barDistance = (int)n;
             if (barDistance <= barWidth)
+            {
                 barDistance = barWidth + 1;
-            int barShort = (int)size;
+            }
+
+            var barShort = (int)size;
             if (barShort <= 0)
+            {
                 barShort = 1;
-            int barTall = (int)barHeight;
+            }
+
+            var barTall = (int)barHeight;
             if (barTall <= barShort)
+            {
                 barTall = barShort + 1;
-            byte[] bars = GetBarsPostnet(code);
-            int width = bars.Length * barDistance;
+            }
+
+            var bars = GetBarsPostnet(code);
+            var width = bars.Length * barDistance;
             byte flip = 1;
             if (codeType == PLANET)
             {
@@ -104,26 +117,26 @@ namespace iTextSharp.text.pdf
                 bars[0] = 0;
                 bars[bars.Length - 1] = 0;
             }
-            System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(width, barTall);
-            int seg1 = barTall - barShort;
-            for (int i = 0; i < seg1; ++i)
+            var bmp = new System.Drawing.Bitmap(width, barTall);
+            var seg1 = barTall - barShort;
+            for (var i = 0; i < seg1; ++i)
             {
-                int idx = 0;
-                for (int k = 0; k < bars.Length; ++k)
+                var idx = 0;
+                for (var k = 0; k < bars.Length; ++k)
                 {
-                    bool dot = (bars[k] == flip);
-                    for (int j = 0; j < barDistance; ++j)
+                    var dot = (bars[k] == flip);
+                    for (var j = 0; j < barDistance; ++j)
                     {
                         bmp.SetPixel(idx++, i, (dot && j < barWidth) ? foreground : background);
                     }
                 }
             }
-            for (int i = seg1; i < barTall; ++i)
+            for (var i = seg1; i < barTall; ++i)
             {
-                int idx = 0;
-                for (int k = 0; k < bars.Length; ++k)
+                var idx = 0;
+                for (var k = 0; k < bars.Length; ++k)
                 {
-                    for (int j = 0; j < barDistance; ++j)
+                    for (var j = 0; j < barDistance; ++j)
                     {
                         bmp.SetPixel(idx++, i, (j < barWidth) ? foreground : background);
                     }
@@ -172,8 +185,11 @@ namespace iTextSharp.text.pdf
         public override Rectangle PlaceBarcode(PdfContentByte cb, BaseColor barColor, BaseColor textColor)
         {
             if (barColor != null)
+            {
                 cb.SetColorFill(barColor);
-            byte[] bars = GetBarsPostnet(code);
+            }
+
+            var bars = GetBarsPostnet(code);
             byte flip = 1;
             if (codeType == PLANET)
             {
@@ -182,7 +198,7 @@ namespace iTextSharp.text.pdf
                 bars[bars.Length - 1] = 0;
             }
             float startX = 0;
-            for (int k = 0; k < bars.Length; ++k)
+            for (var k = 0; k < bars.Length; ++k)
             {
                 cb.Rectangle(startX, 0, x - inkSpreading, bars[k] == flip ? barHeight : size);
                 startX += n;

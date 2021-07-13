@@ -1,5 +1,5 @@
-using System.IO;
 using iTextSharp.text.rtf.document;
+using System.IO;
 
 namespace iTextSharp.text.rtf.text
 {
@@ -38,9 +38,9 @@ namespace iTextSharp.text.rtf.text
             {
                 Title.WriteContent(result);
             }
-            for (int i = 0; i < Items.Count; i++)
+            for (var i = 0; i < Items.Count; i++)
             {
-                IRtfBasicElement rbe = (IRtfBasicElement)Items[i];
+                var rbe = (IRtfBasicElement)Items[i];
                 rbe.WriteContent(result);
             }
             result.Write(t = DocWriter.GetIsoBytes("\\sect"), 0, t.Length);

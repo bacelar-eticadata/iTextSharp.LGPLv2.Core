@@ -32,7 +32,7 @@ namespace iTextSharp.text.xml
         /// </summary>
         protected void Init(XmlDocument xTagfile)
         {
-            AttributeHandler a = new AttributeHandler(this);
+            var a = new AttributeHandler(this);
             a.Parse(xTagfile);
         }
 
@@ -42,11 +42,11 @@ namespace iTextSharp.text.xml
         /// <param name="tagfile"></param>
         protected void Init(string tagfile)
         {
-            AttributeHandler a = new AttributeHandler(this);
+            var a = new AttributeHandler(this);
             a.Parse(tagfile);
         }
 
-        class AttributeHandler : ParserBase
+        private class AttributeHandler : ParserBase
         {
 
             /// <summary> This is an attribute </summary>
@@ -101,7 +101,9 @@ namespace iTextSharp.text.xml
             public override void EndElement(string tag, string lname, string name)
             {
                 if (TAG.Equals(lname))
+                {
                     _tagMap.Add(_currentPeer.Alias, _currentPeer);
+                }
             }
 
             /// <summary>
@@ -124,9 +126,9 @@ namespace iTextSharp.text.xml
             /// <param name="attrs">the list of attributes</param>
             public override void StartElement(string tag, string lname, string n, Hashtable attrs)
             {
-                string name = (string)attrs[NAME];
-                string alias = (string)attrs[ALIAS];
-                string value = (string)attrs[VALUE];
+                var name = (string)attrs[NAME];
+                var alias = (string)attrs[ALIAS];
+                var value = (string)attrs[VALUE];
                 if (name != null)
                 {
                     if (TAG.Equals(lname))

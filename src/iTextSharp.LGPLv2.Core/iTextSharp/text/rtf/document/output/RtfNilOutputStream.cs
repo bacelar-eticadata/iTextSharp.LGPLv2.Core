@@ -15,48 +15,18 @@ namespace iTextSharp.text.rtf.document.output
     {
         private long _size;
 
-        public override bool CanRead
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanRead => false;
 
-        public override bool CanSeek
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public override bool CanSeek => false;
 
-        public override bool CanWrite
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool CanWrite => true;
 
-        public override long Length
-        {
-            get
-            {
-                throw new NotSupportedException();
-            }
-        }
+        public override long Length => throw new NotSupportedException();
 
         public override long Position
         {
-            get
-            {
-                throw new NotSupportedException();
-            }
-            set
-            {
-                throw new NotSupportedException();
-            }
+            get => throw new NotSupportedException();
+            set => throw new NotSupportedException();
         }
 
         public override void Flush()
@@ -89,8 +59,15 @@ namespace iTextSharp.text.rtf.document.output
 
         public override void Write(byte[] src, int off, int len)
         {
-            if (src == null) throw (new ArgumentNullException());
-            if ((off < 0) || (off > src.Length) || (len < 0) || ((off + len) > src.Length) || ((off + len) < 0)) throw new IndexOutOfRangeException();
+            if (src == null)
+            {
+                throw (new ArgumentNullException());
+            }
+
+            if ((off < 0) || (off > src.Length) || (len < 0) || ((off + len) > src.Length) || ((off + len) < 0))
+            {
+                throw new IndexOutOfRangeException();
+            }
 
             _size += len;
         }

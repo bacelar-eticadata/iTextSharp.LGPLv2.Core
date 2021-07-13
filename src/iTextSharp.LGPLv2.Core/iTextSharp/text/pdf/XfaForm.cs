@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
-using System.Text;
 using System.IO;
+using System.Text;
 using System.Xml;
 
 namespace iTextSharp.text.pdf
@@ -34,36 +34,38 @@ namespace iTextSharp.text.pdf
         public XfaForm(PdfReader reader)
         {
             Reader = reader;
-            PdfObject xfa = GetXfaObject(reader);
+            var xfa = GetXfaObject(reader);
             if (xfa == null)
             {
                 XfaPresent = false;
                 return;
             }
             XfaPresent = true;
-            MemoryStream bout = new MemoryStream();
+            var bout = new MemoryStream();
             if (xfa.IsArray())
             {
-                PdfArray ar = (PdfArray)xfa;
-                for (int k = 1; k < ar.Size; k += 2)
+                var ar = (PdfArray)xfa;
+                for (var k = 1; k < ar.Size; k += 2)
                 {
-                    PdfObject ob = ar.GetDirectObject(k);
+                    var ob = ar.GetDirectObject(k);
                     if (ob is PrStream)
                     {
-                        byte[] b = PdfReader.GetStreamBytes((PrStream)ob);
+                        var b = PdfReader.GetStreamBytes((PrStream)ob);
                         bout.Write(b, 0, b.Length);
                     }
                 }
             }
             else if (xfa is PrStream)
             {
-                byte[] b = PdfReader.GetStreamBytes((PrStream)xfa);
+                var b = PdfReader.GetStreamBytes((PrStream)xfa);
                 bout.Write(b, 0, b.Length);
             }
             bout.Seek(0, SeekOrigin.Begin);
-            XmlReader xtr = XmlReader.Create(bout);
-            _domDocument = new XmlDocument();
-            _domDocument.PreserveWhitespace = true;
+            var xtr = XmlReader.Create(bout);
+            _domDocument = new XmlDocument
+            {
+                PreserveWhitespace = true
+            };
             _domDocument.Load(xtr);
             extractNodes();
         }
@@ -98,10 +100,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the top level DOM document</returns>
         public XmlDocument DomDocument
         {
-            get
-            {
-                return _domDocument;
-            }
+            get => _domDocument;
             set
             {
                 _domDocument = value;
@@ -134,9 +133,11 @@ namespace iTextSharp.text.pdf
         public static string GetNodeText(XmlNode n)
         {
             if (n == null)
+            {
                 return "";
-            return getNodeText(n, "");
+            }
 
+            return getNodeText(n, "");
         }
 
         /// <summary>
@@ -148,13 +149,14 @@ namespace iTextSharp.text.pdf
         /// <returns>the XFA object</returns>
         public static PdfObject GetXfaObject(PdfReader reader)
         {
-            PdfDictionary af = (PdfDictionary)PdfReader.GetPdfObjectRelease(reader.Catalog.Get(PdfName.Acroform));
+            var af = (PdfDictionary)PdfReader.GetPdfObjectRelease(reader.Catalog.Get(PdfName.Acroform));
             if (af == null)
             {
                 return null;
             }
             return PdfReader.GetPdfObjectRelease(af.Get(PdfName.Xfa));
         }
+
         /// <summary>
         /// Serializes a XML document to a byte array.
         /// @throws java.io.IOException on error
@@ -163,7 +165,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the serialized XML document</returns>
         public static byte[] SerializeDoc(XmlNode n)
         {
-            MemoryStream fout = new MemoryStream();
+            var fout = new MemoryStream();
             var xwSettings = new XmlWriterSettings
             {
                 Encoding = new UTF8Encoding(false)
@@ -187,20 +189,20 @@ namespace iTextSharp.text.pdf
         /// <param name="writer">the writer</param>
         public static void SetXfa(XfaForm form, PdfReader reader, PdfWriter writer)
         {
-            PdfDictionary af = (PdfDictionary)PdfReader.GetPdfObjectRelease(reader.Catalog.Get(PdfName.Acroform));
+            var af = (PdfDictionary)PdfReader.GetPdfObjectRelease(reader.Catalog.Get(PdfName.Acroform));
             if (af == null)
             {
                 return;
             }
-            PdfObject xfa = GetXfaObject(reader);
+            var xfa = GetXfaObject(reader);
             if (xfa.IsArray())
             {
-                PdfArray ar = (PdfArray)xfa;
-                int t = -1;
-                int d = -1;
-                for (int k = 0; k < ar.Size; k += 2)
+                var ar = (PdfArray)xfa;
+                var t = -1;
+                var d = -1;
+                for (var k = 0; k < ar.Size; k += 2)
                 {
-                    PdfString s = ar.GetAsString(k);
+                    var s = ar.GetAsString(k);
                     if ("template".Equals(s.ToString()))
                     {
                         t = k + 1;
@@ -214,10 +216,10 @@ namespace iTextSharp.text.pdf
                 {
                     reader.KillXref(ar.GetAsIndirectObject(t));
                     reader.KillXref(ar.GetAsIndirectObject(d));
-                    PdfStream tStream = new PdfStream(SerializeDoc(form._templateNode));
+                    var tStream = new PdfStream(SerializeDoc(form._templateNode));
                     tStream.FlateCompress(writer.CompressionLevel);
                     ar[t] = writer.AddToBody(tStream).IndirectReference;
-                    PdfStream dStream = new PdfStream(SerializeDoc(form.DatasetsNode));
+                    var dStream = new PdfStream(SerializeDoc(form.DatasetsNode));
                     dStream.FlateCompress(writer.CompressionLevel);
                     ar[d] = writer.AddToBody(dStream).IndirectReference;
                     af.Put(PdfName.Xfa, new PdfArray(ar));
@@ -225,9 +227,9 @@ namespace iTextSharp.text.pdf
                 }
             }
             reader.KillXref(af.Get(PdfName.Xfa));
-            PdfStream str = new PdfStream(SerializeDoc(form._domDocument));
+            var str = new PdfStream(SerializeDoc(form._domDocument));
             str.FlateCompress(writer.CompressionLevel);
-            PdfIndirectReference refe = writer.AddToBody(str).IndirectReference;
+            var refe = writer.AddToBody(str).IndirectReference;
             af.Put(PdfName.Xfa, refe);
         }
 
@@ -240,7 +242,10 @@ namespace iTextSharp.text.pdf
         public string FindDatasetsName(string name)
         {
             if (DatasetsSom.Name2Node.ContainsKey(name))
+            {
                 return name;
+            }
+
             return DatasetsSom.InverseSearchGlobal(Xml2Som.SplitParts(name));
         }
 
@@ -253,10 +258,16 @@ namespace iTextSharp.text.pdf
         public XmlNode FindDatasetsNode(string name)
         {
             if (name == null)
+            {
                 return null;
+            }
+
             name = FindDatasetsName(name);
             if (name == null)
+            {
                 return null;
+            }
+
             return (XmlNode)DatasetsSom.Name2Node[name];
         }
 
@@ -269,18 +280,28 @@ namespace iTextSharp.text.pdf
         /// <returns>the complete name or  null  if not found</returns>
         public string FindFieldName(string name, AcroFields af)
         {
-            Hashtable items = af.Fields;
+            var items = af.Fields;
             if (items.ContainsKey(name))
+            {
                 return name;
+            }
+
             if (AcroFieldsSom == null)
             {
                 if (items.Count == 0 && XfaPresent)
+                {
                     AcroFieldsSom = new AcroFieldsSearch(DatasetsSom.Name2Node.Keys);
+                }
                 else
+                {
                     AcroFieldsSom = new AcroFieldsSearch(items.Keys);
+                }
             }
             if (AcroFieldsSom.AcroShort2LongName.ContainsKey(name))
+            {
                 return (string)AcroFieldsSom.AcroShort2LongName[name];
+            }
+
             return AcroFieldsSom.InverseSearchGlobal(Xml2Som.SplitParts(name));
         }
 
@@ -293,7 +314,10 @@ namespace iTextSharp.text.pdf
         public void SetNodeText(XmlNode n, string text)
         {
             if (n == null)
+            {
                 return;
+            }
+
             XmlNode nc = null;
             while ((nc = n.FirstChild) != null)
             {
@@ -316,7 +340,7 @@ namespace iTextSharp.text.pdf
 
         private static string getNodeText(XmlNode n, string name)
         {
-            XmlNode n2 = n.FirstChild;
+            var n2 = n.FirstChild;
             while (n2 != null)
             {
                 if (n2.NodeType == XmlNodeType.Element)
@@ -338,15 +362,18 @@ namespace iTextSharp.text.pdf
         /// </summary>
         private void extractNodes()
         {
-            XmlNode n = _domDocument.FirstChild;
+            var n = _domDocument.FirstChild;
             while (n.NodeType != XmlNodeType.Element || n.ChildNodes.Count == 0)
+            {
                 n = n.NextSibling;
+            }
+
             n = n.FirstChild;
             while (n != null)
             {
                 if (n.NodeType == XmlNodeType.Element)
                 {
-                    string s = n.LocalName;
+                    var s = n.LocalName;
                     if (s.Equals("template"))
                     {
                         _templateNode = n;
@@ -361,6 +388,7 @@ namespace iTextSharp.text.pdf
                 n = n.NextSibling;
             }
         }
+
         /// <summary>
         /// A class to process "classic" fields.
         /// </summary>
@@ -376,7 +404,7 @@ namespace iTextSharp.text.pdf
                 AcroShort2LongName = new Hashtable();
                 foreach (string itemName in items)
                 {
-                    string itemShort = GetShortName(itemName);
+                    var itemShort = GetShortName(itemName);
                     AcroShort2LongName[itemShort] = itemName;
                     InverseSearchAdd(inverseSearch, SplitParts(itemShort), itemName);
                 }
@@ -398,6 +426,7 @@ namespace iTextSharp.text.pdf
         {
             protected internal ArrayList Follow = new ArrayList();
             protected internal ArrayList Part = new ArrayList();
+
             /// <summary>
             /// Gets the full name by traversing the hiearchie using only the
             /// index 0.
@@ -407,12 +436,15 @@ namespace iTextSharp.text.pdf
             {
                 get
                 {
-                    InverseStore store = this;
+                    var store = this;
                     while (true)
                     {
-                        object obj = store.Follow[0];
+                        var obj = store.Follow[0];
                         if (obj is string)
+                        {
                             return (string)obj;
+                        }
+
                         store = (InverseStore)obj;
                     }
                 }
@@ -428,12 +460,14 @@ namespace iTextSharp.text.pdf
             /// <returns> true  if a similitude was found</returns>
             public bool IsSimilar(string name)
             {
-                int idx = name.IndexOf("[", StringComparison.Ordinal);
+                var idx = name.IndexOf("[", StringComparison.Ordinal);
                 name = name.Substring(0, idx + 1);
                 foreach (string n in Part)
                 {
                     if (n.StartsWith(name))
+                    {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -461,7 +495,10 @@ namespace iTextSharp.text.pdf
             public object Peek()
             {
                 if (Count == 0)
+                {
                     throw new InvalidOperationException();
+                }
+
                 return this[Count - 1];
             }
 
@@ -472,8 +509,11 @@ namespace iTextSharp.text.pdf
             public object Pop()
             {
                 if (Count == 0)
+                {
                     throw new InvalidOperationException();
-                object ret = this[Count - 1];
+                }
+
+                var ret = this[Count - 1];
                 RemoveAt(Count - 1);
                 return ret;
             }
@@ -514,24 +554,20 @@ namespace iTextSharp.text.pdf
             /// The order the names appear in the XML, depth first.
             /// </summary>
             protected ArrayList order;
+
             /// <summary>
             /// A stack to be used when parsing.
             /// </summary>
             protected Stack2 Stack;
+
             /// <summary>
             /// Gets the data to do a search from the bottom hierarchie.
             /// </summary>
             /// <returns>the data to do a search from the bottom hierarchie</returns>
             public Hashtable InverseSearch
             {
-                get
-                {
-                    return inverseSearch;
-                }
-                set
-                {
-                    inverseSearch = value;
-                }
+                get => inverseSearch;
+                set => inverseSearch = value;
             }
 
             /// <summary>
@@ -540,14 +576,8 @@ namespace iTextSharp.text.pdf
             /// <returns>the mapping of full names to nodes</returns>
             public Hashtable Name2Node
             {
-                get
-                {
-                    return name2Node;
-                }
-                set
-                {
-                    name2Node = value;
-                }
+                get => name2Node;
+                set => name2Node = value;
             }
 
             /// <summary>
@@ -556,14 +586,8 @@ namespace iTextSharp.text.pdf
             /// <returns>the order the names appear in the XML, depth first</returns>
             public ArrayList Order
             {
-                get
-                {
-                    return order;
-                }
-                set
-                {
-                    order = value;
-                }
+                get => order;
+                set => order = value;
             }
 
             /// <summary>
@@ -573,11 +597,14 @@ namespace iTextSharp.text.pdf
             /// <returns>the escaped string</returns>
             public static string EscapeSom(string s)
             {
-                int idx = s.IndexOf(".", StringComparison.Ordinal);
+                var idx = s.IndexOf(".", StringComparison.Ordinal);
                 if (idx < 0)
+                {
                     return s;
-                StringBuilder sb = new StringBuilder();
-                int last = 0;
+                }
+
+                var sb = new StringBuilder();
+                var last = 0;
                 while (idx >= 0)
                 {
                     sb.Append(s.Substring(last, idx - last));
@@ -596,17 +623,23 @@ namespace iTextSharp.text.pdf
             /// <returns>the short name</returns>
             public static string GetShortName(string s)
             {
-                int idx = s.IndexOf(".#subform[", StringComparison.OrdinalIgnoreCase);
+                var idx = s.IndexOf(".#subform[", StringComparison.OrdinalIgnoreCase);
                 if (idx < 0)
+                {
                     return s;
-                int last = 0;
-                StringBuilder sb = new StringBuilder();
+                }
+
+                var last = 0;
+                var sb = new StringBuilder();
                 while (idx >= 0)
                 {
                     sb.Append(s.Substring(last, idx - last));
                     idx = s.IndexOf("]", idx + 10, StringComparison.Ordinal);
                     if (idx < 0)
+                    {
                         return sb.ToString();
+                    }
+
                     last = idx + 1;
                     idx = s.IndexOf(".#subform[", last, StringComparison.OrdinalIgnoreCase);
                 }
@@ -622,18 +655,18 @@ namespace iTextSharp.text.pdf
             /// <param name="unstack">the full name</param>
             public static void InverseSearchAdd(Hashtable inverseSearch, Stack2 stack, string unstack)
             {
-                string last = (string)stack.Peek();
-                InverseStore store = (InverseStore)inverseSearch[last];
+                var last = (string)stack.Peek();
+                var store = (InverseStore)inverseSearch[last];
                 if (store == null)
                 {
                     store = new InverseStore();
                     inverseSearch[last] = store;
                 }
-                for (int k = stack.Count - 2; k >= 0; --k)
+                for (var k = stack.Count - 2; k >= 0; --k)
                 {
                     last = (string)stack[k];
                     InverseStore store2;
-                    int idx = store.Part.IndexOf(last);
+                    var idx = store.Part.IndexOf(last);
                     if (idx < 0)
                     {
                         store.Part.Add(last);
@@ -641,7 +674,10 @@ namespace iTextSharp.text.pdf
                         store.Follow.Add(store2);
                     }
                     else
+                    {
                         store2 = (InverseStore)store.Follow[idx];
+                    }
+
                     store = store2;
                 }
                 store.Part.Add("");
@@ -656,10 +692,13 @@ namespace iTextSharp.text.pdf
             public static Stack2 SplitParts(string name)
             {
                 while (name.StartsWith("."))
+                {
                     name = name.Substring(1);
-                Stack2 parts = new Stack2();
-                int last = 0;
-                int pos = 0;
+                }
+
+                var parts = new Stack2();
+                var last = 0;
+                var pos = 0;
                 string part;
                 while (true)
                 {
@@ -668,23 +707,39 @@ namespace iTextSharp.text.pdf
                     {
                         pos = name.IndexOf(".", pos, StringComparison.Ordinal);
                         if (pos < 0)
+                        {
                             break;
+                        }
+
                         if (name[pos - 1] == '\\')
+                        {
                             ++pos;
+                        }
                         else
+                        {
                             break;
+                        }
                     }
                     if (pos < 0)
+                    {
                         break;
+                    }
+
                     part = name.Substring(last, pos - last);
                     if (!part.EndsWith("]"))
+                    {
                         part += "[0]";
+                    }
+
                     parts.Add(part);
                     last = pos + 1;
                 }
                 part = name.Substring(last);
                 if (!part.EndsWith("]"))
+                {
                     part += "[0]";
+                }
+
                 parts.Add(part);
                 return parts;
             }
@@ -696,11 +751,14 @@ namespace iTextSharp.text.pdf
             /// <returns>the unescaped string</returns>
             public static string UnescapeSom(string s)
             {
-                int idx = s.IndexOf("\\", StringComparison.Ordinal);
+                var idx = s.IndexOf("\\", StringComparison.Ordinal);
                 if (idx < 0)
+                {
                     return s;
-                StringBuilder sb = new StringBuilder();
-                int last = 0;
+                }
+
+                var sb = new StringBuilder();
+                var last = 0;
                 while (idx >= 0)
                 {
                     sb.Append(s.Substring(last, idx - last));
@@ -728,18 +786,27 @@ namespace iTextSharp.text.pdf
             public string InverseSearchGlobal(ArrayList parts)
             {
                 if (parts.Count == 0)
-                    return null;
-                InverseStore store = (InverseStore)inverseSearch[parts[parts.Count - 1]];
-                if (store == null)
-                    return null;
-                for (int k = parts.Count - 2; k >= 0; --k)
                 {
-                    string part = (string)parts[k];
-                    int idx = store.Part.IndexOf(part);
+                    return null;
+                }
+
+                var store = (InverseStore)inverseSearch[parts[parts.Count - 1]];
+                if (store == null)
+                {
+                    return null;
+                }
+
+                for (var k = parts.Count - 2; k >= 0; --k)
+                {
+                    var part = (string)parts[k];
+                    var idx = store.Part.IndexOf(part);
                     if (idx < 0)
                     {
                         if (store.IsSimilar(part))
+                        {
                             return null;
+                        }
+
                         return store.DefaultName;
                     }
                     store = (InverseStore)store.Follow[idx];
@@ -755,10 +822,16 @@ namespace iTextSharp.text.pdf
             protected string PrintStack()
             {
                 if (Stack.Empty())
+                {
                     return "";
-                StringBuilder s = new StringBuilder();
+                }
+
+                var s = new StringBuilder();
                 foreach (string part in Stack)
+                {
                     s.Append('.').Append(part);
+                }
+
                 return s.ToString(1, s.Length - 1);
             }
         }
@@ -791,27 +864,29 @@ namespace iTextSharp.text.pdf
             /// <returns>the new  Node  of the inserted name</returns>
             public XmlNode InsertNode(XmlNode n, string shortName)
             {
-                Stack2 stack = SplitParts(shortName);
-                XmlDocument doc = n.OwnerDocument;
+                var stack = SplitParts(shortName);
+                var doc = n.OwnerDocument;
                 XmlNode n2 = null;
                 n = n.FirstChild;
-                for (int k = 0; k < stack.Count; ++k)
+                for (var k = 0; k < stack.Count; ++k)
                 {
-                    string part = (string)stack[k];
-                    int idx = part.LastIndexOf("[", StringComparison.Ordinal);
-                    string name = part.Substring(0, idx);
+                    var part = (string)stack[k];
+                    var idx = part.LastIndexOf("[", StringComparison.Ordinal);
+                    var name = part.Substring(0, idx);
                     idx = int.Parse(part.Substring(idx + 1, part.Length - idx - 2));
-                    int found = -1;
+                    var found = -1;
                     for (n2 = n.FirstChild; n2 != null; n2 = n2.NextSibling)
                     {
                         if (n2.NodeType == XmlNodeType.Element)
                         {
-                            string s = EscapeSom(n2.LocalName);
+                            var s = EscapeSom(n2.LocalName);
                             if (s.Equals(name))
                             {
                                 ++found;
                                 if (found == idx)
+                                {
                                     break;
+                                }
                             }
                         }
                     }
@@ -819,7 +894,7 @@ namespace iTextSharp.text.pdf
                     {
                         n2 = doc.CreateElement(name);
                         n2 = n.AppendChild(n2);
-                        XmlNode attr = doc.CreateNode(XmlNodeType.Attribute, "dataNode", XFA_DATA_SCHEMA);
+                        var attr = doc.CreateNode(XmlNodeType.Attribute, "dataNode", XFA_DATA_SCHEMA);
                         attr.Value = "dataGroup";
                         n2.Attributes.SetNamedItem(attr);
                     }
@@ -833,18 +908,25 @@ namespace iTextSharp.text.pdf
 
             private static bool hasChildren(XmlNode n)
             {
-                XmlNode dataNodeN = n.Attributes.GetNamedItem("dataNode", XFA_DATA_SCHEMA);
+                var dataNodeN = n.Attributes.GetNamedItem("dataNode", XFA_DATA_SCHEMA);
                 if (dataNodeN != null)
                 {
-                    string dataNode = dataNodeN.Value;
+                    var dataNode = dataNodeN.Value;
                     if ("dataGroup".Equals(dataNode))
+                    {
                         return true;
+                    }
                     else if ("dataValue".Equals(dataNode))
+                    {
                         return false;
+                    }
                 }
                 if (!n.HasChildNodes)
+                {
                     return false;
-                XmlNode n2 = n.FirstChild;
+                }
+
+                var n2 = n.FirstChild;
                 while (n2 != null)
                 {
                     if (n2.NodeType == XmlNodeType.Element)
@@ -858,18 +940,23 @@ namespace iTextSharp.text.pdf
 
             private void processDatasetsInternal(XmlNode n)
             {
-                Hashtable ss = new Hashtable();
-                XmlNode n2 = n.FirstChild;
+                var ss = new Hashtable();
+                var n2 = n.FirstChild;
                 while (n2 != null)
                 {
                     if (n2.NodeType == XmlNodeType.Element)
                     {
-                        string s = EscapeSom(n2.LocalName);
+                        var s = EscapeSom(n2.LocalName);
                         int i;
                         if (ss[s] == null)
+                        {
                             i = 0;
+                        }
                         else
+                        {
                             i = (int)ss[s] + 1;
+                        }
+
                         ss[s] = i;
                         if (hasChildren(n2))
                         {
@@ -880,7 +967,7 @@ namespace iTextSharp.text.pdf
                         else
                         {
                             Stack.Push(s + "[" + i + "]");
-                            string unstack = PrintStack();
+                            var unstack = PrintStack();
                             order.Add(unstack);
                             InverseSearchAdd(unstack);
                             name2Node[unstack] = n2;
@@ -891,6 +978,7 @@ namespace iTextSharp.text.pdf
                 }
             }
         }
+
         /// <summary>
         /// Processes the template section in the XFA form.
         /// </summary>
@@ -928,12 +1016,18 @@ namespace iTextSharp.text.pdf
             /// <returns>the field type or  null  if not found</returns>
             public string GetFieldType(string s)
             {
-                XmlNode n = (XmlNode)name2Node[s];
+                var n = (XmlNode)name2Node[s];
                 if (n == null)
+                {
                     return null;
+                }
+
                 if (n.LocalName.Equals("exclGroup"))
+                {
                     return "exclGroup";
-                XmlNode ui = n.FirstChild;
+                }
+
+                var ui = n.FirstChild;
                 while (ui != null)
                 {
                     if (ui.NodeType == XmlNodeType.Element && ui.LocalName.Equals("ui"))
@@ -943,8 +1037,11 @@ namespace iTextSharp.text.pdf
                     ui = ui.NextSibling;
                 }
                 if (ui == null)
+                {
                     return null;
-                XmlNode type = ui.FirstChild;
+                }
+
+                var type = ui.FirstChild;
                 while (type != null)
                 {
                     if (type.NodeType == XmlNodeType.Element && !(type.LocalName.Equals("extras") && type.LocalName.Equals("picture")))
@@ -959,19 +1056,22 @@ namespace iTextSharp.text.pdf
             private void processTemplate(XmlNode n, Hashtable ff)
             {
                 if (ff == null)
+                {
                     ff = new Hashtable();
-                Hashtable ss = new Hashtable();
-                XmlNode n2 = n.FirstChild;
+                }
+
+                var ss = new Hashtable();
+                var n2 = n.FirstChild;
                 while (n2 != null)
                 {
                     if (n2.NodeType == XmlNodeType.Element)
                     {
-                        string s = n2.LocalName;
+                        var s = n2.LocalName;
                         if (s.Equals("subform"))
                         {
-                            XmlNode name = n2.Attributes.GetNamedItem("name");
-                            string nn = "#subform";
-                            bool annon = true;
+                            var name = n2.Attributes.GetNamedItem("name");
+                            var nn = "#subform";
+                            var annon = true;
                             if (name != null)
                             {
                                 nn = EscapeSom(name.Value);
@@ -986,34 +1086,49 @@ namespace iTextSharp.text.pdf
                             else
                             {
                                 if (ss[nn] == null)
+                                {
                                     i = 0;
+                                }
                                 else
+                                {
                                     i = (int)ss[nn] + 1;
+                                }
+
                                 ss[nn] = i;
                             }
                             Stack.Push(nn + "[" + i + "]");
                             ++_templateLevel;
                             if (annon)
+                            {
                                 processTemplate(n2, ff);
+                            }
                             else
+                            {
                                 processTemplate(n2, null);
+                            }
+
                             --_templateLevel;
                             Stack.Pop();
                         }
                         else if (s.Equals("field") || s.Equals("exclGroup"))
                         {
-                            XmlNode name = n2.Attributes.GetNamedItem("name");
+                            var name = n2.Attributes.GetNamedItem("name");
                             if (name != null)
                             {
-                                string nn = EscapeSom(name.Value);
+                                var nn = EscapeSom(name.Value);
                                 int i;
                                 if (ff[nn] == null)
+                                {
                                     i = 0;
+                                }
                                 else
+                                {
                                     i = (int)ff[nn] + 1;
+                                }
+
                                 ff[nn] = i;
                                 Stack.Push(nn + "[" + i + "]");
-                                string unstack = PrintStack();
+                                var unstack = PrintStack();
                                 order.Add(unstack);
                                 InverseSearchAdd(unstack);
                                 name2Node[unstack] = n2;
@@ -1022,20 +1137,28 @@ namespace iTextSharp.text.pdf
                         }
                         else if (!DynamicForm && _templateLevel > 0 && s.Equals("occur"))
                         {
-                            int initial = 1;
-                            int min = 1;
-                            int max = 1;
-                            XmlNode a = n2.Attributes.GetNamedItem("initial");
+                            var initial = 1;
+                            var min = 1;
+                            var max = 1;
+                            var a = n2.Attributes.GetNamedItem("initial");
                             if (a != null)
-                                try { initial = int.Parse(a.Value.Trim()); } catch { };
+                            {
+                                try { initial = int.Parse(a.Value.Trim()); } catch { }
+                            };
                             a = n2.Attributes.GetNamedItem("min");
                             if (a != null)
-                                try { min = int.Parse(a.Value.Trim()); } catch { };
+                            {
+                                try { min = int.Parse(a.Value.Trim()); } catch { }
+                            };
                             a = n2.Attributes.GetNamedItem("max");
                             if (a != null)
-                                try { max = int.Parse(a.Value.Trim()); } catch { };
+                            {
+                                try { max = int.Parse(a.Value.Trim()); } catch { }
+                            };
                             if (initial != min || min != max)
+                            {
                                 DynamicForm = true;
+                            }
                         }
                     }
                     n2 = n2.NextSibling;

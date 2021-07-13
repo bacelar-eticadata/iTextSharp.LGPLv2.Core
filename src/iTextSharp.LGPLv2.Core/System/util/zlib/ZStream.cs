@@ -57,8 +57,12 @@ namespace System.util.zlib
 
         public int DeflateEnd()
         {
-            if (Dstate == null) return ZStreamError;
-            int ret = Dstate.DeflateEnd();
+            if (Dstate == null)
+            {
+                return ZStreamError;
+            }
+
+            var ret = Dstate.DeflateEnd();
             Dstate = null;
             return ret;
         }
@@ -86,14 +90,21 @@ namespace System.util.zlib
 
         public int DeflateParams(int level, int strategy)
         {
-            if (Dstate == null) return ZStreamError;
+            if (Dstate == null)
+            {
+                return ZStreamError;
+            }
+
             return Dstate.DeflateParams(this, level, strategy);
         }
 
         public int DeflateSetDictionary(byte[] dictionary, int dictLength)
         {
             if (Dstate == null)
+            {
                 return ZStreamError;
+            }
+
             return Dstate.DeflateSetDictionary(this, dictionary, dictLength);
         }
 
@@ -107,14 +118,22 @@ namespace System.util.zlib
 
         public int Inflate(int f)
         {
-            if (Istate == null) return ZStreamError;
+            if (Istate == null)
+            {
+                return ZStreamError;
+            }
+
             return Istate.inflate(this, f);
         }
 
         public int InflateEnd()
         {
-            if (Istate == null) return ZStreamError;
-            int ret = Istate.InflateEnd(this);
+            if (Istate == null)
+            {
+                return ZStreamError;
+            }
+
+            var ret = Istate.InflateEnd(this);
             Istate = null;
             return ret;
         }
@@ -141,14 +160,20 @@ namespace System.util.zlib
         public int InflateSetDictionary(byte[] dictionary, int dictLength)
         {
             if (Istate == null)
+            {
                 return ZStreamError;
+            }
+
             return Istate.InflateSetDictionary(this, dictionary, dictLength);
         }
 
         public int InflateSync()
         {
             if (Istate == null)
+            {
                 return ZStreamError;
+            }
+
             return Istate.InflateSync(this);
         }
         /// <summary>
@@ -165,10 +190,17 @@ namespace System.util.zlib
         /// </summary>
         internal void flush_pending()
         {
-            int len = Dstate.Pending;
+            var len = Dstate.Pending;
 
-            if (len > AvailOut) len = AvailOut;
-            if (len == 0) return;
+            if (len > AvailOut)
+            {
+                len = AvailOut;
+            }
+
+            if (len == 0)
+            {
+                return;
+            }
 
             if (Dstate.PendingBuf.Length <= Dstate.PendingOut ||
                 NextOut.Length <= NextOutIndex ||
@@ -211,10 +243,17 @@ namespace System.util.zlib
         /// </summary>
         internal int read_buf(byte[] buf, int start, int size)
         {
-            int len = AvailIn;
+            var len = AvailIn;
 
-            if (len > size) len = size;
-            if (len == 0) return 0;
+            if (len > size)
+            {
+                len = size;
+            }
+
+            if (len == 0)
+            {
+                return 0;
+            }
 
             AvailIn -= len;
 
