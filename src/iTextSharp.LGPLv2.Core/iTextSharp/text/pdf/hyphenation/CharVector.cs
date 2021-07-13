@@ -16,16 +16,6 @@ namespace iTextSharp.text.pdf.hyphenation
 
         private readonly int _blockSize;
 
-        /// <summary>
-        /// The encapsulated array
-        /// </summary>
-        private char[] _array;
-
-        /// <summary>
-        /// Points to next free item
-        /// </summary>
-        private int _n;
-
         public CharVector() : this(_defaultBlockSize)
         {
         }
@@ -41,15 +31,15 @@ namespace iTextSharp.text.pdf.hyphenation
                 _blockSize = _defaultBlockSize;
             }
 
-            _array = new char[_blockSize];
-            _n = 0;
+            Arr = new char[_blockSize];
+            Length = 0;
         }
 
         public CharVector(char[] a)
         {
             _blockSize = _defaultBlockSize;
-            _array = a;
-            _n = a.Length;
+            Arr = a;
+            Length = a.Length;
         }
 
         public CharVector(char[] a, int capacity)
@@ -63,40 +53,40 @@ namespace iTextSharp.text.pdf.hyphenation
                 _blockSize = _defaultBlockSize;
             }
 
-            _array = a;
-            _n = a.Length;
+            Arr = a;
+            Length = a.Length;
         }
 
-        public char[] Arr => _array;
+        public char[] Arr { get; private set; }
 
         /// <summary>
         /// returns current capacity of array
         /// </summary>
-        public int Capacity => _array.Length;
+        public int Capacity => Arr.Length;
 
         /// <summary>
         /// return number of items in array
         /// </summary>
-        public int Length => _n;
+        public int Length { get; private set; }
 
         public char this[int index]
         {
-            get => _array[index];
+            get => Arr[index];
 
-            set => _array[index] = value;
+            set => Arr[index] = value;
         }
 
         public int Alloc(int size)
         {
-            var index = _n;
-            var len = _array.Length;
-            if (_n + size >= len)
+            var index = Length;
+            var len = Arr.Length;
+            if (Length + size >= len)
             {
                 var aux = new char[len + _blockSize];
-                Array.Copy(_array, 0, aux, 0, len);
-                _array = aux;
+                Array.Copy(Arr, 0, aux, 0, len);
+                Arr = aux;
             }
-            _n += size;
+            Length += size;
             return index;
         }
 
@@ -105,25 +95,25 @@ namespace iTextSharp.text.pdf.hyphenation
         /// </summary>
         public void Clear()
         {
-            _n = 0;
+            Length = 0;
         }
 
         public object Clone()
         {
-            var cv = new CharVector((char[])_array.Clone(), _blockSize)
+            var cv = new CharVector((char[])Arr.Clone(), _blockSize)
             {
-                _n = _n
+                Length = Length
             };
             return cv;
         }
 
         public void TrimToSize()
         {
-            if (_n < _array.Length)
+            if (Length < Arr.Length)
             {
-                var aux = new char[_n];
-                Array.Copy(_array, 0, aux, 0, _n);
-                _array = aux;
+                var aux = new char[Length];
+                Array.Copy(Arr, 0, aux, 0, Length);
+                Arr = aux;
             }
         }
     }

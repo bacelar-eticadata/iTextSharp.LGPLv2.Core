@@ -28,11 +28,6 @@ namespace iTextSharp.text.pdf
         protected PdfReader Reader;
 
         /// <summary>
-        /// Holds value of property rotateContents.
-        /// </summary>
-        private bool _rotateContents = true;
-
-        /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="document"></param>
@@ -54,11 +49,7 @@ namespace iTextSharp.text.pdf
         /// the original page rotation. The default is  true .
         /// otherwise
         /// </summary>
-        public bool RotateContents
-        {
-            set => _rotateContents = value;
-            get => _rotateContents;
-        }
+        public bool RotateContents { set; get; } = true;
 
         public override void AddAnnotation(PdfAnnotation annot)
         {
@@ -752,7 +743,7 @@ namespace iTextSharp.text.pdf
 
             private void applyRotation(PdfDictionary pageN, ByteBuffer outP)
             {
-                if (!_cstp._rotateContents)
+                if (!_cstp.RotateContents)
                 {
                     return;
                 }

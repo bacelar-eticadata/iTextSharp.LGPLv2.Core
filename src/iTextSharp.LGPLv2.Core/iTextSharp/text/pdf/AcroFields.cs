@@ -67,10 +67,6 @@ namespace iTextSharp.text.pdf
         private readonly Hashtable _localFonts = new Hashtable();
         private float _extraMarginLeft;
         private float _extraMarginTop;
-        /// <summary>
-        /// Holds value of property fieldCache.
-        /// </summary>
-        private Hashtable _fieldCache;
 
         /// <summary>
         /// Holds value of property generateAppearances.
@@ -142,11 +138,7 @@ namespace iTextSharp.text.pdf
         /// }
         ///
         /// </summary>
-        public Hashtable FieldCache
-        {
-            set => _fieldCache = value;
-            get => _fieldCache;
-        }
+        public Hashtable FieldCache { set; get; }
 
         /// <summary>
         /// Gets all the fields. The fields are keyed by the fully qualified field name and
@@ -2418,7 +2410,7 @@ namespace iTextSharp.text.pdf
         {
             _topFirst = 0;
             TextField tx = null;
-            if (_fieldCache == null || !_fieldCache.ContainsKey(fieldName))
+            if (FieldCache == null || !FieldCache.ContainsKey(fieldName))
             {
                 tx = new TextField(Writer, null, null);
                 tx.SetExtraMargin(_extraMarginLeft, _extraMarginTop);
@@ -2434,14 +2426,14 @@ namespace iTextSharp.text.pdf
                 }
 
                 tx.Box = box;
-                if (_fieldCache != null)
+                if (FieldCache != null)
                 {
-                    _fieldCache[fieldName] = tx;
+                    FieldCache[fieldName] = tx;
                 }
             }
             else
             {
-                tx = (TextField)_fieldCache[fieldName];
+                tx = (TextField)FieldCache[fieldName];
                 tx.Writer = Writer;
             }
             var fieldType = merged.GetAsName(PdfName.Ft);

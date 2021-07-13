@@ -25,8 +25,6 @@ namespace iTextSharp.text
         ///<summary> This is the content of the Meta-information. </summary>
         private readonly StringBuilder _content;
 
-        ///<summary> This is the type of Meta-information this object contains. </summary>
-        private readonly int _type;
         /// <summary>
         /// constructors
         /// </summary>
@@ -38,7 +36,7 @@ namespace iTextSharp.text
         /// <param name="content">the content</param>
         public Meta(int type, string content)
         {
-            _type = type;
+            Type = type;
             _content = new StringBuilder(content);
         }
 
@@ -49,7 +47,7 @@ namespace iTextSharp.text
         /// <param name="content">the content</param>
         public Meta(string tag, string content)
         {
-            _type = GetType(tag);
+            Type = GetType(tag);
             _content = new StringBuilder(content);
         }
 
@@ -80,7 +78,7 @@ namespace iTextSharp.text
         {
             get
             {
-                switch (_type)
+                switch (Type)
                 {
                     case Element.SUBJECT:
                         return ElementTags.SUBJECT;
@@ -104,7 +102,7 @@ namespace iTextSharp.text
         /// Gets the type of the text element.
         /// </summary>
         /// <value>a type</value>
-        public int Type => _type;
+        public int Type { get; private set; }
 
         /// <summary>
         /// Returns the name of the meta information.

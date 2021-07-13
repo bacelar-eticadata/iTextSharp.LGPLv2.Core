@@ -52,11 +52,6 @@ namespace iTextSharp.text.pdf
         protected PdfViewerPreferencesImp viewerPreferences = new PdfViewerPreferencesImp();
 
         /// <summary>
-        /// Holds value of property rotateContents.
-        /// </summary>
-        private bool _rotateContents = true;
-
-        /// <summary>
         /// Creates new PdfStamperImp.
         /// document
         /// @throws DocumentException on error
@@ -210,11 +205,7 @@ namespace iTextSharp.text.pdf
             set => FlatFreeText = value;
         }
 
-        internal bool RotateContents
-        {
-            set => _rotateContents = value;
-            get => _rotateContents;
-        }
+        internal bool RotateContents { set; get; } = true;
 
         /// <summary>
         /// @see com.lowagie.text.pdf.PdfWriter#addAnnotation(com.lowagie.text.pdf.PdfAnnotation)
@@ -803,7 +794,7 @@ namespace iTextSharp.text.pdf
 
         internal void ApplyRotation(PdfDictionary pageN, ByteBuffer outP)
         {
-            if (!_rotateContents)
+            if (!RotateContents)
             {
                 return;
             }

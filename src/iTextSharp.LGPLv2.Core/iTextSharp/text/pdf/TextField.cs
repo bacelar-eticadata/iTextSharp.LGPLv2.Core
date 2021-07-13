@@ -12,38 +12,8 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class TextField : BaseField
     {
-        /// <summary>
-        /// Holds value of property choiceExports.
-        /// </summary>
-        private string[] _choiceExports;
-
-        /// <summary>
-        /// Holds value of property choices.
-        /// </summary>
-        private string[] _choices;
-
-        /// <summary>
-        /// Holds value of property choiceSelection.
-        /// </summary>
-        private int _choiceSelection;
-
-        /// <summary>
-        /// Holds value of property defaultText.
-        /// </summary>
-        private string _defaultText;
-
-        /// <summary>
-        /// Holds value of property extensionFont.
-        /// </summary>
-        private BaseFont _extensionFont;
-
         private float _extraMarginLeft;
         private float _extraMarginTop;
-
-        /// <summary>
-        /// Holds value of property substitutionFonts.
-        /// </summary>
-        private ArrayList _substitutionFonts;
 
         /// <summary>
         /// Creates a new  TextField .
@@ -61,59 +31,35 @@ namespace iTextSharp.text.pdf
         /// is  null  then the choice values will also be used
         /// as the export values.
         /// </summary>
-        public string[] ChoiceExports
-        {
-            get => _choiceExports;
-            set => _choiceExports = value;
-        }
+        public string[] ChoiceExports { get; set; }
 
         /// <summary>
         /// Sets the choices to be presented to the user in list/combo
         /// fields.
         /// </summary>
-        public string[] Choices
-        {
-            get => _choices;
-            set => _choices = value;
-        }
+        public string[] Choices { get; set; }
 
         /// <summary>
         /// Sets the zero based index of the selected item.
         /// </summary>
-        public int ChoiceSelection
-        {
-            get => _choiceSelection;
-            set => _choiceSelection = value;
-        }
+        public int ChoiceSelection { get; set; }
 
         /// <summary>
         /// Sets the default text. It is only meaningful for text fields.
         /// </summary>
-        public string DefaultText
-        {
-            get => _defaultText;
-            set => _defaultText = value;
-        }
+        public string DefaultText { get; set; }
 
         /// <summary>
         /// Sets the extensionFont. This font will be searched before the
         /// substitution fonts. It may be  null .
         /// </summary>
-        public BaseFont ExtensionFont
-        {
-            set => _extensionFont = value;
-            get => _extensionFont;
-        }
+        public BaseFont ExtensionFont { set; get; }
 
         /// <summary>
         /// Sets a list of substitution fonts. The list is composed of  BaseFont  and can also be  null . The fonts in this list will be used if the original
         /// font doesn't contain the needed glyphs.
         /// </summary>
-        public ArrayList SubstitutionFonts
-        {
-            set => _substitutionFonts = value;
-            get => _substitutionFonts;
-        }
+        public ArrayList SubstitutionFonts { set; get; }
 
         internal int TopFirst { get; private set; }
 
@@ -420,9 +366,9 @@ namespace iTextSharp.text.pdf
                     field.ValueAsString = text;
                 }
 
-                if (_defaultText != null)
+                if (DefaultText != null)
                 {
-                    field.DefaultValueAsString = _defaultText;
+                    field.DefaultValueAsString = DefaultText;
                 }
 
                 if ((options & READ_ONLY) != 0)
@@ -531,15 +477,15 @@ namespace iTextSharp.text.pdf
         {
             var app = GetBorderAppearance();
             app.BeginVariableText();
-            if (_choices == null || _choices.Length == 0)
+            if (Choices == null || Choices.Length == 0)
             {
                 app.EndVariableText();
                 return app;
             }
-            var topChoice = _choiceSelection;
-            if (topChoice >= _choices.Length)
+            var topChoice = ChoiceSelection;
+            if (topChoice >= Choices.Length)
             {
-                topChoice = _choices.Length - 1;
+                topChoice = Choices.Length - 1;
             }
             if (topChoice < 0)
             {
@@ -574,9 +520,9 @@ namespace iTextSharp.text.pdf
             }
             //        first = topChoice;
             last = first + maxFit;
-            if (last > _choices.Length)
+            if (last > Choices.Length)
             {
-                last = _choices.Length;
+                last = Choices.Length;
             }
 
             TopFirst = first;
@@ -592,7 +538,7 @@ namespace iTextSharp.text.pdf
             var yp = offsetX + h - ufont.GetFontDescriptor(BaseFont.BBOXURY, usize);
             for (var idx = first; idx < last; ++idx, yp -= leading)
             {
-                var ptext = _choices[idx];
+                var ptext = Choices[idx];
                 var rtl = checkRtl(ptext) ? PdfWriter.RUN_DIRECTION_LTR : PdfWriter.RUN_DIRECTION_NO_BIDI;
                 ptext = RemoveCrlf(ptext);
                 var phrase = composePhrase(ptext, ufont, (idx == topChoice) ? GrayColor.Graywhite : fcolor, usize);
@@ -606,13 +552,13 @@ namespace iTextSharp.text.pdf
         protected PdfFormField GetChoiceField(bool isList)
         {
             options &= (~MULTILINE) & (~COMB);
-            var uchoices = _choices;
+            var uchoices = Choices;
             if (uchoices == null)
             {
                 uchoices = new string[0];
             }
 
-            var topChoice = _choiceSelection;
+            var topChoice = ChoiceSelection;
             if (topChoice >= uchoices.Length)
             {
                 topChoice = uchoices.Length - 1;
@@ -635,7 +581,7 @@ namespace iTextSharp.text.pdf
 
             PdfFormField field = null;
             string[,] mix = null;
-            if (_choiceExports == null)
+            if (ChoiceExports == null)
             {
                 if (isList)
                 {
@@ -654,12 +600,12 @@ namespace iTextSharp.text.pdf
                     mix[k, 0] = mix[k, 1] = uchoices[k];
                 }
 
-                var top = Math.Min(uchoices.Length, _choiceExports.Length);
+                var top = Math.Min(uchoices.Length, ChoiceExports.Length);
                 for (var k = 0; k < top; ++k)
                 {
-                    if (_choiceExports[k] != null)
+                    if (ChoiceExports[k] != null)
                     {
-                        mix[k, 0] = _choiceExports[k];
+                        mix[k, 0] = ChoiceExports[k];
                     }
                 }
                 if (isList)
@@ -796,7 +742,7 @@ namespace iTextSharp.text.pdf
         private Phrase composePhrase(string text, BaseFont ufont, BaseColor color, float fontSize)
         {
             Phrase phrase = null;
-            if (_extensionFont == null && (_substitutionFonts == null || _substitutionFonts.Count == 0))
+            if (ExtensionFont == null && (SubstitutionFonts == null || SubstitutionFonts.Count == 0))
             {
                 phrase = new Phrase(new Chunk(text, new Font(ufont, fontSize, 0, color)));
             }
@@ -804,14 +750,14 @@ namespace iTextSharp.text.pdf
             {
                 var fs = new FontSelector();
                 fs.AddFont(new Font(ufont, fontSize, 0, color));
-                if (_extensionFont != null)
+                if (ExtensionFont != null)
                 {
-                    fs.AddFont(new Font(_extensionFont, fontSize, 0, color));
+                    fs.AddFont(new Font(ExtensionFont, fontSize, 0, color));
                 }
 
-                if (_substitutionFonts != null)
+                if (SubstitutionFonts != null)
                 {
-                    foreach (BaseFont bf in _substitutionFonts)
+                    foreach (BaseFont bf in SubstitutionFonts)
                     {
                         fs.AddFont(new Font(bf, fontSize, 0, color));
                     }

@@ -57,15 +57,6 @@ namespace iTextSharp.text
         protected float spacingBefore;
 
         /// <summary>
-        /// Holds value of property extraParagraphSpace.
-        /// </summary>
-        private float _extraParagraphSpace;
-
-        /// <summary>
-        /// Holds value of property firstLineIndent.
-        /// </summary>
-        private float _firstLineIndent;
-        /// <summary>
         /// constructors
         /// </summary>
 
@@ -165,29 +156,9 @@ namespace iTextSharp.text
             }
         }
 
-        public float ExtraParagraphSpace
-        {
-            get
-            {
-                return _extraParagraphSpace;
-            }
-            set
-            {
-                _extraParagraphSpace = value;
-            }
-        }
+        public float ExtraParagraphSpace { get; set; }
 
-        public float FirstLineIndent
-        {
-            get
-            {
-                return _firstLineIndent;
-            }
-            set
-            {
-                _firstLineIndent = value;
-            }
-        }
+        public float FirstLineIndent { get; set; }
 
         /// <summary>
         /// Get/set the indentation of this paragraph on the left side.

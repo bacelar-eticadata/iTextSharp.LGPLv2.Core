@@ -17,11 +17,6 @@ namespace iTextSharp.text.pdf
         private readonly PdfStructureTreeRoot _top;
 
         /// <summary>
-        /// Holds value of property reference.
-        /// </summary>
-        private PdfIndirectReference _reference;
-
-        /// <summary>
         /// Creates a new instance of PdfStructureElement.
         /// </summary>
         /// <param name="parent">the parent of this node</param>
@@ -31,7 +26,7 @@ namespace iTextSharp.text.pdf
             _top = parent._top;
             init(parent, structureType);
             _parent = parent;
-            Put(PdfName.P, parent._reference);
+            Put(PdfName.P, parent.Reference);
         }
 
         /// <summary>
@@ -56,7 +51,7 @@ namespace iTextSharp.text.pdf
         /// Gets the reference this object will be written to.
         /// </summary>
         /// <returns>the reference this object will be written to</returns>
-        public PdfIndirectReference Reference => _reference;
+        public PdfIndirectReference Reference { get; private set; }
 
         internal void SetPageMark(int page, int mark)
         {
@@ -65,7 +60,7 @@ namespace iTextSharp.text.pdf
                 Put(PdfName.K, new PdfNumber(mark));
             }
 
-            _top.SetPageMark(page, _reference);
+            _top.SetPageMark(page, Reference);
         }
 
         private void init(PdfDictionary parent, PdfName structureType)
@@ -89,7 +84,7 @@ namespace iTextSharp.text.pdf
 
             kids.Add(this);
             Put(PdfName.S, structureType);
-            _reference = _top.Writer.PdfIndirectReference;
+            Reference = _top.Writer.PdfIndirectReference;
         }
     }
 }

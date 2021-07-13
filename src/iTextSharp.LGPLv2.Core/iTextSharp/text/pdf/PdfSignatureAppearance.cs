@@ -90,21 +90,9 @@ namespace iTextSharp.text.pdf
         private readonly PdfTemplate[] _app = new PdfTemplate[5];
 
         private readonly PdfStamperImp _writer;
-
-        /// <summary>
-        /// Holds value of property acro6Layers.
-        /// </summary>
-        private bool _acro6Layers;
-
         private byte[] _bout;
 
         private int _boutLen;
-
-        /// <summary>
-        /// Holds value of property contact.
-        /// </summary>
-        private string _contact;
-
         private string _digestEncryptionAlgorithm;
 
         private Hashtable _exclusionLocations;
@@ -114,27 +102,6 @@ namespace iTextSharp.text.pdf
         private byte[] _externalRsAdata;
 
         private PdfTemplate _frm;
-
-        /// <summary>
-        /// Holds value of property image.
-        /// </summary>
-        private Image _image;
-
-        /// <summary>
-        /// Holds value of property imageScale.
-        /// </summary>
-        private float _imageScale;
-
-        /// <summary>
-        /// Holds value of property layer2Font.
-        /// </summary>
-        private Font _layer2Font;
-
-        /// <summary>
-        /// Holds value of property layer4Text.
-        /// </summary>
-        private string _layer4Text;
-
         private bool _newField;
 
         private bool _preClosed;
@@ -144,26 +111,9 @@ namespace iTextSharp.text.pdf
         private int[] _range;
 
         /// <summary>
-        /// Gets the rendering mode for this signature .
-        /// </summary>
-        /// <returns>the rectangle rendering mode for this signature.</returns>
-        private SignatureRender _render = SignatureRender.Description;
-
-        /// <summary>
         /// Holds value of property runDirection.
         /// </summary>
         private int _runDirection = PdfWriter.RUN_DIRECTION_NO_BIDI;
-
-        /// <summary>
-        /// Holds value of property signatureEvent.
-        /// </summary>
-        private ISignatureEvent _signatureEvent;
-
-        /// <summary>
-        /// Sets the Image object to render when Render is set to SignatureRender.GraphicAndDescription
-        /// to SignatureRender.Description
-        /// </summary>
-        private Image _signatureGraphic;
 
         internal PdfSignatureAppearance(PdfStamperImp writer)
         {
@@ -197,11 +147,7 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Acrobat 6.0 and higher recomends that only layer n2 and n4 be present. This method sets that mode.
         /// </summary>
-        public bool Acro6Layers
-        {
-            get => _acro6Layers;
-            set => _acro6Layers = value;
-        }
+        public bool Acro6Layers { get; set; }
 
         /// <summary>
         /// Gets the certificate chain.
@@ -218,11 +164,7 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Sets the signing contact.
         /// </summary>
-        public string Contact
-        {
-            get => _contact;
-            set => _contact = value;
-        }
+        public string Contact { get; set; }
 
         /// <summary>
         /// Gets the certificate revocation list.
@@ -251,11 +193,7 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Sets the background image for the layer 2.
         /// </summary>
-        public Image Image
-        {
-            get => _image;
-            set => _image = value;
-        }
+        public Image Image { get; set; }
 
         /// <summary>
         /// Sets the scaling to be applied to the background image. If it's zero the image
@@ -263,20 +201,12 @@ namespace iTextSharp.text.pdf
         /// will keep the proportions. If it's greater than zero that scaling will be applied.
         /// In any of the cases the image will always be centered. It's zero by default.
         /// </summary>
-        public float ImageScale
-        {
-            get => _imageScale;
-            set => _imageScale = value;
-        }
+        public float ImageScale { get; set; }
 
         /// <summary>
         /// Sets the n2 and n4 layer font. If the font size is zero, auto-fit will be used.
         /// </summary>
-        public Font Layer2Font
-        {
-            get => _layer2Font;
-            set => _layer2Font = value;
-        }
+        public Font Layer2Font { get; set; }
 
         /// <summary>
         /// Sets the signature text identifying the signer.
@@ -288,11 +218,7 @@ namespace iTextSharp.text.pdf
         /// Sets the text identifying the signature status.
         /// the description "Signature Not Verified" will be used
         /// </summary>
-        public string Layer4Text
-        {
-            get => _layer4Text;
-            set => _layer4Text = value;
-        }
+        public string Layer4Text { get; set; }
 
         /// <summary>
         /// Sets the signing location.
@@ -337,11 +263,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the rectangle representing the signature dimensions. It may be  null </returns>
         public Rectangle Rect { get; private set; }
 
-        public SignatureRender Render
-        {
-            get => _render;
-            set => _render = value;
-        }
+        public SignatureRender Render { get; set; } = SignatureRender.Description;
 
         /// <summary>
         /// Sets the run direction in the n2 and n4 layer.
@@ -363,17 +285,9 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Sets the signature event to allow modification of the signature dictionary.
         /// </summary>
-        public ISignatureEvent SignatureEvent
-        {
-            get => _signatureEvent;
-            set => _signatureEvent = value;
-        }
+        public ISignatureEvent SignatureEvent { get; set; }
 
-        public Image SignatureGraphic
-        {
-            get => _signatureGraphic;
-            set => _signatureGraphic = value;
-        }
+        public Image SignatureGraphic { get; set; }
 
         /// <summary>
         /// Gets the signature date.
@@ -597,7 +511,7 @@ namespace iTextSharp.text.pdf
                 _writer.AddDirectTemplateSimple(t, new PdfName("n0"));
                 t.SetLiteral("% DSBlank\n");
             }
-            if (_app[1] == null && !_acro6Layers)
+            if (_app[1] == null && !Acro6Layers)
             {
                 var t = _app[1] = new PdfTemplate(_writer);
                 t.BoundingBox = new Rectangle(100, 100);
@@ -632,35 +546,35 @@ namespace iTextSharp.text.pdf
                 var t = _app[2] = new PdfTemplate(_writer);
                 t.BoundingBox = Rect;
                 _writer.AddDirectTemplateSimple(t, new PdfName("n2"));
-                if (_image != null)
+                if (Image != null)
                 {
-                    if (_imageScale.ApproxEquals(0))
+                    if (ImageScale.ApproxEquals(0))
                     {
-                        t.AddImage(_image, Rect.Width, 0, 0, Rect.Height, 0, 0);
+                        t.AddImage(Image, Rect.Width, 0, 0, Rect.Height, 0, 0);
                     }
                     else
                     {
-                        var usableScale = _imageScale;
-                        if (_imageScale < 0)
+                        var usableScale = ImageScale;
+                        if (ImageScale < 0)
                         {
-                            usableScale = Math.Min(Rect.Width / _image.Width, Rect.Height / _image.Height);
+                            usableScale = Math.Min(Rect.Width / Image.Width, Rect.Height / Image.Height);
                         }
 
-                        var w = _image.Width * usableScale;
-                        var h = _image.Height * usableScale;
+                        var w = Image.Width * usableScale;
+                        var h = Image.Height * usableScale;
                         var x = (Rect.Width - w) / 2;
                         var y = (Rect.Height - h) / 2;
-                        t.AddImage(_image, w, 0, 0, h, x, y);
+                        t.AddImage(Image, w, 0, 0, h, x, y);
                     }
                 }
                 Font font;
-                if (_layer2Font == null)
+                if (Layer2Font == null)
                 {
                     font = new Font();
                 }
                 else
                 {
-                    font = new Font(_layer2Font);
+                    font = new Font(Layer2Font);
                 }
 
                 var size = font.Size;
@@ -757,33 +671,33 @@ namespace iTextSharp.text.pdf
                 ct.SetSimpleColumn(new Phrase(text, font), dataRect.Left, dataRect.Bottom, dataRect.Right, dataRect.Top, size, Element.ALIGN_LEFT);
                 ct.Go();
             }
-            if (_app[3] == null && !_acro6Layers)
+            if (_app[3] == null && !Acro6Layers)
             {
                 var t = _app[3] = new PdfTemplate(_writer);
                 t.BoundingBox = new Rectangle(100, 100);
                 _writer.AddDirectTemplateSimple(t, new PdfName("n3"));
                 t.SetLiteral("% DSBlank\n");
             }
-            if (_app[4] == null && !_acro6Layers)
+            if (_app[4] == null && !Acro6Layers)
             {
                 var t = _app[4] = new PdfTemplate(_writer);
                 t.BoundingBox = new Rectangle(0, Rect.Height * (1 - TopSection), Rect.Right, Rect.Top);
                 _writer.AddDirectTemplateSimple(t, new PdfName("n4"));
                 Font font;
-                if (_layer2Font == null)
+                if (Layer2Font == null)
                 {
                     font = new Font();
                 }
                 else
                 {
-                    font = new Font(_layer2Font);
+                    font = new Font(Layer2Font);
                 }
 
                 var size = font.Size;
                 var text = "Signature Not Verified";
-                if (_layer4Text != null)
+                if (Layer4Text != null)
                 {
-                    text = _layer4Text;
+                    text = Layer4Text;
                 }
 
                 var sr = new Rectangle(Rect.Width - 2 * Margin, Rect.Height * TopSection - 2 * Margin);
@@ -828,13 +742,13 @@ namespace iTextSharp.text.pdf
                 }
 
                 _frm.AddTemplate(_app[0], 0, 0);
-                if (!_acro6Layers)
+                if (!Acro6Layers)
                 {
                     _frm.AddTemplate(_app[1], scale, 0, 0, scale, x, y);
                 }
 
                 _frm.AddTemplate(_app[2], 0, 0);
-                if (!_acro6Layers)
+                if (!Acro6Layers)
                 {
                     _frm.AddTemplate(_app[3], scale, 0, 0, scale, x, y);
                     _frm.AddTemplate(_app[4], 0, 0);
@@ -855,7 +769,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the background image for the layer 2</returns>
         public Image GetImage()
         {
-            return _image;
+            return Image;
         }
 
         /// <summary>
@@ -1101,9 +1015,9 @@ namespace iTextSharp.text.pdf
                     addDocMdp(SigStandard);
                 }
 
-                if (_signatureEvent != null)
+                if (SignatureEvent != null)
                 {
-                    _signatureEvent.GetSignatureDictionary(SigStandard);
+                    SignatureEvent.GetSignatureDictionary(SigStandard);
                 }
 
                 _writer.AddToBody(SigStandard, refSig, false);
@@ -1126,9 +1040,9 @@ namespace iTextSharp.text.pdf
                     addDocMdp(CryptoDictionary);
                 }
 
-                if (_signatureEvent != null)
+                if (SignatureEvent != null)
                 {
-                    _signatureEvent.GetSignatureDictionary(CryptoDictionary);
+                    SignatureEvent.GetSignatureDictionary(CryptoDictionary);
                 }
 
                 _writer.AddToBody(CryptoDictionary, refSig, false);

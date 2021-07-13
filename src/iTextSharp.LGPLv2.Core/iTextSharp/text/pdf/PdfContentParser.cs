@@ -15,27 +15,18 @@ namespace iTextSharp.text.pdf
         public const int COMMAND_TYPE = 200;
 
         /// <summary>
-        /// Holds value of property tokeniser.
-        /// </summary>
-        private PrTokeniser _tokeniser;
-
-        /// <summary>
         /// Creates a new instance of PdfContentParser
         /// </summary>
         /// <param name="tokeniser">the tokeniser with the content</param>
         public PdfContentParser(PrTokeniser tokeniser)
         {
-            _tokeniser = tokeniser;
+            Tokeniser = tokeniser;
         }
 
         /// <summary>
         /// Sets the tokeniser.
         /// </summary>
-        public PrTokeniser Tokeniser
-        {
-            set => _tokeniser = value;
-            get => _tokeniser;
-        }
+        public PrTokeniser Tokeniser { set; get; }
 
         /// <summary>
         /// Gets the tokeniser.
@@ -43,7 +34,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the tokeniser.</returns>
         public PrTokeniser GetTokeniser()
         {
-            return _tokeniser;
+            return Tokeniser;
         }
 
         /// <summary>
@@ -53,9 +44,9 @@ namespace iTextSharp.text.pdf
         /// <returns> true  if a token was read,  false  if the end of content was reached</returns>
         public bool NextValidToken()
         {
-            while (_tokeniser.NextToken())
+            while (Tokeniser.NextToken())
             {
-                if (_tokeniser.TokenType == PrTokeniser.TK_COMMENT)
+                if (Tokeniser.TokenType == PrTokeniser.TK_COMMENT)
                 {
                     continue;
                 }
@@ -139,17 +130,17 @@ namespace iTextSharp.text.pdf
                     throw new IOException("Unexpected end of file.");
                 }
 
-                if (_tokeniser.TokenType == PrTokeniser.TK_END_DIC)
+                if (Tokeniser.TokenType == PrTokeniser.TK_END_DIC)
                 {
                     break;
                 }
 
-                if (_tokeniser.TokenType != PrTokeniser.TK_NAME)
+                if (Tokeniser.TokenType != PrTokeniser.TK_NAME)
                 {
                     throw new IOException("Dictionary key is not a name.");
                 }
 
-                var name = new PdfName(_tokeniser.StringValue, false);
+                var name = new PdfName(Tokeniser.StringValue, false);
                 var obj = ReadPrObject();
                 var type = obj.Type;
                 if (-type == PrTokeniser.TK_END_DIC)
@@ -179,7 +170,7 @@ namespace iTextSharp.text.pdf
                 return null;
             }
 
-            var type = _tokeniser.TokenType;
+            var type = Tokeniser.TokenType;
             switch (type)
             {
                 case PrTokeniser.TK_START_DIC:
@@ -191,20 +182,20 @@ namespace iTextSharp.text.pdf
                     return ReadArray();
 
                 case PrTokeniser.TK_STRING:
-                    var str = new PdfString(_tokeniser.StringValue, null).SetHexWriting(_tokeniser.IsHexString());
+                    var str = new PdfString(Tokeniser.StringValue, null).SetHexWriting(Tokeniser.IsHexString());
                     return str;
 
                 case PrTokeniser.TK_NAME:
-                    return new PdfName(_tokeniser.StringValue, false);
+                    return new PdfName(Tokeniser.StringValue, false);
 
                 case PrTokeniser.TK_NUMBER:
-                    return new PdfNumber(_tokeniser.StringValue);
+                    return new PdfNumber(Tokeniser.StringValue);
 
                 case PrTokeniser.TK_OTHER:
-                    return new PdfLiteral(COMMAND_TYPE, _tokeniser.StringValue);
+                    return new PdfLiteral(COMMAND_TYPE, Tokeniser.StringValue);
 
                 default:
-                    return new PdfLiteral(-type, _tokeniser.StringValue);
+                    return new PdfLiteral(-type, Tokeniser.StringValue);
             }
         }
     }

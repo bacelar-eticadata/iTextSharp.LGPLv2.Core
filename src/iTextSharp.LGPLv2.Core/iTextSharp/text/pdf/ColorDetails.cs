@@ -6,15 +6,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class ColorDetails
     {
-        /// <summary>
-        /// The color name that appears in the document body stream
-        /// </summary>
-        private readonly PdfName _colorName;
-
-        /// <summary>
-        /// The indirect reference to this color
-        /// </summary>
-        private readonly PdfIndirectReference _indirectReference;
 
         /// <summary>
         /// The color
@@ -29,8 +20,8 @@ namespace iTextSharp.text.pdf
         /// <param name="scolor">the  PDfSpotColor </param>
         internal ColorDetails(PdfName colorName, PdfIndirectReference indirectReference, PdfSpotColor scolor)
         {
-            _colorName = colorName;
-            _indirectReference = indirectReference;
+            ColorName = colorName;
+            IndirectReference = indirectReference;
             _spotcolor = scolor;
         }
 
@@ -38,13 +29,13 @@ namespace iTextSharp.text.pdf
         /// Gets the color name as it appears in the document body.
         /// </summary>
         /// <returns>the color name</returns>
-        internal PdfName ColorName => _colorName;
+        internal PdfName ColorName { get; private set; }
 
         /// <summary>
         /// Gets the indirect reference to this color.
         /// </summary>
         /// <returns>the indirect reference to this color</returns>
-        internal PdfIndirectReference IndirectReference => _indirectReference;
+        internal PdfIndirectReference IndirectReference { get; private set; }
 
         /// <summary>
         /// Gets the  SpotColor  object.

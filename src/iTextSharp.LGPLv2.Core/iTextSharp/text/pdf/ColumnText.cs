@@ -220,39 +220,12 @@ namespace iTextSharp.text.pdf
         /// The current y line location. Text will be written at this line minus the leading.
         /// </summary>
         protected float yLine;
-
-        /// <summary>
-        /// Holds value of property arabicOptions.
-        /// </summary>
-        private int _arabicOptions;
-
-        /// <summary>
-        /// Holds value of property filledWidth.
-        /// </summary>
-        private float _filledWidth;
-
         private float _firstLineY;
 
         private bool _firstLineYDone;
 
         private bool _lastWasNewline = true;
-
-        /// <summary>
-        /// Holds value of property linesWritten.
-        /// </summary>
-        private int _linesWritten;
-
-        /// <summary>
-        /// Holds value of property spaceCharRatio.
-        /// </summary>
-        private float _spaceCharRatio = GlobalSpaceCharRatio;
-
         private bool _splittedRow;
-
-        /// <summary>
-        /// if true, first line height is adjusted so that the max ascender touches the top
-        /// </summary>
-        private bool _useAscender;
 
         /// <summary>
         /// Creates a  ColumnText .
@@ -287,11 +260,7 @@ namespace iTextSharp.text.pdf
         /// Sets the arabic shaping options. The option can be AR_NOVOWEL,
         /// AR_COMPOSEDTASHKEEL and AR_LIG.
         /// </summary>
-        public int ArabicOptions
-        {
-            set => _arabicOptions = value;
-            get => _arabicOptions;
-        }
+        public int ArabicOptions { set; get; }
 
         /// <summary>
         /// Sets the canvas.
@@ -348,11 +317,7 @@ namespace iTextSharp.text.pdf
         /// Sets the real width used by the largest line. Only used to set it
         /// to zero to start another measurement.
         /// </summary>
-        public float FilledWidth
-        {
-            set => _filledWidth = value;
-            get => _filledWidth;
-        }
+        public float FilledWidth { set; get; }
 
         /// <summary>
         /// Gets the following paragraph lines indent.
@@ -403,7 +368,7 @@ namespace iTextSharp.text.pdf
         /// Gets the number of lines written.
         /// </summary>
         /// <returns>the number of lines written</returns>
-        public int LinesWritten => _linesWritten;
+        public int LinesWritten { get; private set; }
 
         /// <summary>
         /// Gets the variable leading
@@ -450,21 +415,12 @@ namespace iTextSharp.text.pdf
         /// fully justified text.
         /// </summary>
         /// <returns>the space/character extra spacing ratio</returns>
-        public float SpaceCharRatio
-        {
-            get => _spaceCharRatio;
-
-            set => _spaceCharRatio = value;
-        }
+        public float SpaceCharRatio { get; set; } = GlobalSpaceCharRatio;
 
         /// <summary>
         /// Enables/Disables adjustment of first line height based on max ascender.
         /// </summary>
-        public bool UseAscender
-        {
-            set => _useAscender = value;
-            get => _useAscender;
-        }
+        public bool UseAscender { set; get; }
 
         /// <summary>
         /// Gets the yLine.
@@ -794,9 +750,9 @@ namespace iTextSharp.text.pdf
             }
 
             descender = 0;
-            _linesWritten = 0;
+            LinesWritten = 0;
             var dirty = false;
-            var ratio = _spaceCharRatio;
+            var ratio = SpaceCharRatio;
             var currentValues = new object[2];
             PdfFont currentFont = null;
             var lastBaseFactor = 0F;
@@ -857,7 +813,7 @@ namespace iTextSharp.text.pdf
                         status = NO_MORE_TEXT;
                         break;
                     }
-                    line = BidiLine.ProcessLine(LeftX, RectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, _arabicOptions);
+                    line = BidiLine.ProcessLine(LeftX, RectangularWidth - firstIndent - rightIndent, alignment, localRunDirection, ArabicOptions);
                     if (line == null)
                     {
                         status = NO_MORE_TEXT;
@@ -926,7 +882,7 @@ namespace iTextSharp.text.pdf
                         text.BeginText();
                         dirty = true;
                     }
-                    line = BidiLine.ProcessLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, _arabicOptions);
+                    line = BidiLine.ProcessLine(x1, x2 - x1 - firstIndent - rightIndent, alignment, localRunDirection, ArabicOptions);
                     if (line == null)
                     {
                         status = NO_MORE_TEXT;
@@ -943,7 +899,7 @@ namespace iTextSharp.text.pdf
                 }
                 _lastWasNewline = line.NewlineSplit;
                 yLine -= line.NewlineSplit ? extraParagraphSpace : 0;
-                ++_linesWritten;
+                ++LinesWritten;
                 descender = line.Descender;
             }
             if (dirty)
@@ -1078,9 +1034,9 @@ namespace iTextSharp.text.pdf
         /// <param name="w">the new  filledWidth  if greater than the existing one</param>
         public void UpdateFilledWidth(float w)
         {
-            if (w > _filledWidth)
+            if (w > FilledWidth)
             {
-                _filledWidth = w;
+                FilledWidth = w;
             }
         }
 
@@ -1124,10 +1080,10 @@ namespace iTextSharp.text.pdf
             extraParagraphSpace = org.extraParagraphSpace;
             RectangularWidth = org.RectangularWidth;
             RectangularMode = org.RectangularMode;
-            _spaceCharRatio = org._spaceCharRatio;
+            SpaceCharRatio = org.SpaceCharRatio;
             _lastWasNewline = org._lastWasNewline;
-            _linesWritten = org._linesWritten;
-            _arabicOptions = org._arabicOptions;
+            LinesWritten = org.LinesWritten;
+            ArabicOptions = org.ArabicOptions;
             runDirection = org.runDirection;
             descender = org.descender;
             Composite = org.Composite;
@@ -1151,8 +1107,8 @@ namespace iTextSharp.text.pdf
             RightX = org.RightX;
             _firstLineYDone = org._firstLineYDone;
             WaitPhrase = org.WaitPhrase;
-            _useAscender = org._useAscender;
-            _filledWidth = org._filledWidth;
+            UseAscender = org.UseAscender;
+            FilledWidth = org.FilledWidth;
             AdjustFirstLine = org.AdjustFirstLine;
         }
 
@@ -1308,7 +1264,7 @@ namespace iTextSharp.text.pdf
                 throw new DocumentException("Irregular columns are not supported in composite mode.");
             }
 
-            _linesWritten = 0;
+            LinesWritten = 0;
             descender = 0;
             var firstPass = AdjustFirstLine;
         main_loop:
@@ -1332,7 +1288,7 @@ namespace iTextSharp.text.pdf
                         {
                             CompositeColumn = new ColumnText(canvas)
                             {
-                                UseAscender = (firstPass ? _useAscender : false),
+                                UseAscender = (firstPass ? UseAscender : false),
                                 Alignment = para.Alignment,
                                 Indent = para.IndentationLeft + para.FirstLineIndent,
                                 ExtraParagraphSpace = para.ExtraParagraphSpace,
@@ -1341,8 +1297,8 @@ namespace iTextSharp.text.pdf
                             };
                             CompositeColumn.SetLeading(para.Leading, para.MultipliedLeading);
                             CompositeColumn.RunDirection = runDirection;
-                            CompositeColumn.ArabicOptions = _arabicOptions;
-                            CompositeColumn.SpaceCharRatio = _spaceCharRatio;
+                            CompositeColumn.ArabicOptions = ArabicOptions;
+                            CompositeColumn.SpaceCharRatio = SpaceCharRatio;
                             CompositeColumn.AddText(para);
                             if (!firstPass)
                             {
@@ -1359,7 +1315,7 @@ namespace iTextSharp.text.pdf
                         CompositeColumn.MaxY = MaxY;
                         var keepCandidate = (para.KeepTogether && createHere && !firstPass);
                         status = CompositeColumn.Go(simulate || (keepCandidate && keep == 0));
-                        UpdateFilledWidth(CompositeColumn._filledWidth);
+                        UpdateFilledWidth(CompositeColumn.FilledWidth);
                         if ((status & NO_MORE_TEXT) == 0 && keepCandidate)
                         {
                             CompositeColumn = null;
@@ -1379,7 +1335,7 @@ namespace iTextSharp.text.pdf
                     }
                     firstPass = false;
                     yLine = CompositeColumn.yLine;
-                    _linesWritten += CompositeColumn._linesWritten;
+                    LinesWritten += CompositeColumn.LinesWritten;
                     descender = CompositeColumn.descender;
                     if ((status & NO_MORE_TEXT) != 0)
                     {
@@ -1451,7 +1407,7 @@ namespace iTextSharp.text.pdf
                             }
                             CompositeColumn = new ColumnText(canvas)
                             {
-                                UseAscender = (firstPass ? _useAscender : false),
+                                UseAscender = (firstPass ? UseAscender : false),
                                 Alignment = item.Alignment,
                                 Indent = item.IndentationLeft + listIndentation + item.FirstLineIndent,
                                 ExtraParagraphSpace = item.ExtraParagraphSpace
@@ -1460,8 +1416,8 @@ namespace iTextSharp.text.pdf
                             CompositeColumn.RightIndent = item.IndentationRight + list.IndentationRight;
                             CompositeColumn.SetLeading(item.Leading, item.MultipliedLeading);
                             CompositeColumn.RunDirection = runDirection;
-                            CompositeColumn.ArabicOptions = _arabicOptions;
-                            CompositeColumn.SpaceCharRatio = _spaceCharRatio;
+                            CompositeColumn.ArabicOptions = ArabicOptions;
+                            CompositeColumn.SpaceCharRatio = SpaceCharRatio;
                             CompositeColumn.AddText(item);
                             if (!firstPass)
                             {
@@ -1478,7 +1434,7 @@ namespace iTextSharp.text.pdf
                         CompositeColumn.MaxY = MaxY;
                         var keepCandidate = (item.KeepTogether && createHere && !firstPass);
                         status = CompositeColumn.Go(simulate || (keepCandidate && keep == 0));
-                        UpdateFilledWidth(CompositeColumn._filledWidth);
+                        UpdateFilledWidth(CompositeColumn.FilledWidth);
                         if ((status & NO_MORE_TEXT) == 0 && keepCandidate)
                         {
                             CompositeColumn = null;
@@ -1498,7 +1454,7 @@ namespace iTextSharp.text.pdf
                     }
                     firstPass = false;
                     yLine = CompositeColumn.yLine;
-                    _linesWritten += CompositeColumn._linesWritten;
+                    LinesWritten += CompositeColumn.LinesWritten;
                     descender = CompositeColumn.descender;
                     if (!float.IsNaN(CompositeColumn._firstLineY) && !CompositeColumn._firstLineYDone)
                     {

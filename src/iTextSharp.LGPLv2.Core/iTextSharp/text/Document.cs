@@ -292,8 +292,7 @@ namespace iTextSharp.text
                 throw new DocumentException("The document is not open yet; you can only add Meta information.");
             }
             var success = false;
-            var number = element as ChapterAutoNumber;
-            if (number != null)
+            if (element is ChapterAutoNumber number)
             {
                 Chapternumber = number.SetAutomaticNumber(Chapternumber);
             }

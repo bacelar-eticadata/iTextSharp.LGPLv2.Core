@@ -74,14 +74,9 @@ namespace iTextSharp.text.pdf.intern
         private readonly PdfDictionary _viewerPreferences = new PdfDictionary();
 
         /// <summary>
-        /// This value will hold the viewer preferences for the page layout and page mode.
-        /// </summary>
-        private int _pageLayoutAndMode;
-
-        /// <summary>
         /// Returns the page layout and page mode value.
         /// </summary>
-        public int PageLayoutAndMode => _pageLayoutAndMode;
+        public int PageLayoutAndMode { get; private set; }
 
         /// <summary>
         /// Sets the viewer preferences as the sum of several constants.
@@ -93,12 +88,12 @@ namespace iTextSharp.text.pdf.intern
             set
             {
                 var preferences = value;
-                _pageLayoutAndMode |= preferences;
+                PageLayoutAndMode |= preferences;
                 // for backwards compatibility, it is also possible
                 // to set the following viewer preferences with this method:
                 if ((preferences & ViewerPreferencesMask) != 0)
                 {
-                    _pageLayoutAndMode = ~ViewerPreferencesMask & _pageLayoutAndMode;
+                    PageLayoutAndMode = ~ViewerPreferencesMask & PageLayoutAndMode;
                     if ((preferences & PdfWriter.HideToolbar) != 0)
                     {
                         _viewerPreferences.Put(PdfName.Hidetoolbar, PdfBoolean.Pdftrue);
@@ -254,54 +249,54 @@ namespace iTextSharp.text.pdf.intern
         {
             // Page Layout
             catalog.Remove(PdfName.Pagelayout);
-            if ((_pageLayoutAndMode & PdfWriter.PageLayoutSinglePage) != 0)
+            if ((PageLayoutAndMode & PdfWriter.PageLayoutSinglePage) != 0)
             {
                 catalog.Put(PdfName.Pagelayout, PdfName.Singlepage);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageLayoutOneColumn) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageLayoutOneColumn) != 0)
             {
                 catalog.Put(PdfName.Pagelayout, PdfName.Onecolumn);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoColumnLeft) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageLayoutTwoColumnLeft) != 0)
             {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twocolumnleft);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoColumnRight) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageLayoutTwoColumnRight) != 0)
             {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twocolumnright);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoPageLeft) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageLayoutTwoPageLeft) != 0)
             {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twopageleft);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageLayoutTwoPageRight) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageLayoutTwoPageRight) != 0)
             {
                 catalog.Put(PdfName.Pagelayout, PdfName.Twopageright);
             }
 
             // Page Mode
             catalog.Remove(PdfName.Pagemode);
-            if ((_pageLayoutAndMode & PdfWriter.PageModeUseNone) != 0)
+            if ((PageLayoutAndMode & PdfWriter.PageModeUseNone) != 0)
             {
                 catalog.Put(PdfName.Pagemode, PdfName.Usenone);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageModeUseOutlines) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageModeUseOutlines) != 0)
             {
                 catalog.Put(PdfName.Pagemode, PdfName.Useoutlines);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageModeUseThumbs) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageModeUseThumbs) != 0)
             {
                 catalog.Put(PdfName.Pagemode, PdfName.Usethumbs);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageModeFullScreen) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageModeFullScreen) != 0)
             {
                 catalog.Put(PdfName.Pagemode, PdfName.Fullscreen);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageModeUseOC) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageModeUseOC) != 0)
             {
                 catalog.Put(PdfName.Pagemode, PdfName.Useoc);
             }
-            else if ((_pageLayoutAndMode & PdfWriter.PageModeUseAttachments) != 0)
+            else if ((PageLayoutAndMode & PdfWriter.PageModeUseAttachments) != 0)
             {
                 catalog.Put(PdfName.Pagemode, PdfName.Useattachments);
             }

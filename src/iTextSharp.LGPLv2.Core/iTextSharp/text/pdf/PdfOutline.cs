@@ -28,46 +28,6 @@ namespace iTextSharp.text.pdf
         private readonly PdfAction _action;
 
         /// <summary>
-        /// value of the <B>Destination</B>-key
-        /// </summary>
-        private readonly PdfDestination _destination;
-
-        /// <summary>
-        /// Holds value of property color.
-        /// </summary>
-        private BaseColor _color;
-
-        /// <summary>
-        /// value of the <B>Count</B>-key
-        /// </summary>
-        private int _count;
-
-        /// <summary>
-        /// Holds value of property open.
-        /// </summary>
-        private bool _open;
-
-        /// <summary>
-        /// value of the <B>Parent</B>-key
-        /// </summary>
-        private PdfOutline _parent;
-
-        /// <summary>
-        /// the  PdfIndirectReference  of this object
-        /// </summary>
-        private PdfIndirectReference _reference;
-
-        /// <summary>
-        /// Holds value of property style.
-        /// </summary>
-        private int _style;
-
-        /// <summary>
-        /// Holds value of property tag.
-        /// </summary>
-        private string _tag;
-
-        /// <summary>
         /// constructors
         /// </summary>
 
@@ -111,7 +71,7 @@ namespace iTextSharp.text.pdf
         /// <param name="open"> true  if the children are visible</param>
         public PdfOutline(PdfOutline parent, PdfDestination destination, string title, bool open)
         {
-            _destination = destination;
+            PdfDestination = destination;
             InitOutline(parent, title, open);
         }
 
@@ -196,14 +156,14 @@ namespace iTextSharp.text.pdf
             {
                 buf.Append(chunk.Content);
             }
-            _destination = destination;
+            PdfDestination = destination;
             InitOutline(parent, buf.ToString(), open);
         }
 
         internal PdfOutline(PdfWriter writer) : base(Outlines)
         {
-            _open = true;
-            _parent = null;
+            Open = true;
+            Parent = null;
             Writer = writer;
         }
 
@@ -211,18 +171,9 @@ namespace iTextSharp.text.pdf
         /// methods
         /// </summary>
 
-        public BaseColor Color
-        {
-            get => _color;
-            set => _color = value;
-        }
+        public BaseColor Color { get; set; }
 
-        public PdfIndirectReference IndirectReference
-        {
-            get => _reference;
-
-            set => _reference = value;
-        }
+        public PdfIndirectReference IndirectReference { get; set; }
 
         public ArrayList Kids
         {
@@ -235,47 +186,34 @@ namespace iTextSharp.text.pdf
         {
             get
             {
-                if (_parent == null)
+                if (Parent == null)
                 {
                     return 0;
                 }
-                return (_parent.Level + 1);
+                return (Parent.Level + 1);
             }
         }
 
         /// <summary>
         /// Setter for property open.
         /// </summary>
-        public bool Open
-        {
-            set => _open = value;
-            get => _open;
-        }
+        public bool Open { set; get; }
 
-        public PdfOutline Parent => _parent;
+        public PdfOutline Parent { get; private set; }
 
         /// <summary>
         /// Gets the destination for this outline.
         /// </summary>
         /// <returns>the destination</returns>
-        public PdfDestination PdfDestination => _destination;
+        public PdfDestination PdfDestination { get; private set; }
 
-        public int Style
-        {
-            get => _style;
-            set => _style = value;
-        }
+        public int Style { get; set; }
 
         /// <summary>
         /// Getter for property tag.
         /// </summary>
         /// <returns>Value of property tag.</returns>
-        public string Tag
-        {
-            get => _tag;
-
-            set => _tag = value;
-        }
+        public string Tag { get; set; }
 
         public string Title
         {
@@ -288,12 +226,7 @@ namespace iTextSharp.text.pdf
             set => Put(PdfName.Title, new PdfString(value, TEXT_UNICODE));
         }
 
-        internal int Count
-        {
-            get => _count;
-
-            set => _count = value;
-        }
+        internal int Count { get; set; }
 
         public void AddKid(PdfOutline outline)
         {
@@ -302,26 +235,26 @@ namespace iTextSharp.text.pdf
 
         public bool SetDestinationPage(PdfIndirectReference pageReference)
         {
-            if (_destination == null)
+            if (PdfDestination == null)
             {
                 return false;
             }
-            return _destination.AddPage(pageReference);
+            return PdfDestination.AddPage(pageReference);
         }
 
         public override void ToPdf(PdfWriter writer, Stream os)
         {
-            if (_color != null && !_color.Equals(BaseColor.Black))
+            if (Color != null && !Color.Equals(BaseColor.Black))
             {
-                Put(PdfName.C, new PdfArray(new[] { _color.R / 255f, _color.G / 255f, _color.B / 255f }));
+                Put(PdfName.C, new PdfArray(new[] { Color.R / 255f, Color.G / 255f, Color.B / 255f }));
             }
             var flag = 0;
-            if ((_style & text.Font.BOLD) != 0)
+            if ((Style & text.Font.BOLD) != 0)
             {
                 flag |= 2;
             }
 
-            if ((_style & text.Font.ITALIC) != 0)
+            if ((Style & text.Font.ITALIC) != 0)
             {
                 flag |= 1;
             }
@@ -331,22 +264,22 @@ namespace iTextSharp.text.pdf
                 Put(PdfName.F, new PdfNumber(flag));
             }
 
-            if (_parent != null)
+            if (Parent != null)
             {
-                Put(PdfName.Parent, _parent.IndirectReference);
+                Put(PdfName.Parent, Parent.IndirectReference);
             }
-            if (_destination != null && _destination.HasPage())
+            if (PdfDestination != null && PdfDestination.HasPage())
             {
-                Put(PdfName.Dest, _destination);
+                Put(PdfName.Dest, PdfDestination);
             }
             if (_action != null)
             {
                 Put(PdfName.A, _action);
             }
 
-            if (_count != 0)
+            if (Count != 0)
             {
-                Put(PdfName.Count, new PdfNumber(_count));
+                Put(PdfName.Count, new PdfNumber(Count));
             }
             base.ToPdf(writer, os);
         }
@@ -359,12 +292,12 @@ namespace iTextSharp.text.pdf
         /// <param name="open"> true  if the children are visible</param>
         internal void InitOutline(PdfOutline parent, string title, bool open)
         {
-            _open = open;
-            _parent = parent;
+            Open = open;
+            Parent = parent;
             Writer = parent.Writer;
             Put(PdfName.Title, new PdfString(title, TEXT_UNICODE));
             parent.AddKid(this);
-            if (_destination != null && !_destination.HasPage()) // bugfix Finn Bock
+            if (PdfDestination != null && !PdfDestination.HasPage()) // bugfix Finn Bock
             {
                 SetDestinationPage(Writer.CurrentPage);
             }

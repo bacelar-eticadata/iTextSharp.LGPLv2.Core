@@ -27,21 +27,6 @@ namespace iTextSharp.text.pdf
         protected Table Table;
 
         /// <summary>
-        /// this is the ArrayList with all the cells in the table.
-        /// </summary>
-        private readonly ArrayList _cells;
-
-        /// <summary>
-        /// this is the number of columns in the table.
-        /// </summary>
-        private readonly int _columns;
-
-        /// <summary>
-        /// this is the ArrayList with all the cell of the table header.
-        /// </summary>
-        private readonly ArrayList _headercells;
-
-        /// <summary>
         /// constructors
         /// </summary>
 
@@ -62,15 +47,15 @@ namespace iTextSharp.text.pdf
             // copying the attributes from class Table
             CloneNonPositionParameters(table);
 
-            _columns = table.Columns;
+            Columns = table.Columns;
             Positions = table.GetWidths(left, right - left);
 
             // initialisation of some parameters
             Left = Positions[0];
             Right = Positions[Positions.Length - 1];
 
-            _headercells = new ArrayList();
-            _cells = new ArrayList();
+            HeaderCells = new ArrayList();
+            Cells = new ArrayList();
 
             updateRowAdditionsInternal();
         }
@@ -98,15 +83,15 @@ namespace iTextSharp.text.pdf
 
         internal float Cellpadding => Table.Cellpadding;
 
-        internal ArrayList Cells => _cells;
+        internal ArrayList Cells { get; private set; }
 
         internal float Cellspacing => Table.Cellspacing;
 
-        internal int Columns => _columns;
+        internal int Columns { get; private set; }
 
-        internal ArrayList HeaderCells => _headercells;
+        internal ArrayList HeaderCells { get; private set; }
 
-        internal int Rows => _cells.Count == 0 ? 0 : ((PdfCell)_cells[_cells.Count - 1]).Rownumber + 1;
+        internal int Rows => Cells.Count == 0 ? 0 : ((PdfCell)Cells[Cells.Count - 1]).Rownumber + 1;
 
         public bool HasToFitPageCells()
         {
@@ -120,7 +105,7 @@ namespace iTextSharp.text.pdf
 
         internal bool HasHeader()
         {
-            return _headercells.Count > 0;
+            return HeaderCells.Count > 0;
         }
 
         internal void UpdateRowAdditions()
@@ -174,7 +159,7 @@ namespace iTextSharp.text.pdf
                             if (rowNumber < firstDataRow)
                             {
                                 currentCell.SetHeader();
-                                _headercells.Add(currentCell);
+                                HeaderCells.Add(currentCell);
                                 if (!Table.NotAddedYet)
                                 {
                                     continue;
@@ -221,7 +206,7 @@ namespace iTextSharp.text.pdf
                     currentCell.Bottom = offsets[rows - 1];
                 }
             }
-            _cells.AddRange(newCells);
+            Cells.AddRange(newCells);
             Bottom = offsets[rows - 1];
         }
     }

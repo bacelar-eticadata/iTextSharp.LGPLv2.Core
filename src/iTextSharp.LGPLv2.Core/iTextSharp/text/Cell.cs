@@ -111,15 +111,6 @@ namespace iTextSharp.text
         private float _leading = float.NaN;
 
         /// <summary>
-        /// If a truncation happens due to the {@link #maxLines} property, then this text will
-        /// be added to indicate a truncation has happened.
-        /// Default value is null, and means avoiding marking the truncation.
-        /// A useful value of this property could be e.g. "..."
-        /// (contributed by dperezcar@fcc.es)
-        /// </summary>
-        private string _showTruncation;
-
-        /// <summary>
         /// Constructs an empty Cell.
         /// </summary>
         /// <summary>
@@ -356,12 +347,7 @@ namespace iTextSharp.text
         /// <summary>
         /// get/set showTruncation value
         /// </summary>
-        public string ShowTruncation
-        {
-            get => _showTruncation;
-
-            set => _showTruncation = value;
-        }
+        public string ShowTruncation { get; set; }
 
         /// <summary>
         /// Gets the number of Elements in the Cell.

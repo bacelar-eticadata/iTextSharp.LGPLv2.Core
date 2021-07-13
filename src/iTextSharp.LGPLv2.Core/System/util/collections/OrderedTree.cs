@@ -10,10 +10,6 @@ namespace System.util.collections
         public static readonly OrderedTreeNode SentinelNode;
 
         /// <summary>
-        /// the number of nodes contained in the tree
-        /// </summary>
-        private int _intCount;
-        /// <summary>
         /// the node that was last found; used to optimize searches
         /// </summary>
         private OrderedTreeNode _lastNodeFound;
@@ -39,7 +35,7 @@ namespace System.util.collections
             _lastNodeFound = SentinelNode;
         }
 
-        public int Count => _intCount;
+        public int Count { get; private set; }
 
         ///<summary>
         /// Keys
@@ -114,7 +110,7 @@ namespace System.util.collections
 
                 _lastNodeFound = node;
 
-                _intCount = _intCount + 1;
+                Count = Count + 1;
             }
         }
 
@@ -185,7 +181,7 @@ namespace System.util.collections
 
             _lastNodeFound = node;
 
-            _intCount = _intCount + 1;
+            Count = Count + 1;
         }
         ///<summary>
         /// Clear
@@ -194,7 +190,7 @@ namespace System.util.collections
         public void Clear()
         {
             _rbTree = SentinelNode;
-            _intCount = 0;
+            Count = 0;
         }
 
         public bool ContainsKey(IComparable key)
@@ -418,7 +414,7 @@ namespace System.util.collections
 
             delete(node);
 
-            _intCount = _intCount - 1;
+            Count = Count - 1;
         }
 
         ///<summary>
@@ -810,15 +806,6 @@ namespace System.util.collections
         /// the treap uses the stack to order the nodes
         /// </summary>
         private readonly Stack _stack;
-        /// <summary>
-        /// the data or value associated with the key
-        /// </summary>
-        private object _objValue;
-
-        /// <summary>
-        /// key
-        /// </summary>
-        private IComparable _ordKey;
         private bool _pre = true;
         private OrderedTreeNode _tnode;
         ///<summary>
@@ -854,21 +841,11 @@ namespace System.util.collections
         ///<summary>
         ///Key
         ///</summary>
-        public IComparable Key
-        {
-            get => _ordKey;
-
-            set => _ordKey = value;
-        }
+        public IComparable Key { get; set; }
         ///<summary>
         ///Data
         ///</summary>
-        public object Value
-        {
-            get => _objValue;
-
-            set => _objValue = value;
-        }
+        public object Value { get; set; }
         public OrderedTreeEnumerator GetEnumerator()
         {
             return this;
@@ -1006,33 +983,12 @@ namespace System.util.collections
         /// tree node colors
         /// </summary>
         public const bool RED = false;
-        /// <summary>
-        /// color - used to balance the tree
-        /// </summary>
-        private bool _intColor;
 
-        /// <summary>
-        /// the data or value associated with the key
-        /// </summary>
-        private object _objData;
-
-        /// <summary>
-        /// key provided by the calling class
-        /// </summary>
-        private IComparable _ordKey;
-        /// <summary>
-        /// left node
-        /// </summary>
-        private OrderedTreeNode _rbnLeft;
         /// <summary>
         /// parent node
         /// </summary>
         private OrderedTreeNode _rbnParent;
 
-        /// <summary>
-        /// right node
-        /// </summary>
-        private OrderedTreeNode _rbnRight;
         public OrderedTreeNode()
         {
             Color = RED;
@@ -1041,41 +997,21 @@ namespace System.util.collections
         ///<summary>
         ///Color
         ///</summary>
-        public bool Color
-        {
-            get => _intColor;
-
-            set => _intColor = value;
-        }
+        public bool Color { get; set; }
 
         ///<summary>
         ///Data
         ///</summary>
-        public object Data
-        {
-            get => _objData;
-
-            set => _objData = value;
-        }
+        public object Data { get; set; }
 
         ///<summary>
         ///Key
         ///</summary>
-        public IComparable Key
-        {
-            get => _ordKey;
-
-            set => _ordKey = value;
-        }
+        public IComparable Key { get; set; }
         ///<summary>
         ///Left
         ///</summary>
-        public OrderedTreeNode Left
-        {
-            get => _rbnLeft;
-
-            set => _rbnLeft = value;
-        }
+        public OrderedTreeNode Left { get; set; }
         public OrderedTreeNode Parent
         {
             get => _rbnParent;
@@ -1086,11 +1022,6 @@ namespace System.util.collections
         ///<summary>
         /// Right
         ///</summary>
-        public OrderedTreeNode Right
-        {
-            get => _rbnRight;
-
-            set => _rbnRight = value;
-        }
+        public OrderedTreeNode Right { get; set; }
     }
 }

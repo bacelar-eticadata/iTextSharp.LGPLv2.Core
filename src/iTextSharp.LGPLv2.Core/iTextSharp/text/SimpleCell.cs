@@ -40,58 +40,9 @@ namespace iTextSharp.text
         protected bool useDescender;
 
         /// <summary>
-        /// the content of the Cell.
-        /// </summary>
-        private readonly ArrayList _content = new ArrayList();
-        /// <summary>
-        /// indicates if these are the attributes of a single Cell (false) or a group of Cells (true).
-        /// </summary>
-        private bool _cellgroup;
-
-        /// <summary>
         /// the colspan of a Cell
         /// </summary>
         private int _colspan = 1;
-
-        /// <summary>
-        /// horizontal alignment inside the Cell.
-        /// </summary>
-        private int _horizontalAlignment = ALIGN_UNDEFINED;
-
-        /// <summary>
-        /// an extra padding variable
-        /// </summary>
-        private float _paddingBottom = float.NaN;
-
-        /// <summary>
-        /// an extra padding variable
-        /// </summary>
-        private float _paddingLeft = float.NaN;
-
-        /// <summary>
-        /// an extra padding variable
-        /// </summary>
-        private float _paddingRight = float.NaN;
-
-        /// <summary>
-        /// an extra padding variable
-        /// </summary>
-        private float _paddingTop = float.NaN;
-
-        /// <summary>
-        /// an extra spacing variable
-        /// </summary>
-        private float _spacingBottom = float.NaN;
-
-        /// <summary>
-        /// an extra spacing variable
-        /// </summary>
-        private float _spacingLeft = float.NaN;
-
-        /// <summary>
-        /// an extra spacing variable
-        /// </summary>
-        private float _spacingRight = float.NaN;
 
         /// <summary>
         /// an extra spacing variable
@@ -99,37 +50,20 @@ namespace iTextSharp.text
         private float _spacingTop = float.NaN;
 
         /// <summary>
-        /// vertical alignment inside the Cell.
-        /// </summary>
-        private int _verticalAlignment = ALIGN_UNDEFINED;
-
-        /// <summary>
-        /// the width of the Cell.
-        /// </summary>
-        private float _width;
-        /// <summary>
-        /// the widthpercentage of the Cell.
-        /// </summary>
-        private float _widthpercentage;
-        /// <summary>
         /// A CellAttributes object is always constructed without any dimensions.
         /// Dimensions are defined after creation.
         /// </summary>
         /// <param name="row">only true if the CellAttributes object represents a row.</param>
         public SimpleCell(bool row) : base(0f, 0f, 0f, 0f)
         {
-            _cellgroup = row;
+            Cellgroup = row;
             Border = BOX;
         }
 
         /// <summary>
         /// </summary>
         /// <returns>Returns the cellgroup.</returns>
-        public bool Cellgroup
-        {
-            get => _cellgroup;
-            set => _cellgroup = value;
-        }
+        public bool Cellgroup { get; set; }
 
         /// <summary>
         /// </summary>
@@ -149,11 +83,7 @@ namespace iTextSharp.text
         /// <summary>
         /// </summary>
         /// <returns>Returns the horizontal alignment.</returns>
-        public int HorizontalAlignment
-        {
-            get => _horizontalAlignment;
-            set => _horizontalAlignment = value;
-        }
+        public int HorizontalAlignment { get; set; } = ALIGN_UNDEFINED;
 
         /// <summary>
         /// Sets the padding parameters if they are undefined.
@@ -162,19 +92,19 @@ namespace iTextSharp.text
         {
             set
             {
-                if (float.IsNaN(_paddingRight))
+                if (float.IsNaN(PaddingRight))
                 {
                     PaddingRight = value;
                 }
-                if (float.IsNaN(_paddingLeft))
+                if (float.IsNaN(PaddingLeft))
                 {
                     PaddingLeft = value;
                 }
-                if (float.IsNaN(_paddingBottom))
+                if (float.IsNaN(PaddingBottom))
                 {
                     PaddingBottom = value;
                 }
-                if (float.IsNaN(_paddingTop))
+                if (float.IsNaN(PaddingTop))
                 {
                     PaddingTop = value;
                 }
@@ -183,29 +113,13 @@ namespace iTextSharp.text
 
         /// <summary>
         /// </summary>
-        public float PaddingBottom
-        {
-            get => _paddingBottom;
-            set => _paddingBottom = value;
-        }
+        public float PaddingBottom { get; set; } = float.NaN;
 
-        public float PaddingLeft
-        {
-            get => _paddingLeft;
-            set => _paddingLeft = value;
-        }
+        public float PaddingLeft { get; set; } = float.NaN;
 
-        public float PaddingRight
-        {
-            get => _paddingRight;
-            set => _paddingRight = value;
-        }
+        public float PaddingRight { get; set; } = float.NaN;
 
-        public float PaddingTop
-        {
-            get => _paddingTop;
-            set => _paddingTop = value;
-        }
+        public float PaddingTop { get; set; } = float.NaN;
 
         /// <summary>
         /// </summary>
@@ -214,31 +128,19 @@ namespace iTextSharp.text
         {
             set
             {
-                _spacingLeft = value;
-                _spacingRight = value;
+                SpacingLeft = value;
+                SpacingRight = value;
                 _spacingTop = value;
-                _spacingBottom = value;
+                SpacingBottom = value;
             }
 
         }
 
-        public float SpacingBottom
-        {
-            get => _spacingBottom;
-            set => _spacingBottom = value;
-        }
+        public float SpacingBottom { get; set; } = float.NaN;
 
-        public float SpacingLeft
-        {
-            get => _spacingLeft;
-            set => _spacingLeft = value;
-        }
+        public float SpacingLeft { get; set; } = float.NaN;
 
-        public float SpacingRight
-        {
-            get => _spacingRight;
-            set => _spacingRight = value;
-        }
+        public float SpacingRight { get; set; } = float.NaN;
 
         public float SpacingTop
         {
@@ -272,34 +174,22 @@ namespace iTextSharp.text
             set => useDescender = value;
         }
 
-        public int VerticalAlignment
-        {
-            get => _verticalAlignment;
-            set => _verticalAlignment = value;
-        }
+        public int VerticalAlignment { get; set; } = ALIGN_UNDEFINED;
 
         /// <summary>
         /// </summary>
         /// <returns>Returns the width.</returns>
-        public new float Width
-        {
-            get => _width;
-            set => _width = value;
-        }
+        public new float Width { get; set; }
 
         /// <summary>
         /// </summary>
         /// <returns>Returns the widthpercentage.</returns>
-        public float Widthpercentage
-        {
-            get => _widthpercentage;
-            set => _widthpercentage = value;
-        }
+        public float Widthpercentage { get; set; }
 
         /// <summary>
         /// </summary>
         /// <returns>Returns the content.</returns>
-        internal ArrayList Content => _content;
+        internal ArrayList Content { get; } = new ArrayList();
 
         /// <summary>
         /// @see com.lowagie.text.TextElementArray#add(java.lang.Object)
@@ -324,7 +214,7 @@ namespace iTextSharp.text
         /// <param name="element"></param>
         public void AddElement(IElement element)
         {
-            if (_cellgroup)
+            if (Cellgroup)
             {
                 if (element is SimpleCell)
                 {
@@ -332,7 +222,7 @@ namespace iTextSharp.text
                     {
                         throw new BadElementException("You can't add one row to another row.");
                     }
-                    _content.Add(element);
+                    Content.Add(element);
                     return;
                 }
                 else
@@ -352,7 +242,7 @@ namespace iTextSharp.text
                     || element.Type == IMGRAW
                     || element.Type == IMGTEMPLATE)
             {
-                _content.Add(element);
+                Content.Add(element);
             }
             else
             {
@@ -365,13 +255,13 @@ namespace iTextSharp.text
         /// </summary>
         public void CellLayout(PdfPCell cell, Rectangle position, PdfContentByte[] canvases)
         {
-            var spLeft = _spacingLeft;
+            var spLeft = SpacingLeft;
             if (float.IsNaN(spLeft))
             {
                 spLeft = 0f;
             }
 
-            var spRight = _spacingRight;
+            var spRight = SpacingRight;
             if (float.IsNaN(spRight))
             {
                 spRight = 0f;
@@ -383,7 +273,7 @@ namespace iTextSharp.text
                 spTop = 0f;
             }
 
-            var spBottom = _spacingBottom;
+            var spBottom = SpacingBottom;
             if (float.IsNaN(spBottom))
             {
                 spBottom = 0f;
@@ -408,12 +298,12 @@ namespace iTextSharp.text
             cell.CloneNonPositionParameters(rowAttributes);
             cell.SoftCloneNonPositionParameters(this);
             cell.Colspan = _colspan;
-            cell.HorizontalAlignment = _horizontalAlignment;
-            cell.VerticalAlignment = _verticalAlignment;
+            cell.HorizontalAlignment = HorizontalAlignment;
+            cell.VerticalAlignment = VerticalAlignment;
             cell.UseAscender = useAscender;
             cell.UseBorderPadding = useBorderPadding;
             cell.UseDescender = useDescender;
-            foreach (IElement element in _content)
+            foreach (IElement element in Content)
             {
                 cell.AddElement(element);
             }
@@ -433,28 +323,28 @@ namespace iTextSharp.text
             };
             var tmp = new SimpleCell(CELL)
             {
-                SpacingLeft = _spacingLeft,
-                SpacingRight = _spacingRight,
+                SpacingLeft = SpacingLeft,
+                SpacingRight = SpacingRight,
                 SpacingTop = _spacingTop,
-                SpacingBottom = _spacingBottom
+                SpacingBottom = SpacingBottom
             };
             tmp.CloneNonPositionParameters(rowAttributes);
             tmp.SoftCloneNonPositionParameters(this);
             cell.CellEvent = tmp;
-            cell.HorizontalAlignment = rowAttributes._horizontalAlignment;
-            cell.VerticalAlignment = rowAttributes._verticalAlignment;
+            cell.HorizontalAlignment = rowAttributes.HorizontalAlignment;
+            cell.VerticalAlignment = rowAttributes.VerticalAlignment;
             cell.UseAscender = rowAttributes.useAscender;
             cell.UseBorderPadding = rowAttributes.useBorderPadding;
             cell.UseDescender = rowAttributes.useDescender;
             cell.Colspan = _colspan;
-            if (_horizontalAlignment != ALIGN_UNDEFINED)
+            if (HorizontalAlignment != ALIGN_UNDEFINED)
             {
-                cell.HorizontalAlignment = _horizontalAlignment;
+                cell.HorizontalAlignment = HorizontalAlignment;
             }
 
-            if (_verticalAlignment != ALIGN_UNDEFINED)
+            if (VerticalAlignment != ALIGN_UNDEFINED)
             {
-                cell.VerticalAlignment = _verticalAlignment;
+                cell.VerticalAlignment = VerticalAlignment;
             }
 
             if (useAscender)
@@ -473,13 +363,13 @@ namespace iTextSharp.text
             }
 
             float p;
-            var spLeft = _spacingLeft;
+            var spLeft = SpacingLeft;
             if (float.IsNaN(spLeft))
             {
                 spLeft = 0f;
             }
 
-            var spRight = _spacingRight;
+            var spRight = SpacingRight;
             if (float.IsNaN(spRight))
             {
                 spRight = 0f;
@@ -491,41 +381,41 @@ namespace iTextSharp.text
                 spTop = 0f;
             }
 
-            var spBottom = _spacingBottom;
+            var spBottom = SpacingBottom;
             if (float.IsNaN(spBottom))
             {
                 spBottom = 0f;
             }
 
-            p = _paddingLeft;
+            p = PaddingLeft;
             if (float.IsNaN(p))
             {
                 p = 0f;
             }
 
             cell.PaddingLeft = p + spLeft;
-            p = _paddingRight;
+            p = PaddingRight;
             if (float.IsNaN(p))
             {
                 p = 0f;
             }
 
             cell.PaddingRight = p + spRight;
-            p = _paddingTop;
+            p = PaddingTop;
             if (float.IsNaN(p))
             {
                 p = 0f;
             }
 
             cell.PaddingTop = p + spTop;
-            p = _paddingBottom;
+            p = PaddingBottom;
             if (float.IsNaN(p))
             {
                 p = 0f;
             }
 
             cell.PaddingBottom = p + spBottom;
-            foreach (IElement element in _content)
+            foreach (IElement element in Content)
             {
                 cell.AddElement(element);
             }

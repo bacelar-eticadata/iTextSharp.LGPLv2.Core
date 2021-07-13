@@ -20,11 +20,6 @@ namespace iTextSharp.text.pdf
         private IPdfPCellEvent _cellEvent;
 
         /// <summary>
-        /// Holds value of property colspan.
-        /// </summary>
-        private int _colspan = 1;
-
-        /// <summary>
         /// Holds value of property fixedHeight.
         /// </summary>
         private float _fixedHeight;
@@ -40,56 +35,15 @@ namespace iTextSharp.text.pdf
         private float _minimumHeight;
 
         /// <summary>
-        /// Holds value of property noWrap.
-        /// </summary>
-        private bool _noWrap;
-
-        /// <summary>
-        /// Holds value of property paddingBottom.
-        /// </summary>
-        private float _paddingBottom = 2;
-
-        /// <summary>
-        /// Holds value of property paddingLeft.
-        /// </summary>
-        private float _paddingLeft = 2;
-
-        /// <summary>
-        /// Holds value of property paddingLeft.
-        /// </summary>
-        private float _paddingRight = 2;
-
-        /// <summary>
-        /// Holds value of property paddingTop.
-        /// </summary>
-        private float _paddingTop = 2;
-
-        /// <summary>
         /// The rotation of the cell. Possible values are
         /// 0, 90, 180 and 270.
         /// </summary>
         private int _rotation;
 
         /// <summary>
-        /// Holds value of property rowspan.
-        /// @since    2.1.6
-        /// </summary>
-        private int _rowspan = 1;
-
-        /// <summary>
         /// Holds value of property table.
         /// </summary>
         private PdfPTable _table;
-
-        /// <summary>
-        /// Increases padding to include border if true
-        /// </summary>
-        private bool _useBorderPadding;
-
-        /// <summary>
-        /// Holds value of property useDescender.
-        /// </summary>
-        private bool _useDescender;
 
         /// <summary>
         /// Holds value of property verticalAlignment.
@@ -183,15 +137,15 @@ namespace iTextSharp.text.pdf
             {
                 CloneNonPositionParameters(style);
                 _verticalAlignment = style._verticalAlignment;
-                _paddingLeft = style._paddingLeft;
-                _paddingRight = style._paddingRight;
-                _paddingTop = style._paddingTop;
-                _paddingBottom = style._paddingBottom;
-                _colspan = style._colspan;
-                _rowspan = style._rowspan;
+                PaddingLeft = style.PaddingLeft;
+                PaddingRight = style.PaddingRight;
+                PaddingTop = style.PaddingTop;
+                PaddingBottom = style.PaddingBottom;
+                Colspan = style.Colspan;
+                Rowspan = style.Rowspan;
                 _cellEvent = style._cellEvent;
-                _useDescender = style._useDescender;
-                _useBorderPadding = style._useBorderPadding;
+                UseDescender = style.UseDescender;
+                UseBorderPadding = style.UseBorderPadding;
                 _rotation = style._rotation;
             }
             else
@@ -208,16 +162,16 @@ namespace iTextSharp.text.pdf
         {
             CloneNonPositionParameters(cell);
             _verticalAlignment = cell._verticalAlignment;
-            _paddingLeft = cell._paddingLeft;
-            _paddingRight = cell._paddingRight;
-            _paddingTop = cell._paddingTop;
-            _paddingBottom = cell._paddingBottom;
+            PaddingLeft = cell.PaddingLeft;
+            PaddingRight = cell.PaddingRight;
+            PaddingTop = cell.PaddingTop;
+            PaddingBottom = cell.PaddingBottom;
             phrase = cell.phrase;
             _fixedHeight = cell._fixedHeight;
             _minimumHeight = cell._minimumHeight;
-            _noWrap = cell._noWrap;
-            _colspan = cell._colspan;
-            _rowspan = cell._rowspan;
+            NoWrap = cell.NoWrap;
+            Colspan = cell.Colspan;
+            Rowspan = cell.Rowspan;
             if (cell._table != null)
             {
                 _table = new PdfPTable(cell._table);
@@ -225,9 +179,9 @@ namespace iTextSharp.text.pdf
 
             _image = Image.GetInstance(cell._image);
             _cellEvent = cell._cellEvent;
-            _useDescender = cell._useDescender;
+            UseDescender = cell.UseDescender;
             Column = ColumnText.Duplicate(cell.Column);
-            _useBorderPadding = cell._useBorderPadding;
+            UseBorderPadding = cell.UseBorderPadding;
             _rotation = cell._rotation;
         }
 
@@ -276,11 +230,7 @@ namespace iTextSharp.text.pdf
         /// Getter for property colspan.
         /// </summary>
         /// <returns>Value of property colspan.</returns>
-        public int Colspan
-        {
-            get => _colspan;
-            set => _colspan = value;
-        }
+        public int Colspan { get; set; } = 1;
 
         /// <summary>
         /// Gets the ColumnText with the content of the cell.
@@ -307,9 +257,9 @@ namespace iTextSharp.text.pdf
                 if (UseBorderPadding)
                 {
                     var localBorder = BorderWidthBottom / (UseVariableBorders ? 1f : 2f);
-                    return _paddingBottom + localBorder;
+                    return PaddingBottom + localBorder;
                 }
-                return _paddingBottom;
+                return PaddingBottom;
             }
         }
 
@@ -325,9 +275,9 @@ namespace iTextSharp.text.pdf
                 if (UseBorderPadding)
                 {
                     var localBorder = BorderWidthLeft / (UseVariableBorders ? 1f : 2f);
-                    return _paddingLeft + localBorder;
+                    return PaddingLeft + localBorder;
                 }
-                return _paddingLeft;
+                return PaddingLeft;
             }
         }
 
@@ -343,9 +293,9 @@ namespace iTextSharp.text.pdf
                 if (UseBorderPadding)
                 {
                     var localBorder = BorderWidthRight / (UseVariableBorders ? 1f : 2f);
-                    return _paddingRight + localBorder;
+                    return PaddingRight + localBorder;
                 }
-                return _paddingRight;
+                return PaddingRight;
             }
         }
 
@@ -361,9 +311,9 @@ namespace iTextSharp.text.pdf
                 if (UseBorderPadding)
                 {
                     var localBorder = BorderWidthTop / (UseVariableBorders ? 1f : 2f);
-                    return _paddingTop + localBorder;
+                    return PaddingTop + localBorder;
                 }
-                return _paddingTop;
+                return PaddingTop;
             }
         }
 
@@ -465,11 +415,7 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Setter for property noWrap.
         /// </summary>
-        public bool NoWrap
-        {
-            set => _noWrap = value;
-            get => _noWrap;
-        }
+        public bool NoWrap { set; get; }
 
         /// <summary>
         /// Sets the padding of the contents in the cell (space between content and border).
@@ -478,10 +424,10 @@ namespace iTextSharp.text.pdf
         {
             set
             {
-                _paddingBottom = value;
-                _paddingTop = value;
-                _paddingLeft = value;
-                _paddingRight = value;
+                PaddingBottom = value;
+                PaddingTop = value;
+                PaddingLeft = value;
+                PaddingRight = value;
             }
         }
 
@@ -489,40 +435,24 @@ namespace iTextSharp.text.pdf
         /// Getter for property paddingBottom.
         /// </summary>
         /// <returns>Value of property paddingBottom.</returns>
-        public float PaddingBottom
-        {
-            get => _paddingBottom;
-            set => _paddingBottom = value;
-        }
+        public float PaddingBottom { get; set; } = 2;
 
         /// <summary>
         /// </summary>
         /// <returns>Value of property paddingLeft.</returns>
-        public float PaddingLeft
-        {
-            get => _paddingLeft;
-            set => _paddingLeft = value;
-        }
+        public float PaddingLeft { get; set; } = 2;
 
         /// <summary>
         /// Getter for property paddingRight.
         /// </summary>
         /// <returns>Value of property paddingRight.</returns>
-        public float PaddingRight
-        {
-            get => _paddingRight;
-            set => _paddingRight = value;
-        }
+        public float PaddingRight { get; set; } = 2;
 
         /// <summary>
         /// Getter for property paddingTop.
         /// </summary>
         /// <returns>Value of property paddingTop.</returns>
-        public float PaddingTop
-        {
-            get => _paddingTop;
-            set => _paddingTop = value;
-        }
+        public float PaddingTop { get; set; } = 2;
 
         /// <summary>
         /// Gets the  Phrase  from this cell.
@@ -577,11 +507,7 @@ namespace iTextSharp.text.pdf
         /// Getter for property rowspan.
         /// </summary>
         /// <returns>Value of property rowspan.</returns>
-        public int Rowspan
-        {
-            get => _rowspan;
-            set => _rowspan = value;
-        }
+        public int Rowspan { get; set; } = 1;
 
         /// <summary>
         /// Gets the run direction of the text content in the cell
@@ -638,21 +564,13 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Adjusts effective padding to include border widths.
         /// </summary>
-        public bool UseBorderPadding
-        {
-            set => _useBorderPadding = value;
-            get => _useBorderPadding;
-        }
+        public bool UseBorderPadding { set; get; }
 
         /// <summary>
         /// Getter for property useDescender.
         /// </summary>
         /// <returns>Value of property useDescender.</returns>
-        public bool UseDescender
-        {
-            get => _useDescender;
-            set => _useDescender = value;
-        }
+        public bool UseDescender { get; set; }
 
         /// <summary>
         /// Gets the vertical alignment for the cell.

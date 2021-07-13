@@ -24,15 +24,6 @@ namespace iTextSharp.text
         /// <summary> Does the page contain a pagenumber? </summary>
         private readonly bool _numbered;
 
-        /// <summary> This is the Phrase that comes after the pagenumber. </summary>
-        private Phrase _after;
-
-        /// <summary> This is alignment of the header/footer. </summary>
-        private int _alignment;
-
-        /// <summary> This is the Phrase that comes before the pagenumber. </summary>
-        private Phrase _before;
-
         /// <summary> This is number of the page. </summary>
         private int _pageN;
         /// <summary>
@@ -50,8 +41,8 @@ namespace iTextSharp.text
             BorderWidth = 1;
 
             _numbered = true;
-            _before = before;
-            _after = after;
+            Before = before;
+            After = after;
         }
 
         /// <summary>
@@ -65,7 +56,7 @@ namespace iTextSharp.text
             BorderWidth = 1;
 
             _numbered = numbered;
-            _before = before;
+            Before = before;
         }
 
         public HeaderFooter(Properties attributes) : base(0, 0, 0, 0)
@@ -98,33 +89,19 @@ namespace iTextSharp.text
         /// Get/set the part that comes after the pageNumber.
         /// </summary>
         /// <value>a Phrase</value>
-        public Phrase After
-        {
-            get => _after;
-
-            set => _after = value;
-        }
+        public Phrase After { get; set; }
 
         /// <summary>
         /// Sets the Element.
         /// </summary>
         /// <value>the new alignment</value>
-        public int Alignment
-        {
-            set => _alignment = value;
-            get => _alignment;
-        }
+        public int Alignment { set; get; }
 
         /// <summary>
         /// Get/set the part that comes before the pageNumber.
         /// </summary>
         /// <value>a Phrase</value>
-        public Phrase Before
-        {
-            get => _before;
-
-            set => _before = value;
-        }
+        public Phrase Before { get; set; }
 
         /// <summary>
         /// Sets the page number.
@@ -143,19 +120,19 @@ namespace iTextSharp.text
         {
             get
             {
-                var paragraph = new Paragraph(_before.Leading)
+                var paragraph = new Paragraph(Before.Leading)
                 {
-                    _before
+                    Before
                 };
                 if (_numbered)
                 {
-                    paragraph.AddSpecial(new Chunk(_pageN.ToString(), _before.Font));
+                    paragraph.AddSpecial(new Chunk(_pageN.ToString(), Before.Font));
                 }
-                if (_after != null)
+                if (After != null)
                 {
-                    paragraph.AddSpecial(_after);
+                    paragraph.AddSpecial(After);
                 }
-                paragraph.Alignment = _alignment;
+                paragraph.Alignment = Alignment;
                 return paragraph;
             }
         }
@@ -176,20 +153,20 @@ namespace iTextSharp.text
         {
             if (Util.EqualsIgnoreCase(alignment, ElementTags.ALIGN_CENTER))
             {
-                _alignment = ALIGN_CENTER;
+                Alignment = ALIGN_CENTER;
                 return;
             }
             if (Util.EqualsIgnoreCase(alignment, ElementTags.ALIGN_RIGHT))
             {
-                _alignment = ALIGN_RIGHT;
+                Alignment = ALIGN_RIGHT;
                 return;
             }
             if (Util.EqualsIgnoreCase(alignment, ElementTags.ALIGN_JUSTIFIED))
             {
-                _alignment = ALIGN_JUSTIFIED;
+                Alignment = ALIGN_JUSTIFIED;
                 return;
             }
-            _alignment = ALIGN_LEFT;
+            Alignment = ALIGN_LEFT;
         }
 
     }

@@ -14,30 +14,14 @@ namespace iTextSharp.text.pdf
         /// encoding should be included in the document.
         /// </summary>
         protected bool subset = true;
-
-        /// <summary>
-        /// The font
-        /// </summary>
-        private readonly BaseFont _baseFont;
-
         private readonly CjkFont _cjkFont;
 
         private readonly IntHashtable _cjkTag;
 
         /// <summary>
-        /// The font name that appears in the document body stream
-        /// </summary>
-        private readonly PdfName _fontName;
-
-        /// <summary>
         /// The font type
         /// </summary>
         private readonly int _fontType;
-
-        /// <summary>
-        /// The indirect reference to this font
-        /// </summary>
-        private readonly PdfIndirectReference _indirectReference;
 
         /// <summary>
         /// The map used with double byte encodings. The key is Int(glyph) and the
@@ -70,9 +54,9 @@ namespace iTextSharp.text.pdf
         /// <param name="baseFont">the  BaseFont </param>
         internal FontDetails(PdfName fontName, PdfIndirectReference indirectReference, BaseFont baseFont)
         {
-            _fontName = fontName;
-            _indirectReference = indirectReference;
-            _baseFont = baseFont;
+            FontName = fontName;
+            IndirectReference = indirectReference;
+            BaseFont = baseFont;
             _fontType = baseFont.FontType;
             switch (_fontType)
             {
@@ -109,19 +93,19 @@ namespace iTextSharp.text.pdf
         /// Gets the  BaseFont  of this font.
         /// </summary>
         /// <returns>the  BaseFont  of this font</returns>
-        internal BaseFont BaseFont => _baseFont;
+        internal BaseFont BaseFont { get; private set; }
 
         /// <summary>
         /// Gets the font name as it appears in the document body.
         /// </summary>
         /// <returns>the font name</returns>
-        internal PdfName FontName => _fontName;
+        internal PdfName FontName { get; private set; }
 
         /// <summary>
         /// Gets the indirect reference to this font.
         /// </summary>
         /// <returns>the indirect reference to this font</returns>
-        internal PdfIndirectReference IndirectReference => _indirectReference;
+        internal PdfIndirectReference IndirectReference { get; private set; }
 
         /// <summary>
         /// Converts the text into bytes to be placed in the document.
@@ -136,12 +120,12 @@ namespace iTextSharp.text.pdf
             switch (_fontType)
             {
                 case BaseFont.FONT_TYPE_T3:
-                    return _baseFont.ConvertToBytes(text);
+                    return BaseFont.ConvertToBytes(text);
 
                 case BaseFont.FONT_TYPE_T1:
                 case BaseFont.FONT_TYPE_TT:
                     {
-                        b = _baseFont.ConvertToBytes(text);
+                        b = BaseFont.ConvertToBytes(text);
                         var len = b.Length;
                         for (var k = 0; k < len; ++k)
                         {
@@ -158,12 +142,12 @@ namespace iTextSharp.text.pdf
                             _cjkTag[_cjkFont.GetCidCode(text[k])] = 0;
                         }
 
-                        b = _baseFont.ConvertToBytes(text);
+                        b = BaseFont.ConvertToBytes(text);
                         break;
                     }
                 case BaseFont.FONT_TYPE_DOCUMENT:
                     {
-                        b = _baseFont.ConvertToBytes(text);
+                        b = BaseFont.ConvertToBytes(text);
                         break;
                     }
                 case BaseFont.FONT_TYPE_TTUNI:
@@ -235,7 +219,7 @@ namespace iTextSharp.text.pdf
             switch (_fontType)
             {
                 case BaseFont.FONT_TYPE_T3:
-                    _baseFont.WriteFont(writer, _indirectReference, null);
+                    BaseFont.WriteFont(writer, IndirectReference, null);
                     break;
 
                 case BaseFont.FONT_TYPE_T1:
@@ -262,15 +246,15 @@ namespace iTextSharp.text.pdf
                             firstChar = 255;
                             lastChar = 255;
                         }
-                        _baseFont.WriteFont(writer, _indirectReference, new object[] { firstChar, lastChar, _shortTag, subset });
+                        BaseFont.WriteFont(writer, IndirectReference, new object[] { firstChar, lastChar, _shortTag, subset });
                         break;
                     }
                 case BaseFont.FONT_TYPE_CJK:
-                    _baseFont.WriteFont(writer, _indirectReference, new object[] { _cjkTag });
+                    BaseFont.WriteFont(writer, IndirectReference, new object[] { _cjkTag });
                     break;
 
                 case BaseFont.FONT_TYPE_TTUNI:
-                    _baseFont.WriteFont(writer, _indirectReference, new object[] { _longTag, subset });
+                    BaseFont.WriteFont(writer, IndirectReference, new object[] { _longTag, subset });
                     break;
             }
         }

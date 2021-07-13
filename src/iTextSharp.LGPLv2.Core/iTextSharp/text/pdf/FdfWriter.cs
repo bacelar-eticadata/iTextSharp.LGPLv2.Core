@@ -14,19 +14,10 @@ namespace iTextSharp.text.pdf
         private readonly Hashtable _fields = new Hashtable();
 
         /// <summary>
-        /// The PDF file associated with the FDF.
-        /// </summary>
-        private string _file;
-
-        /// <summary>
         /// Gets the PDF file name associated with the FDF.
         /// </summary>
         /// <returns>the PDF file name associated with the FDF</returns>
-        public string File
-        {
-            get => _file;
-            set => _file = value;
-        }
+        public string File { get; set; }
 
         /// <summary>
         /// Gets the field value.
@@ -377,9 +368,9 @@ namespace iTextSharp.text.pdf
             {
                 var dic = new PdfDictionary();
                 dic.Put(PdfName.Fields, Calculate(_fdf._fields));
-                if (_fdf._file != null)
+                if (_fdf.File != null)
                 {
-                    dic.Put(PdfName.F, new PdfString(_fdf._file, PdfObject.TEXT_UNICODE));
+                    dic.Put(PdfName.F, new PdfString(_fdf.File, PdfObject.TEXT_UNICODE));
                 }
 
                 var fd = new PdfDictionary();

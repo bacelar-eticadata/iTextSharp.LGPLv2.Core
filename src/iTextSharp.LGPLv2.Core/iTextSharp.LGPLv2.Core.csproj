@@ -25,8 +25,8 @@ iTextSharp.LGPLv2.Core is an unofficial port of the last LGPL version of the iTe
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <Version>1.8.0.1</Version>
-    <AssemblyVersion>1.8.0.1</AssemblyVersion>
+    <Version>1.8.0.2</Version>
+    <AssemblyVersion>1.8.0.2</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="iTextSharp\text\pdf\fonts\*.*;iTextSharp\text\pdf\fonts\cmaps\*.*" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
@@ -50,7 +50,7 @@ iTextSharp.LGPLv2.Core is an unofficial port of the last LGPL version of the iTe
     <DefineConstants>DEBUG;NETSTANDARD2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.9" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
   </ItemGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'net48'">
     <DefineConstants>DEBUG;NET40</DefineConstants>

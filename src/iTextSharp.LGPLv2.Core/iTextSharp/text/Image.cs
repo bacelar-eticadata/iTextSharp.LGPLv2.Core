@@ -238,20 +238,6 @@ namespace iTextSharp.text
         private float _initialRotation;
 
         /// <summary>
-        /// Holds value of property smask.
-        /// </summary>
-        private bool _smask;
-
-        /// <summary>
-        /// Holds value of property widthPercentage.
-        /// </summary>
-        private float _widthPercentage = 100;
-
-        /// <summary>
-        /// Holds value of property XYRatio.
-        /// </summary>
-        private float _xyRatio;
-        /// <summary>
         /// constructors
         /// </summary>
 
@@ -301,13 +287,13 @@ namespace iTextSharp.text
             Profile = image.Profile;
             deflated = image.deflated;
             Additional = image.Additional;
-            _smask = image._smask;
+            Smask = image.Smask;
             XyRatio = image.XyRatio;
             originalData = image.originalData;
             originalType = image.originalType;
             spacingAfter = image.spacingAfter;
             spacingBefore = image.spacingBefore;
-            _widthPercentage = image._widthPercentage;
+            WidthPercentage = image.WidthPercentage;
             layer = image.layer;
             _initialRotation = image._initialRotation;
             DirectReference = image.DirectReference;
@@ -439,7 +425,7 @@ namespace iTextSharp.text
                 }
 
                 imageMask = value;
-                _smask = (value.bpc > 1 && value.bpc <= 8);
+                Smask = (value.bpc > 1 && value.bpc <= 8);
             }
         }
 
@@ -624,11 +610,7 @@ namespace iTextSharp.text
         /// <value>a value</value>
         public float ScaledWidth => scaledWidth;
 
-        public bool Smask
-        {
-            get => _smask;
-            set => _smask = value;
-        }
+        public bool Smask { get; set; }
 
         public float SpacingAfter
         {
@@ -691,17 +673,9 @@ namespace iTextSharp.text
             set => url = value;
         }
 
-        public float WidthPercentage
-        {
-            get => _widthPercentage;
-            set => _widthPercentage = value;
-        }
+        public float WidthPercentage { get; set; } = 100;
 
-        public float XyRatio
-        {
-            get => _xyRatio;
-            set => _xyRatio = value;
-        }
+        public float XyRatio { get; set; }
 
         /// <summary>
         /// Gets an instance of an Image.

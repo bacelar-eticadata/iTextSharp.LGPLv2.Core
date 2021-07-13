@@ -14,10 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfNumber : PdfObject
     {
-        /// <summary>
-        /// actual value of this  PdfNumber , represented as a  double
-        /// </summary>
-        private double _value;
 
         /// <summary>
         /// constructors
@@ -32,7 +28,7 @@ namespace iTextSharp.text.pdf
         {
             try
             {
-                _value = double.Parse(content.Trim(), System.Globalization.NumberFormatInfo.InvariantInfo);
+                DoubleValue = double.Parse(content.Trim(), System.Globalization.NumberFormatInfo.InvariantInfo);
                 Content = content;
             }
             catch (Exception nfe)
@@ -48,7 +44,7 @@ namespace iTextSharp.text.pdf
 
         public PdfNumber(int value) : base(NUMBER)
         {
-            _value = value;
+            DoubleValue = value;
             Content = value.ToString();
         }
 
@@ -59,7 +55,7 @@ namespace iTextSharp.text.pdf
 
         public PdfNumber(double value) : base(NUMBER)
         {
-            _value = value;
+            DoubleValue = value;
             Content = ByteBuffer.FormatDouble(value);
         }
 
@@ -81,15 +77,15 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns>a value</returns>
 
-        public double DoubleValue => _value;
+        public double DoubleValue { get; private set; }
 
         /// <summary>
         /// Returns the primitive  double  value of this object.
         /// </summary>
         /// <returns>a value</returns>
-        public float FloatValue => (float)_value;
+        public float FloatValue => (float)DoubleValue;
 
-        public int IntValue => (int)_value;
+        public int IntValue => (int)DoubleValue;
 
         /// <summary>
         /// other methods
@@ -101,8 +97,8 @@ namespace iTextSharp.text.pdf
 
         public void Increment()
         {
-            _value += 1.0;
-            Content = ByteBuffer.FormatDouble(_value);
+            DoubleValue += 1.0;
+            Content = ByteBuffer.FormatDouble(DoubleValue);
         }
     }
 }

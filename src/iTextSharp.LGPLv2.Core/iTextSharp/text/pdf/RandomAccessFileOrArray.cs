@@ -19,11 +19,6 @@ namespace iTextSharp.text.pdf
         internal bool IsBack;
         internal FileStream Rf;
 
-        /// <summary>
-        /// Holds value of property startOffset.
-        /// </summary>
-        private int _startOffset;
-
         public RandomAccessFileOrArray(string filename) : this(filename, false)
         {
         }
@@ -136,7 +131,7 @@ namespace iTextSharp.text.pdf
         {
             Filename = file.Filename;
             ArrayIn = file.ArrayIn;
-            _startOffset = file._startOffset;
+            StartOffset = file.StartOffset;
         }
 
         public int FilePointer
@@ -147,11 +142,11 @@ namespace iTextSharp.text.pdf
                 var n = IsBack ? 1 : 0;
                 if (ArrayIn == null)
                 {
-                    return (int)Rf.Position - n - _startOffset;
+                    return (int)Rf.Position - n - StartOffset;
                 }
                 else
                 {
-                    return ArrayInPtr - n - _startOffset;
+                    return ArrayInPtr - n - StartOffset;
                 }
             }
         }
@@ -163,20 +158,16 @@ namespace iTextSharp.text.pdf
                 if (ArrayIn == null)
                 {
                     InsureOpen();
-                    return (int)Rf.Length - _startOffset;
+                    return (int)Rf.Length - StartOffset;
                 }
                 else
                 {
-                    return ArrayIn.Length - _startOffset;
+                    return ArrayIn.Length - StartOffset;
                 }
             }
         }
 
-        public int StartOffset
-        {
-            get => _startOffset;
-            set => _startOffset = value;
-        }
+        public int StartOffset { get; set; }
 
         public static byte[] InputStreamToArray(Stream isp)
         {
@@ -633,7 +624,7 @@ namespace iTextSharp.text.pdf
 
         public void Seek(int pos)
         {
-            pos += _startOffset;
+            pos += StartOffset;
             IsBack = false;
             if (ArrayIn == null)
             {

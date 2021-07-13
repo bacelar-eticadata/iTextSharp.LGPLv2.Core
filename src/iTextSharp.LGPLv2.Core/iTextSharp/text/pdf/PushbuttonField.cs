@@ -90,19 +90,9 @@ namespace iTextSharp.text.pdf
         public const int SCALE_ICON_NEVER = 2;
 
         /// <summary>
-        /// Holds value of property iconFitToBounds.
-        /// </summary>
-        private bool _iconFitToBounds;
-
-        /// <summary>
         /// Holds value of property iconHorizontalAdjustment.
         /// </summary>
         private float _iconHorizontalAdjustment = 0.5f;
-
-        /// <summary>
-        /// Holds value of property iconReference.
-        /// </summary>
-        private PrIndirectReference _iconReference;
 
         /// <summary>
         /// Holds value of property iconVerticalAdjustment.
@@ -118,11 +108,6 @@ namespace iTextSharp.text.pdf
         /// Holds value of property layout.
         /// </summary>
         private int _layout = LAYOUT_LABEL_ONLY;
-
-        /// <summary>
-        /// Holds value of property proportionalIcon.
-        /// </summary>
-        private bool _proportionalIcon = true;
 
         /// <summary>
         /// Holds value of property scaleIcon.
@@ -244,8 +229,8 @@ namespace iTextSharp.text.pdf
                     scale = PdfName.N;
                 }
 
-                field.SetMkIconFit(scale, _proportionalIcon ? PdfName.P : PdfName.A, _iconHorizontalAdjustment,
-                    _iconVerticalAdjustment, _iconFitToBounds);
+                field.SetMkIconFit(scale, ProportionalIcon ? PdfName.P : PdfName.A, _iconHorizontalAdjustment,
+                    _iconVerticalAdjustment, IconFitToBounds);
                 return field;
             }
         }
@@ -256,11 +241,7 @@ namespace iTextSharp.text.pdf
         /// is  false .
         /// if  false  the border width will be taken into account
         /// </summary>
-        public bool IconFitToBounds
-        {
-            get => _iconFitToBounds;
-            set => _iconFitToBounds = value;
-        }
+        public bool IconFitToBounds { get; set; }
 
         /// <summary>
         /// A number between 0 and 1 indicating the fraction of leftover space to allocate at the left of the icon.
@@ -287,11 +268,7 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Sets the reference to an existing icon.
         /// </summary>
-        public PrIndirectReference IconReference
-        {
-            get => _iconReference;
-            set => _iconReference = value;
-        }
+        public PrIndirectReference IconReference { get; set; }
 
         /// <summary>
         /// A number between 0 and 1 indicating the fraction of leftover space to allocate at the bottom of the icon.
@@ -353,11 +330,7 @@ namespace iTextSharp.text.pdf
         /// Sets the way the icon is scaled. If  true  the icon is scaled proportionally,
         /// if  false  the scaling is done anamorphicaly.
         /// </summary>
-        public bool ProportionalIcon
-        {
-            get => _proportionalIcon;
-            set => _proportionalIcon = value;
-        }
+        public bool ProportionalIcon { get; set; } = true;
 
         /// <summary>
         /// Sets the way the icon will be scaled. Possible values are
@@ -404,11 +377,11 @@ namespace iTextSharp.text.pdf
         {
             var app = GetBorderAppearance();
             var localBox = new Rectangle(app.BoundingBox);
-            if (string.IsNullOrEmpty(text) && (_layout == LAYOUT_LABEL_ONLY || (_image == null && _template == null && _iconReference == null)))
+            if (string.IsNullOrEmpty(text) && (_layout == LAYOUT_LABEL_ONLY || (_image == null && _template == null && IconReference == null)))
             {
                 return app;
             }
-            if (_layout == LAYOUT_ICON_ONLY && _image == null && _template == null && _iconReference == null)
+            if (_layout == LAYOUT_ICON_ONLY && _image == null && _template == null && IconReference == null)
             {
                 return app;
             }
@@ -431,9 +404,9 @@ namespace iTextSharp.text.pdf
             var fsize = fontSize;
             var wt = localBox.Width - 2 * offX - 2;
             var ht = localBox.Height - 2 * offX;
-            var adj = (_iconFitToBounds ? 0 : offX + 1);
+            var adj = (IconFitToBounds ? 0 : offX + 1);
             var nlayout = _layout;
-            if (_image == null && _template == null && _iconReference == null)
+            if (_image == null && _template == null && IconReference == null)
             {
                 nlayout = LAYOUT_LABEL_ONLY;
             }
@@ -603,9 +576,9 @@ namespace iTextSharp.text.pdf
                     boundingBoxWidth = _tp.BoundingBox.Width;
                     boundingBoxHeight = _tp.BoundingBox.Height;
                 }
-                else if (_iconReference != null)
+                else if (IconReference != null)
                 {
-                    var dic = (PdfDictionary)PdfReader.GetPdfObject(_iconReference);
+                    var dic = (PdfDictionary)PdfReader.GetPdfObject(IconReference);
                     if (dic != null)
                     {
                         var r2 = PdfReader.GetNormalizedRectangle(dic.GetAsArray(PdfName.Bbox));
@@ -620,7 +593,7 @@ namespace iTextSharp.text.pdf
             {
                 var icx = iconBox.Width / boundingBoxWidth;
                 var icy = iconBox.Height / boundingBoxHeight;
-                if (_proportionalIcon)
+                if (ProportionalIcon)
                 {
                     switch (_scaleIcon)
                     {
@@ -694,7 +667,7 @@ namespace iTextSharp.text.pdf
                             coy = nm.FloatValue;
                         }
                     }
-                    app.AddTemplateReference(_iconReference, PdfName.Frm, icx, 0, 0, icy, xpos - cox * icx, ypos - coy * icy);
+                    app.AddTemplateReference(IconReference, PdfName.Frm, icx, 0, 0, icy, xpos - cox * icx, ypos - coy * icy);
                 }
                 app.RestoreState();
             }

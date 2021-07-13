@@ -86,50 +86,7 @@ namespace iTextSharp.text.pdf
         /// Holds value of property widthPercentage.
         /// </summary>
         protected float widthPercentage = 80;
-
-        /// <summary>
-        /// Holds value of property extendLastRow.
-        /// </summary>
-        private bool _extendLastRow;
-
         private int _footerRows;
-
-        /// <summary>
-        /// Holds value of property headersInEvent.
-        /// </summary>
-        private bool _headersInEvent;
-
-        /// <summary>
-        /// Holds value of property horizontalAlignment.
-        /// </summary>
-        private int _horizontalAlignment = Element.ALIGN_CENTER;
-
-        /// <summary>
-        /// Defines if the table should be kept
-        /// on one page if possible
-        /// </summary>
-        private bool _keepTogether;
-
-        /// <summary>
-        /// Holds value of property lockedWidth.
-        /// </summary>
-        private bool _lockedWidth;
-
-        /// <summary>
-        /// Holds value of property skipFirstHeader.
-        /// </summary>
-        private bool _skipFirstHeader;
-
-        /// <summary>
-        /// Holds value of property skipLastFooter.
-        /// @since    2.1.6
-        /// </summary>
-        private bool _skipLastFooter;
-
-        /// <summary>
-        /// Holds value of property splitLate.
-        /// </summary>
-        private bool _splitLate = true;
 
         /// <summary>
         /// Holds value of property splitRows.
@@ -157,7 +114,7 @@ namespace iTextSharp.text.pdf
             absoluteWidths = new float[relativeWidths.Length];
             CalculateWidths();
             CurrentRow = new PdfPCell[absoluteWidths.Length];
-            _keepTogether = false;
+            KeepTogether = false;
         }
 
         /// <summary>
@@ -180,7 +137,7 @@ namespace iTextSharp.text.pdf
             absoluteWidths = new float[RelativeWidths.Length];
             CalculateWidths();
             CurrentRow = new PdfPCell[absoluteWidths.Length];
-            _keepTogether = false;
+            KeepTogether = false;
         }
 
         /// <summary>
@@ -245,11 +202,7 @@ namespace iTextSharp.text.pdf
             set => Complete = value;
         }
 
-        public bool ExtendLastRow
-        {
-            get => _extendLastRow;
-            set => _extendLastRow = value;
-        }
+        public bool ExtendLastRow { get; set; }
 
         /// <summary>
         /// Gets the height of the rows that constitute the header as defined by
@@ -325,34 +278,18 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        public bool HeadersInEvent
-        {
-            get => _headersInEvent;
-            set => _headersInEvent = value;
-        }
+        public bool HeadersInEvent { get; set; }
 
-        public int HorizontalAlignment
-        {
-            get => _horizontalAlignment;
-            set => _horizontalAlignment = value;
-        }
+        public int HorizontalAlignment { get; set; } = Element.ALIGN_CENTER;
 
         /// <summary>
         /// If true the table will be kept on one page if it fits, by forcing a
         /// new page if it doesn't fit on the current page. The default is to
         /// split the table over multiple pages.
         /// </summary>
-        public bool KeepTogether
-        {
-            set => _keepTogether = value;
-            get => _keepTogether;
-        }
+        public bool KeepTogether { set; get; }
 
-        public bool LockedWidth
-        {
-            get => _lockedWidth;
-            set => _lockedWidth = value;
-        }
+        public bool LockedWidth { get; set; }
 
         /// <summary>
         /// Returns the number of columns.
@@ -398,11 +335,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the number of rows in this table</returns>
         public int Size => rows.Count;
 
-        public bool SkipFirstHeader
-        {
-            get => _skipFirstHeader;
-            set => _skipFirstHeader = value;
-        }
+        public bool SkipFirstHeader { get; set; }
 
         /// <summary>
         /// Tells you if the last footer needs to be skipped
@@ -410,11 +343,7 @@ namespace iTextSharp.text.pdf
         /// @since   2.1.6
         /// </summary>
         /// <returns>Value of property skipLastFooter.</returns>
-        public bool SkipLastFooter
-        {
-            get => _skipLastFooter;
-            set => _skipLastFooter = value;
-        }
+        public bool SkipLastFooter { get; set; }
 
         public float SpacingAfter
         {
@@ -428,11 +357,7 @@ namespace iTextSharp.text.pdf
             set => spacingBefore = value;
         }
 
-        public bool SplitLate
-        {
-            get => _splitLate;
-            set => _splitLate = value;
-        }
+        public bool SplitLate { get; set; } = true;
 
         public bool SplitRows
         {
@@ -1199,7 +1124,7 @@ namespace iTextSharp.text.pdf
 
                     heights[k - rowStart + 1] = heights[k - rowStart] - hr;
                 }
-                tableEvent.TableLayout(this, GetEventWidths(xPos, rowStart, rowEnd, _headersInEvent), heights, _headersInEvent ? headerRows : 0, rowStart, canvases);
+                tableEvent.TableLayout(this, GetEventWidths(xPos, rowStart, rowEnd, HeadersInEvent), heights, HeadersInEvent ? headerRows : 0, rowStart, canvases);
             }
             return yPos;
         }
@@ -1452,15 +1377,15 @@ namespace iTextSharp.text.pdf
             spacingBefore = sourceTable.spacingBefore;
             headerRows = sourceTable.headerRows;
             _footerRows = sourceTable._footerRows;
-            _lockedWidth = sourceTable._lockedWidth;
-            _extendLastRow = sourceTable._extendLastRow;
-            _headersInEvent = sourceTable._headersInEvent;
+            LockedWidth = sourceTable.LockedWidth;
+            ExtendLastRow = sourceTable.ExtendLastRow;
+            HeadersInEvent = sourceTable.HeadersInEvent;
             widthPercentage = sourceTable.widthPercentage;
-            _splitLate = sourceTable._splitLate;
-            _skipFirstHeader = sourceTable._skipFirstHeader;
-            _skipLastFooter = sourceTable._skipLastFooter;
-            _horizontalAlignment = sourceTable._horizontalAlignment;
-            _keepTogether = sourceTable._keepTogether;
+            SplitLate = sourceTable.SplitLate;
+            SkipFirstHeader = sourceTable.SkipFirstHeader;
+            SkipLastFooter = sourceTable.SkipLastFooter;
+            HorizontalAlignment = sourceTable.HorizontalAlignment;
+            KeepTogether = sourceTable.KeepTogether;
             Complete = sourceTable.Complete;
         }
 

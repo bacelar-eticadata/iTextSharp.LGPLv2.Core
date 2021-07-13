@@ -16,16 +16,6 @@ namespace iTextSharp.text.pdf.hyphenation
 
         private readonly int _blockSize;
 
-        /// <summary>
-        /// The encapsulated array
-        /// </summary>
-        private byte[] _arr;
-
-        /// <summary>
-        /// Points to next free item
-        /// </summary>
-        private int _n;
-
         public ByteVector() : this(_defaultBlockSize)
         {
         }
@@ -41,15 +31,15 @@ namespace iTextSharp.text.pdf.hyphenation
                 _blockSize = _defaultBlockSize;
             }
 
-            _arr = new byte[_blockSize];
-            _n = 0;
+            Arr = new byte[_blockSize];
+            Length = 0;
         }
 
         public ByteVector(byte[] a)
         {
             _blockSize = _defaultBlockSize;
-            _arr = a;
-            _n = 0;
+            Arr = a;
+            Length = 0;
         }
 
         public ByteVector(byte[] a, int capacity)
@@ -63,27 +53,27 @@ namespace iTextSharp.text.pdf.hyphenation
                 _blockSize = _defaultBlockSize;
             }
 
-            _arr = a;
-            _n = 0;
+            Arr = a;
+            Length = 0;
         }
 
-        public byte[] Arr => _arr;
+        public byte[] Arr { get; private set; }
 
         /// <summary>
         /// returns current capacity of array
         /// </summary>
-        public int Capacity => _arr.Length;
+        public int Capacity => Arr.Length;
 
         /// <summary>
         /// return number of items in array
         /// </summary>
-        public int Length => _n;
+        public int Length { get; private set; }
 
         public byte this[int index]
         {
-            get => _arr[index];
+            get => Arr[index];
 
-            set => _arr[index] = value;
+            set => Arr[index] = value;
         }
 
         /// <summary>
@@ -91,25 +81,25 @@ namespace iTextSharp.text.pdf.hyphenation
         /// </summary>
         public int Alloc(int size)
         {
-            var index = _n;
-            var len = _arr.Length;
-            if (_n + size >= len)
+            var index = Length;
+            var len = Arr.Length;
+            if (Length + size >= len)
             {
                 var aux = new byte[len + _blockSize];
-                Array.Copy(_arr, 0, aux, 0, len);
-                _arr = aux;
+                Array.Copy(Arr, 0, aux, 0, len);
+                Arr = aux;
             }
-            _n += size;
+            Length += size;
             return index;
         }
 
         public void TrimToSize()
         {
-            if (_n < _arr.Length)
+            if (Length < Arr.Length)
             {
-                var aux = new byte[_n];
-                Array.Copy(_arr, 0, aux, 0, _n);
-                _arr = aux;
+                var aux = new byte[Length];
+                Array.Copy(Arr, 0, aux, 0, Length);
+                Arr = aux;
             }
         }
     }

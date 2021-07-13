@@ -60,11 +60,6 @@ namespace iTextSharp.text.pdf
         protected internal PdfWriter Writer;
 
         /// <summary>
-        /// Holds value of property placeInPage.
-        /// </summary>
-        private int _placeInPage = -1;
-
-        /// <summary>
         /// constructors
         /// </summary>
         public PdfAnnotation(PdfWriter writer, Rectangle rect)
@@ -277,12 +272,7 @@ namespace iTextSharp.text.pdf
         /// Getter for property placeInPage.
         /// </summary>
         /// <returns>Value of property placeInPage.</returns>
-        public int PlaceInPage
-        {
-            get => _placeInPage;
-
-            set => _placeInPage = value;
-        }
+        public int PlaceInPage { get; set; } = -1;
 
         public PdfAnnotation Popup
         {

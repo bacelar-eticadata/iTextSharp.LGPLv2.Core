@@ -17,16 +17,6 @@ namespace iTextSharp.text.pdf
         protected string title;
 
         /// <summary>
-        /// Holds value of property on.
-        /// </summary>
-        private bool _on = true;
-
-        /// <summary>
-        /// Holds value of property onPanel.
-        /// </summary>
-        private bool _onPanel = true;
-
-        /// <summary>
         /// Creates a new layer.
         /// </summary>
         /// <param name="name">the name of the layer</param>
@@ -78,11 +68,7 @@ namespace iTextSharp.text.pdf
         /// Gets the initial visibility of the layer.
         /// </summary>
         /// <returns>the initial visibility of the layer</returns>
-        public bool On
-        {
-            get => _on;
-            set => _on = value;
-        }
+        public bool On { get; set; } = true;
 
         /// <summary>
         /// Gets the layer visibility in Acrobat's layer panel
@@ -90,11 +76,7 @@ namespace iTextSharp.text.pdf
         /// the layer cannot be directly manipulated by the user. Note that any children layers will
         /// also be absent from the panel.
         /// </summary>
-        public bool OnPanel
-        {
-            get => _onPanel;
-            set => _onPanel = value;
-        }
+        public bool OnPanel { get; set; } = true;
 
         /// <summary>
         /// Gets the parent layer.

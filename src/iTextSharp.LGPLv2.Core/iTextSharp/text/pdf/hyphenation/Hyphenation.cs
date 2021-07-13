@@ -11,11 +11,6 @@ namespace iTextSharp.text.pdf.hyphenation
         private readonly string _word;
 
         /// <summary>
-        /// number of hyphenation points in word
-        /// </summary>
-        private readonly int _len;
-
-        /// <summary>
         /// rawWord as made of alternating strings and {@link Hyphen Hyphen}
         /// instances
         /// </summary>
@@ -23,13 +18,13 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             _word = word;
             HyphenationPoints = points;
-            _len = points.Length;
+            Length = points.Length;
         }
 
         /// <summary>
         /// </summary>
         /// <returns>the number of hyphenation points in the word</returns>
-        public int Length => _len;
+        public int Length { get; private set; }
 
         /// <summary>
         /// </summary>
@@ -56,7 +51,7 @@ namespace iTextSharp.text.pdf.hyphenation
         {
             var str = new StringBuilder();
             var start = 0;
-            for (var i = 0; i < _len; i++)
+            for (var i = 0; i < Length; i++)
             {
                 str.Append(_word.Substring(start, HyphenationPoints[i]) + "-");
                 start = HyphenationPoints[i];

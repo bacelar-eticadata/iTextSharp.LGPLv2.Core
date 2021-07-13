@@ -28,15 +28,6 @@ namespace iTextSharp.text.pdf
         public static readonly PdfBoolean Pdftrue = new PdfBoolean(true);
 
         /// <summary>
-        /// membervariables
-        /// </summary>
-
-        /// <summary>
-        /// the bool value of this object
-        /// </summary>
-        private readonly bool _value;
-
-        /// <summary>
         /// constructors
         /// </summary>
 
@@ -55,7 +46,7 @@ namespace iTextSharp.text.pdf
             {
                 Content = FALSE;
             }
-            _value = value;
+            BooleanValue = value;
         }
 
         /// <summary>
@@ -68,11 +59,11 @@ namespace iTextSharp.text.pdf
         {
             if (value.Equals(TRUE))
             {
-                _value = true;
+                BooleanValue = true;
             }
             else if (value.Equals(FALSE))
             {
-                _value = false;
+                BooleanValue = false;
             }
             else
             {
@@ -88,11 +79,11 @@ namespace iTextSharp.text.pdf
         /// Returns the primitive value of the  PdfBoolean -object.
         /// </summary>
         /// <returns>the actual value of the object.</returns>
-        public bool BooleanValue => _value;
+        public bool BooleanValue { get; private set; }
 
         public override string ToString()
         {
-            return _value ? TRUE : FALSE;
+            return BooleanValue ? TRUE : FALSE;
         }
     }
 }

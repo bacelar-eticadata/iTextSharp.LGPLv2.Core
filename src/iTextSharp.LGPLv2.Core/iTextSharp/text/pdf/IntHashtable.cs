@@ -7,8 +7,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class IntHashtable
     {
-        /// The total number of entries in the hash table.
-        private int _count;
 
         /// The load factor for the hashtable.
         private float _loadFactor;
@@ -51,7 +49,7 @@ namespace iTextSharp.text.pdf
         public IntHashtable() : this(101, 0.75f) { }
 
         /// Returns the number of elements contained in the hashtable.
-        public int Size => _count;
+        public int Size { get; private set; }
 
         /// <summary>
         ///
@@ -89,7 +87,7 @@ namespace iTextSharp.text.pdf
                     }
                 }
 
-                if (_count >= _threshold)
+                if (Size >= _threshold)
                 {
                     Rehash();
                     this[key] = value;
@@ -104,7 +102,7 @@ namespace iTextSharp.text.pdf
                     Next = tab[index]
                 };
                 tab[index] = en;
-                ++_count;
+                ++Size;
             }
         }
 
@@ -117,14 +115,14 @@ namespace iTextSharp.text.pdf
                 tab[index] = null;
             }
 
-            _count = 0;
+            Size = 0;
         }
 
         public IntHashtable Clone()
         {
             var t = new IntHashtable
             {
-                _count = _count,
+                Size = Size,
                 _loadFactor = _loadFactor,
                 _threshold = _threshold,
                 _table = new IntHashtableEntry[_table.Length]
@@ -198,7 +196,7 @@ namespace iTextSharp.text.pdf
 
         public int[] GetKeys()
         {
-            var res = new int[_count];
+            var res = new int[Size];
             var ptr = 0;
             var index = _table.Length;
             IntHashtableEntry entry = null;
@@ -227,7 +225,7 @@ namespace iTextSharp.text.pdf
         /// Returns true if the hashtable contains no elements.
         public bool IsEmpty()
         {
-            return _count == 0;
+            return Size == 0;
         }
 
         /// Removes the element corresponding to the key. Does nothing if the
@@ -258,7 +256,7 @@ namespace iTextSharp.text.pdf
                         tab[index] = e.Next;
                     }
 
-                    --_count;
+                    --Size;
                     return e.value;
                 }
             }

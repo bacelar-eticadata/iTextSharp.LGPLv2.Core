@@ -15,29 +15,12 @@ namespace iTextSharp.text
         /// the content of a Table.
         /// </summary>
         private readonly ArrayList _content = new ArrayList();
-        /// <summary>
-        /// the alignment of the table.
-        /// </summary>
-        private int _alignment;
-
-        /// <summary>
-        /// the padding of the Cells.
-        /// </summary>
-        private float _cellpadding;
-
-        /// <summary>
-        /// the spacing of the Cells.
-        /// </summary>
-        private float _cellspacing;
 
         /// <summary>
         /// the width of the Table.
         /// </summary>
         private float _width;
-        /// <summary>
-        /// the widthpercentage of the Table.
-        /// </summary>
-        private float _widthpercentage;
+
         /// <summary>
         /// A RectangleCell is always constructed without any dimensions.
         /// Dimensions are defined after creation.
@@ -51,29 +34,17 @@ namespace iTextSharp.text
         /// <summary>
         /// </summary>
         /// <returns>Returns the alignment.</returns>
-        public int Alignment
-        {
-            get => _alignment;
-            set => _alignment = value;
-        }
+        public int Alignment { get; set; }
 
         /// <summary>
         /// </summary>
         /// <returns>Returns the cellpadding.</returns>
-        public float Cellpadding
-        {
-            get => _cellpadding;
-            set => _cellpadding = value;
-        }
+        public float Cellpadding { get; set; }
 
         /// <summary>
         /// </summary>
         /// <returns>Returns the cellspacing.</returns>
-        public float Cellspacing
-        {
-            get => _cellspacing;
-            set => _cellspacing = value;
-        }
+        public float Cellspacing { get; set; }
 
         /// <summary>
         /// @see com.lowagie.text.Element#type()
@@ -92,11 +63,7 @@ namespace iTextSharp.text
         /// <summary>
         /// </summary>
         /// <returns>Returns the widthpercentage.</returns>
-        public float Widthpercentage
-        {
-            get => _widthpercentage;
-            set => _widthpercentage = value;
-        }
+        public float Widthpercentage { get; set; }
 
         /// <summary>
         /// @see com.lowagie.text.TextElementArray#add(java.lang.Object)
@@ -151,7 +118,7 @@ namespace iTextSharp.text
             var table = new PdfPTable(columns)
             {
                 TableEvent = this,
-                HorizontalAlignment = _alignment
+                HorizontalAlignment = Alignment
             };
             int pos;
             foreach (SimpleCell row in _content)
@@ -161,21 +128,21 @@ namespace iTextSharp.text
                 {
                     if (float.IsNaN(cell.SpacingLeft))
                     {
-                        cell.SpacingLeft = _cellspacing / 2f;
+                        cell.SpacingLeft = Cellspacing / 2f;
                     }
                     if (float.IsNaN(cell.SpacingRight))
                     {
-                        cell.SpacingRight = _cellspacing / 2f;
+                        cell.SpacingRight = Cellspacing / 2f;
                     }
                     if (float.IsNaN(cell.SpacingTop))
                     {
-                        cell.SpacingTop = _cellspacing / 2f;
+                        cell.SpacingTop = Cellspacing / 2f;
                     }
                     if (float.IsNaN(cell.SpacingBottom))
                     {
-                        cell.SpacingBottom = _cellspacing / 2f;
+                        cell.SpacingBottom = Cellspacing / 2f;
                     }
-                    cell.Padding = _cellpadding;
+                    cell.Padding = Cellpadding;
                     table.AddCell(cell.CreatePdfPCell(row));
                     if (cell.Colspan == 1)
                     {
@@ -227,9 +194,9 @@ namespace iTextSharp.text
             {
                 table.TotalWidth = _width;
             }
-            if (_widthpercentage > 0)
+            if (Widthpercentage > 0)
             {
-                table.WidthPercentage = _widthpercentage;
+                table.WidthPercentage = Widthpercentage;
             }
             return table;
         }
@@ -256,9 +223,9 @@ namespace iTextSharp.text
             var widthpercentages = new float[columns];
             var table = new Table(columns)
             {
-                Alignment = _alignment,
-                Spacing = _cellspacing,
-                Padding = _cellpadding
+                Alignment = Alignment,
+                Spacing = Cellspacing,
+                Padding = Cellpadding
             };
             table.CloneNonPositionParameters(this);
             int pos;
@@ -320,9 +287,9 @@ namespace iTextSharp.text
                 table.Width = _width;
                 table.Locked = true;
             }
-            else if (_widthpercentage > 0)
+            else if (Widthpercentage > 0)
             {
-                table.Width = _widthpercentage;
+                table.Width = Widthpercentage;
             }
             return table;
         }

@@ -86,16 +86,6 @@ namespace iTextSharp.text.pdf
         private int _checkType;
 
         /// <summary>
-        /// Holds value of property onValue.
-        /// </summary>
-        private string _onValue;
-
-        /// <summary>
-        /// Holds value of property checked.
-        /// </summary>
-        private bool _vchecked;
-
-        /// <summary>
         /// Creates a new instance of RadioCheckField
         /// </summary>
         /// <param name="writer">the document  PdfWriter </param>
@@ -112,11 +102,7 @@ namespace iTextSharp.text.pdf
         /// Sets the state of the field to checked or unchecked.
         /// and  false  for unchecked
         /// </summary>
-        public bool Checked
-        {
-            get => _vchecked;
-            set => _vchecked = value;
-        }
+        public bool Checked { get; set; }
 
         /// <summary>
         /// Gets the check field.
@@ -154,11 +140,7 @@ namespace iTextSharp.text.pdf
         /// <summary>
         /// Sets the value when the field is checked.
         /// </summary>
-        public string OnValue
-        {
-            get => _onValue;
-            set => _onValue = value;
-        }
+        public string OnValue { get; set; }
 
         /// <summary>
         /// Gets the radio field. It's only composed of the widget keys and must be used
@@ -339,7 +321,7 @@ namespace iTextSharp.text.pdf
                 field.SetFieldFlags(PdfFormField.FF_REQUIRED);
             }
 
-            field.ValueAsName = _vchecked ? _onValue : "Off";
+            field.ValueAsName = Checked ? OnValue : "Off";
             return field;
         }
 
@@ -377,7 +359,7 @@ namespace iTextSharp.text.pdf
                     field.SetFieldFlags(PdfFormField.FF_REQUIRED);
                 }
 
-                field.ValueAsName = _vchecked ? _onValue : "Off";
+                field.ValueAsName = Checked ? OnValue : "Off";
             }
             if (text != null)
             {
@@ -392,9 +374,9 @@ namespace iTextSharp.text.pdf
             field.BorderStyle = new PdfBorderDictionary(borderWidth, borderStyle, new PdfDashPattern(3));
             var tpon = GetAppearance(isRadio, true);
             var tpoff = GetAppearance(isRadio, false);
-            field.SetAppearance(PdfAnnotation.AppearanceNormal, _onValue, tpon);
+            field.SetAppearance(PdfAnnotation.AppearanceNormal, OnValue, tpon);
             field.SetAppearance(PdfAnnotation.AppearanceNormal, "Off", tpoff);
-            field.AppearanceState = _vchecked ? _onValue : "Off";
+            field.AppearanceState = Checked ? OnValue : "Off";
             var da = (PdfAppearance)tpon.Duplicate;
             da.SetFontAndSize(RealFont, fontSize);
             if (textColor == null)

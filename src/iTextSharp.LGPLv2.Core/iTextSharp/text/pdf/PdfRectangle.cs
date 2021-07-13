@@ -14,29 +14,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfRectangle : PdfArray
     {
-        /// <summary>
-        /// membervariables
-        /// </summary>
-
-        /// <summary>
-        /// lower left x
-        /// </summary>
-        private readonly float _llx;
-
-        /// <summary>
-        /// lower left y
-        /// </summary>
-        private readonly float _lly;
-
-        /// <summary>
-        /// upper right x
-        /// </summary>
-        private readonly float _urx;
-
-        /// <summary>
-        /// upper right y
-        /// </summary>
-        private readonly float _ury;
 
         /// <summary>
         /// constructors
@@ -54,22 +31,22 @@ namespace iTextSharp.text.pdf
         {
             if (rotation == 90 || rotation == 270)
             {
-                _llx = lly;
-                _lly = llx;
-                _urx = ury;
-                _ury = urx;
+                Left = lly;
+                Bottom = llx;
+                Right = ury;
+                Top = urx;
             }
             else
             {
-                _llx = llx;
-                _lly = lly;
-                _urx = urx;
-                _ury = ury;
+                Left = llx;
+                Bottom = lly;
+                Right = urx;
+                Top = ury;
             }
-            base.Add(new PdfNumber(_llx));
-            base.Add(new PdfNumber(_lly));
-            base.Add(new PdfNumber(_urx));
-            base.Add(new PdfNumber(_ury));
+            base.Add(new PdfNumber(Left));
+            base.Add(new PdfNumber(Bottom));
+            base.Add(new PdfNumber(Right));
+            base.Add(new PdfNumber(Top));
         }
 
         public PdfRectangle(float llx, float lly, float urx, float ury) : this(llx, lly, urx, ury, 0)
@@ -103,11 +80,11 @@ namespace iTextSharp.text.pdf
         /// methods
         /// </summary>
 
-        public float Bottom => _lly;
+        public float Bottom { get; private set; }
 
-        public float Height => _ury - _lly;
+        public float Height => Top - Bottom;
 
-        public float Left => _llx;
+        public float Left { get; private set; }
 
         /// <summary>
         /// Returns the high level version of this PdfRectangle
@@ -115,13 +92,13 @@ namespace iTextSharp.text.pdf
         /// <returns>this PdfRectangle translated to class Rectangle</returns>
         public Rectangle Rectangle => new Rectangle(Left, Bottom, Right, Top);
 
-        public float Right => _urx;
+        public float Right { get; private set; }
 
-        public PdfRectangle Rotate => new PdfRectangle(_lly, _llx, _ury, _urx, 0);
+        public PdfRectangle Rotate => new PdfRectangle(Bottom, Left, Top, Right, 0);
 
-        public float Top => _ury;
+        public float Top { get; private set; }
 
-        public float Width => _urx - _llx;
+        public float Width => Right - Left;
 
         public override bool Add(PdfObject obj)
         {
@@ -185,12 +162,12 @@ namespace iTextSharp.text.pdf
 
         public float GetBottom(int margin)
         {
-            return _lly + margin;
+            return Bottom + margin;
         }
 
         public float GetLeft(int margin)
         {
-            return _llx + margin;
+            return Left + margin;
         }
 
         /// <summary>
@@ -201,7 +178,7 @@ namespace iTextSharp.text.pdf
 
         public float GetRight(int margin)
         {
-            return _urx - margin;
+            return Right - margin;
         }
 
         /// <summary>
@@ -212,7 +189,7 @@ namespace iTextSharp.text.pdf
 
         public float GetTop(int margin)
         {
-            return _ury - margin;
+            return Top - margin;
         }
     }
 }

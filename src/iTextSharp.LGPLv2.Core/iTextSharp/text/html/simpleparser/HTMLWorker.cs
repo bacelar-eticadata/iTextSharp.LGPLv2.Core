@@ -556,16 +556,14 @@ namespace iTextSharp.text.html.simpleparser
                 Image img = null;
                 if (_interfaceProps != null)
                 {
-                    var ip = _interfaceProps["img_provider"] as IImageProvider;
-                    if (ip != null)
+                    if (_interfaceProps["img_provider"] is IImageProvider ip)
                     {
                         img = ip.GetImage(src, h, _cprops, Document);
                     }
 
                     if (img == null)
                     {
-                        var images = _interfaceProps["img_static"] as Hashtable;
-                        if (images != null)
+                        if (_interfaceProps["img_static"] is Hashtable images)
                         {
                             var tim = (Image)images[src];
                             if (tim != null)
@@ -577,8 +575,7 @@ namespace iTextSharp.text.html.simpleparser
                         {
                             if (!src.StartsWith("http"))
                             { // relative src references only
-                                var baseurl = _interfaceProps["img_baseurl"] as string;
-                                if (baseurl != null)
+                                if (_interfaceProps["img_baseurl"] is string baseurl)
                                 {
                                     src = baseurl + src;
                                     img = Image.GetInstance(src);

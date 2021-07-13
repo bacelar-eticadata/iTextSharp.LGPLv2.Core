@@ -14,40 +14,11 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PdfCell : Rectangle
     {
-        /// <summary>
-        /// membervariables
-        /// </summary>
-
-        /// <summary>
-        /// This is the cellpadding of the cell.
-        /// </summary>
-        private readonly float _cellpadding;
-
-        /// <summary>
-        /// This is the cellspacing of the cell.
-        /// </summary>
-        private readonly float _cellspacing;
 
         /// <summary>
         /// These are the Images in the Cell.
         /// </summary>
         private readonly ArrayList _images;
-
-        /// <summary>
-        /// This is the leading of the lines.
-        /// </summary>
-        private readonly float _leading;
-
-        /// <summary>
-        /// This is the number of the row the cell is in.
-        /// </summary>
-        private readonly int _rownumber;
-
-        /// <summary>
-        /// This is the rowspan of the cell.
-        /// </summary>
-        private readonly int _rowspan;
-
         private readonly int _verticalAlignment;
 
         /// <summary>
@@ -57,17 +28,6 @@ namespace iTextSharp.text.pdf
         private float _contentHeight;
 
         private PdfLine _firstLine;
-
-        /// <summary>
-        /// This is the number of the group the cell is in.
-        /// </summary>
-        private int _groupNumber;
-
-        /// <summary>
-        /// Indicates if this cell belongs to the header of a  PdfTable
-        /// </summary>
-        private bool _header;
-
         private PdfLine _lastLine;
 
         /// <summary>
@@ -79,24 +39,6 @@ namespace iTextSharp.text.pdf
         /// These are the PdfLines in the Cell.
         /// </summary>
         private ArrayList _lines;
-
-        /// <summary>
-        /// Indicates that the largest ascender height should be used to
-        /// determine the height of the first line. Setting this to true can help
-        /// with vertical alignment problems.
-        /// </summary>
-        private bool _useAscender;
-
-        /// <summary>
-        /// Adjusts the cell contents to compensate for border widths.
-        /// </summary>
-        private bool _useBorderPadding;
-
-        /// <summary>
-        /// Indicates that the largest descender height should be added to the height of
-        /// the last line (so characters like y don't dip into the border).
-        /// </summary>
-        private bool _useDescender;
 
         /// <summary>
         /// constructors
@@ -117,19 +59,19 @@ namespace iTextSharp.text.pdf
         {
             // copying the other Rectangle attributes from class Cell
             CloneNonPositionParameters(cell);
-            _cellpadding = cellpadding;
-            _cellspacing = cellspacing;
+            Cellpadding = cellpadding;
+            Cellspacing = cellspacing;
             _verticalAlignment = cell.VerticalAlignment;
-            _useAscender = cell.UseAscender;
-            _useDescender = cell.UseDescender;
-            _useBorderPadding = cell.UseBorderPadding;
+            UseAscender = cell.UseAscender;
+            UseDescender = cell.UseDescender;
+            UseBorderPadding = cell.UseBorderPadding;
 
             // initialisation of some parameters
             PdfChunk chunk;
             PdfChunk overflow;
             _lines = new ArrayList();
             _images = new ArrayList();
-            _leading = cell.Leading;
+            Leading = cell.Leading;
             var alignment = cell.HorizontalAlignment;
             left += cellspacing + cellpadding;
             right -= cellspacing + cellpadding;
@@ -137,7 +79,7 @@ namespace iTextSharp.text.pdf
             left += getBorderWidthInside(LEFT_BORDER);
             right -= getBorderWidthInside(RIGHT_BORDER);
             _contentHeight = 0;
-            _rowspan = cell.Rowspan;
+            Rowspan = cell.Rowspan;
 
             ArrayList allActions;
             int aCounter;
@@ -151,7 +93,7 @@ namespace iTextSharp.text.pdf
                     case JBIG2:
                     case IMGRAW:
                     case IMGTEMPLATE:
-                        addImage((Image)ele, left, right, 0.4f * _leading, alignment);
+                        addImage((Image)ele, left, right, 0.4f * Leading, alignment);
                         break;
                     // if the element is a list
                     case LIST:
@@ -162,7 +104,7 @@ namespace iTextSharp.text.pdf
                         }
                         // we loop over all the listitems
                         addList((List)ele, left, right, alignment);
-                        _line = new PdfLine(left, right, alignment, _leading);
+                        _line = new PdfLine(left, right, alignment, Leading);
                         break;
                     // if the element is something else
                     default:
@@ -170,7 +112,7 @@ namespace iTextSharp.text.pdf
                         ProcessActions(ele, null, allActions);
                         aCounter = 0;
 
-                        var currentLineLeading = _leading;
+                        var currentLineLeading = Leading;
                         var currentLeft = left;
                         var currentRight = right;
                         if (ele is Phrase)
@@ -253,7 +195,7 @@ namespace iTextSharp.text.pdf
                 }
             }
             // we set some additional parameters
-            if (_useDescender && _lastLine != null)
+            if (UseDescender && _lastLine != null)
             {
                 _contentHeight -= _lastLine.Descender;
             }
@@ -272,12 +214,12 @@ namespace iTextSharp.text.pdf
             newBottom -= getBorderWidthInside(TOP_BORDER) + getBorderWidthInside(BOTTOM_BORDER);
             Bottom = newBottom;
 
-            _rownumber = rownumber;
+            Rownumber = rownumber;
         }
 
         public override float Bottom
         {
-            get => GetBottom(_cellspacing);
+            get => GetBottom(Cellspacing);
             set
             {
                 base.Bottom = value;
@@ -314,19 +256,15 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        public float Cellpadding => _cellpadding;
+        public float Cellpadding { get; private set; }
 
-        public float Cellspacing => _cellspacing;
+        public float Cellspacing { get; private set; }
 
-        public int GroupNumber
-        {
-            get => _groupNumber;
-            set => _groupNumber = value;
-        }
+        public int GroupNumber { get; set; }
 
-        public float Leading => _leading;
+        public float Leading { get; private set; }
 
-        public override float Left => GetLeft(_cellspacing);
+        public override float Left => GetLeft(Cellspacing);
 
         public float RemainingHeight
         {
@@ -337,50 +275,38 @@ namespace iTextSharp.text.pdf
                 {
                     result += image.ScaledHeight;
                 }
-                return remainingLinesHeight() + _cellspacing + 2 * _cellpadding + result;
+                return remainingLinesHeight() + Cellspacing + 2 * Cellpadding + result;
             }
         }
 
-        public override float Right => GetRight(_cellspacing);
+        public override float Right => GetRight(Cellspacing);
 
-        public int Rownumber => _rownumber;
+        public int Rownumber { get; private set; }
 
-        public int Rowspan => _rowspan;
+        public int Rowspan { get; private set; }
 
         public int Size => _lines.Count;
 
-        public override float Top => GetTop(_cellspacing);
+        public override float Top => GetTop(Cellspacing);
 
         /// <summary>
         /// Gets the value of {@link #useAscender}
         /// </summary>
         /// <returns>useAscender</returns>
-        public bool UseAscender
-        {
-            get => _useAscender;
-            set => _useAscender = value;
-        }
+        public bool UseAscender { get; set; }
 
         /// <summary>
         /// Sets the value of {@link #useBorderPadding}.
         /// </summary>
-        public bool UseBorderPadding
-        {
-            set => _useBorderPadding = value;
-            get => _useBorderPadding;
-        }
+        public bool UseBorderPadding { set; get; }
 
         /// <summary>
         /// Gets the value of {@link #useDescender}
         /// </summary>
         /// <returns>useDescender</returns>
-        public bool UseDescender
-        {
-            get => _useDescender;
-            set => _useDescender = value;
-        }
+        public bool UseDescender { get; set; }
 
-        internal bool Header => _header;
+        internal bool Header { get; private set; }
 
         /// <summary>
         /// Calculates what the height of the first line should be so that the content will be
@@ -405,7 +331,7 @@ namespace iTextSharp.text.pdf
                         }
                         else
                         {
-                            firstLineRealHeight = _useAscender ? _firstLine.Ascender : _leading;
+                            firstLineRealHeight = UseAscender ? _firstLine.Ascender : Leading;
                         }
                     }
                 }
@@ -430,7 +356,7 @@ namespace iTextSharp.text.pdf
             {
                 height = image.AbsoluteY;
                 // if the currentPosition is higher than the bottom, we add the line to the result
-                if (top - height > (bottom + _cellpadding))
+                if (top - height > (bottom + Cellpadding))
                 {
                     image.SetAbsolutePosition(image.AbsoluteX, top - height);
                     result.Add(image);
@@ -448,7 +374,7 @@ namespace iTextSharp.text.pdf
         {
             float lineHeight;
             var currentPosition = Math.Min(Top, top);
-            Top = currentPosition + _cellspacing;
+            Top = currentPosition + Cellspacing;
             var result = new ArrayList();
 
             // if the bottom of the page is higher than the top of the cell: do nothing
@@ -466,7 +392,7 @@ namespace iTextSharp.text.pdf
                 lineHeight = _line.Height;
                 currentPosition -= lineHeight;
                 // if the currentPosition is higher than the bottom, we add the line to the result
-                if (currentPosition > (bottom + _cellpadding + getBorderWidthInside(BOTTOM_BORDER)))
+                if (currentPosition > (bottom + Cellpadding + getBorderWidthInside(BOTTOM_BORDER)))
                 { // bugfix by Tom Ring and Veerendra Namineni
                     result.Add(_line);
                 }
@@ -477,7 +403,7 @@ namespace iTextSharp.text.pdf
             }
             // if the bottom of the cell is higher than the bottom of the page, the cell is written, so we can remove all lines
             var difference = 0f;
-            if (!_header)
+            if (!Header)
             {
                 if (aboveBottom)
                 {
@@ -498,7 +424,7 @@ namespace iTextSharp.text.pdf
             {
                 foreach (Image image in _images)
                 {
-                    image.SetAbsolutePosition(image.AbsoluteX, image.AbsoluteY - difference - _leading);
+                    image.SetAbsolutePosition(image.AbsoluteX, image.AbsoluteY - difference - Leading);
                 }
             }
             return result;
@@ -523,12 +449,12 @@ namespace iTextSharp.text.pdf
 
         internal bool MayBeRemoved()
         {
-            return (_header || (_lines.Count == 0 && _images.Count == 0));
+            return (Header || (_lines.Count == 0 && _images.Count == 0));
         }
 
         internal void SetHeader()
         {
-            _header = true;
+            Header = true;
         }
 
         protected void ProcessActions(IElement element, PdfAction action, ArrayList allActions)
@@ -587,7 +513,7 @@ namespace iTextSharp.text.pdf
             flushCurrentLine();
             if (_line == null)
             {
-                _line = new PdfLine(left, right, alignment, _leading);
+                _line = new PdfLine(left, right, alignment, Leading);
             }
             var imageLine = _line;
 
@@ -645,7 +571,7 @@ namespace iTextSharp.text.pdf
                             }
                             _line.ResetAlignment();
                             addLine(_line);
-                            _line = new PdfLine(left + item.IndentationLeft, right, alignment, _leading);
+                            _line = new PdfLine(left + item.IndentationLeft, right, alignment, Leading);
                         }
                         break;
 
@@ -679,7 +605,7 @@ namespace iTextSharp.text.pdf
         private float getBorderWidthInside(int side)
         {
             var width = 0f;
-            if (_useBorderPadding)
+            if (UseBorderPadding)
             {
                 switch (side)
                 {

@@ -42,11 +42,6 @@ namespace iTextSharp.text.pdf
         private static readonly string[] _boxStrings = { "crop", "trim", "art", "bleed" };
 
         /// <summary>
-        /// value of the <B>MediaBox</B> key
-        /// </summary>
-        private PdfRectangle _mediaBox;
-
-        /// <summary>
         /// constructors
         /// </summary>
         /// <summary>
@@ -58,7 +53,7 @@ namespace iTextSharp.text.pdf
         /// <param name="rotate">a value for the <B>Rotate</B> key</param>
         internal PdfPage(PdfRectangle mediaBox, Hashtable boxSize, PdfDictionary resources, int rotate) : base(Page)
         {
-            _mediaBox = mediaBox;
+            MediaBox = mediaBox;
             Put(PdfName.Mediabox, mediaBox);
             Put(PdfName.Resources, resources);
             if (rotate != 0)
@@ -92,7 +87,7 @@ namespace iTextSharp.text.pdf
         /// </summary>
         /// <returns> false  because this is a single page</returns>
 
-        internal PdfRectangle MediaBox => _mediaBox;
+        internal PdfRectangle MediaBox { get; private set; }
 
         public bool IsParent()
         {
@@ -120,9 +115,9 @@ namespace iTextSharp.text.pdf
 
         internal PdfRectangle RotateMediaBox()
         {
-            _mediaBox = _mediaBox.Rotate;
-            Put(PdfName.Mediabox, _mediaBox);
-            return _mediaBox;
+            MediaBox = MediaBox.Rotate;
+            Put(PdfName.Mediabox, MediaBox);
+            return MediaBox;
         }
     }
 }

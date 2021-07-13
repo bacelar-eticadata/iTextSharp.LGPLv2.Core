@@ -49,32 +49,9 @@ namespace iTextSharp.text.pdf
         private string _digestEncryptionAlgorithm;
         private byte[] _externalDigest;
         private byte[] _externalRsAdata;
-
-        /// <summary>
-        /// Holds value of property location.
-        /// </summary>
-        private string _location;
-
         private readonly ICipherParameters _privKey;
-
-        /// <summary>
-        /// Holds value of property reason.
-        /// </summary>
-        private string _reason;
-
         private byte[] _rsAdata;
         private ArrayList _signCerts;
-
-        /// <summary>
-        /// Holds value of property signDate.
-        /// </summary>
-        private DateTime _signDate;
-
-        /// <summary>
-        /// Holds value of property signName.
-        /// </summary>
-        private string _signName;
-
         private bool _verified;
         private bool _verifyResult;
 
@@ -444,11 +421,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the X.509 certificate revocation lists associated with this PKCS#7 object</returns>
         public ArrayList CrLs { get; }
 
-        public string Location
-        {
-            get => _location;
-            set => _location = value;
-        }
+        public string Location { get; set; }
 
         /// <summary>
         /// Gets the OCSP basic response if there is one.
@@ -457,11 +430,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the OCSP basic response or null</returns>
         public BasicOcspResp Ocsp { get; private set; }
 
-        public string Reason
-        {
-            get => _reason;
-            set => _reason = value;
-        }
+        public string Reason { get; set; }
 
         /// <summary>
         /// Get the X.509 sign certificate chain associated with this PKCS#7 object.
@@ -480,11 +449,7 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        public DateTime SignDate
-        {
-            get => _signDate;
-            set => _signDate = value;
-        }
+        public DateTime SignDate { get; set; }
 
         /// <summary>
         /// Get the X.509 certificate actually used to sign the digest.
@@ -498,11 +463,7 @@ namespace iTextSharp.text.pdf
         /// <returns>the version of the PKCS#7 "SignerInfo" object. Always 1</returns>
         public int SigningInfoVersion { get; }
 
-        public string SignName
-        {
-            get => _signName;
-            set => _signName = value;
-        }
+        public string SignName { get; set; }
 
         /// <summary>
         /// Gets the timestamp date

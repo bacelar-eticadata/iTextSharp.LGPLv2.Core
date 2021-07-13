@@ -26,11 +26,6 @@ namespace iTextSharp.text.pdf
         protected Image image;
 
         /// <summary>
-        /// the font metrics.
-        /// </summary>
-        private readonly BaseFont _font;
-
-        /// <summary>
         /// the size.
         /// </summary>
         private readonly float _size;
@@ -42,7 +37,7 @@ namespace iTextSharp.text.pdf
         internal PdfFont(BaseFont bf, float size)
         {
             _size = size;
-            _font = bf;
+            Font = bf;
         }
 
         internal static PdfFont DefaultFont
@@ -54,7 +49,7 @@ namespace iTextSharp.text.pdf
             }
         }
 
-        internal BaseFont Font => _font;
+        internal BaseFont Font { get; private set; }
 
         internal float HorizontalScaling
         {
@@ -96,7 +91,7 @@ namespace iTextSharp.text.pdf
             try
             {
                 pdfFont = (PdfFont)obj;
-                if (_font != pdfFont._font)
+                if (Font != pdfFont.Font)
                 {
                     return 1;
                 }
@@ -136,7 +131,7 @@ namespace iTextSharp.text.pdf
         {
             if (image == null)
             {
-                return _font.GetWidthPoint(character, _size) * HScale;
+                return Font.GetWidthPoint(character, _size) * HScale;
             }
             else
             {
@@ -148,7 +143,7 @@ namespace iTextSharp.text.pdf
         {
             if (image == null)
             {
-                return _font.GetWidthPoint(s, _size) * HScale;
+                return Font.GetWidthPoint(s, _size) * HScale;
             }
             else
             {

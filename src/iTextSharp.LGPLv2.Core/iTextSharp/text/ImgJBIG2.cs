@@ -12,15 +12,6 @@ namespace iTextSharp.text
     {
 
         /// <summary>
-        /// JBIG2 globals
-        /// </summary>
-        private readonly byte[] _global;
-        /// <summary>
-        /// A unique hash
-        /// </summary>
-        private readonly byte[] _globalHash;
-
-        /// <summary>
         /// Empty constructor.
         /// </summary>
         public ImgJbig2() : base((Image)null)
@@ -49,13 +40,11 @@ namespace iTextSharp.text
             plainHeight = Height;
             if (globals != null)
             {
-                _global = globals;
+                GlobalBytes = globals;
                 try
                 {
-                    using (var md5 = MD5.Create())
-                    {
-                        _globalHash = md5.ComputeHash(_global);
-                    }
+                    using var md5 = MD5.Create();
+                    GlobalHash = md5.ComputeHash(GlobalBytes);
                 }
                 catch
                 {
@@ -68,12 +57,12 @@ namespace iTextSharp.text
         /// Getter for the JBIG2 global data.
         /// </summary>
         /// <returns>an array of bytes</returns>
-        public byte[] GlobalBytes => _global;
+        public byte[] GlobalBytes { get; private set; }
 
         /// <summary>
         /// Getter for the unique hash.
         /// </summary>
         /// <returns>an array of bytes</returns>
-        public byte[] GlobalHash => _globalHash;
+        public byte[] GlobalHash { get; private set; }
     }
 }

@@ -98,8 +98,7 @@ namespace iTextSharp.text
         /// <param name="phrase">a  Phrase </param>
         public Anchor(Phrase phrase) : base(phrase)
         {
-            var anchor = phrase as Anchor;
-            if (anchor != null)
+            if (phrase is Anchor anchor)
             {
                 var a = anchor;
                 Name = a.name;

@@ -5,10 +5,6 @@ namespace iTextSharp.text.pdf
     /// </summary>
     public class PatternColor : ExtendedColor
     {
-        /// <summary>
-        /// The actual pattern.
-        /// </summary>
-        private readonly PdfPatternPainter _painter;
 
         /// <summary>
         /// Creates a color representing a pattern.
@@ -16,14 +12,14 @@ namespace iTextSharp.text.pdf
         /// <param name="painter">the actual pattern</param>
         public PatternColor(PdfPatternPainter painter) : base(TYPE_PATTERN, .5f, .5f, .5f)
         {
-            _painter = painter;
+            Painter = painter;
         }
 
         /// <summary>
         /// Gets the pattern.
         /// </summary>
         /// <returns>the pattern</returns>
-        public PdfPatternPainter Painter => _painter;
+        public PdfPatternPainter Painter { get; private set; }
 
         public override bool Equals(object obj)
         {
@@ -32,7 +28,7 @@ namespace iTextSharp.text.pdf
 
         public override int GetHashCode()
         {
-            return _painter.GetHashCode();
+            return Painter.GetHashCode();
         }
     }
 }

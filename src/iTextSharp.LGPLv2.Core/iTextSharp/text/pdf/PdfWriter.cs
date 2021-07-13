@@ -716,32 +716,19 @@ namespace iTextSharp.text.pdf
     /// </summary>
     private IPdfPageEvent _pageEvent;
 
-    /// <summary>
-    /// Holds value of property RGBTranparency.
-    /// </summary>
-    private bool _rgbTransparencyBlending;
+        /// <summary>
+        /// [U6] space char ratio
+        /// </summary>
+        /// <summary>
+        /// The ratio between the extra word spacing and the extra character spacing.
+        /// Extra word spacing will grow  ratio  times more than extra character spacing.
+        /// </summary>
+        private float _spaceCharRatio = SPACE_CHAR_RATIO_DEFAULT;
 
-    /// <summary>
-    /// [U6] space char ratio
-    /// </summary>
-    /// <summary>
-    /// The ratio between the extra word spacing and the extra character spacing.
-    /// Extra word spacing will grow  ratio  times more than extra character spacing.
-    /// </summary>
-    private float _spaceCharRatio = SPACE_CHAR_RATIO_DEFAULT;
-
-    /// <summary>
-    /// [F12] tagged PDF
-    /// </summary>
-    /// <summary>
-    /// A flag indicating the presence of structure elements that contain user properties attributes.
-    /// </summary>
-    private bool _userProperties;
-
-    /// <summary>
-    /// Constructs a  PdfWriter .
-    /// </summary>
-    protected PdfWriter()
+        /// <summary>
+        /// Constructs a  PdfWriter .
+        /// </summary>
+        protected PdfWriter()
     {
       Root = new PdfPages(this);
     }
@@ -1071,26 +1058,22 @@ namespace iTextSharp.text.pdf
       get => _pdfxConformance.PdfxConformance;
     }
 
-    /// <summary>
-    /// Sets the transparency blending colorspace to RGB. The default blending colorspace is
-    /// CMYK and will result in faded colors in the screen and in printing. Calling this method
-    /// will return the RGB colors to what is expected. The RGB blending will be applied to all subsequent pages
-    /// until other value is set.
-    /// Note that this is a generic solution that may not work in all cases.
-    /// to use the default blending colorspace
-    /// </summary>
-    public bool RgbTransparencyBlending
-    {
-      get => _rgbTransparencyBlending;
-      set => _rgbTransparencyBlending = value;
-    }
+        /// <summary>
+        /// Sets the transparency blending colorspace to RGB. The default blending colorspace is
+        /// CMYK and will result in faded colors in the screen and in printing. Calling this method
+        /// will return the RGB colors to what is expected. The RGB blending will be applied to all subsequent pages
+        /// until other value is set.
+        /// Note that this is a generic solution that may not work in all cases.
+        /// to use the default blending colorspace
+        /// </summary>
+        public bool RgbTransparencyBlending { get; set; }
 
-    /// <summary>
-    /// Use this method to get the root outline
-    /// and construct bookmarks.
-    /// </summary>
-    /// <returns>the root outline</returns>
-    public PdfOutline RootOutline => directContent.RootOutline;
+        /// <summary>
+        /// Use this method to get the root outline
+        /// and construct bookmarks.
+        /// </summary>
+        /// <returns>the root outline</returns>
+        public PdfOutline RootOutline => directContent.RootOutline;
 
     /// <summary>
     /// Sets the run direction. This is only used as a placeholder
@@ -1197,28 +1180,24 @@ namespace iTextSharp.text.pdf
       set => Pdf.Transition = value;
     }
 
-    /// <summary>
-    /// Sets the flag indicating the presence of structure elements that contain user properties attributes.
-    /// </summary>
-    public bool UserProperties
-    {
-      set => _userProperties = value;
-      get => _userProperties;
-    }
+        /// <summary>
+        /// Sets the flag indicating the presence of structure elements that contain user properties attributes.
+        /// </summary>
+        public bool UserProperties { set; get; }
 
-    /// <summary>
-    /// [U4] Thumbnail image
-    /// </summary>
-    /// <summary>
-    /// [U8] user units
-    /// </summary>
-    /// <summary>
-    /// A UserUnit is a value that defines the default user space unit.
-    /// The minimum UserUnit is 1 (1 unit = 1/72 inch).
-    /// The maximum UserUnit is 75,000.
-    /// Remark that this userunit only works starting with PDF1.6!
-    /// </summary>
-    public float Userunit
+        /// <summary>
+        /// [U4] Thumbnail image
+        /// </summary>
+        /// <summary>
+        /// [U8] user units
+        /// </summary>
+        /// <summary>
+        /// A UserUnit is a value that defines the default user space unit.
+        /// The minimum UserUnit is 1 (1 unit = 1/72 inch).
+        /// The maximum UserUnit is 75,000.
+        /// Remark that this userunit only works starting with PDF1.6!
+        /// </summary>
+        public float Userunit
     {
       get => userunit;
       set
@@ -2330,7 +2309,7 @@ namespace iTextSharp.text.pdf
         page.Put(PdfName.Group, group);
         group = null;
       }
-      else if (_rgbTransparencyBlending)
+      else if (RgbTransparencyBlending)
       {
         var pp = new PdfDictionary();
         pp.Put(PdfName.TYPE, PdfName.Group);
@@ -2917,7 +2896,7 @@ namespace iTextSharp.text.pdf
         catalog.Put(PdfName.Structtreeroot, structureTreeRoot.Reference);
         var mi = new PdfDictionary();
         mi.Put(PdfName.Marked, PdfBoolean.Pdftrue);
-        if (_userProperties)
+        if (UserProperties)
         {
           mi.Put(PdfName.Userproperties, PdfBoolean.Pdftrue);
         }
@@ -3072,13 +3051,7 @@ namespace iTextSharp.text.pdf
       private ByteBuffer _index;
 
       private int _numObj;
-
-      /// <summary>
-      /// the current byteposition in the body.
-      /// </summary>
-      private int _position;
-
-      private int _refnum;
+            private int _refnum;
 
       private ByteBuffer _streamObjects;
 
@@ -3090,7 +3063,7 @@ namespace iTextSharp.text.pdf
       {
         _xrefs = new OrderedTree();
         _xrefs[new PdfCrossReference(0, 0, GENERATION_MAX)] = null;
-        _position = writer.Os.Counter;
+        Offset = writer.Os.Counter;
         _refnum = 1;
         _writer = writer;
       }
@@ -3105,9 +3078,9 @@ namespace iTextSharp.text.pdf
         }
       }
 
-      internal int Offset => _position;
+            internal int Offset { get; private set; }
 
-      internal PdfIndirectReference PdfIndirectReference => new PdfIndirectReference(0, IndirectReferenceNumber);
+            internal PdfIndirectReference PdfIndirectReference => new PdfIndirectReference(0, IndirectReferenceNumber);
 
       internal int Refnum
       {
@@ -3166,11 +3139,11 @@ namespace iTextSharp.text.pdf
         else
         {
           var indirect = new PdfIndirectObject(refNumber, objecta, _writer);
-          var pxref = new PdfCrossReference(refNumber, _position);
+          var pxref = new PdfCrossReference(refNumber, Offset);
           _xrefs.Remove(pxref);
           _xrefs[pxref] = null;
           indirect.WriteTo(_writer.Os);
-          _position = _writer.Os.Counter;
+          Offset = _writer.Os.Counter;
           return indirect;
         }
       }
@@ -3202,7 +3175,7 @@ namespace iTextSharp.text.pdf
         {
           FlushObjStm();
           refNumber = IndirectReferenceNumber;
-          _xrefs[new PdfCrossReference(refNumber, _position)] = null;
+          _xrefs[new PdfCrossReference(refNumber, Offset)] = null;
         }
         var first = ((PdfCrossReference)_xrefs.GetMinKey()).Refnum;
         var len = 0;
@@ -3229,7 +3202,7 @@ namespace iTextSharp.text.pdf
           var mask = 0xff000000;
           for (; mid > 1; --mid)
           {
-            if ((mask & _position) != 0)
+            if ((mask & Offset) != 0)
             {
               break;
             }
