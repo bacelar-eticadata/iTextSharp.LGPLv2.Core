@@ -7,5 +7,9 @@ namespace iTextSharp.text.pdf
         public BadPasswordException(string message) : base(message)
         {
         }
+
+        public BadPasswordException()
+        {
+        }
     }
 }

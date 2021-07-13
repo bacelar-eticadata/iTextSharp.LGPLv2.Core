@@ -14,5 +14,9 @@ namespace iTextSharp.text.exceptions
         public IllegalPdfSyntaxException(string message) : base(message)
         {
         }
+
+        public IllegalPdfSyntaxException()
+        {
+        }
     }
 }

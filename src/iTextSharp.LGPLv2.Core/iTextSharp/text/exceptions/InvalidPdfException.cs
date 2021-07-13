@@ -15,5 +15,9 @@ namespace iTextSharp.text.exceptions
         public InvalidPdfException(string message) : base(message)
         {
         }
+
+        public InvalidPdfException()
+        {
+        }
     }
 }

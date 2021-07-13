@@ -14,5 +14,9 @@ namespace iTextSharp.text.rtf.parser.exceptions
         public RtfUnknownCtrlWordException() : base("Unknown control word.")
         {
         }
+
+        public RtfUnknownCtrlWordException(string message) : base(message)
+        {
+        }
     }
 }

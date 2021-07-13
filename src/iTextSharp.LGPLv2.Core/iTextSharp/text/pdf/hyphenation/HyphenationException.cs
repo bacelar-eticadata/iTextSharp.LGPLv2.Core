@@ -10,5 +10,9 @@ namespace iTextSharp.text.pdf.hyphenation
         public HyphenationException(string msg) : base(msg)
         {
         }
+
+        public HyphenationException()
+        {
+        }
     }
 }

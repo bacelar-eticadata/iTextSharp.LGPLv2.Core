@@ -25,5 +25,9 @@ namespace iTextSharp.text
         /// </summary>
         /// <param name="message">error message</param>
         public DocumentException(string message) : base(message) { }
+
+        public DocumentException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

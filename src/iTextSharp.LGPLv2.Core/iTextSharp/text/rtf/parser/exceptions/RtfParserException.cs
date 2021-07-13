@@ -40,5 +40,9 @@ namespace iTextSharp.text.rtf.parser.exceptions
         public RtfParserException(string message) : base(message)
         {
         }
+
+        public RtfParserException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

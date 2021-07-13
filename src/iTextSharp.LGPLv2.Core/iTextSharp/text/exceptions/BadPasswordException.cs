@@ -14,5 +14,13 @@ namespace iTextSharp.text.exceptions
         public BadPasswordException(string message) : base(message)
         {
         }
+
+        public BadPasswordException()
+        {
+        }
+
+        public BadPasswordException(string message, System.Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

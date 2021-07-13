@@ -34,11 +34,7 @@ namespace iTextSharp.text.pdf.crypto
             if (neededLen > 0)
             {
                 outp = new byte[neededLen];
-            }
-            else
-            {
-                neededLen = 0;
-            }
+            }           
 
             _bp.ProcessBytes(inp, inpOff, inpLen, outp, 0);
             return outp;
@@ -48,7 +44,7 @@ namespace iTextSharp.text.pdf.crypto
         {
             var neededLen = _bp.GetOutputSize(0);
             var outp = new byte[neededLen];
-            var n = 0;
+            int n;
             try
             {
                 n = _bp.DoFinal(outp, 0);

@@ -11,5 +11,9 @@ namespace iTextSharp.text
         { }
 
         public BadElementException(string message) : base(message) { }
+
+        public BadElementException(string message, System.Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

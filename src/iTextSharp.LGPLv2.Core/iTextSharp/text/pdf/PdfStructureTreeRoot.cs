@@ -29,7 +29,7 @@ namespace iTextSharp.text.pdf
         /// Gets the writer.
         /// </summary>
         /// <returns>the writer</returns>
-        public PdfWriter Writer => _writer;
+        public PdfWriter Writer { get; internal set; }
 
         /// <summary>
         /// Maps the user tags to the standard tags. The mapping will allow a standard application to make some sense of the tagged
@@ -54,12 +54,12 @@ namespace iTextSharp.text.pdf
             foreach (int i in _parentTree.Keys)
             {
                 var ar = (PdfArray)_parentTree[i];
-                numTree[i] = _writer.AddToBody(ar).IndirectReference;
+                numTree[i] = Writer.AddToBody(ar).IndirectReference;
             }
-            var dicTree = PdfNumberTree.WriteTree(numTree, _writer);
+            var dicTree = PdfNumberTree.WriteTree(numTree, Writer);
             if (dicTree != null)
             {
-                Put(PdfName.Parenttree, _writer.AddToBody(dicTree).IndirectReference);
+                Put(PdfName.Parenttree, Writer.AddToBody(dicTree).IndirectReference);
             }
 
             NodeProcess(this, Reference);
@@ -92,7 +92,7 @@ namespace iTextSharp.text.pdf
             }
             if (reference != null)
             {
-                _writer.AddToBody(struc, reference);
+                Writer.AddToBody(struc, reference);
             }
         }
     }

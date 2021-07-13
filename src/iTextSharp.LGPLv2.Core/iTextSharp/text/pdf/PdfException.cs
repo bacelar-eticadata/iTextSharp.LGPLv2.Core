@@ -12,5 +12,9 @@ namespace iTextSharp.text.pdf
         public PdfException(string message) : base(message)
         {
         }
+
+        public PdfException(string message, System.Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

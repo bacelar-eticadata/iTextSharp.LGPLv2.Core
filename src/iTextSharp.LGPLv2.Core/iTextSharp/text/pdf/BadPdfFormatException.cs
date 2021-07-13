@@ -20,5 +20,9 @@ namespace iTextSharp.text.pdf
         public BadPdfFormatException(string message) : base(message)
         {
         }
+
+        public BadPdfFormatException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }
